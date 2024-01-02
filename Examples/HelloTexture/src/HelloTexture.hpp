@@ -2,7 +2,7 @@
 
 #include "../../Nest/include/Nest.hpp"
 
-class HelloTexture {
+class HelloTexture final : public Level {
 public:
-    void start(Window *window);
+    void start(Window *window) override;
 };

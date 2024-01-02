@@ -25,7 +25,7 @@ add_executable(${NameProject} main.cpp
         Examples/HelloTexture/src/HelloTexture.cpp
         Examples/HelloTexture/src/HelloTexture.hpp
         Examples/HelloSquare/src/HelloSquare.hpp
-        Examples/HelloSquare/src/HelloSquare.cpp)
+        Examples/HelloSquare/src/HelloSquare.cpp Nest/src/Entity/Level.hpp)
 
 #------------------------------------------------------------------------------------------------------------------#
 # GLFW

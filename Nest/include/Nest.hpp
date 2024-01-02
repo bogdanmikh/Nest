@@ -9,3 +9,6 @@
 
 // Window
 #include "../src/Window/Window.hpp"
+
+// Entity
+#include "../src/Entity/Level.hpp"
