@@ -13,6 +13,10 @@ struct Vertex {
     Vertex(glm::vec3 aPosition, glm::vec2 aTexCoords)
         : Position(aPosition)
         , TexCoords(aTexCoords){};
+
+    Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY)
+        : Position(x, y, z),
+        TexCoords(aTexCoordX, aTexCoordY){};
 };
 
 struct VertexBufferElement {

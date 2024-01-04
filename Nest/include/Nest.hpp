@@ -1,14 +1,17 @@
-// NestRendering
-#include "../src/NestRenderer/Renderer.hpp"
-#include "../src/NestRenderer/Shader.hpp"
-#include "../src/NestRenderer/VertexBuffer.hpp"
-#include "../src/NestRenderer/IndexBuffer.hpp"
-#include "../src/NestRenderer/VertexArray.hpp"
-#include "../src/NestRenderer/VertexBufferLayout.hpp"
-#include "../src/NestRenderer/Texture.hpp"
+#pragma once// NestRendering
+
+#include "Nest/NestRenderer/Renderer.hpp"
+#include "Nest/NestRenderer/Shader.hpp"
+#include "Nest/NestRenderer/VertexBuffer.hpp"
+#include "Nest/NestRenderer/IndexBuffer.hpp"
+#include "Nest/NestRenderer/VertexArray.hpp"
+#include "Nest/NestRenderer/VertexBufferLayout.hpp"
+#include "Nest/NestRenderer/Texture.hpp"
 
 // Window
-#include "../src/Window/Window.hpp"
+#include "Nest/Window/Window.hpp"
 
-// Entity
-#include "../src/Entity/Level.hpp"
+//NestObjects
+#include "Nest/NestObjects/GameObject.hpp"
+#include "Nest/NestObjects/World.hpp"
+#include "Nest/NestObjects/Shapes/Cube.hpp"

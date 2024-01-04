@@ -2,30 +2,35 @@ cmake_minimum_required(VERSION 3.25)
 
 set(NameProject Nest)
 
-project(NameProject)
+project(${NameProject})
 
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(${NameProject} main.cpp
-        Nest/src/Window/Window.cpp
-        Nest/src/Window/Key.hpp
-        Nest/src/Window/Window.hpp
-        Nest/src/NestRenderer/Shader.cpp
-        Nest/src/NestRenderer/Shader.hpp
-        Nest/src/NestRenderer/VertexBuffer.cpp
-        Nest/src/NestRenderer/VertexBuffer.hpp
-        Nest/src/NestRenderer/Renderer.cpp
-        Nest/src/NestRenderer/Renderer.hpp
-        Nest/include/Nest.hpp
-        Nest/src/NestRenderer/IndexBuffer.cpp
-        Nest/src/NestRenderer/VertexArray.cpp
-        Nest/src/NestRenderer/VertexArray.cpp
-        Nest/src/NestRenderer/Texture.cpp
+        Nest/include/Nest/Window/Window.cpp
+        Nest/include/Nest/Window/Key.hpp
+        Nest/include/Nest/Window/Window.hpp
+        Nest/include/Nest/NestRenderer/Shader.cpp
+        Nest/include/Nest/NestRenderer/Shader.hpp
+        Nest/include/Nest/NestRenderer/VertexBuffer.cpp
+        Nest/include/Nest/NestRenderer/VertexBuffer.hpp
+        Nest/include/Nest/NestRenderer/Renderer.cpp
+        Nest/include/Nest/NestRenderer/Renderer.hpp
+        Nest/include/Nest/NestRenderer/IndexBuffer.cpp
+        Nest/include/Nest/NestRenderer/VertexArray.cpp
+        Nest/include/Nest/NestRenderer/VertexArray.cpp
+        Nest/include/Nest/NestRenderer/Texture.cpp
 
-        Examples/HelloTexture/src/HelloTexture.cpp
-        Examples/HelloTexture/src/HelloTexture.hpp
-        Examples/HelloSquare/src/HelloSquare.hpp
-        Examples/HelloSquare/src/HelloSquare.cpp Nest/src/Entity/Level.hpp)
+        Examples/HelloTexture/src/Game.cpp
+        Examples/HelloTexture/src/Game.hpp
+        Nest/include/Nest/NestObjects/Shapes/Cube.hpp
+
+        Nest/include/Nest/NestObjects/World.cpp
+        Nest/include/Nest/NestObjects/World.hpp
+        Nest/include/Nest/NestObjects/GameObject.hpp
+        Nest/include/Nest/NestObjects/World.cpp
+        Nest/include/Nest/NestObjects/Shapes/Cube.cpp
+)
 
 #------------------------------------------------------------------------------------------------------------------#
 # GLFW
@@ -57,3 +62,13 @@ add_subdirectory(Vendor/imgui)
 
 target_link_libraries(${NameProject} imgui)
 target_include_directories(${NameProject} PRIVATE Vendor/imgui)
+
+target_include_directories(${NameProject} PRIVATE Nest/include)
+
+#bgfx
+#add_subdirectory(Vendor/bgfx)
+#
+#target_link_libraries(${NameProject} bgfx)
+#target_include_directories(${NameProject} PRIVATE Vendor/bgfx)
+
+
