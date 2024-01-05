@@ -8,4 +8,5 @@ public:
     static void setRenderBufferSize(int w, int h);
     static void drawArrays(int count);
     static void drawIndexed(int count);
+    static void checkForErrors();
 };

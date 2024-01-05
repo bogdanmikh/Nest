@@ -48,37 +48,37 @@ public:
         : m_Stride(0) {}
     ~VertexBufferLayout(){};
 
-    void pushFloat(unsigned int count) {
+    void pushFloat(unsigned int count = 1) {
         VertexBufferElement element = {GL_FLOAT, count, GL_FALSE};
         m_Elements.push_back(element);
         m_Stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT);
     }
 
-    void pushUInt(unsigned int count) {
+    void pushUInt(unsigned int count = 1) {
         VertexBufferElement element = {GL_UNSIGNED_INT, count, GL_FALSE};
         m_Elements.push_back(element);
         m_Stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_INT);
     }
 
-    void pushChar(unsigned int count) {
+    void pushChar(unsigned int count = 1) {
         VertexBufferElement element = {GL_UNSIGNED_BYTE, count, GL_TRUE};
         m_Elements.push_back(element);
         m_Stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_BYTE);
     }
 
-    void pushVec3F(unsigned int count) {
+    void pushVec3F(unsigned int count = 1) {
         VertexBufferElement element = {GL_FLOAT, count * 3, GL_FALSE};
         m_Elements.push_back(element);
         m_Stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT) * 3;
     }
 
-    void pushVec2F(unsigned int count) {
+    void pushVec2F(unsigned int count = 1) {
         VertexBufferElement element = {GL_FLOAT, count * 2, GL_FALSE};
         m_Elements.push_back(element);
         m_Stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT) * 2;
     }
 
-    void pushVertex(unsigned int count) {
+    void pushVertex(unsigned int count = 1) {
         pushVec3F(1);
         pushVec2F(1);
     }

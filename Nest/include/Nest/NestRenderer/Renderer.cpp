@@ -22,7 +22,7 @@ const char *getGLErrorStr(GLenum err) {
     }
 }
 
-void checkForErrors() {
+void Renderer::checkForErrors() {
     while (true) {
         const GLenum err = glGetError();
         if (GL_NO_ERROR == err)
@@ -30,8 +30,6 @@ void checkForErrors() {
         std::cout << "OPENGL: " << getGLErrorStr(err) << std::endl;;
     }
 }
-
-uint32_t vao;
 
 void Renderer::init() {
     glEnable(GL_DEPTH_TEST);
@@ -58,6 +56,6 @@ void Renderer::drawArrays(int count) {
 }
 
 void Renderer::drawIndexed(int count) {
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
     checkForErrors();
 }

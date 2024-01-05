@@ -5,12 +5,11 @@
 
 class World {
 public:
-    inline World() {}
+    inline World() = default;
     void update(double deltaTime);
     void addActor(GameObject* actor);
     void deleteActor(GameObject* actor);
     void deleteAll();
 private:
-    VertexArray *vertexArray;
     std::vector<GameObject*> gameObjects;
 };

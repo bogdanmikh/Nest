@@ -3,7 +3,8 @@
 Cube::Cube(const std::string& texturePath, Shader* shader)
     : mPosition(0.f),
       mRotation(0.f),
-      mSize(1.),
+      mSize(2),
+      mShader(shader),
       mTexture(texturePath) {
     auto vertices = new Vertex[24]{
             // Front
@@ -48,12 +49,20 @@ Cube::Cube(const std::string& texturePath, Shader* shader)
             20, 21, 22, 22, 23, 20  // Right
     };
     mVertexBuffer = new VertexBuffer(vertices, 24 * sizeof(Vertex));
+    Renderer::checkForErrors();
 
-    mVertexBufferLayout = new VertexBufferLayout();
-    mVertexBufferLayout->pushVec3F(1);
-    mVertexBufferLayout->pushVec2F(1);
+    VertexBufferLayout layout;
+    layout.pushVec3F();
+    layout.pushVec2F();
+    Renderer::checkForErrors();
 
-    IndexBuffer indexBuffer(indices, 36);
+    mVertexArray = new VertexArray();
+    Renderer::checkForErrors();
+    mVertexArray->addBuffer(*mVertexBuffer, layout);
+    Renderer::checkForErrors();
+
+    mIndexBuffer = new IndexBuffer(indices, 36);
+    Renderer::checkForErrors();
 
     delete[] vertices;
     delete[] indices;
@@ -63,11 +72,20 @@ void Cube::updateModelMatrix() {
     mShader->use();
     glm::mat4 model = glm::translate(glm::mat4(1.f), mPosition);
     model = glm::scale(model, mSize);
-    mShader->setMat4("model", model);
+    model = glm::rotate(model, mRotation.x, glm::vec3(1.f, 0.f, 0.f));
+    model = glm::rotate(model, mRotation.y, glm::vec3(0.f, 1.f, 0.f));
+    model = glm::rotate(model, mRotation.z, glm::vec3(0.f, 0.f, 1.f));
+    mShader->setMat4("u_model", model);
+    Renderer::checkForErrors();
 }
+
 void Cube::draw() {
-    mShader->use();
+    mIndexBuffer->bind();
+    mVertexArray->bind();
     mTexture.bind();
     updateModelMatrix();
+    Renderer::checkForErrors();
     Renderer::drawIndexed(36);
+    Renderer::checkForErrors();
+
 }

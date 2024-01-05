@@ -3,8 +3,7 @@
 #include "World.hpp"
 void World::update(double deltaTime) {
     for (auto & gameObject : gameObjects) {
-        vertexArray->bind();
-        gameObject->update(deltaTime);
+        gameObject->draw();
     }
 }
 
