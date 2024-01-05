@@ -45,10 +45,4 @@ target_include_directories(${NameProject} PRIVATE Vendor/imgui)
 
 target_include_directories(${NameProject} PRIVATE Nest/include)
 
-#bgfx
-#add_subdirectory(Vendor/bgfx)
-#
-#target_link_libraries(${NameProject} bgfx)
-#target_include_directories(${NameProject} PRIVATE Vendor/bgfx)
-
 

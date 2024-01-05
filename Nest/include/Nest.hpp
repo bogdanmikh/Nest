@@ -15,3 +15,4 @@
 #include "Nest/NestObjects/GameObject.hpp"
 #include "Nest/NestObjects/World.hpp"
 #include "Nest/NestObjects/Shapes/Cube.hpp"
+#include "Nest/NestObjects/Camera.hpp"

@@ -2,57 +2,92 @@
 // Created by admin on 26.12.2023.
 //
 
+#include <chrono>
+#include <iostream>
 #include "Game.hpp"
 
 void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
-    Renderer::checkForErrors();
-    auto *cube = new Cube("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Bohdan.png", shader);
+    auto *cube = new Cube("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png", shader);
+    auto *cube2 = new Cube("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png", shader);
+    cube2->setPosition(7.f, 0.f, -2.f);
+
+    Camera camera;
+    camera.setShader(shader);
+    camera.setPosition(0.f, 0.f, 5.f);
+
+    float cameraSpeed = 5.f;
     Renderer::init();
-    Renderer::checkForErrors();
+
+    float lastTime = window->getTime();
+    int frames = 0;
+    const int maxFrames = 60;
+    double sec = 0;
+    window->toggleCursorLock();
+    glm::vec2 lastPos = window->getCursorPos();
+
+    glm::vec3 rotation;
 
     while (!window->shouldClose() && !window->isKeyPressed(Key::ESCAPE)) {
+        float currentTime = window->getTime();
+        double deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        sec += deltaTime;
+        if (sec > 1.) {
+            std::cout << "FPS: " << frames << std::endl;
+            sec = 0;
+            frames = 0;
+        }
+        if (frames >= maxFrames && sec < 1.) {
+            continue;
+        }
+        frames++;
+
         Renderer::clear();
         Renderer::checkForErrors();
 
-        glm::vec3 position = cube->getPosition();
-        glm::vec3 rotation = cube->getRotation();
-
         if (window->isKeyPressed(Key::W)) {
-            position.z += 0.1f;
-        } else if (window->isKeyPressed(Key::S)) {
-            position.z -= 0.1f;
-        } else if (window->isKeyPressed(Key::SPACE)) {
-            position.y += 0.1f;
+            camera.translateLocal(0., 0., cameraSpeed * deltaTime);
+        }
+        if (window->isKeyPressed(Key::S)) {
+            camera.translateLocal(0., 0., -cameraSpeed * deltaTime);
+        }
+        if (window->isKeyPressed(Key::A)) {
+            camera.translateLocal(-cameraSpeed * deltaTime, 0., 0.);
+        }
+        if (window->isKeyPressed(Key::D)) {
+            camera.translateLocal(cameraSpeed * deltaTime, 0., 0.);
+        }
+        if (window->isKeyPressed(Key::SPACE)) {
+            camera.translateLocal( 0., cameraSpeed * deltaTime, 0.);
+        }
+        if (window->isKeyPressed(Key::LEFT_CONTROL)) {
+            camera.translateLocal( 0., -cameraSpeed * deltaTime, 0.);
         }
 
-         glm::vec2 resolution = window->getSize();
-         Renderer::setRenderBufferSize(resolution.x, resolution.y);
-         Renderer::checkForErrors();
+        glm::vec2 cursorPos = window->getCursorPos();
+        glm::vec2 diff = lastPos - cursorPos;
+        lastPos = cursorPos;
+        float mouseSpeed = 0.1f;
+        camera.rotate(-diff.y * mouseSpeed, -diff.x * mouseSpeed, 0.f);
 
-
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), resolution.x / resolution.y,
-                                                0.001f, 100.0f);
+        glm::vec2 resolution = window->getSize();
+        camera.updateAspectRatio(resolution.x / resolution.y);
+        Renderer::setRenderBufferSize(resolution.x, resolution.y);
         Renderer::checkForErrors();
 
-        rotation.x += 0.01f;
-        rotation.y += 0.01f;
-
-        Renderer::checkForErrors();
         shader->setFloat("u_time", window->getTime());
-        Renderer::checkForErrors();
         shader->setVec2("u_mouse", window->getCursorPos());
-        Renderer::checkForErrors();
         shader->setVec2("u_resolution", window->getSize());
         Renderer::checkForErrors();
-        shader->setMat4("u_projection", projection);
-        Renderer::checkForErrors();
+
+        rotation.x += 0.05f;
+        rotation.y += 0.05f;
 
         cube->draw();
-
-        cube->setPosition(position);
-        cube->setRotation(rotation);
+        cube2->setRotation(rotation);
+        cube2->draw();
 
         window->swapBuffers();
         Renderer::checkForErrors();
