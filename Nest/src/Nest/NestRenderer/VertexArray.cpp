@@ -1,5 +1,5 @@
 #include <iostream>
-#include "VertexArray.hpp"
+#include "Nest/NestRenderer/VertexArray.hpp"
 
 VertexArray::VertexArray() {
     glGenVertexArrays(1, &m_RendererID);

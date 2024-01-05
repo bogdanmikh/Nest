@@ -1,4 +1,4 @@
-#include "Cube.hpp"
+#include "Nest/NestObjects/Shapes/Cube.hpp"
 
 Cube::Cube(const std::string& texturePath, Shader* shader)
     : mPosition(0.f),

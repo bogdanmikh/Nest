@@ -1,6 +1,7 @@
 #include <algorithm>
 
-#include "World.hpp"
+#include "Nest/NestObjects/World.hpp"
+
 void World::update(double deltaTime) {
     for (auto & gameObject : gameObjects) {
         gameObject->draw();

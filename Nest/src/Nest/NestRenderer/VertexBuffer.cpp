@@ -1,4 +1,4 @@
-#include "VertexBuffer.hpp"
+#include "Nest/NestRenderer/VertexBuffer.hpp"
 #include "glad/glad.h"
 
 VertexBuffer::VertexBuffer(const void *data, unsigned int size) {

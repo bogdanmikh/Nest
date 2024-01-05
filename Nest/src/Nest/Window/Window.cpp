@@ -1,8 +1,8 @@
-#include "Window.hpp"
+#include "Nest/Window/Window.hpp"
 
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glad/glad.h"
+#include "GLFW/glfw3.h"
 
 Window::Window(const char* name, int resolutionX, int resolutionY, bool fullScreen)
 : cursorLocked(false) {

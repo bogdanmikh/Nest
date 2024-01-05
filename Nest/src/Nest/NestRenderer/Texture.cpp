@@ -1,8 +1,8 @@
 #include <iostream>
-#include <stb_image.h>
+#include "stb_image.h"
 
-#include "Texture.hpp"
-#include <glad/glad.h>
+#include "Nest/NestRenderer/Texture.hpp"
+#include "glad/glad.h"
 
 Texture::Texture(const std::string &path) {
     glGenTextures(1, &m_RendererID);

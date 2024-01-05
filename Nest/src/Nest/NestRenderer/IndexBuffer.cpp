@@ -1,5 +1,5 @@
-#include "IndexBuffer.hpp"
-#include <glad/glad.h>
+#include "Nest/NestRenderer/IndexBuffer.hpp"
+#include "glad/glad.h"
 
 IndexBuffer::IndexBuffer(unsigned int *data, unsigned int count)
     : m_Size(count) {
