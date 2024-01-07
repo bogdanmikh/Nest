@@ -10,6 +10,8 @@ struct Vertex {
     // texCoords
     glm::vec2 TexCoords;
 
+    Vertex() = default;
+
     Vertex(glm::vec3 aPosition, glm::vec2 aTexCoords)
         : Position(aPosition)
         , TexCoords(aTexCoords){};
@@ -17,6 +19,10 @@ struct Vertex {
     Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY)
         : Position(x, y, z),
         TexCoords(aTexCoordX, aTexCoordY){};
+
+    void setVertex(const glm::vec3 &vertex) {
+        Position = vertex;
+    }
 };
 
 struct VertexBufferElement {

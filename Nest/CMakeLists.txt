@@ -9,6 +9,8 @@ set(SOURCES
         Nest/include/Nest/NestRenderer/IndexBuffer.hpp
         Nest/include/Nest/NestRenderer/VertexArray.hpp
         Nest/include/Nest/NestRenderer/Renderer.hpp
+        Nest/include/Nest/NestRenderer/Mesh.hpp
+
         Nest/include/Nest/NestObjects/Shapes/Cube.hpp
         Nest/include/Nest/NestObjects/Camera.hpp
 
@@ -20,11 +22,16 @@ set(SOURCES
         Nest/src/Nest/NestRenderer/VertexArray.cpp
         Nest/src/Nest/NestRenderer/VertexArray.cpp
         Nest/src/Nest/NestRenderer/Texture.cpp
+        Nest/src/Nest/NestRenderer/Mesh.cpp
 
         Nest/src/Nest/NestObjects/Shapes/Cube.cpp
         Nest/src/Nest/NestObjects/Camera.cpp
 
         Examples/HelloTexture/src/Game.hpp
         Examples/HelloTexture/src/Game.cpp
+        Examples/HelloTexture/src/Chunk.hpp
+        Examples/HelloTexture/src/Chunk.cpp
+        Examples/HelloTexture/src/ChunkMeshGenerator.hpp
+        Examples/HelloTexture/src/ChunkMeshGenerator.cpp
         PARENT_SCOPE
 )

@@ -8,7 +8,8 @@ project(${NameProject})
 
 add_subdirectory(Nest)
 
-add_executable(${NameProject} ${SOURCES})
+add_executable(${NameProject} ${SOURCES}
+        Examples/HelloTexture/src/ChunkMeshGenerator.hpp)
 
 #------------------------------------------------------------------------------------------------------------------#
 #add_subdirectory(Nest)

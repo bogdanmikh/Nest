@@ -1,11 +1,8 @@
 #include "Nest/NestObjects/Shapes/Cube.hpp"
 
-Cube::Cube(const std::string& texturePath, Shader* shader)
-    : mPosition(0.f),
-      mRotation(0.f),
-      mSize(2),
-      mShader(shader),
-      mTexture(texturePath) {
+Cube::Cube() : mPosition(0.f), mRotation(0.f), mSize(0.5) {}
+
+void Cube::init() {
     auto vertices = new Vertex[24]{
             // Front
             Vertex(-1.0f, -1.0f, 1.0f, 0.0f, 1.0f), // 0
@@ -48,20 +45,7 @@ Cube::Cube(const std::string& texturePath, Shader* shader)
             16, 17, 18, 18, 19, 16, // Left
             20, 21, 22, 22, 23, 20  // Right
     };
-    mVertexBuffer = new VertexBuffer(vertices, 24 * sizeof(Vertex));
-    Renderer::checkForErrors();
-
-    VertexBufferLayout layout;
-    layout.pushVec3F();
-    layout.pushVec2F();
-    Renderer::checkForErrors();
-
-    mVertexArray = new VertexArray();
-    Renderer::checkForErrors();
-    mVertexArray->addBuffer(*mVertexBuffer, layout);
-    Renderer::checkForErrors();
-
-    mIndexBuffer = new IndexBuffer(indices, 36);
+    mesh = new Mesh(vertices, 24, indices, 36);
     Renderer::checkForErrors();
 
     delete[] vertices;
@@ -80,12 +64,7 @@ void Cube::updateModelMatrix() {
 }
 
 void Cube::draw() {
-    mIndexBuffer->bind();
-    mVertexArray->bind();
-    mTexture.bind();
+    mesh->draw();
     updateModelMatrix();
     Renderer::checkForErrors();
-    Renderer::drawIndexed(36);
-    Renderer::checkForErrors();
-
 }

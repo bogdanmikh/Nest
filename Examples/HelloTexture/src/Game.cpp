@@ -2,17 +2,20 @@
 // Created by admin on 26.12.2023.
 //
 
-#include <chrono>
 #include <iostream>
 #include "Game.hpp"
+#include "Chunk.hpp"
+#include "ChunkMeshGenerator.hpp"
 
 void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
-    auto *cube = new Cube("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png", shader);
-    auto *cube2 = new Cube("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png", shader);
-    cube2->setPosition(7.f, 0.f, -2.f);
 
+    auto *chunk1 = new Chunk(2, 2, 2);
+
+    ChunkMeshGenerator chunkMeshGenerator(chunk1);
+    Mesh* mesh = chunkMeshGenerator.generateMesh();
+    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png");
     Camera camera;
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
@@ -26,8 +29,6 @@ void Game::start(Window *window) {
     double sec = 0;
     window->toggleCursorLock();
     glm::vec2 lastPos = window->getCursorPos();
-
-    glm::vec3 rotation;
 
     while (!window->shouldClose() && !window->isKeyPressed(Key::ESCAPE)) {
         float currentTime = window->getTime();
@@ -80,14 +81,10 @@ void Game::start(Window *window) {
         shader->setFloat("u_time", window->getTime());
         shader->setVec2("u_mouse", window->getCursorPos());
         shader->setVec2("u_resolution", window->getSize());
+        shader->setMat4("u_model", glm::mat4(1.));
         Renderer::checkForErrors();
 
-        rotation.x += 0.05f;
-        rotation.y += 0.05f;
-
-        cube->draw();
-        cube2->setRotation(rotation);
-        cube2->draw();
+        mesh->draw();
 
         window->swapBuffers();
         Renderer::checkForErrors();
@@ -95,6 +92,7 @@ void Game::start(Window *window) {
         window->pollEvents();
         Renderer::checkForErrors();
     }
-    delete cube;
+    delete chunk1;
+    delete mesh;
     delete shader;
 }

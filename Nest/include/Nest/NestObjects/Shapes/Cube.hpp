@@ -8,22 +8,28 @@
 class Cube : public GameObject {
 private:
     Shader *mShader;
-    IndexBuffer* mIndexBuffer;
-    VertexBuffer* mVertexBuffer;
-    VertexArray* mVertexArray;
-    Texture mTexture;
+    Mesh *mesh;
     glm::vec3 mRotation;
     glm::vec3 mPosition;
 
     glm::vec3 mSize;
     void updateModelMatrix();
 public:
-    Cube(const std::string& texturePath, Shader* shader);
+    Cube();
     ~Cube() {
-        delete mIndexBuffer;
-        delete mVertexBuffer;
-        delete mVertexArray;
+        delete mesh;
     }
+
+    void init();
+
+    inline void addTexture(const std::string& texturePath) {
+        mesh->addTexture(texturePath);
+    }
+
+    inline void setShader(Shader* shader) {
+        mShader = shader;
+    }
+
     void draw() override;
 
     inline void setPosition(float x, float y, float z) {

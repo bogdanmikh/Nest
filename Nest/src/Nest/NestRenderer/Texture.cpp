@@ -14,13 +14,13 @@ Texture::Texture(const std::string &path) {
         GLenum format;
         if (nrChannels == 1) {
             format = GL_RED;
-            std::cout << "R" << std::endl;
+//            std::cout << "R" << std::endl;
         } else if (nrChannels == 3) {
             format = GL_RGB;
-            std::cout << "RGB" << std::endl;
+//            std::cout << "RGB" << std::endl;
         } else {
             format = GL_RGBA;
-            std::cout << "RGBA" << std::endl;
+//            std::cout << "RGBA" << std::endl;
         }
 
         glBindTexture(GL_TEXTURE_2D, m_RendererID);

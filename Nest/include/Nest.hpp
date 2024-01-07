@@ -7,6 +7,7 @@
 #include "Nest/NestRenderer/VertexArray.hpp"
 #include "Nest/NestRenderer/VertexBufferLayout.hpp"
 #include "Nest/NestRenderer/Texture.hpp"
+#include "Nest/NestRenderer/Mesh.hpp"
 
 // Window
 #include "Nest/Window/Window.hpp"
