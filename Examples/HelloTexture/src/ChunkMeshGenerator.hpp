@@ -13,5 +13,6 @@ public:
     Mesh* generateMesh();
 private:
     bool isAir(int x, int y, int z);
+    void addFaceIndices(uint32_t offset, std::vector<uint32_t> &indices);
     Chunk *mChunk;
 };

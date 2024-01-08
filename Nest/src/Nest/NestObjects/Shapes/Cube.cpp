@@ -42,7 +42,7 @@ void Cube::init() {
             4, 5, 6, 6, 7, 4,       // Back
             8, 9, 10, 10, 11, 8,    // Top
             12, 13, 14, 14, 15, 12, // Bottom
-            16, 17, 18, 18, 19, 16, // Left
+            16, 17, 18,  18, 19, 16, // Left
             20, 21, 22, 22, 23, 20  // Right
     };
     mesh = new Mesh(vertices, 24, indices, 36);

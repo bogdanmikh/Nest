@@ -7,26 +7,27 @@ Mesh *ChunkMeshGenerator::generateMesh() {
     std::vector<Vertex> vertices;
     std::vector<uint32_t> indices;
     for (int y = 0; y < h; y++) {
-        for (int z = 0; z < d; ++z) {
+        for (int z = 0; z < d; z++) {
             for (int x = 0; x < w; ++x) {
-                auto id = mChunk->get(x, y, z);
-                if (!id) continue;
-
+                if (mChunk->get(x, y, z)->isAir()) continue;
                 // left
-                if (isAir(x - 1, y, z)) {
-                    vertices.emplace_back(x-0.5f, y-0.5f, z-0.5f, 0.0f, 1.f);
-                    vertices.emplace_back(x-0.5f, y-0.5f, z+0.5f, 1.f, 1.f);
-                    vertices.emplace_back(x-0.5f, y+0.5f, z+0.5f, 1.f, 0.f);
-                    vertices.emplace_back(x-0.5f, y+0.5f, z-0.5f, 0.0f, 0.0f);
 
-                    int offset = indices.size();
-                    indices.push_back(offset);
-                    indices.push_back(offset + 1);
-                    indices.push_back(offset + 2);
-                    indices.push_back(offset + 2);
-                    indices.push_back(offset + 3);
-                    indices.push_back(offset);
-                    std::cout << "X: " << x << " Y: " << y << " Z: " << z << std::endl;
+                if (isAir(x - 1, y, z)) {
+                    vertices.emplace_back(x - 0.5f, y - 0.5f, z - 0.5f, 0.0f, 0.f);
+                    vertices.emplace_back(x - 0.5f, y - 0.5f, z + 0.5f, 1.f, 0.f);
+                    vertices.emplace_back(x - 0.5f, y + 0.5f, z + 0.5f, 1.f, 1.f);
+                    vertices.emplace_back(x - 0.5f, y + 0.5f, z - 0.5f, 0.0f, 1.0f);
+
+//                    vertices.emplace_back(x+0.5f, y-0.5f, z-0.5f, 0.0f, 1.f),
+//                    vertices.emplace_back(x+0.5f, y+0.5f, z-0.5f, 1.f, 1.f),
+//                    vertices.emplace_back(x+0.5f, y+0.5f, z+0.5f, 1.f, 0.0f),
+//                    vertices.emplace_back(x+0.5f, y-0.5f, z+0.5f, 0.0f, 0.0f);
+                    std::cout << indices.size() << std::endl;
+                    addFaceIndices(indices.size(), indices);
+                    std::cout << "Point 1:" << " Y: " << y - 0.5f << " Z: " << z - 0.5f << std::endl;
+                    std::cout << "Point 2:" << " Y: " << y - 0.5f << " Z: " << z + 0.5f << std::endl;
+                    std::cout << "Point 3:" << " Y: " << y + 0.5f << " Z: " << z + 0.5f << std::endl;
+                    std::cout << "Point 4:" << " Y: " << y + 0.5f << " Z: " << z - 0.5f << std::endl << std::endl;
                 }
 
             }
@@ -36,9 +37,18 @@ Mesh *ChunkMeshGenerator::generateMesh() {
 }
 
 bool ChunkMeshGenerator::isAir(int x, int y, int z) {
-    const uint32_t w = mChunk->getW(), h = mChunk->getH(), d = mChunk->getD();
-    if (!(x >= 0 && y >= 0 && z >= 0 && x < w && y < h && z < d)) {
+    Voxel* voxel = mChunk->get(x, y, z);
+    if (voxel == nullptr) {
         return true;
     }
-    return mChunk->get(x, y, z) == 0;
+    return mChunk->get(x, y, z)->isAir();
+}
+
+void ChunkMeshGenerator::addFaceIndices(uint32_t offset, std::vector<uint32_t> &indices) {
+    indices.emplace_back(offset);
+    indices.emplace_back(offset + 1);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 2);
+    indices.emplace_back(offset + 3);
+    indices.emplace_back(offset);
 }

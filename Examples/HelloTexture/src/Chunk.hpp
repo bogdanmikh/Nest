@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "Voxel.hpp"
+
 class Chunk {
 private:
     uint32_t mWight;
@@ -9,7 +11,7 @@ private:
     uint32_t mDepth;
     uint32_t mSize;
 public:
-    unsigned char *chunk;
+    Voxel* chunk;
     Chunk(uint32_t wight, uint32_t height, uint32_t depth);
     ~Chunk();
     inline uint32_t getSize() const {
@@ -25,11 +27,15 @@ public:
         return mDepth;
     }
 
-    void set(uint32_t x, uint32_t y, uint32_t z, uint8_t block) {
-        chunk[(y * mDepth + z) * mWight + x] = block;
+    void set(uint32_t x, uint32_t y, uint32_t z, VoxelType type) {
+        chunk[(y * mDepth + z) * mWight + x].type = type;
     }
 
-    unsigned char get(int32_t x, int32_t y, int32_t z) {
-        return chunk[(y * mDepth + z) * mWight + x];
+   Voxel* get(int32_t x, int32_t y, int32_t z) {
+        if (x < 0 || y < 0 || z <  0 || x > mWight || y > mHeight || z > mDepth) {
+            return nullptr;
+        }
+
+        return &chunk[(y * mDepth + z) * mWight + x];
     }
 };

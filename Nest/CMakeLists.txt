@@ -29,6 +29,7 @@ set(SOURCES
 
         Examples/HelloTexture/src/Game.hpp
         Examples/HelloTexture/src/Game.cpp
+        Examples/HelloTexture/src/Voxel.hpp
         Examples/HelloTexture/src/Chunk.hpp
         Examples/HelloTexture/src/Chunk.cpp
         Examples/HelloTexture/src/ChunkMeshGenerator.hpp

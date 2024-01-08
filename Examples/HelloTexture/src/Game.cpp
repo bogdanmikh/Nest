@@ -11,11 +11,11 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunk1 = new Chunk(2, 2, 2);
+    auto *chunk1 = new Chunk(1, 1, 2);
 
     ChunkMeshGenerator chunkMeshGenerator(chunk1);
     Mesh* mesh = chunkMeshGenerator.generateMesh();
-    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.png");
+    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.jpeg");
     Camera camera;
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
@@ -81,7 +81,7 @@ void Game::start(Window *window) {
         shader->setFloat("u_time", window->getTime());
         shader->setVec2("u_mouse", window->getCursorPos());
         shader->setVec2("u_resolution", window->getSize());
-        shader->setMat4("u_model", glm::mat4(1.));
+        shader->setMat4("u_model", glm::mat4(1));
         Renderer::checkForErrors();
 
         mesh->draw();
