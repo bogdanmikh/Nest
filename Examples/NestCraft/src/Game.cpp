@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <NestUI.hpp>
 #include "Game.hpp"
 #include "Chunk.hpp"
 #include "ChunkMeshGenerator.hpp"
@@ -11,16 +12,17 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunk1 = new Chunk(300, 300, 300);
+    auto *chunk1 = new Chunk(50, 50, 50);
 
     ChunkMeshGenerator chunkMeshGenerator(chunk1);
     Mesh* mesh = chunkMeshGenerator.generateMesh();
-    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/HelloTexture/res/textures/Block.jpeg");
+    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
+
     Camera camera;
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
 
-    float cameraSpeed = 25.f;
+    float cameraSpeed = 5.f;
     Renderer::init();
 
     float lastTime = window->getTime();
@@ -46,7 +48,6 @@ void Game::start(Window *window) {
         frames++;
 
         Renderer::clear();
-        Renderer::checkForErrors();
 
         if (window->isKeyPressed(Key::W)) {
             camera.translateLocal(0., 0., cameraSpeed * deltaTime);
@@ -76,7 +77,6 @@ void Game::start(Window *window) {
         glm::vec2 resolution = window->getSize();
         camera.updateAspectRatio(resolution.x / resolution.y);
         Renderer::setRenderBufferSize(resolution.x, resolution.y);
-        Renderer::checkForErrors();
 
         shader->setFloat("u_time", window->getTime());
         shader->setVec2("u_mouse", window->getCursorPos());
@@ -87,12 +87,11 @@ void Game::start(Window *window) {
         mesh->draw();
 
         window->swapBuffers();
-        Renderer::checkForErrors();
 
         window->pollEvents();
         Renderer::checkForErrors();
     }
-    delete chunk1;
     delete mesh;
+    delete chunk1;
     delete shader;
 }

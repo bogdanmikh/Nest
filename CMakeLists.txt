@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.25)
 
 set(NameProject NestCraft)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 project(${NameProject})
 
 add_subdirectory(Nest)
+add_subdirectory(NestUI)
 
-add_executable(${NameProject} ${SOURCES}
-        Examples/HelloTexture/src/ChunkMeshGenerator.hpp)
+add_executable(${NameProject} ${SOURCESNEST} ${SOURCESNESTUI})
 
 #------------------------------------------------------------------------------------------------------------------#
 #add_subdirectory(Nest)
@@ -44,6 +44,10 @@ add_subdirectory(Vendor/imgui)
 target_link_libraries(${NameProject} imgui)
 target_include_directories(${NameProject} PRIVATE Vendor/imgui)
 
+# Nest
 target_include_directories(${NameProject} PRIVATE Nest/include)
+
+# NestUI
+target_include_directories(${NameProject} PRIVATE NestUI/include)
 
 

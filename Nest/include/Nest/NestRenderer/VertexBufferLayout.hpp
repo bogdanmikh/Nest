@@ -9,20 +9,20 @@ struct Vertex {
     glm::vec3 Position;
     // texCoords
     glm::vec2 TexCoords;
+    // light
+    float light;
 
     Vertex() = default;
 
-    Vertex(glm::vec3 aPosition, glm::vec2 aTexCoords)
+    Vertex(glm::vec3 aPosition, glm::vec2 aTexCoords, float light = 1.f)
         : Position(aPosition)
-        , TexCoords(aTexCoords){};
+        , TexCoords(aTexCoords)
+        , light(light){};
 
-    Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY)
+    Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY, float light = 1.f)
         : Position(x, y, z)
-        , TexCoords(aTexCoordX, aTexCoordY) {};
-
-    void setVertex(const glm::vec3 &vertex) {
-        Position = vertex;
-    }
+        , TexCoords(aTexCoordX, aTexCoordY)
+        , light(light){};
 };
 
 struct VertexBufferElement {
@@ -87,6 +87,7 @@ public:
     void pushVertex(unsigned int count = 1) {
         pushVec3F(1);
         pushVec2F(1);
+        pushFloat(1);
     }
 
     inline std::vector<VertexBufferElement> getElements() const {

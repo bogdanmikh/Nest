@@ -1,4 +1,4 @@
-set(SOURCES
+set(SOURCESNEST
         main.cpp
 
         Nest/include/Nest/Window/Key.hpp
@@ -27,12 +27,12 @@ set(SOURCES
         Nest/src/Nest/NestObjects/Shapes/Cube.cpp
         Nest/src/Nest/NestObjects/Camera.cpp
 
-        Examples/HelloTexture/src/Game.hpp
-        Examples/HelloTexture/src/Game.cpp
-        Examples/HelloTexture/src/Voxel.hpp
-        Examples/HelloTexture/src/Chunk.hpp
-        Examples/HelloTexture/src/Chunk.cpp
-        Examples/HelloTexture/src/ChunkMeshGenerator.hpp
-        Examples/HelloTexture/src/ChunkMeshGenerator.cpp
+        Examples/NestCraft/src/Game.hpp
+        Examples/NestCraft/src/Game.cpp
+        Examples/NestCraft/src/Voxel.hpp
+        Examples/NestCraft/src/Chunk.hpp
+        Examples/NestCraft/src/Chunk.cpp
+        Examples/NestCraft/src/ChunkMeshGenerator.hpp
+        Examples/NestCraft/src/ChunkMeshGenerator.cpp
         PARENT_SCOPE
 )

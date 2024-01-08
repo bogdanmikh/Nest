@@ -2,7 +2,15 @@
 
 enum class VoxelType {
     NOTHING = 0,
-    GROUND = 1,
+    GRASS = 1,
+    GROUND = 2,
+    TREE = 3,
+    BOARDS = 4,
+    STONE = 5,
+    STONE_BRICKS = 6,
+    SAND_STONE = 7,
+    SAND = 8,
+    COUNT = 0
 };
 
 struct Voxel {
