@@ -11,7 +11,7 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunk1 = new Chunk(1, 1, 2);
+    auto *chunk1 = new Chunk(300, 300, 300);
 
     ChunkMeshGenerator chunkMeshGenerator(chunk1);
     Mesh* mesh = chunkMeshGenerator.generateMesh();
@@ -20,7 +20,7 @@ void Game::start(Window *window) {
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
 
-    float cameraSpeed = 5.f;
+    float cameraSpeed = 25.f;
     Renderer::init();
 
     float lastTime = window->getTime();

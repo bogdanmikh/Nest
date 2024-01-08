@@ -17,8 +17,8 @@ struct Vertex {
         , TexCoords(aTexCoords){};
 
     Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY)
-        : Position(x, y, z),
-        TexCoords(aTexCoordX, aTexCoordY){};
+        : Position(x, y, z)
+        , TexCoords(aTexCoordX, aTexCoordY) {};
 
     void setVertex(const glm::vec3 &vertex) {
         Position = vertex;
