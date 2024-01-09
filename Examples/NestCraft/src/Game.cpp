@@ -12,10 +12,10 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunk1 = new Chunk(50, 50, 50);
+    auto *chunk1 = new Chunk(20, 20, 20);
 
-    ChunkMeshGenerator chunkMeshGenerator(chunk1);
-    Mesh* mesh = chunkMeshGenerator.generateMesh();
+    ChunkMeshGenerator chunkMeshGenerator;
+    Mesh* mesh = chunkMeshGenerator.generateMesh(chunk1, 0, 0, 0);
     mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
 
     Camera camera;

@@ -10,6 +10,7 @@ Chunk::Chunk(uint32_t wight, uint32_t height, uint32_t depth)
                 if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 10)) {
                     set(x, y, z, VoxelType::GROUND);
                 }
+//                    set(x, y, z, VoxelType::GROUND);
             }
         }
     }

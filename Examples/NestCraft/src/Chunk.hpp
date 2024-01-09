@@ -32,10 +32,18 @@ public:
     }
 
    Voxel* get(int32_t x, int32_t y, int32_t z) {
-        if (x < 0 || y < 0 || z <  0 || x >= mWight || y >= mHeight || z >= mDepth) {
+        if (x < 0 || y < 0 || z < 0 || x >= mWight || y >= mHeight || z >= mDepth) {
             return nullptr;
         }
 
         return &chunk[y * mWight * mHeight + x * mWight + z];
+    }
+
+    uint8_t getType(int32_t x, int32_t y, int32_t z) {
+        if (x < 0 || y < 0 || z < 0 || x >= mWight || y >= mHeight || z >= mDepth) {
+            return 0;
+        }
+
+        return uint8_t(chunk[y * mWight * mHeight + x * mWight + z].type);
     }
 };
