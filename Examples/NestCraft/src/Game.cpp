@@ -16,7 +16,7 @@ void Game::start(Window *window) {
 
     ChunkMeshGenerator chunkMeshGenerator;
     Mesh* mesh = chunkMeshGenerator.generateMesh(chunk1, 0, 0, 0);
-    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
+    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/Block.jpeg");
 
     Camera camera;
     camera.setShader(shader);

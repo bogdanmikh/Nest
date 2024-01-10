@@ -20,9 +20,9 @@ Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkI
     for (int voxelIndexY = 0; voxelIndexY < h; voxelIndexY++) {
         for (int voxelIndexZ= 0; voxelIndexZ < d; voxelIndexZ++) {
             for (int voxelIndexX = 0; voxelIndexX < w; ++voxelIndexX) {
-                int x = voxelIndexX + chunkIndexX * w;
-                int y = voxelIndexY + chunkIndexY * y;
-                int z = voxelIndexZ + chunkIndexZ * z;
+                int x = voxelIndexX;
+                int y = voxelIndexY;
+                int z = voxelIndexZ;
                 if (isAir(x, y, z, chunk)) continue;
 
                 uint8_t voxelId = chunk->getType(x, y, z);
