@@ -9,17 +9,23 @@
 #include "ChunkMeshGenerator.hpp"
 
 void Game::start(Window *window) {
-    auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
-                              "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
-
-    auto* chunkManager = new ChunkManager(1, 1, 1);
+    auto *shader = new Shader("/home/bogdan/Projects/NewNest/Nest/res/Shaders/vst.glsl",
+                              "/home/bogdan/Projects/NewNest/Nest/res/Shaders/fst.glsl");
     ChunkMeshGenerator chunkMeshGenerator;
-    Mesh** meshes = new Mesh*[chunkManager->getSize()];
+    auto* chunkManager = new ChunkManager(4, 4, 1);
+    Mesh **meshes = new Mesh*[chunkManager->getSize()];
+    int index = 0;
     for (int i = 0; i < chunkManager->getSize(); ++i) {
-        meshes[i] = chunkMeshGenerator.generateMesh(chunkManager, 0, 0, 0);
-        meshes[i]->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
+        std::cout << "Chunk " << index << " generic" << std::endl;
+        Chunk *chunk = chunkManager->chunks[i];
+        if (!chunk) {
+            std::cout << "Error:Chunk IS NULL\n";
+            continue;
+        }
+        Mesh *mesh = chunkMeshGenerator.generateMesh(chunk);
+        mesh->addTexture("/home/bogdan/Projects/NewNest/Examples/NestCraft/res/textures/BlocksTile.png");
+        meshes[index++] = mesh;
     }
-
     Camera camera;
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
@@ -84,21 +90,31 @@ void Game::start(Window *window) {
         shader->setVec2("u_mouse", window->getCursorPos());
         shader->setVec2("u_resolution", window->getSize());
         Renderer::checkForErrors();
-
-        glm::mat4 model(1);
         for (int i = 0; i < chunkManager->getSize(); ++i) {
+            glm::mat4 model(1);
+            std::cout << "Chunk " << i << " draw: ";
             Chunk *chunk = chunkManager->chunks[i];
+            if (!chunk) {
+                std::cout << "\nError:Chunk IS NULL\n";
+                continue;
+            }
             Mesh *mesh = meshes[i];
-            model = glm::mat4(1);
-            glm::translate(model, glm::vec3(chunk->getW() * chunkManager->getSizeX(), chunk->getH() * chunkManager->getSizeY(), chunk->getD() * chunkManager->getSizeZ()));
-            mesh->draw();
+            glm::translate(model, glm::vec3(chunk->getPosX() * chunkManager->getSizeX(),
+                                            chunk->getPosY() * chunkManager->getSizeY(),
+                                            chunk->getPosZ() * chunkManager->getSizeZ()));
             shader->setMat4("u_model", model);
+            mesh->draw();
+            std::cout << chunk->getPosX() * chunkManager->getSizeX() << " " <<
+                chunk->getPosY() * chunkManager->getSizeY() << " " <<
+                chunk->getPosZ() * chunkManager->getSizeZ() << std::endl;
         }
+
         window->swapBuffers();
 
         window->pollEvents();
         Renderer::checkForErrors();
     }
+    delete chunkManager;
     delete[] meshes;
     delete shader;
 }

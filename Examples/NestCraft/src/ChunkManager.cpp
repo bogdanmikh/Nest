@@ -8,7 +8,7 @@ ChunkManager::ChunkManager(uint32_t w, uint32_t h, uint32_t d) : w(w), h(h), d(d
     for (int y = 0; y < h; ++y) {
         for (int z = 0; z < d; ++z) {
             for (int x = 0; x < w; ++x) {
-                auto* chunk = new Chunk(w,y, z);
+                auto* chunk = new Chunk(x,y, z);
                 chunks[index++] = chunk;
             }
         }
@@ -22,7 +22,7 @@ ChunkManager::~ChunkManager() {
     delete[] chunks;
 }
 
-uint32_t ChunkManager::getSize() {
+uint32_t ChunkManager::getSize() const {
     return size;
 }
 

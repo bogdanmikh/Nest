@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16)
 
 set(NameProject NestCraft)
 
@@ -7,12 +7,13 @@ set(CMAKE_CXX_STANDARD 20)
 project(${NameProject})
 
 add_subdirectory(Nest)
+add_subdirectory(Examples/NestCraft)
 add_subdirectory(NestUI)
 
-add_executable(${NameProject} ${SOURCESNEST} ${SOURCESNESTUI})
+add_executable(${NameProject} ${SOURCESNEST} ${SOURCENESTCRAFT}
+        main.cpp)
 
 #------------------------------------------------------------------------------------------------------------------#
-#add_subdirectory(Nest)
 
 # GLFW
 add_subdirectory(Vendor/glfw)

@@ -5,45 +5,22 @@
 #include "Voxel.hpp"
 
 class Chunk {
-private:
-    uint32_t mWight;
-    uint32_t mHeight;
-    uint32_t mDepth;
-    uint32_t mSize;
 public:
-    Voxel* chunk;
-    Chunk(uint32_t wight, uint32_t height, uint32_t depth);
+    static const uint32_t wight  = 20;
+    static const uint32_t height = 20;
+    static const uint32_t depth  = 20;
+    Chunk(int posX, int posY, int posZ);
     ~Chunk();
-    inline uint32_t getSize() const {
-        return mSize;
-    }
-    inline uint32_t getW() const {
-        return mWight;
-    }
-    inline uint32_t getH() const {
-        return mHeight;
-    }
-    inline uint32_t getD() const {
-        return mDepth;
-    }
+    void set(uint32_t x, uint32_t y, uint32_t z, VoxelType type);
+    Voxel* get(int32_t x, int32_t y, int32_t z);
+    uint8_t getType(int32_t x, int32_t y, int32_t z);
 
-    void set(uint32_t x, uint32_t y, uint32_t z, VoxelType type) {
-        chunk[y * mWight * mHeight + x * mWight + z].type = type;
-    }
-
-   Voxel* get(int32_t x, int32_t y, int32_t z) {
-        if (x < 0 || y < 0 || z < 0 || x >= mWight || y >= mHeight || z >= mDepth) {
-            return nullptr;
-        }
-
-        return &chunk[y * mWight * mHeight + x * mWight + z];
-    }
-
-    uint8_t getType(int32_t x, int32_t y, int32_t z) {
-        if (x < 0 || y < 0 || z < 0 || x >= mWight || y >= mHeight || z >= mDepth) {
-            return 0;
-        }
-
-        return uint8_t(chunk[y * mWight * mHeight + x * mWight + z].type);
-    }
+    int getPosX() const;
+    int getPosY() const;
+    int getPosZ() const;
+private:
+    int posX;
+    int posY;
+    int posZ;
+    Voxel* chunk;
 };
