@@ -7,15 +7,17 @@ Chunk::Chunk(uint32_t wight, uint32_t height, uint32_t depth)
     for (int y = 0; y < mHeight; y++) {
         for (int z = 0; z < mDepth; ++z) {
             for (int x = 0; x < mWight; ++x) {
-                if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 10)) {
-                    set(x, y, z, VoxelType::GROUND);
-                }
+//                if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 5)) {
 //                    set(x, y, z, VoxelType::GROUND);
+//                } else if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 6)) {
+//                    set(x, y, z, VoxelType::GRASS);
+//                }
+                if (y < 100) set(x, y, z, VoxelType::GROUND);
             }
         }
     }
 }
 
 Chunk::~Chunk() {
-    delete[] chunk;
+    delete chunk;
 }

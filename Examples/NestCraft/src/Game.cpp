@@ -5,18 +5,20 @@
 #include <iostream>
 #include <NestUI.hpp>
 #include "Game.hpp"
-#include "Chunk.hpp"
+#include "ChunkManager.hpp"
 #include "ChunkMeshGenerator.hpp"
 
 void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunk1 = new Chunk(20, 20, 20);
-
+    auto* chunkManager = new ChunkManager(1, 1, 1);
     ChunkMeshGenerator chunkMeshGenerator;
-    Mesh* mesh = chunkMeshGenerator.generateMesh(chunk1, 0, 0, 0);
-    mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/Block.jpeg");
+    Mesh** meshes = new Mesh*[chunkManager->getSize()];
+    for (int i = 0; i < chunkManager->getSize(); ++i) {
+        meshes[i] = chunkMeshGenerator.generateMesh(chunkManager, 0, 0, 0);
+        meshes[i]->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
+    }
 
     Camera camera;
     camera.setShader(shader);
@@ -81,17 +83,22 @@ void Game::start(Window *window) {
         shader->setFloat("u_time", window->getTime());
         shader->setVec2("u_mouse", window->getCursorPos());
         shader->setVec2("u_resolution", window->getSize());
-        shader->setMat4("u_model", glm::mat4(1));
         Renderer::checkForErrors();
 
-        mesh->draw();
-
+        glm::mat4 model(1);
+        for (int i = 0; i < chunkManager->getSize(); ++i) {
+            Chunk *chunk = chunkManager->chunks[i];
+            Mesh *mesh = meshes[i];
+            model = glm::mat4(1);
+            glm::translate(model, glm::vec3(chunk->getW() * chunkManager->getSizeX(), chunk->getH() * chunkManager->getSizeY(), chunk->getD() * chunkManager->getSizeZ()));
+            mesh->draw();
+            shader->setMat4("u_model", model);
+        }
         window->swapBuffers();
 
         window->pollEvents();
         Renderer::checkForErrors();
     }
-    delete mesh;
-    delete chunk1;
+    delete[] meshes;
     delete shader;
 }

@@ -2,8 +2,8 @@
 
 enum class VoxelType {
     NOTHING = 0,
-    GRASS = 1,
-    GROUND = 2,
+    GROUND = 1,
+    GRASS = 2,
     TREE = 3,
     BOARDS = 4,
     STONE = 5,

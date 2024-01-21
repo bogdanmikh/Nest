@@ -11,7 +11,9 @@ glm::vec2 getUV(uint8_t tileIndex) {
     return {u, v};
 }
 
-Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
+Mesh *ChunkMeshGenerator::generateMesh(ChunkManager *chunkManager, int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
+    Chunk *chunk = chunkManager->chunks[chunkIndexY * chunkManager->getSizeX() * chunkManager->getSizeZ()+
+                                 chunkIndexX * chunkManager->getSizeX() + chunkIndexZ];
     const uint32_t w = chunk->getW(), h = chunk->getH(), d = chunk->getD();
     auto* vertices = new Vertex[w * h * d * 24];
     uint32_t verticesCount = 0;
@@ -20,21 +22,22 @@ Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkI
     for (int voxelIndexY = 0; voxelIndexY < h; voxelIndexY++) {
         for (int voxelIndexZ= 0; voxelIndexZ < d; voxelIndexZ++) {
             for (int voxelIndexX = 0; voxelIndexX < w; ++voxelIndexX) {
-                int x = voxelIndexX;
-                int y = voxelIndexY;
-                int z = voxelIndexZ;
+                int x = voxelIndexX + chunkIndexX * chunk->getW();
+                int y = voxelIndexY + chunkIndexY * chunk->getH();
+                int z = voxelIndexZ + chunkIndexZ * chunk->getD();
+                std::cout << x << " " << y << " " << z << std::endl;
                 if (isAir(x, y, z, chunk)) continue;
 
                 uint8_t voxelId = chunk->getType(x, y, z);
                 float light;
-                float uvSize = 1.0f / 16.f;
+                float uvSize = 1.f / 16.f;
+                uvSize -= 0.001;
                 glm::vec2 uv = getUV(voxelId);
-
                 // Front
                 if (isAir(x, y, z + 1, chunk)) {
                     light = 1.0f;
                     addFaceIndices(verticesCount, indicesCount, indices);
-                    vertices[verticesCount++] = Vertex(x-0.5f, y -0.5f, z + 0.5f,
+                    vertices[verticesCount++] = Vertex(x-0.5f, y-0.5f, z+0.5f,
                                                        uv.x,
                                                        uv.y+uvSize,
                                                        light);
@@ -56,20 +59,20 @@ Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkI
                     light = 0.75f;
                     addFaceIndices(verticesCount, indicesCount, indices);
                     vertices[verticesCount++] = Vertex(x-0.5f, y-0.5f, z-0.5f,
-                                                       uv.x,
+                                                       uv.x+uvSize,
                                                        uv.y+uvSize,
                                                        light);
                     vertices[verticesCount++] = Vertex(x-0.5f, y+0.5f, z-0.5f,
                                                        uv.x+uvSize,
-                                                       uv.y+uvSize,
+                                                       uv.y,
                                                        light);
                     vertices[verticesCount++] = Vertex(x+0.5f, y+0.5f, z-0.5f,
-                                                       uv.x+uvSize,
+                                                       uv.x,
                                                        uv.y,
                                                        light);
                     vertices[verticesCount++] = Vertex(x+0.5f, y-0.5f, z-0.5f,
                                                        uv.x,
-                                                       uv.y,
+                                                       uv.y+uvSize,
                                                        light);
                 }
                 // top
@@ -111,11 +114,32 @@ Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkI
                                                        uv.y,
                                                        light);
                     vertices[verticesCount++] = Vertex(x-0.5f, y-0.5f, z+0.5f,
-                                                       uv.y,
+                                                       uv.x,
                                                        uv.y,
                                                        light);
                 }
 
+                // right
+                if (isAir(x + 1, y, z, chunk)) {
+                    light = 0.9f;
+                    addFaceIndices(verticesCount, indicesCount, indices);
+                    vertices[verticesCount++] = Vertex(x + 0.5f, y - 0.5f, z - 0.5f,
+                                                       uv.x+uvSize,
+                                                       uv.y,
+                                                       light);
+                    vertices[verticesCount++] = Vertex(x + 0.5f, y + 0.5f, z - 0.5f,
+                                                       uv.x+uvSize,
+                                                       uv.y+uvSize,
+                                                       light);
+                    vertices[verticesCount++] = Vertex(x + 0.5f, y + 0.5f, z + 0.5f,
+                                                       uv.x,
+                                                       uv.y+uvSize,
+                                                       light);
+                    vertices[verticesCount++] = Vertex(x + 0.5f, y - 0.5f, z + 0.5f,
+                                                       uv.x,
+                                                       uv.y,
+                                                       light);
+                }
                 // left
                 if (isAir(x - 1, y, z, chunk)) {
                     light = 0.8f;
@@ -133,27 +157,6 @@ Mesh *ChunkMeshGenerator::generateMesh(Chunk *chunk, int chunkIndexX, int chunkI
                                                        uv.y,
                                                        light);
                     vertices[verticesCount++] = Vertex(x - 0.5f, y + 0.5f, z - 0.5f,
-                                                       uv.x,
-                                                       uv.y,
-                                                       light);
-                }
-                // right
-                if (isAir(x + 1, y, z, chunk)) {
-                    light = 0.9f;
-                    addFaceIndices(verticesCount, indicesCount, indices);
-                    vertices[verticesCount++] = Vertex(x + 0.5f, y - 0.5f, z - 0.5f,
-                                                       uv.x,
-                                                       uv.y+uvSize,
-                                                       light);
-                    vertices[verticesCount++] = Vertex(x + 0.5f, y + 0.5f, z - 0.5f,
-                                                       uv.x+uvSize,
-                                                       uv.y+uvSize,
-                                                       light);
-                    vertices[verticesCount++] = Vertex(x + 0.5f, y + 0.5f, z + 0.5f,
-                                                       uv.x+uvSize,
-                                                       uv.y,
-                                                       light);
-                    vertices[verticesCount++] = Vertex(x + 0.5f, y - 0.5f, z + 0.5f,
                                                        uv.x,
                                                        uv.y,
                                                        light);

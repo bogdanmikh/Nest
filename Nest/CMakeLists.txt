@@ -1,6 +1,4 @@
 set(SOURCESNEST
-        main.cpp
-
         Nest/include/Nest/Window/Key.hpp
         Nest/include/Nest/Window/Window.hpp
 
@@ -10,6 +8,8 @@ set(SOURCESNEST
         Nest/include/Nest/NestRenderer/VertexArray.hpp
         Nest/include/Nest/NestRenderer/Renderer.hpp
         Nest/include/Nest/NestRenderer/Mesh.hpp
+
+        Nest/res/defaultShaders.hpp;
 
         Nest/include/Nest/NestObjects/Shapes/Cube.hpp
         Nest/include/Nest/NestObjects/Camera.hpp
@@ -26,13 +26,5 @@ set(SOURCESNEST
 
         Nest/src/Nest/NestObjects/Shapes/Cube.cpp
         Nest/src/Nest/NestObjects/Camera.cpp
-
-        Examples/NestCraft/src/Game.hpp
-        Examples/NestCraft/src/Game.cpp
-        Examples/NestCraft/src/Voxel.hpp
-        Examples/NestCraft/src/Chunk.hpp
-        Examples/NestCraft/src/Chunk.cpp
-        Examples/NestCraft/src/ChunkMeshGenerator.hpp
-        Examples/NestCraft/src/ChunkMeshGenerator.cpp
         PARENT_SCOPE
 )
