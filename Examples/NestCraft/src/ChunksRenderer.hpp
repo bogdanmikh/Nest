@@ -6,22 +6,17 @@
 #include "ChunkManager.hpp"
 #include "ChunkMeshGenerator.hpp"
 
-
 class ChunksRenderer {
 public:
-    ChunksRenderer(uint32_t xSize);
+    ChunksRenderer(uint32_t w = 4, uint32_t h = 1, uint32_t d = 4);
+    void init();
     void draw();
+    ~ChunksRenderer();
 private:
+    uint32_t w;
+    uint32_t h;
+    uint32_t d;
     ChunkMeshGenerator chunkMeshGenerator;
+    ChunkManager* chunkManager;
     Mesh** meshes;
 };
-
-/*
- auto* chunkManager = new ChunkManager(4, 1, 4);
-    ChunkMeshGenerator chunkMeshGenerator;
-    Mesh** meshes = new Mesh*[chunkManager->getSize()];
-    for (int i = 0; i < chunkManager->getSize(); ++i) {
-        meshes[i] = chunkMeshGenerator.generateMesh(chunkManager->chunks[i]);
-        meshes[i]->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
-    }
- */

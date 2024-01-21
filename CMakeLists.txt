@@ -11,6 +11,7 @@ add_subdirectory(Examples/NestCraft)
 add_subdirectory(NestUI)
 
 add_executable(${NameProject} ${SOURCESNEST} ${SOURCENESTCRAFT}
+        main.cpp
         main.cpp)
 
 #------------------------------------------------------------------------------------------------------------------#

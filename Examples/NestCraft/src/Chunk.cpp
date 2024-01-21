@@ -6,12 +6,12 @@ Chunk::Chunk(int posX, int posY, int posZ) : posX(posX), posY(posY), posZ(posZ) 
     for (int y = 0; y < height; y++) {
         for (int z = 0; z < depth; ++z) {
             for (int x = 0; x < wight; ++x) {
-//                if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 5)) {
-//                    set(x, y, z, VoxelType::GROUND);
-//                } else if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 6)) {
-//                    set(x, y, z, VoxelType::GRASS);
-//                }
-                set(x, y, z, VoxelType::GROUND);
+                if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 5)) {
+                    set(x, y, z, VoxelType::GROUND);
+                } else if (y <= ((sin(x * 0.6f) * 0.5 + 0.5f) * 6)) {
+                    set(x, y, z, VoxelType::GRASS);
+                }
+//                set(x, y, z, VoxelType::GROUND);
             }
         }
     }
