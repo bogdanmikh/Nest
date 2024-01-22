@@ -11,7 +11,7 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunksRenderer = new ChunksRenderer;
+    auto *chunksRenderer = new ChunksRenderer(4, 1, 2);
     chunksRenderer->init();
 
     Camera camera;
@@ -44,6 +44,10 @@ void Game::start(Window *window) {
         frames++;
 
         Renderer::clear();
+
+        if (window->isKeyPressed(Key::LEFT_SHIFT)) {
+            cameraSpeed = 20.f;
+        } else cameraSpeed = 5.f;
 
         if (window->isKeyPressed(Key::W)) {
             camera.translateLocal(0., 0., cameraSpeed * deltaTime);

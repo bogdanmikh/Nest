@@ -11,7 +11,7 @@ void ChunksRenderer::init() {
     chunkManager = new ChunkManager(w, h, d);
     meshes = new Mesh*[chunkManager->getSize()];
     for (int i = 0; i < chunkManager->getSize(); ++i) {
-        Chunk *chunk = chunkManager->chunks[i];
+        Chunk *chunk = chunkManager->getChunkIndex(i);
         if (!chunk) {
             std::cout <<"Error:Chunk IS NULL\n";
             continue;
@@ -25,7 +25,7 @@ void ChunksRenderer::init() {
 
 void ChunksRenderer::draw() {
     for (int i = 0; i < chunkManager->getSize(); ++i) {
-        Chunk *chunk = chunkManager->chunks[i];
+        Chunk *chunk = chunkManager->getChunkIndex(i);
         if (!chunk) {
             std::cout << "\nError:Chunk IS NULL\n";
             continue;

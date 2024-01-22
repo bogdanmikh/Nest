@@ -1,14 +1,9 @@
 #pragma once
 
-#include <cstdint>
-
 #include "Voxel.hpp"
 
 class Chunk {
 public:
-    static const uint32_t wight  = 10;
-    static const uint32_t height = 10;
-    static const uint32_t depth  = 10;
     Chunk(int posX, int posY, int posZ);
     ~Chunk();
     void set(uint32_t x, uint32_t y, uint32_t z, VoxelType type);

@@ -37,3 +37,13 @@ uint32_t ChunkManager::getSizeY() const {
 uint32_t ChunkManager::getSizeZ() const {
     return d;
 }
+
+Chunk *ChunkManager::getChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
+    Chunk *chunk = chunks[chunkIndexY * ChunkManager::SIZE_X * ChunkManager::SIZE_Z +
+                                  chunkIndexX * ChunkManager::SIZE_X + chunkIndexZ];
+    return chunk;
+}
+
+Chunk *ChunkManager::getChunkIndex(int index) {
+    return chunks[index];
+}

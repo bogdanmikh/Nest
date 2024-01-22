@@ -12,16 +12,16 @@ glm::vec2 getUV(uint8_t tileIndex) {
 }
 
 Mesh* ChunkMeshGenerator::generateMesh(Chunk *chunk) {
-    auto* vertices = new Vertex[Chunk::wight * Chunk::height * Chunk::height * 24];
+    auto* vertices = new Vertex[ChunkManager::SIZE_X * ChunkManager::SIZE_Y * ChunkManager::SIZE_Y * 24];
     uint32_t verticesCount = 0;
-    auto* indices = new uint32_t[Chunk::wight * Chunk::height * Chunk::height * 36];
+    auto* indices = new uint32_t[ChunkManager::SIZE_X * ChunkManager::SIZE_Y * ChunkManager::SIZE_Y * 36];
     uint32_t indicesCount = 0;
-    for (int voxelIndexY = 0; voxelIndexY < Chunk::height; voxelIndexY++) {
-        for (int voxelIndexZ = 0; voxelIndexZ < Chunk::height; voxelIndexZ++) {
-            for (int voxelIndexX = 0; voxelIndexX < Chunk::wight; ++voxelIndexX) {
-                int x = voxelIndexX + chunk->getPosX() * Chunk::wight;
-                int y = voxelIndexY + chunk->getPosY() * Chunk::height;
-                int z = voxelIndexZ + chunk->getPosZ() * Chunk::depth;
+    for (int voxelIndexY = 0; voxelIndexY < ChunkManager::SIZE_Y; voxelIndexY++) {
+        for (int voxelIndexZ = 0; voxelIndexZ < ChunkManager::SIZE_Y; voxelIndexZ++) {
+            for (int voxelIndexX = 0; voxelIndexX < ChunkManager::SIZE_X; ++voxelIndexX) {
+                int x = voxelIndexX + chunk->getPosX() * ChunkManager::SIZE_X;
+                int y = voxelIndexY + chunk->getPosY() * ChunkManager::SIZE_Y;
+                int z = voxelIndexZ + chunk->getPosZ() * ChunkManager::SIZE_Z;
 //                std::cout << std::endl << x << " " << y << " " << z;
                 if (isAir(voxelIndexX, voxelIndexY, voxelIndexZ, chunk)) continue;
 
@@ -165,19 +165,18 @@ Mesh* ChunkMeshGenerator::generateMesh(Chunk *chunk) {
 }
 
 Mesh *ChunkMeshGenerator::generateMesh(ChunkManager *chunkManager, int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
-    Chunk *chunk = chunkManager->chunks[chunkIndexY * Chunk::wight * Chunk::depth +
-                                 chunkIndexX * Chunk::wight + chunkIndexZ];
+    Chunk *chunk = chunkManager->getChunk(chunkIndexX, chunkIndexY, chunkIndexZ);
 
-    auto* vertices = new Vertex[Chunk::wight * Chunk::height * Chunk::height * 24];
+    auto* vertices = new Vertex[ChunkManager::SIZE_X * ChunkManager::SIZE_Y * ChunkManager::SIZE_Y * 24];
     uint32_t verticesCount = 0;
-    auto* indices = new uint32_t[Chunk::wight * Chunk::height * Chunk::height * 36];
+    auto* indices = new uint32_t[ChunkManager::SIZE_X * ChunkManager::SIZE_Y * ChunkManager::SIZE_Y * 36];
     uint32_t indicesCount = 0;
-    for (int voxelIndexY = 0; voxelIndexY < Chunk::height; voxelIndexY++) {
-        for (int voxelIndexZ = 0; voxelIndexZ < Chunk::height; voxelIndexZ++) {
-            for (int voxelIndexX = 0; voxelIndexX < Chunk::wight; ++voxelIndexX) {
-                int x = voxelIndexX + chunk->getPosX() * Chunk::wight;
-                int y = voxelIndexY + chunk->getPosY() * Chunk::height;
-                int z = voxelIndexZ + chunk->getPosZ() * Chunk::depth;
+    for (int voxelIndexY = 0; voxelIndexY < ChunkManager::SIZE_Y; voxelIndexY++) {
+        for (int voxelIndexZ = 0; voxelIndexZ < ChunkManager::SIZE_Y; voxelIndexZ++) {
+            for (int voxelIndexX = 0; voxelIndexX < ChunkManager::SIZE_X; ++voxelIndexX) {
+                int x = voxelIndexX + chunk->getPosX() * ChunkManager::SIZE_X;
+                int y = voxelIndexY + chunk->getPosY() * ChunkManager::SIZE_Y;
+                int z = voxelIndexZ + chunk->getPosZ() * ChunkManager::SIZE_Z;
 //                std::cout << std::endl << x << " " << y << " " << z;
                 if (isAir(voxelIndexX, voxelIndexY, voxelIndexZ, chunk)) continue;
 
@@ -323,7 +322,7 @@ Mesh *ChunkMeshGenerator::generateMesh(ChunkManager *chunkManager, int chunkInde
 bool ChunkMeshGenerator::isAir(int x, int y, int z, Chunk* chunk) {
     Voxel* voxel = chunk->get(x, y, z);
     if (voxel == nullptr) {
-        return true;
+        return false;
     }
     return chunk->get(x, y, z)->isAir();
 }
