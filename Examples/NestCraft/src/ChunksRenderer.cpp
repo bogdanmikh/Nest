@@ -3,35 +3,42 @@
 ChunksRenderer::ChunksRenderer(uint32_t w, uint32_t h, uint32_t d) : w(w), h(h), d(d) {}
 
 ChunksRenderer::~ChunksRenderer() {
-    delete chunkManager;
+    delete chunksStorage;
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        delete meshes[i];
+    }
     delete[] meshes;
 }
 
 void ChunksRenderer::init() {
-    chunkManager = new ChunkManager(w, h, d);
-    meshes = new Mesh*[chunkManager->getSize()];
-    for (int i = 0; i < chunkManager->getSize(); ++i) {
-        Chunk *chunk = chunkManager->getChunkIndex(i);
-        if (!chunk) {
-            std::cout <<"Error:Chunk IS NULL\n";
-            continue;
+    chunksStorage = new ChunksStorage();
+    meshes = new Mesh*[ChunksStorage::SIZE_XYZ];
+
+    int index = 0;
+    for (int x = 0; x < ChunksStorage::SIZE_X; ++x) {
+        for (int y = 0; y < ChunksStorage::SIZE_Y; ++y) {
+            for (int z = 0; z < ChunksStorage::SIZE_Z; ++z) {
+                Chunk *chunk = chunksStorage->getChunk(x, y, z);
+                if (!chunk) {
+                    std::cout <<"Error:Chunk IS NULL\n";
+                    continue;
+                }
+                Mesh *mesh = chunkMeshGenerator.generateMesh(chunksStorage, x, y, z);
+                mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
+                meshes[index++] = mesh;
+            }
         }
-//        std::cout << "Chunk " << i << " generating" << std::endl;
-        Mesh *mesh = chunkMeshGenerator.generateMesh(chunk);
-        mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
-        meshes[i] = mesh;
     }
 }
 
 void ChunksRenderer::draw() {
-    for (int i = 0; i < chunkManager->getSize(); ++i) {
-        Chunk *chunk = chunkManager->getChunkIndex(i);
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        Chunk *chunk = chunksStorage->getChunkIndex(i);
         if (!chunk) {
             std::cout << "\nError:Chunk IS NULL\n";
             continue;
         }
-        Mesh *mesh = meshes[i];
-        mesh->draw();
+        meshes[i]->draw();
 //            std::cout << "Chunk " << i << " draw: " << chunk->getPosX() * chunkManager->getSizeX() << " " <<
 //                chunk->getPosY() * chunkManager->getSizeY() << " " <<
 //                chunk->getPosZ() * chunkManager->getSizeZ() << std::endl;

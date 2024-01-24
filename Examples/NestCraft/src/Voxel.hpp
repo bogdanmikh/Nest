@@ -15,7 +15,6 @@ enum class VoxelType {
 
 struct Voxel {
     VoxelType type;
-
     Voxel()
             : type(VoxelType::NOTHING) {}
 

@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <NestUI.hpp>
 #include "Game.hpp"
 #include "ChunksRenderer.hpp"
 
@@ -11,19 +10,20 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunksRenderer = new ChunksRenderer(4, 1, 2);
+    auto *chunksRenderer = new ChunksRenderer();
     chunksRenderer->init();
+
+    Renderer::init();
 
     Camera camera;
     camera.setShader(shader);
     camera.setPosition(0.f, 0.f, 5.f);
 
     float cameraSpeed = 5.f;
-    Renderer::init();
 
     float lastTime = window->getTime();
     int frames = 0;
-    const int maxFrames = 60;
+    const int maxFrames = 144;
     double sec = 0;
     window->toggleCursorLock();
     glm::vec2 lastPos = window->getCursorPos();
@@ -82,7 +82,6 @@ void Game::start(Window *window) {
         shader->setVec2("u_mouse", window->getCursorPos());
         shader->setVec2("u_resolution", window->getSize());
         shader->setMat4("u_model", glm::mat4(1));
-
 
         chunksRenderer->draw();
 

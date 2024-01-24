@@ -3,7 +3,7 @@
 #include <iostream>
 #include <NestUI.hpp>
 #include <Nest.hpp>
-#include "ChunkManager.hpp"
+#include "ChunksStorage.hpp"
 #include "ChunkMeshGenerator.hpp"
 
 class ChunksRenderer {
@@ -17,6 +17,6 @@ private:
     uint32_t h;
     uint32_t d;
     ChunkMeshGenerator chunkMeshGenerator;
-    ChunkManager* chunkManager;
+    ChunksStorage* chunksStorage;
     Mesh** meshes;
 };

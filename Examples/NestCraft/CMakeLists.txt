@@ -1,4 +1,5 @@
 set(SOURCENESTCRAFT
+
     Examples/NestCraft/src/Game.hpp
     Examples/NestCraft/src/Game.cpp
 
@@ -10,7 +11,7 @@ set(SOURCENESTCRAFT
     Examples/NestCraft/src/ChunksRenderer.hpp
     Examples/NestCraft/src/ChunksRenderer.cpp
 
-    Examples/NestCraft/src/ChunkManager.hpp
-    Examples/NestCraft/src/ChunkManager.cpp
+    Examples/NestCraft/src/ChunksStorage.hpp
+    Examples/NestCraft/src/ChunksStorage.cpp
     PARENT_SCOPE
 )
