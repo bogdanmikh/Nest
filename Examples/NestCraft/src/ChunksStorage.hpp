@@ -5,9 +5,9 @@
 
 class ChunksStorage {
 public:
-    static const int SIZE_X = 10;
+    static const int SIZE_X = 4;
     static const int SIZE_Y = 4;
-    static const int SIZE_Z = 10;
+    static const int SIZE_Z = 4;
     static const int SIZE_XYZ = SIZE_X * SIZE_Y * SIZE_Z;
 
     static const int WORLD_SIZE_X = ChunksStorage::SIZE_X * Chunk::SIZE_X;

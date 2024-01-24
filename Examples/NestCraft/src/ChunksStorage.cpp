@@ -48,6 +48,7 @@ Chunk *ChunksStorage::getChunk(int x, int y, int z) {
                    chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
 }
 
+
 Chunk *ChunksStorage::getChunkIndex(int index) {
     return chunks[index];
 }

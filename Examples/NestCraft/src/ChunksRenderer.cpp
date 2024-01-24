@@ -13,16 +13,11 @@ ChunksRenderer::~ChunksRenderer() {
 void ChunksRenderer::init() {
     chunksStorage = new ChunksStorage();
     meshes = new Mesh*[ChunksStorage::SIZE_XYZ];
-
+    std::cout << "WORLD GENERATED!" << std::endl;
     int index = 0;
     for (int x = 0; x < ChunksStorage::SIZE_X; ++x) {
         for (int y = 0; y < ChunksStorage::SIZE_Y; ++y) {
             for (int z = 0; z < ChunksStorage::SIZE_Z; ++z) {
-                Chunk *chunk = chunksStorage->getChunk(x, y, z);
-                if (!chunk) {
-                    std::cout <<"Error:Chunk IS NULL\n";
-                    continue;
-                }
                 Mesh *mesh = chunkMeshGenerator.generateMesh(chunksStorage, x, y, z);
                 mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
                 meshes[index++] = mesh;
