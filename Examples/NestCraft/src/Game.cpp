@@ -10,7 +10,7 @@ void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
 
-    auto *chunksRenderer = new ChunksRenderer();
+    auto *chunksRenderer = new ChunksRenderer;
     chunksRenderer->init();
 
     Renderer::init();

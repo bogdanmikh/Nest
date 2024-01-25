@@ -12,9 +12,7 @@ add_subdirectory(NestUI)
 
 add_executable(${NameProject} ${SOURCESNEST} ${SOURCENESTCRAFT}
         main.cpp
-        main.cpp
-        Examples/NestCraft/src/CameraMove.cpp
-        Examples/NestCraft/src/CameraMove.hpp)
+)
 
 #------------------------------------------------------------------------------------------------------------------#
 

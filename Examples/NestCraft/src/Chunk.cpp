@@ -4,6 +4,7 @@
 #include <cmath>
 
 Chunk::Chunk() {
+    needUpdate = false;
     data = new Voxel[SIZE_X * SIZE_Y * SIZE_Z];
     for (int x = 0; x < SIZE_X; ++x) {
         for (int y = 0; y < SIZE_Y; y++) {
@@ -25,13 +26,14 @@ void Chunk::set(int x, int y, int z, VoxelType type) {
 }
 
 Voxel *Chunk::get(int x, int y, int z) {
-    if (x < 0 || y < 0 || z < 0 || x >= SIZE_X || y >= SIZE_Y || z >= SIZE_Z)
+    if (x < 0 || y < 0 || z < 0 || x >= SIZE_X || y >= SIZE_Y || z >= SIZE_Z) {
         return nullptr;
+    }
     return &data[y * Chunk::SIZE_X * Chunk::SIZE_Z + x * Chunk::SIZE_X + z];
 }
 
 
-uint8_t Chunk::getType(int32_t indexX, int32_t indexY, int32_t indexZ) {
+uint8_t Chunk::getType(int indexX, int indexY, int indexZ) {
     Voxel* voxel = get(indexX, indexY, indexZ);
     if (voxel == nullptr) {
         return 0;
