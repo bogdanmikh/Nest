@@ -4,9 +4,9 @@
 
 class Chunk {
 public:
-    static const uint32_t SIZE_X = 50;
-    static const uint32_t SIZE_Y = 50;
-    static const uint32_t SIZE_Z = 50;
+    static const uint32_t SIZE_X = 20;
+    static const uint32_t SIZE_Y = 20;
+    static const uint32_t SIZE_Z = 20;
     Chunk();
     ~Chunk();
     void set(int indexX, int indexY, int indexZ, VoxelType type);

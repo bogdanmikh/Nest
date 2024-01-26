@@ -17,6 +17,9 @@ public:
     void setPosition(float x, float y, float z);
     void translateLocal(float x, float y, float z);
 
+    glm::vec3 getPosition();
+    glm::vec3 getFront();
+
 private:
     void updateVectors();
     void updateViewMatrix();

@@ -4,17 +4,19 @@
 
 #include <iostream>
 #include "Game.hpp"
-#include "ChunksRenderer.hpp"
+#include "CoreGame/ChunksRenderer.hpp"
+
 
 void Game::start(Window *window) {
     auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
                               "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
+    
 
     auto *chunksRenderer = new ChunksRenderer;
     chunksRenderer->init();
 
     Renderer::init();
-    Renderer::setClearColor(0.38, 0.672, 1., 1.);
+//    Renderer::setClearColor(0.38, 0.672, 1., 1.);
 
     Camera camera;
     camera.setShader(shader);
@@ -84,7 +86,7 @@ void Game::start(Window *window) {
         shader->setVec2("u_resolution", window->getSize());
         shader->setMat4("u_model", glm::mat4(1));
 
-        chunksRenderer->draw();
+        chunksRenderer->draw(window, &camera);
 
         window->swapBuffers();
 

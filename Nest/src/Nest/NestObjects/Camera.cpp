@@ -114,3 +114,11 @@ void Camera::updateViewMatrix() {
         shader->setMat4("u_view", view);
     }
 }
+
+glm::vec3 Camera::getPosition() {
+    return position;
+}
+
+glm::vec3 Camera::getFront() {
+    return front;
+}
