@@ -24,7 +24,7 @@ void ChunksRenderer::init() {
         for (int y = 0; y < ChunksStorage::SIZE_Y; ++y) {
             for (int z = 0; z < ChunksStorage::SIZE_Z; ++z) {
 //                threads[index] = std::thread([&]() {
-                    Mesh* mesh = chunkMeshGenerator.generateMesh(chunksStorage, x, y, z);
+                    Mesh* mesh = chunkMeshGenerator.generateMesh(chunksStorage, x, y, z, true);
                     mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
                     meshes[index] = mesh;
 //                });

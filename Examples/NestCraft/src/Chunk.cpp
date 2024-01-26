@@ -1,15 +1,21 @@
 #include "Chunk.hpp"
 #include "ChunksStorage.hpp"
 
+#include <random>
+#include <glm/gtc/noise.hpp>
 #include <cmath>
 
 Chunk::Chunk() {
     needUpdate = false;
     data = new Voxel[SIZE_X * SIZE_Y * SIZE_Z];
     for (int x = 0; x < SIZE_X; ++x) {
-        for (int y = 0; y < SIZE_Y; y++) {
-            for (int z = 0; z < SIZE_Z; ++z) {
-                set(x, y, z, VoxelType::GROUND);
+        for (int z = 0; z < SIZE_Z; ++z) {
+            int realX = x + SIZE_X;
+            int realZ = z + SIZE_Z;
+            float height = glm::perlin(glm::vec3(realX * 0.05f, realZ * 0.05f, 0));
+            for (int y = 0; y < SIZE_Y; y++) {
+
+                if (y <= height * 10 + 10) set(x, y, z, VoxelType(12));
             }
         }
     }

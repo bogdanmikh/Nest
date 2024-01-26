@@ -14,6 +14,7 @@ void Game::start(Window *window) {
     chunksRenderer->init();
 
     Renderer::init();
+    Renderer::setClearColor(0.38, 0.672, 1., 1.);
 
     Camera camera;
     camera.setShader(shader);
