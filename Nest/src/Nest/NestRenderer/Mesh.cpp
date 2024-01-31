@@ -12,6 +12,16 @@ Mesh::Mesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, 
     va->addBuffer(*vb, layout);
 }
 
+Mesh::Mesh(float *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
+        : ib(new IndexBuffer(indices, indicesCount))
+        , vb(new VertexBuffer(vertices, sizeof(float) * verticesCount))
+        , indices(indicesCount) {
+    VertexBufferLayout layout;
+    layout.pushVec3F();
+    va = new VertexArray;
+    va->addBuffer(*vb, layout);
+}
+
 Mesh::~Mesh() {
     for (int i = 0; i < textures.size(); i++) {
         delete textures[i];
@@ -29,6 +39,7 @@ void Mesh::draw() {
     va->bind();
     ib->bind();
     Renderer::drawIndexed(indices);
+    Renderer::checkForErrors();
 }
 
 void Mesh::addTexture(const std::string& texturePath) {

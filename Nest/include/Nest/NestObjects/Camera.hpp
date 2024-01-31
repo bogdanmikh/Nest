@@ -11,6 +11,7 @@ public:
     void setFieldOfView(float radians);
     void updateAspectRatio(float aspect);
     void setShader(Shader* shader);
+    Shader* getShader();
     void rotate(float x, float y, float z);
     void setRotation(float x, float y, float z);
     void translate(float x, float y, float z);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Nest.hpp>
 #include "Voxel.hpp"
 
 class Chunk {
@@ -13,7 +14,10 @@ public:
     Voxel* get(int indexX, int indexY, int indexZ);
     uint8_t getType(int indexX, int indexY, int indexZ);
 
-    bool needUpdate;
-private:
+    void setMesh(Mesh* mesh);
+    Mesh* getMesh();
+
     Voxel* data;
+private:
+    Mesh* m_mesh;
 };

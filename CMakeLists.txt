@@ -10,8 +10,13 @@ add_subdirectory(Nest)
 add_subdirectory(Examples/NestCraft)
 add_subdirectory(NestUI)
 
-add_executable(${NameProject} ${SOURCESNEST} ${SOURCENESTCRAFT}
+add_executable(
+        ${NameProject}
+        ${SOURCESNEST}
+        ${SOURCENESTCRAFT}
+        ${SOURCESNESTUI}
         main.cpp
+        NestUI/NestUI.hpp
 )
 
 #------------------------------------------------------------------------------------------------------------------#
@@ -50,6 +55,6 @@ target_include_directories(${NameProject} PRIVATE Vendor/imgui)
 target_include_directories(${NameProject} PRIVATE Nest/include)
 
 # NestUI
-target_include_directories(${NameProject} PRIVATE NestUI/include)
+target_include_directories(${NameProject} PRIVATE NestUI)
 
 

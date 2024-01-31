@@ -3,25 +3,22 @@
 #include <iostream>
 #include <mutex>
 
-#include "NestUI.hpp"
-#include "Nest.hpp"
+#include <NestUI.hpp>
+#include <Nest.hpp>
 
 #include "ChunksStorage.hpp"
+#include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
 
-class ChunksRenderer {
+class ChunksRenderer final : public GameObject {
 public:
+    ChunksRenderer(){}
+    ~ChunksRenderer() override;
     void init();
-    void draw(Window* window, Camera *camera);
-    ~ChunksRenderer();
+    void draw() override;
+    void update(double deltaTime) override;
 private:
-    bool lastDownE;
-    bool lastDownQ;
-    std::mutex meshesMutex;
-    uint32_t w;
-    uint32_t h;
-    uint32_t d;
-    ChunkMeshGenerator chunkMeshGenerator;
+    BlocksCreation* blocksCreation;
     ChunksStorage* chunksStorage;
     Mesh** meshes;
 };

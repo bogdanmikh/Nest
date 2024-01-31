@@ -39,6 +39,15 @@ void Camera::setShader(Shader *shader) {
     updateViewMatrix();
 }
 
+
+Shader* Camera::getShader() {
+    if (this->shader == nullptr) {
+        printf("SHADER::NOT_INIT\n");
+        return nullptr;
+    }
+    return this->shader;
+}
+
 void Camera::updateProjectionMatrix() {
     if (shader != nullptr) {
         glm::mat4 projection = glm::perspective(fieldOfViewRadians, aspect, 0.01f, 1000.f);

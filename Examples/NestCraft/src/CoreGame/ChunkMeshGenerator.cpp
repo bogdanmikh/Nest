@@ -16,7 +16,6 @@ Mesh* ChunkMeshGenerator::generateMesh(ChunksStorage *chunksStorage,
                                        int chunkIndexY,
                                        int chunkIndexZ,
                                        bool ambientOcclusion) {
-    Chunk* currentChunk = chunksStorage->getChunk(chunkIndexX, chunkIndexY, chunkIndexZ);
     auto* vertices = new Vertex[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
     auto* indices = new uint32_t[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
     uint32_t verticesCount = 0;

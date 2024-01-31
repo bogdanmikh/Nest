@@ -5,94 +5,35 @@
 #include <iostream>
 #include "Game.hpp"
 #include "CoreGame/ChunksRenderer.hpp"
+#include "CoreGame/Menu.hpp"
+#include "CameraMove.hpp"
+#include "CoreGame/BlocksCreation.hpp"
 
-
-void Game::start(Window *window) {
-    auto *shader = new Shader("/home/bogdan/Projects/Nest/Nest/res/Shaders/vst.glsl",
-                              "/home/bogdan/Projects/Nest/Nest/res/Shaders/fst.glsl");
-    
-
+void Game::start() {
+    shader = new Shader("Nest/res/Shaders/vst.glsl",
+                              "Nest/res/Shaders/fst.glsl");
+    Application::getInstance()->getCamera()->setShader(shader);
+    gameObjects.emplace_back(new CameraMove);
     auto *chunksRenderer = new ChunksRenderer;
     chunksRenderer->init();
+    gameObjects.emplace_back(chunksRenderer);
+    gameObjects.emplace_back(new Menu);
+}
 
-    Renderer::init();
-//    Renderer::setClearColor(0.38, 0.672, 1., 1.);
-
-    Camera camera;
-    camera.setShader(shader);
-    camera.setPosition(0.f, 0.f, 5.f);
-
-    float cameraSpeed = 5.f;
-
-    float lastTime = window->getTime();
-    int frames = 0;
-    const int maxFrames = 144;
-    double sec = 0;
-    window->toggleCursorLock();
-    glm::vec2 lastPos = window->getCursorPos();
-
-    while (!window->shouldClose() && !window->isKeyPressed(Key::ESCAPE)) {
-        float currentTime = window->getTime();
-        double deltaTime = currentTime - lastTime;
-        lastTime = currentTime;
-        sec += deltaTime;
-        if (sec > 1.) {
-            std::cout << "FPS: " << frames << std::endl;
-            sec = 0;
-            frames = 0;
-        }
-        if (frames >= maxFrames && sec < 1.) {
-            continue;
-        }
-        frames++;
-
-        Renderer::clear();
-
-        if (window->isKeyPressed(Key::LEFT_SHIFT)) {
-            cameraSpeed = 20.f;
-        } else cameraSpeed = 5.f;
-
-        if (window->isKeyPressed(Key::W)) {
-            camera.translateLocal(0., 0., cameraSpeed * deltaTime);
-        }
-        if (window->isKeyPressed(Key::S)) {
-            camera.translateLocal(0., 0., -cameraSpeed * deltaTime);
-        }
-        if (window->isKeyPressed(Key::A)) {
-            camera.translateLocal(-cameraSpeed * deltaTime, 0., 0.);
-        }
-        if (window->isKeyPressed(Key::D)) {
-            camera.translateLocal(cameraSpeed * deltaTime, 0., 0.);
-        }
-        if (window->isKeyPressed(Key::SPACE)) {
-            camera.translateLocal( 0., cameraSpeed * deltaTime, 0.);
-        }
-        if (window->isKeyPressed(Key::LEFT_CONTROL)) {
-            camera.translateLocal( 0., -cameraSpeed * deltaTime, 0.);
-        }
-
-        glm::vec2 cursorPos = window->getCursorPos();
-        glm::vec2 diff = lastPos - cursorPos;
-        lastPos = cursorPos;
-        float mouseSpeed = 0.1f;
-        camera.rotate(-diff.y * mouseSpeed, -diff.x * mouseSpeed, 0.f);
-
-        glm::vec2 resolution = window->getSize();
-        camera.updateAspectRatio(resolution.x / resolution.y);
-        Renderer::setRenderBufferSize(resolution.x, resolution.y);
-
-        shader->setFloat("u_time", window->getTime());
-        shader->setVec2("u_mouse", window->getCursorPos());
-        shader->setVec2("u_resolution", window->getSize());
-        shader->setMat4("u_model", glm::mat4(1));
-
-        chunksRenderer->draw(window, &camera);
-
-        window->swapBuffers();
-
-        window->pollEvents();
-        Renderer::checkForErrors();
+void Game::update(double deltaTime) {
+    shader->use();
+    shader->setFloat("u_time", Application::getInstance()->getWindow()->getTime());
+    shader->setVec2("u_mouse", Application::getInstance()->getWindow()->getCursorPos());
+    shader->setVec2("u_resolution", Application::getInstance()->getWindow()->getSize());
+    shader->setMat4("u_model", glm::mat4(1));
+    for (const auto &item: gameObjects) {
+        item->update(deltaTime);
     }
-    delete chunksRenderer;
+}
+
+Game::~Game() {
+    for (const auto &item: gameObjects) {
+        delete item;
+    }
     delete shader;
 }

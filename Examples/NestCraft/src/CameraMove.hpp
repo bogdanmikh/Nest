@@ -1,14 +1,16 @@
+#pragma once
+
 #include <Nest.hpp>
 
-class CameraMove {
+class CameraMove : public GameObject {
 public:
-    explicit CameraMove(Window* window, Shader* shader, float posX = 0, float posY = 0, float posZ = 0);
-    void update(double deltaTime);
+    CameraMove();
+    void update(double deltaTime) override;
+    void draw() override;
 private:
-    Window* window;
-    Camera camera;
-
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;
-};
 
+    Window* window;
+    Camera* camera;
+};

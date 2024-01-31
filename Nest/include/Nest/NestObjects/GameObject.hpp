@@ -4,7 +4,6 @@
 #include "Nest/NestRenderer/IndexBuffer.hpp"
 
 class GameObject {
-    
 public:
     explicit GameObject() = default;
     virtual ~GameObject() = default;

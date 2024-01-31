@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <filesystem>
 
 #include "Nest/NestRenderer/Shader.hpp"
 
@@ -18,10 +19,14 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath, const char *geo
     vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
     gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    std::filesystem::path currentPath = std::filesystem::current_path().parent_path();
+    std::string path = currentPath.string();
+    std::string vsPath = path + '/' + (vertexPath);
+    std::string fsPath = path + '/' + (fragmentPath);
     try {
         // open files
-        vShaderFile.open(vertexPath);
-        fShaderFile.open(fragmentPath);
+        vShaderFile.open(vsPath.c_str());
+        fShaderFile.open(fsPath.c_str());
         std::stringstream vShaderStream, fShaderStream;
         // read file's buffer contents into streams
         vShaderStream << vShaderFile.rdbuf();
