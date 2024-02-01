@@ -4,30 +4,32 @@
 
 ChunksRenderer::~ChunksRenderer() {
     delete blocksCreation;
-    delete chunksStorage;
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
-        delete meshes[i];
+        delete chunksStorage->getChunkIndex(i)->getMesh();
     }
-    delete[] meshes;
+    delete chunksStorage;
 }
 
 void ChunksRenderer::init() {
     chunksStorage = new ChunksStorage();
     std::cout << "WORLD GENERATED" << std::endl;
-    meshes = new Mesh*[ChunksStorage::SIZE_XYZ];
     blocksCreation = new BlocksCreation();
     blocksCreation->init();
     blocksCreation->setCamera(Application::getInstance()->getCamera());
     blocksCreation->setChunksStorage(chunksStorage);
-    int index = 0;
-
-    for (int x = 0; x < ChunksStorage::SIZE_X; ++x) {
-        for (int y = 0; y < ChunksStorage::SIZE_Y; ++y) {
-            for (int z = 0; z < ChunksStorage::SIZE_Z; ++z) {
-                Mesh* mesh = ChunkMeshGenerator::generateMesh(chunksStorage, x, y, z, true);
-                mesh->addTexture("/home/bogdan/Projects/Nest/Examples/NestCraft/res/textures/BlocksTile.png");
-                meshes[index] = mesh;
-                index++;
+    for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
+        for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
+            for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
+                Mesh *mesh = ChunkMeshGenerator::generateMesh(chunksStorage,indexX,
+                                                              indexY, indexZ, true);
+                chunksStorage
+                        ->chunks[indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
+                                 indexX * ChunksStorage::SIZE_X + indexZ]
+                        .setMesh(mesh);
+                chunksStorage
+                        ->chunks[indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
+                                 indexX * ChunksStorage::SIZE_X + indexZ]
+                        .getMesh()->addTexture("Examples/NestCraft/res/textures/BlocksTile.png");
             }
         }
     }
@@ -41,6 +43,6 @@ void ChunksRenderer::update(double deltaTime) {
 
 void ChunksRenderer::draw() {
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
-        meshes[i]->draw();
+        chunksStorage->chunks[i].getMesh()->draw();
     }
 }

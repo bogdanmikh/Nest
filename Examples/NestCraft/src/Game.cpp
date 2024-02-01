@@ -10,6 +10,8 @@
 #include "CoreGame/BlocksCreation.hpp"
 
 void Game::start() {
+    Application::getInstance()->getWindow()->toggleCursorLock();
+
     shader = new Shader("Nest/res/Shaders/vst.glsl",
                               "Nest/res/Shaders/fst.glsl");
     Application::getInstance()->getCamera()->setShader(shader);

@@ -19,5 +19,7 @@ set(SOURCENESTCRAFT
     Examples/NestCraft/src/CoreGame/Menu.cpp
     Examples/NestCraft/src/CoreGame/BlocksCreation.hpp
     Examples/NestCraft/src/CoreGame/BlocksCreation.cpp
+    Examples/NestCraft/src/CoreGame/PerlinNoise.hpp
+    Examples/NestCraft/src/CoreGame/PerlinNoise.cpp
     PARENT_SCOPE
 )

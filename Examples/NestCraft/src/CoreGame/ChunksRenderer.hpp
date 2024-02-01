@@ -20,5 +20,4 @@ public:
 private:
     BlocksCreation* blocksCreation;
     ChunksStorage* chunksStorage;
-    Mesh** meshes;
 };

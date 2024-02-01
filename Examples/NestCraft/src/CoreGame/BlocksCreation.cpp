@@ -17,14 +17,13 @@ void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkInde
     m_chunksStorage
         ->chunks[chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                  chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
-        ->setMesh(data);
+        .setMesh(data);
 }
 
 void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
     if (x < 0 || y < 0 || z < 0 || x >= ChunksStorage::WORLD_SIZE_X ||
         y >= ChunksStorage::WORLD_SIZE_Y || z >= ChunksStorage::WORLD_SIZE_Z)
         return;
-
     m_chunksStorage->setVoxel(x, y, z, type);
     int chunkIndexX = x / Chunk::SIZE_X;
     int chunkIndexY = y / Chunk::SIZE_Y;
@@ -56,6 +55,10 @@ void BlocksCreation::update(double deltaTime) {
     bool rightPressed;
     leftPressed = Application::getInstance()->getWindow()->isMouseButtonPressed(MouseButton::LEFT);
     rightPressed = Application::getInstance()->getWindow()->isMouseButtonPressed(MouseButton::RIGHT);
+    bool canCreateVoxel = leftPressed && !lastPressLeftMouseButton;
+    bool canDeleteVoxel = rightPressed && !lastPressRightMouseButton;
+    lastPressLeftMouseButton = leftPressed;
+    lastPressRightMouseButton = rightPressed;
     if (!leftPressed && !rightPressed) {
         return;
     }
@@ -64,12 +67,12 @@ void BlocksCreation::update(double deltaTime) {
     auto v = m_chunksStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE);
     if (v && v->voxel != nullptr) {
-        if (leftPressed) {
+        if (canCreateVoxel) {
             int x = v->end.x + v->normal.x;
             int y = v->end.y + v->normal.y;
             int z = v->end.z + v->normal.z;
             setVoxel(x, y, z, m_selectedBlock);
-        } else if (rightPressed) {
+        } else if (canDeleteVoxel) {
             int x = v->end.x;
             int y = v->end.y;
             int z = v->end.z;

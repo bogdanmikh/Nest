@@ -16,6 +16,8 @@ Mesh* ChunkMeshGenerator::generateMesh(ChunksStorage *chunksStorage,
                                        int chunkIndexY,
                                        int chunkIndexZ,
                                        bool ambientOcclusion) {
+    Chunk &chunk = chunksStorage->chunks[chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
+                                 chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
     auto* vertices = new Vertex[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
     auto* indices = new uint32_t[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
     uint32_t verticesCount = 0;
@@ -27,7 +29,7 @@ Mesh* ChunkMeshGenerator::generateMesh(ChunksStorage *chunksStorage,
                 int y = voxelIndexY + chunkIndexY * Chunk::SIZE_Y;
                 int z = voxelIndexZ + chunkIndexZ * Chunk::SIZE_Z;
 
-                Voxel *currentVoxel = chunksStorage->getVoxel(voxelIndexX, voxelIndexY, voxelIndexZ);
+                Voxel *currentVoxel = chunk.get(voxelIndexX, voxelIndexY, voxelIndexZ);
                 if (currentVoxel == nullptr || currentVoxel->isAir()) {
                     continue;
                 }

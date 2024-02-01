@@ -1,6 +1,7 @@
 #include "Nest/NestRenderer/Mesh.hpp"
 
 #include <iostream>
+#include <filesystem>
 
 Mesh::Mesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
         : ib(new IndexBuffer(indices, indicesCount))
@@ -43,7 +44,10 @@ void Mesh::draw() {
 }
 
 void Mesh::addTexture(const std::string& texturePath) {
-    auto texture = new Texture(texturePath);
+    std::filesystem::path currentPath = std::filesystem::current_path().parent_path();
+    std::string path = currentPath.string();
+    std::string texPath = (path + '/' + texturePath);
+    auto texture = new Texture(texPath);
     textures.push_back(texture);
 }
 

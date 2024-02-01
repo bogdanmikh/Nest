@@ -27,7 +27,7 @@ void Menu::update(double deltaTime) {
     const glm::vec3& position = Application::getInstance()->getCamera()->getPosition();
     ImGui::Text("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z);
 
-    ImGui::ColorEdit4("Color", m_color);
+    ImGui::ColorEdit3("Color", m_color);
 //    ImGui::ColorPicker4("Picker", m_color);q
     Application::getInstance()->getCamera()->getShader()->setVec3("u_color", m_color[0], m_color[1], m_color[2]);
 //    ImGui::Columns(2);

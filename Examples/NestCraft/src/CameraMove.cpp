@@ -5,12 +5,11 @@
 CameraMove::CameraMove()
     : window(Application::getInstance()->getWindow())
     , camera(Application::getInstance()->getCamera()) {
-    camera->setPosition(0.0, 0.0, 5.0);
+    camera->setPosition(0.0, 10.0, 5.0);
+//    camera->rotate(20, 90, 0.f);
 }
 
 void CameraMove::update(double deltaTime) {
-//    if (window->isJustKeyPressed(Key::TAB)) window->toggleCursorLock();
-
     if (window->isKeyPressed(Key::LEFT_SHIFT)) {
         cameraSpeed = 20.f;
     } else cameraSpeed = 5.f;
