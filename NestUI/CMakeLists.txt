@@ -1,4 +1,5 @@
 set(SOURCESNESTUI
+        NestUI/NestUI.hpp
         NestUI/ImGui/ImGui.hpp
         NestUI/ImGui/ImGui.cpp
 

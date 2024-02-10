@@ -1,5 +1,6 @@
 #include "ChunksStorage.hpp"
 #include "PerlinNoise.hpp"
+#include "ChunkMeshGenerator.hpp"
 
 ChunksStorage::~ChunksStorage() {
     delete[] chunks;
@@ -18,7 +19,7 @@ ChunksStorage::ChunksStorage() {
                 if (y < height) {
                     voxelType = y <= 2 ? VoxelType::SAND : VoxelType::GROUND;
                 } else if (y == height) {
-                    voxelType = VoxelType::GRASS;
+                    voxelType = VoxelType(12);
                 } else {
                     voxelType = VoxelType::NOTHING;
                 }
@@ -150,4 +151,24 @@ std::optional<VoxelRaycastData> ChunksStorage::bresenham3D(
         }
     }
     return {};
+}
+
+void ChunksStorage::saveWorld(unsigned char* data) {
+    int index = 0;
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        Chunk &chunk = chunks[i];
+        for (int j = 0; j < Chunk::SIZE_XYZ; ++j, index++) {
+            data[index] = (unsigned char)(chunk.data[j].type);
+        }
+    }
+}
+
+void ChunksStorage::loadWorld(unsigned char *data) {
+    int index = 0;
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        Chunk &chunk = chunks[i];
+        for (int j = 0; j < Chunk::SIZE_XYZ; ++j, index++) {
+            chunk.data[j].type = static_cast<VoxelType>(data[index]);
+        }
+    }
 }

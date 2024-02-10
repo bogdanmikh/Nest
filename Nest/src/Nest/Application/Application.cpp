@@ -1,7 +1,10 @@
 #include <chrono>
 
-#include "Nest/Application/Application.hpp"
 #include <NestUI.hpp>
+
+#include "Nest/Application/Application.hpp"
+#include "Nest/NestRenderer/Renderer.hpp"
+#include "Nest/Window/Events.hpp"
 
 uint64_t getMillis() {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
@@ -10,16 +13,14 @@ uint64_t getMillis() {
 
 Application::Application() {
     window = new Window;
-    window->init("Sandbox", 640, 480, true);
+    window->init("Sandbox", true);
 
     camera = new Camera;
     camera->setFieldOfView(glm::radians(45.f));
     camera->setRotation(0.f, 0.f, 0.f);
-//    camera
     ImGui_Init(window->getNativeHandle());
 
     Renderer::init();
-
     Renderer::setClearColor(.235f, .235f, .235f, 1.0f);
 }
 
@@ -43,7 +44,7 @@ void Application::loop() {
         thisSecondFramesCount++;
         if (oneSecondTimeCount >= 1000) {
             fps = thisSecondFramesCount;
-            std::cout << "FPS: " << fps << std::endl;
+            printf("FPS: %d\n", fps);
             thisSecondFramesCount = 0;
             oneSecondTimeCount = 0;
         }
@@ -53,7 +54,10 @@ void Application::loop() {
 
         Renderer::clear();
 
-        if (window->isKeyPressed(Key::ESCAPE)) {
+        if (Events::isJustKeyPressed(Key::TAB)) {
+            Events::toggleCursorLock();
+        }
+        if (Events::isJustKeyPressed(Key::ESCAPE)) {
             close();
         }
         ImGui_NewFrame();
@@ -63,8 +67,8 @@ void Application::loop() {
         ImGui_EndFrame();
 
 
+        Events::pollEvents();
         window->swapBuffers();
-        window->pollEvents();
     }
 }
 

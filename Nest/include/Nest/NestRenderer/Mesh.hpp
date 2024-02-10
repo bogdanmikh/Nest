@@ -14,6 +14,7 @@ public:
     ~Mesh();
     void draw();
     void addTexture(const std::string& texturePath);
+    void update(Vertex *vertices, unsigned int verticesCount);
 private:
     VertexArray *va;
     IndexBuffer *ib;

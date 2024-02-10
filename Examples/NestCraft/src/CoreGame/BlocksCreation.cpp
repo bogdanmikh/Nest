@@ -1,7 +1,3 @@
-//
-// Created by Admin on 12.02.2022.
-//
-
 #include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
 #include "Voxel.hpp"
@@ -9,7 +5,7 @@
 #include <imgui.h>
 
 void BlocksCreation::init() {
-    m_selectedBlock = VoxelType::GROUND;
+    m_selectedBlock = VoxelType(11);
 }
 
 void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
@@ -51,14 +47,11 @@ void BlocksCreation::setVoxel(int x, int y, int z, VoxelType type) {
 }
 
 void BlocksCreation::update(double deltaTime) {
+    updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Application::getInstance()->getWindow()->isMouseButtonPressed(MouseButton::LEFT);
-    rightPressed = Application::getInstance()->getWindow()->isMouseButtonPressed(MouseButton::RIGHT);
-    bool canCreateVoxel = leftPressed && !lastPressLeftMouseButton;
-    bool canDeleteVoxel = rightPressed && !lastPressRightMouseButton;
-    lastPressLeftMouseButton = leftPressed;
-    lastPressRightMouseButton = rightPressed;
+    leftPressed = Events::isJustMouseButtonPressed(MouseButton::LEFT);
+    rightPressed = Events::isJustMouseButtonPressed(MouseButton::RIGHT);
     if (!leftPressed && !rightPressed) {
         return;
     }
@@ -67,12 +60,12 @@ void BlocksCreation::update(double deltaTime) {
     auto v = m_chunksStorage->bresenham3D(
         position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE);
     if (v && v->voxel != nullptr) {
-        if (canCreateVoxel) {
+        if (leftPressed) {
             int x = v->end.x + v->normal.x;
             int y = v->end.y + v->normal.y;
             int z = v->end.z + v->normal.z;
             setVoxel(x, y, z, m_selectedBlock);
-        } else if (canDeleteVoxel) {
+        } else if (rightPressed) {
             int x = v->end.x;
             int y = v->end.y;
             int z = v->end.z;
@@ -82,6 +75,7 @@ void BlocksCreation::update(double deltaTime) {
 }
 
 void BlocksCreation::onImGuiRender() {
+    ImGui::SetNextWindowPos(ImVec2(500.0f, 500.0f));
     ImGui::Begin("Block");
     if (ImGui::Button("TREE")) {
         m_selectedBlock = VoxelType::TREE;
@@ -93,6 +87,24 @@ void BlocksCreation::onImGuiRender() {
         m_selectedBlock = VoxelType::BOARDS;
     }
     ImGui::End();
+}
+
+void BlocksCreation::updateVoxelHand() {
+    if (Events::isJustKeyPressed(Key::KEY_1)) {
+        m_selectedBlock = VoxelType(1);
+    } else if (Events::isJustKeyPressed(Key::KEY_2)) {
+        m_selectedBlock = VoxelType(7);
+    } else if (Events::isJustKeyPressed(Key::KEY_3)) {
+        m_selectedBlock = VoxelType(8);
+    } else if (Events::isJustKeyPressed(Key::KEY_4)) {
+        m_selectedBlock = VoxelType(9);
+    } else if (Events::isJustKeyPressed(Key::KEY_5)) {
+        m_selectedBlock = VoxelType(10);
+    } else if (Events::isJustKeyPressed(Key::KEY_6)) {
+        m_selectedBlock = VoxelType(11);
+    } else if (Events::isJustKeyPressed(Key::KEY_7)) {
+        m_selectedBlock = VoxelType(12);
+    }
 }
 
 void BlocksCreation::setChunksStorage(ChunksStorage* storage) {

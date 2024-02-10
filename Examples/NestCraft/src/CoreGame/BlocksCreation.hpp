@@ -22,8 +22,7 @@ private:
     void setVoxel(int x, int y, int z, VoxelType type);
     void updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ);
 
-    bool lastPressLeftMouseButton;
-    bool lastPressRightMouseButton;
+    void updateVoxelHand();
     ChunksStorage *m_chunksStorage;
     Camera *m_camera;
     VoxelType m_selectedBlock;

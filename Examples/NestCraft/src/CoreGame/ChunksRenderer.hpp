@@ -12,7 +12,7 @@
 
 class ChunksRenderer final : public GameObject {
 public:
-    ChunksRenderer(){}
+    ChunksRenderer();
     ~ChunksRenderer() override;
     void init();
     void draw() override;

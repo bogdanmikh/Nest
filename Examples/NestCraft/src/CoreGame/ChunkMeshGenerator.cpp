@@ -362,7 +362,10 @@ Mesh* ChunkMeshGenerator::generateMesh(ChunksStorage *chunksStorage,
             }
         }
     }
-    return new Mesh(vertices, verticesCount, indices,  indicesCount);
+    Mesh* mesh = new Mesh(vertices, verticesCount, indices,  indicesCount);
+    delete[] vertices;
+    delete[] indices;
+    return mesh;
 }
 
 bool ChunkMeshGenerator::isAir(int localX, int localY, int localZ, ChunksStorage *chunksStorage) {

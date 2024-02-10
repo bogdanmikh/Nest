@@ -16,7 +16,6 @@ add_executable(
         ${SOURCENESTCRAFT}
         ${SOURCESNESTUI}
         main.cpp
-        NestUI/NestUI.hpp
 )
 
 #------------------------------------------------------------------------------------------------------------------#

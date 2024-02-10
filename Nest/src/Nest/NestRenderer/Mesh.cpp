@@ -1,4 +1,5 @@
 #include "Nest/NestRenderer/Mesh.hpp"
+#include "Nest/AMSTL/LocalPath.hpp"
 
 #include <iostream>
 #include <filesystem>
@@ -8,7 +9,7 @@ Mesh::Mesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, 
         , vb(new VertexBuffer(vertices, sizeof(Vertex) * verticesCount))
         , indices(indicesCount) {
     VertexBufferLayout layout;
-    layout.pushVertex(1);
+    layout.pushVertex();
     va = new VertexArray;
     va->addBuffer(*vb, layout);
 }
@@ -43,12 +44,12 @@ void Mesh::draw() {
     Renderer::checkForErrors();
 }
 
+void Mesh::update(Vertex *vertices, unsigned int verticesCount) {
+
+}
+
 void Mesh::addTexture(const std::string& texturePath) {
-    std::filesystem::path currentPath = std::filesystem::current_path().parent_path();
-    std::string path = currentPath.string();
-    std::string texPath = (path + '/' + texturePath);
+    std::string texPath = (amstl::localPath + texturePath);
     auto texture = new Texture(texPath);
     textures.push_back(texture);
 }
-
-

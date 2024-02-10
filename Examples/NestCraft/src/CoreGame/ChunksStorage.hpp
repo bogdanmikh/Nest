@@ -8,9 +8,9 @@
 
 class ChunksStorage {
 public:
-    static const int SIZE_X = 3;
+    static const int SIZE_X = 10;
     static const int SIZE_Y = 1;
-    static const int SIZE_Z = 3;
+    static const int SIZE_Z = 10;
     static const int SIZE_XYZ = ChunksStorage::SIZE_X * ChunksStorage::SIZE_Y * ChunksStorage::SIZE_Z;
 
     static const int WORLD_SIZE_X = ChunksStorage::SIZE_X * Chunk::SIZE_X;
@@ -27,4 +27,7 @@ public:
     std::optional<VoxelRaycastData> bresenham3D(
             float x1, float y1, float z1, float x2, float y2, float z2, int maximumDistance);
     Chunk* chunks;
+
+    void saveWorld(unsigned char* data);
+    void loadWorld(unsigned char* data);
 };

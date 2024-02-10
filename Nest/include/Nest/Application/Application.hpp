@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Nest.hpp"
+//#include "Nest.hpp"
+#include "Nest/Window/Window.hpp"
+#include "Nest/NestObjects/Camera.hpp"
+#include "Nest/NestObjects/Level.hpp"
 
 class Application {
 public:
     ~Application();
     inline static Application* getInstance() {
-//        if (Application::s_instance == nullptr) Application::s_instance = new Application;
         return s_instance;
     }
 

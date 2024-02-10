@@ -70,7 +70,7 @@ typedef struct
 // packed.
 typedef struct
 {
-    GLfloat s, t;         // NestCraft coordinates
+    GLfloat s, t;         // Texture coordinates
     GLuint  rgba;         // Color (four ubytes packed into an uint)
     GLfloat x, y, z;      // Vertex coordinates
 } Vertex;
@@ -99,7 +99,7 @@ struct {
 
 
 //========================================================================
-// NestCraft declarations (we hard-code them into the source code, since
+// Texture declarations (we hard-code them into the source code, since
 // they are so simple)
 //========================================================================
 
@@ -108,7 +108,7 @@ struct {
 #define F_TEX_WIDTH  16   // Floor texture dimensions
 #define F_TEX_HEIGHT 16
 
-// NestCraft object IDs
+// Texture object IDs
 GLuint particle_tex_id, floor_tex_id;
 
 // Particle texture (a simple spot)

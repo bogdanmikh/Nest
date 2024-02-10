@@ -12,7 +12,7 @@ out vec2 TexCoord;
 out float Light;
 
 void main(){
-    gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
+    gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0) * sin(aLight);
     TexCoord = aTexCoord;
     Light = aLight;
 }

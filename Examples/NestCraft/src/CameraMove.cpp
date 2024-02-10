@@ -10,30 +10,36 @@ CameraMove::CameraMove()
 }
 
 void CameraMove::update(double deltaTime) {
-    if (window->isKeyPressed(Key::LEFT_SHIFT)) {
+    if (Events::isKeyPressed(Key::LEFT_SHIFT)) {
         cameraSpeed = 20.f;
     } else cameraSpeed = 5.f;
 
-    if (window->isKeyPressed(Key::W)) {
+    if (Events::isKeyPressed(Key::W)) {
         camera->translateLocal(0., 0., cameraSpeed * deltaTime);
     }
-    if (window->isKeyPressed(Key::S)) {
+    if (Events::isKeyPressed(Key::S)) {
         camera->translateLocal(0., 0., -cameraSpeed * deltaTime);
     }
-    if (window->isKeyPressed(Key::A)) {
+    if (Events::isKeyPressed(Key::A)) {
         camera->translateLocal(-cameraSpeed * deltaTime, 0., 0.);
     }
-    if (window->isKeyPressed(Key::D)) {
+    if (Events::isKeyPressed(Key::D)) {
         camera->translateLocal(cameraSpeed * deltaTime, 0., 0.);
     }
-    if (window->isKeyPressed(Key::SPACE)) {
+    if (Events::isKeyPressed(Key::SPACE)) {
         camera->translateLocal( 0., cameraSpeed * deltaTime, 0.);
     }
-    if (window->isKeyPressed(Key::LEFT_CONTROL)) {
+    if (Events::isKeyPressed(Key::LEFT_CONTROL)) {
         camera->translateLocal( 0., -cameraSpeed * deltaTime, 0.);
     }
 
-    glm::vec2 cursorPos = window->getCursorPos();
+    glm::vec2 resolution = window->getSize();
+    camera->updateAspectRatio(resolution.x / resolution.y);
+    Renderer::setRenderBufferSize(resolution.x, resolution.y);
+
+    if (!Events::isCursorLocked()) return;
+
+    glm::vec2 cursorPos = Events::getCursorPos();
     glm::vec2 diff = lastPos - cursorPos;
     lastPos = cursorPos;
     float mouseSpeed = 0.1f;
@@ -41,9 +47,6 @@ void CameraMove::update(double deltaTime) {
 
 
 
-    glm::vec2 resolution = window->getSize();
-    camera->updateAspectRatio(resolution.x / resolution.y);
-    Renderer::setRenderBufferSize(resolution.x, resolution.y);
 }
 
 void CameraMove::draw() {

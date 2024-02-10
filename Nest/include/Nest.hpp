@@ -12,11 +12,11 @@
 
 // Window
 #include "Nest/Window/Window.hpp"
+#include "Nest/Window/Events.hpp"
 
 // NestObjects
 #include "Nest/NestObjects/GameObject.hpp"
 #include "Nest/NestObjects/World.hpp"
-#include "Nest/NestObjects/Shapes/Cube.hpp"
 #include "Nest/NestObjects/Camera.hpp"
 #include "Nest/NestObjects/Level.hpp"
 
@@ -25,3 +25,6 @@
 
 // Application
 #include "Nest/Application/Application.hpp"
+
+// Files
+#include "Nest/Files/Files.hpp"

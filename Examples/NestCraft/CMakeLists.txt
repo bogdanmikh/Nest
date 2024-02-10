@@ -21,5 +21,9 @@ set(SOURCENESTCRAFT
     Examples/NestCraft/src/CoreGame/BlocksCreation.cpp
     Examples/NestCraft/src/CoreGame/PerlinNoise.hpp
     Examples/NestCraft/src/CoreGame/PerlinNoise.cpp
+    Examples/NestCraft/src/CoreGame/LineBatch.hpp
+    Examples/NestCraft/src/CoreGame/LineBatch.cpp
+
+    Examples/NestCraft/src/CoreGame/Cross.hpp
     PARENT_SCOPE
 )
