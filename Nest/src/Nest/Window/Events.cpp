@@ -61,14 +61,14 @@ bool Events::isKeyPressed(Key key) {
     if (int(key) < 0 || int(key) >= 1024) {
         return false;
     }
-    return keys[uint(key)];
+    return keys[uint32_t(key)];
 }
 
 bool Events::isJustKeyPressed(Key key) {
     if (int(key) < 0 || int(key) >= 1024) {
         return false;
     }
-    return keys[uint(key)] && framesKeys[int(key)] == frame;
+    return keys[uint32_t(key)] && framesKeys[int(key)] == frame;
 }
 
 bool Events::isMouseButtonPressed(MouseButton mouseButton) {
@@ -93,10 +93,9 @@ void Events::pollEvents() {
 void Events::toggleCursorLock() {
     cursorLocked = !cursorLocked;
     glm::vec2 cursorPos = getCursorPos();
-    printf("%f, %f\n", cursorPos.x, cursorPos.y);
 
-    glfwSetInputMode((GLFWwindow *) m_handle, GLFW_CURSOR, cursorLocked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     glfwSetCursorPos((GLFWwindow *) m_handle, cursorPos.x, cursorPos.y);
+    glfwSetInputMode((GLFWwindow *) m_handle, GLFW_CURSOR, cursorLocked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
 }
 
 bool Events::isCursorLocked() {

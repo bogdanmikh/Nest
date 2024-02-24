@@ -16,7 +16,7 @@ Application::Application() {
     window->init("Sandbox", true);
 
     camera = new Camera;
-    camera->setFieldOfView(glm::radians(45.f));
+    camera->setFieldOfView(glm::radians(120.f));
     camera->setRotation(0.f, 0.f, 0.f);
     ImGui_Init(window->getNativeHandle());
 
@@ -28,7 +28,6 @@ Application::~Application() {
     ImGui_Shutdown();
     delete camera;
     delete window;
-    delete s_instance;
 }
 
 void Application::loop() {
@@ -65,7 +64,6 @@ void Application::loop() {
             currentLevel->update(deltaTime);
         }
         ImGui_EndFrame();
-
 
         Events::pollEvents();
         window->swapBuffers();

@@ -8,6 +8,7 @@ public:
     void update(double deltaTime) override;
     void draw() override;
 private:
+    bool cursorLock;
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;
 
