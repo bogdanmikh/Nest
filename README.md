@@ -12,7 +12,8 @@ Graphic API:
 * [NestPBR](Examples/NestPBR/README.md)
 * [NestCraft](Examples/NestCraft/README.md)
 * [ContentBrowser](Examples/ContentBrowser/README.md)
-* Profiler (in developing)
+* [Profiler (in developing)](Examples/Profiler/README.md)
+
 
 ## Dependencies
 - glad
