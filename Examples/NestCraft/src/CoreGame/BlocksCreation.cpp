@@ -50,8 +50,8 @@ void BlocksCreation::update(double deltaTime) {
     updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Events::isJustMouseButtonPressed(MouseButton::LEFT);
-    rightPressed = Events::isJustMouseButtonPressed(MouseButton::RIGHT);
+    leftPressed = Events::isMouseButtonPressed(MouseButton::LEFT);
+    rightPressed = Events::isMouseButtonPressed(MouseButton::RIGHT);
     if (!leftPressed && !rightPressed) {
         return;
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Nest.hpp>
+#include "CoreGame/GameObject.hpp"
 
 class CameraMove : public GameObject {
 public:

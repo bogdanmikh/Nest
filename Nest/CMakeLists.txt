@@ -1,38 +1,47 @@
-set(SOURCESNEST
-        Nest/include/Nest/Application/Application.hpp
-        Nest/include/Nest/Files/Files.hpp
+project(Nest)
 
-        Nest/include/Nest/AMSTL/LocalPath.hpp
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-        Nest/include/Nest/Window/Key.hpp
-        Nest/include/Nest/Window/Window.hpp
-        Nest/include/Nest/Window/Events.hpp
+# Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
+if (POLICY CMP0025)
+    cmake_policy(SET CMP0025 NEW)
+endif ()
 
-        Nest/include/Nest/NestRenderer/Shader.hpp
-        Nest/include/Nest/NestRenderer/VertexBuffer.hpp
-        Nest/include/Nest/NestRenderer/IndexBuffer.hpp
-        Nest/include/Nest/NestRenderer/VertexArray.hpp
-        Nest/include/Nest/NestRenderer/Renderer.hpp
-        Nest/include/Nest/NestRenderer/Mesh.hpp
+file(GLOB_RECURSE SOURCES src/*.cpp)
+file(GLOB_RECURSE INCLUDE src/*.hpp include/*.hpp)
 
-        Nest/include/Nest/NestObjects/Camera.hpp
-        Nest/include/Nest/NestObjects/Level.hpp
+# Nest target
+add_library(Nest STATIC "${SOURCES}" "${INCLUDE}")
 
-        Nest/src/Nest/Application/Application.cpp
-        Nest/src/Nest/Files/Files.cpp
+target_include_directories(Nest PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-        Nest/src/Nest/Window/Window.cpp
-        Nest/src/Nest/Window/Events.cpp
+# Dependencies - GLM
+target_link_libraries(Nest glm)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glm)
 
-        Nest/src/Nest/NestRenderer/Shader.cpp
-        Nest/src/Nest/NestRenderer/VertexBuffer.cpp
-        Nest/src/Nest/NestRenderer/Renderer.cpp
-        Nest/src/Nest/NestRenderer/IndexBuffer.cpp
-        Nest/src/Nest/NestRenderer/VertexArray.cpp
-        Nest/src/Nest/NestRenderer/VertexArray.cpp
-        Nest/src/Nest/NestRenderer/Texture.cpp
-        Nest/src/Nest/NestRenderer/Mesh.cpp
+# Dependencies - stb_image
+target_link_libraries(Nest stb_image)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/stb_image)
 
-        Nest/src/Nest/NestObjects/Camera.cpp
-        PARENT_SCOPE
-)
+# Dependencies - Dear ImGui
+target_link_libraries(Nest imgui)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
+
+# Dependencies - GLFW, only for Desktop :)
+target_link_libraries(Nest glfw)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfw/include)
+
+# Dependencies - Dear ImGui
+target_link_libraries(Nest imgui)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
+
+# Dependencies - GLAD
+target_link_libraries(Nest glad)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glad/include)
+
+# Dependencies - spdlog
+target_link_libraries(Nest spdlog)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/spdlog/include)

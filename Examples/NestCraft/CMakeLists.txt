@@ -1,29 +1,37 @@
-set(SOURCENESTCRAFT
+project(NestCraft)
 
-    Examples/NestCraft/src/Game.hpp
-    Examples/NestCraft/src/Game.cpp
+set(CMAKE_CXX_STANDARD 20)
 
-    Examples/NestCraft/src/CameraMove.hpp
-    Examples/NestCraft/src/CameraMove.cpp
-
-    Examples/NestCraft/src/CoreGame/Voxel.hpp
-    Examples/NestCraft/src/CoreGame/Chunk.hpp
-    Examples/NestCraft/src/CoreGame/Chunk.cpp
-    Examples/NestCraft/src/CoreGame/ChunkMeshGenerator.hpp
-    Examples/NestCraft/src/CoreGame/ChunkMeshGenerator.cpp
-    Examples/NestCraft/src/CoreGame/ChunksRenderer.hpp
-    Examples/NestCraft/src/CoreGame/ChunksRenderer.cpp
-    Examples/NestCraft/src/CoreGame/ChunksStorage.hpp
-    Examples/NestCraft/src/CoreGame/ChunksStorage.cpp
-    Examples/NestCraft/src/CoreGame/Menu.hpp
-    Examples/NestCraft/src/CoreGame/Menu.cpp
-    Examples/NestCraft/src/CoreGame/BlocksCreation.hpp
-    Examples/NestCraft/src/CoreGame/BlocksCreation.cpp
-    Examples/NestCraft/src/CoreGame/PerlinNoise.hpp
-    Examples/NestCraft/src/CoreGame/PerlinNoise.cpp
-    Examples/NestCraft/src/CoreGame/LineBatch.hpp
-    Examples/NestCraft/src/CoreGame/LineBatch.cpp
-
-    Examples/NestCraft/src/CoreGame/Cross.hpp
-    PARENT_SCOPE
+file(GLOB_RECURSE SOURCES
+        main.cpp
+        src/*.cpp
 )
+
+file(GLOB_RECURSE INCLUDE
+        src/*.h
+        src/*.hpp
+        include/*.hpp
+)
+
+file(GLOB RESOURCE_FOLDERS res/*)
+
+add_app(NestCraft "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
+
+# set output directories for all builds (Debug, Release, etc.)
+foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+    string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+    set_target_properties(NestCraft
+            PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${BIN_DIRECTORY}
+    )
+endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+
+
+set_target_properties(NestCraft
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${BIN_DIRECTORY}
+)
+
+# Dependencies - Nest
+target_link_libraries(NestCraft Nest)
+target_include_directories(NestCraft PRIVATE ${NEST_DIRECTORY}/include)

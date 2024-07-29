@@ -3,10 +3,10 @@
 #include <iostream>
 #include <mutex>
 
-#include <NestUI.hpp>
 #include <Nest.hpp>
 
 #include "ChunksStorage.hpp"
+#include "GameObject.hpp"
 #include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
 

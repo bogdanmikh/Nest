@@ -10,10 +10,12 @@ public:
     }
 
     float end() {
-        std::chrono::time_point<std::chrono::high_resolution_clock> m_end = std::chrono::high_resolution_clock::now();
+        std::chrono::time_point<std::chrono::high_resolution_clock> m_end =
+            std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> duration = m_end - m_start;
         return duration.count();
     }
+
 private:
     std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
 };

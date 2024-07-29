@@ -7,6 +7,7 @@
 #include <Nest.hpp>
 
 #include "ChunksStorage.hpp"
+#include "GameObject.hpp"
 
 class BlocksCreation final: public GameObject {
 public:

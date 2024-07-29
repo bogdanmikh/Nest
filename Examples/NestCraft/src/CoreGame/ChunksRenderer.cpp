@@ -4,7 +4,7 @@
 
 ChunksRenderer::ChunksRenderer() {
     chunksStorage = new ChunksStorage();
-    std::cout << "WORLD GENERATED" << std::endl;
+    LOG_INFO("WORLD GENERATED");
     blocksCreation = new BlocksCreation();
     blocksCreation->init();
     blocksCreation->setCamera(Application::getInstance()->getCamera());
@@ -29,11 +29,11 @@ void ChunksRenderer::init() {
                 chunksStorage
                         ->chunks[indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                                  indexX * ChunksStorage::SIZE_X + indexZ]
-                        .getMesh()->addTexture("Examples/NestCraft/res/textures/BlocksTile.png");
+                        .getMesh()->addTexture("Textures/BlocksTile.png");
             }
         }
     }
-    std::cout << "MESHES GENERATED" << std::endl;
+    LOG_INFO("MESHES GENERATED");
 }
 
 void ChunksRenderer::update(double deltaTime) {
@@ -41,14 +41,14 @@ void ChunksRenderer::update(double deltaTime) {
         auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
         chunksStorage->saveWorld(data);
         if (!NestFiles::writeBinaryFile("world.bin", (const char*)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ)) {
-            printf("WORLD::NOT_SAVED\n");
+            LOG_ERROR("WORLD::NOT_SAVED");
         }
         delete[] data;
     }
     if (Events::isJustKeyPressed(Key::E)) {
         auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
         if (!NestFiles::readBinaryFile("world.bin", (char*)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ)) {
-            printf("WORLD::NOT_LOAD\n");
+            LOG_ERROR("WORLD::NOT_LOAD");
         }
         chunksStorage->loadWorld(data);
         delete[] data;
