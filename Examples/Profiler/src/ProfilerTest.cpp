@@ -32,17 +32,10 @@ void ProfilerTest::detach() {
 std::thread th1;
 std::thread th2;
 
-void func1() {
-    for (int i = 0; i < 100000000; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-
-        }
-    }
-}
-
 void func2() {
-    NEST_FUNC();
-    for (int i = 0; i < 1000; ++i) {
+    NEST_FRAME("Func2");
+//    NEST_FUNC();
+    for (int i = 0; i < 100000; ++i) {
         for (int j = 0; j < 1000; ++j) {
 
         }
@@ -50,8 +43,13 @@ void func2() {
 }
 
 void ProfilerTest::update(double deltaTime) {
-    NEST_FRAME("Loh");
-    func2();
+    NEST_FRAME("Update");
+    if (th1.joinable()) {
+        th1.detach();
+    }
+
+    th1 = std::thread(func2);
+//    func2();
     ImGui::Begin("Loshara");
     ImGui::End();
 }

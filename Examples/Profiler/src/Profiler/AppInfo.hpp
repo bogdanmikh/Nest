@@ -23,6 +23,7 @@ struct FrameInfo : public Rain::Codable {
     std::vector<FuncInfo> funcInfo;
     uint64_t startTime;
     uint64_t endTime;
+    uint64_t elapsedTime;
     std::string nameThread;
     int threadId;
 
@@ -30,6 +31,7 @@ struct FrameInfo : public Rain::Codable {
     RAIN_FIELD(startTime)
     RAIN_FIELD(endTime)
     RAIN_FIELD(funcInfo)
+    RAIN_FIELD(elapsedTime)
     RAIN_FIELD(nameThread)
     RAIN_FIELD(threadId)
     RAIN_FIELDS_END

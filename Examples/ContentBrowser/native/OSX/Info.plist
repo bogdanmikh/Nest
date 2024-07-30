@@ -5,19 +5,19 @@
 	<key>BuildMachineOSBuild</key>
 	<string>21A559</string>
 	<key>CFBundleDisplayName</key>
-	<string>VivoVideoEditor</string>
+	<string>ContentBrowser</string>
 	<key>CFBundleExecutable</key>
-	<string>VivoVideoEditor</string>
+	<string>ContentBrowser</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.vivo.VivoVideoEditor</string>
+	<string>com.contentbrowser.ContentBrowser</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>VivoVideoEditor</string>
+	<string>ContentBrowser</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSupportedPlatforms</key>

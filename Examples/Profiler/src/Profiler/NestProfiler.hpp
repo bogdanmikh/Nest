@@ -20,6 +20,7 @@ public:
         return s_instance;
     }
     void addFrame(const FrameInfo& frameInfo);
+    void setEndTimeFrame(const uint64_t& endTime);
     void addFunc(const FuncInfo& funcInfo);
     AppInfo& getResult();
 private:
@@ -29,10 +30,10 @@ private:
     AppInfo m_appInfo;
 };
 
-uint64_t getTimeMs() {
-    auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-    uint64_t milliseconds = std::chrono::time_point_cast<std::chrono::milliseconds>(now).time_since_epoch().count();
-    return milliseconds;
+static uint64_t getTimeUs() {
+    auto now = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
+    uint64_t microseconds = std::chrono::time_point_cast<std::chrono::microseconds>(now).time_since_epoch().count();
+    return microseconds;
 }
 
 struct FuncProfiler {
@@ -40,7 +41,7 @@ struct FuncProfiler {
         : m_nameFile(nameFile)
         , m_nameFunc(nameFunc)
         , m_line(line)
-        , m_startTime(getTimeMs()) {}
+        , m_startTime(getTimeUs()) {}
 
     ~FuncProfiler() {
         FuncInfo funcInfo;
@@ -48,7 +49,7 @@ struct FuncProfiler {
         funcInfo.nameFunc = m_nameFunc;
         funcInfo.line = m_line;
         funcInfo.startTime = m_startTime;
-        funcInfo.endTime = getTimeMs();
+        funcInfo.endTime = getTimeUs();
         Instrumentor::get()->addFunc(funcInfo);
     }
     std::string m_nameFunc;
@@ -58,23 +59,21 @@ struct FuncProfiler {
 };
 
 struct FrameProfiler {
-    FrameProfiler (const std::string &nameThread)
-        : m_nameThread(nameThread)
-        , m_startTime(getTimeMs()) {}
-
-    ~FrameProfiler() {
+    FrameProfiler (const std::string &nameThread) {
         std::stringstream ss;
         ss << std::this_thread::get_id();
         int threadId = (int)std::stoull(ss.str());
+
         FrameInfo frameInfo;
-        frameInfo.nameThread = m_nameThread;
-        frameInfo.startTime = m_startTime;
-        frameInfo.endTime = getTimeMs();
+        frameInfo.nameThread = nameThread;
+        frameInfo.startTime = getTimeUs();
         frameInfo.threadId = threadId;
         Instrumentor::get()->addFrame(frameInfo);
     }
-    uint64_t m_startTime;
-    std::string m_nameThread;
+
+    ~FrameProfiler() {
+        Instrumentor::get()->setEndTimeFrame(getTimeUs());
+    }
 };
 
 }
