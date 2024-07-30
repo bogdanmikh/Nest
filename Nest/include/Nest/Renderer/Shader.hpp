@@ -27,7 +27,7 @@ public:
     void setMat4(const std::string &name, const glm::mat4 &mat);
 
 private:
-    unsigned int m_RendererID = 0;
+    unsigned int m_rendererID = 0;
     std::unordered_map<std::string, int> m_UniformLocationCache;
     void checkCompileErrors(uint32_t shader, std::string type);
     int getUniformLocation(const std::string &name);
