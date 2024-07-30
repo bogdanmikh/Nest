@@ -18,6 +18,7 @@ public:
 
     bool decode(std::istream &istream, void *data, TypeInfo info) override;
     bool beginObject(const char *key) override;
+    bool decode(const char *key, bool &data) override;
     bool decode(const char *key, int &data) override;
     bool decode(const char *key, float &data) override;
     bool decode(const char *key, std::string &data) override;

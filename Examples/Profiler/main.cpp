@@ -1,10 +1,10 @@
 #include <Nest.hpp>
 
-#include "src/Profiler.hpp"
+#include "src/ProfilerTest.hpp"
 
 int main() {
     auto *application = Application::getInstance();
-    auto *layer = new Profiler();
+    auto *layer = new ProfilerTest();
     application->setLayer(layer);
     application->loop();
     layer->detach();

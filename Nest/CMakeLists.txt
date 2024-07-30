@@ -45,3 +45,5 @@ target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glad/include)
 # Dependencies - spdlog
 target_link_libraries(Nest spdlog)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/spdlog/include)
+
+target_link_libraries(Nest Rain)

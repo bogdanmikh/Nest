@@ -76,7 +76,9 @@ public:
             info.decoderFunc =
                 [](const char *key, Decoder *decoder, const TypeInfo &info, void *data) {
                     static_assert(std::is_base_of<Codable, T>());
-                    decoder->beginObject(key);
+                    if (!decoder->beginObject(key)) {
+                        return;
+                    }
                     for (auto &field : info.fields) {
                         auto memberInfo = getTypeRegistry()->findInfo(field.typeId);
                         memberInfo.decoderFunc(
@@ -183,6 +185,14 @@ struct TypeDecoder<float> {
     }
 };
 
+/** DOUBLE */
+template<>
+struct TypeDecoder<double> {
+    static void decode(const char *key, Decoder *decoder, const TypeInfo &info, double &data) {
+        decoder->decode(key, data);
+    }
+};
+
 /** CONST CHAR* */
 template<>
 struct TypeDecoder<const char *> {
@@ -212,13 +222,47 @@ struct TypeDecoder<int> {
     }
 };
 
+/** UINT */
+template<>
+struct TypeDecoder<uint32_t> {
+    static void decode(const char *key, Decoder *decoder, const TypeInfo &info, uint32_t &data) {
+        decoder->decode(key, data);
+    }
+};
+
+/** INT64 */
+template<>
+struct TypeDecoder<int64_t> {
+    static void decode(const char *key, Decoder *decoder, const TypeInfo &info, int64_t &data) {
+        decoder->decode(key, data);
+    }
+};
+
+/** UINT64 */
+template<>
+struct TypeDecoder<uint64_t> {
+    static void decode(const char *key, Decoder *decoder, const TypeInfo &info, uint64_t &data) {
+        decoder->decode(key, data);
+    }
+};
+
+/** BOOL */
+template<>
+struct TypeDecoder<bool> {
+    static void decode(const char *key, Decoder *decoder, const TypeInfo &info, bool &data) {
+        decoder->decode(key, data);
+    }
+};
+
 /** VECTOR */
 template<typename T, typename Alloc>
 struct TypeDecoder<std::vector<T, Alloc>> {
     static void
     decode(const char *key, Decoder *decoder, const TypeInfo &info, std::vector<T, Alloc> &data) {
-        decoder->beginArray(key);
         data.clear();
+        if (!decoder->beginArray(key)) {
+            return;
+        }
         auto memberInfo = getTypeRegistry()->findOrCreateType<T>();
         while (decoder->arrayHasElement()) {
             T value;
@@ -233,14 +277,6 @@ struct TypeDecoder<std::vector<T, Alloc>> {
 // ------------------------------------------------------------
 // ---------- PRIMITIVES ENCODING IMPLEMENTATION --------------
 // ------------------------------------------------------------
-
-/** FLOAT */
-template<>
-struct TypeEncoder<float> {
-    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, float &data) {
-        encoder->encode(key, data);
-    }
-};
 
 /** CONST CHAR* */
 template<>
@@ -267,6 +303,55 @@ struct TypeEncoder<std::basic_string<Elem, Traits, Alloc>> {
 template<>
 struct TypeEncoder<int> {
     static void encode(const char *key, Encoder *encoder, const TypeInfo &info, int &data) {
+        encoder->encode(key, data);
+    }
+};
+
+/** UINT */
+template<>
+struct TypeEncoder<uint32_t> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, uint32_t &data) {
+        encoder->encode(key, data);
+    }
+};
+
+/** INT64 */
+template<>
+struct TypeEncoder<int64_t> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, int64_t &data) {
+        encoder->encode(key, data);
+    }
+};
+
+/** UINT64 */
+template<>
+struct TypeEncoder<uint64_t> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, uint64_t &data) {
+        encoder->encode(key, data);
+    }
+};
+
+/** FLOAT */
+template<>
+struct TypeEncoder<float> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, float &data) {
+        encoder->encode(key, data);
+    }
+};
+
+/** DOUBLE */
+template<>
+struct TypeEncoder<double> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, double &data) {
+        encoder->encode(key, data);
+    }
+};
+
+
+/** BOOL */
+template<>
+struct TypeEncoder<bool> {
+    static void encode(const char *key, Encoder *encoder, const TypeInfo &info, bool &data) {
         encoder->encode(key, data);
     }
 };

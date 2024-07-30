@@ -46,6 +46,20 @@ bool YamlDecoder::beginObject(const char *key) {
     return true;
 }
 
+bool YamlDecoder::decode(const char *key, bool &data) {
+    if (m_isArray) {
+        const auto &member = *m_arrayIteratorStack.back();
+        data = member.as<bool>();
+    } else {
+        if (!currentObject()[key]) {
+            return false;
+        }
+        const auto &member = currentObject()[key];
+        data = member.as<bool>();
+    }
+    return true;
+}
+
 bool YamlDecoder::decode(const char *key, int &data) {
     if (m_isArray) {
         const auto &member = *m_arrayIteratorStack.back();

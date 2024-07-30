@@ -2,7 +2,7 @@
 
 #include <Nest.hpp>
 
-class Profiler final : public Layer {
+class ProfilerTest final : public Layer {
 public:
     void start() override;
     void detach() override;

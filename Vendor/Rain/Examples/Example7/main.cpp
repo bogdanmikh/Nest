@@ -62,6 +62,7 @@ struct Car : public Rain::Codable {
 struct Person : public Rain::Codable {
     std::string name;
     int age;
+    bool isHungry;
     std::vector<Car> cars;
     std::vector<int> x;
     const char *surname;
@@ -69,6 +70,7 @@ struct Person : public Rain::Codable {
     RAIN_FIELDS_BEGIN(Person)
     RAIN_FIELD(name)
     RAIN_FIELD(age)
+    RAIN_FIELD(isHungry)
     RAIN_FIELD(x)
     RAIN_FIELD(cars)
     RAIN_FIELD(surname)
@@ -79,6 +81,7 @@ struct Person : public Rain::Codable {
         , name(name)
         , surname(surname)
         , cars(cars)
+        , isHungry(false)
         , x({1, 2, 3, 4}) {}
 
     Person()

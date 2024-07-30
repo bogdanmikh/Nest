@@ -7,14 +7,15 @@
 // --------------------------------
 
 #define RAIN_FIELDS_BEGIN(classType)                                                               \
-    static const std::vector<Rain::FieldInfo> getFields() {                                        \
+    static std::vector<Rain::FieldInfo> getFields() {                                              \
         using ClassType = classType;                                                               \
-        return std::vector<Rain::FieldInfo> ({
+        auto fields = std::vector<Rain::FieldInfo>();
 
 #define RAIN_FIELD(name)                                                                           \
-    Rain::getTypeRegistry()->makeFieldInfo<decltype(name)>(#name, Rain::offsetOf(&ClassType::name)),
+    fields.emplace_back(Rain::getTypeRegistry()->makeFieldInfo<decltype(name)>(                    \
+        #name, Rain::offsetOf(&ClassType::name)                                                    \
+    ));
 
 #define RAIN_FIELDS_END                                                                            \
-    })                                                                                              \
-    ;                                                                                              \
+    return fields;                                                                                 \
     }

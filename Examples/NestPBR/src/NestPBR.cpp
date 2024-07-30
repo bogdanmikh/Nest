@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-void Profiler::start() {
+void ProfilerTest::start() {
     std::array<std::string, 6> skyTextureAssetNotBlur = {
         "Textures/skybox/notblur/px.png",
         "Textures/skybox/notblur/nx.png",
@@ -63,9 +63,9 @@ void Profiler::start() {
     m_cameraMove.init();
 }
 
-void Profiler::detach() {}
+void ProfilerTest::detach() {}
 
-void Profiler::update(double deltaTime) {
+void ProfilerTest::update(double deltaTime) {
     m_cameraMove.update(deltaTime);
     m_skyComponent.draw();
     m_cube.rotateZ(0.5);
