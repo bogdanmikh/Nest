@@ -15,4 +15,4 @@ struct View {
     FrameBufferHandle m_frameBuffer;
 };
 
-} // namespace Miren
+} // namespace NestRen

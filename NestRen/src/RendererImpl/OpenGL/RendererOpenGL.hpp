@@ -30,36 +30,20 @@ public:
     void resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) override;
     void deleteTexture(TextureHandle handle) override;
     void createIndexBuffer(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     ) override;
     void createDynamicIndexBuffer(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     ) override;
-    void updateDynamicIndexBuffer(
-        IndexBufferHandle handle, Memory indices, size_t count
-    ) override;
+    void updateDynamicIndexBuffer(IndexBufferHandle handle, Memory indices, size_t count) override;
     void deleteIndexBuffer(IndexBufferHandle handle) override;
     void createVertexBuffer(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     ) override;
     void createDynamicVertexBuffer(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     ) override;
-    void updateDynamicVertexBuffer(
-        VertexBufferHandle handle, Memory data, uint32_t size
-    ) override;
+    void updateDynamicVertexBuffer(VertexBufferHandle handle, Memory data, uint32_t size) override;
     void deleteVertexBuffer(VertexBufferHandle handle) override;
     void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) override;
     void deleteVertexLayout(VertexLayoutHandle handle) override;

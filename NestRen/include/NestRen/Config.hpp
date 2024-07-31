@@ -1,6 +1,6 @@
 #pragma once
 
-//#define MIREN_LOG_ENABLED 0
+// #define MIREN_LOG_ENABLED 0
 #define MIREN_CMDBUF_LOG_ENABLED 0
 #define MAX_VERTEX_BUFFERS 1000
 #define MAX_INDEX_BUFFERS 1000

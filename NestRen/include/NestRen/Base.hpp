@@ -9,15 +9,15 @@
 
 namespace NestRen {
 
-#define NESTREN_HANDLE(name)                                                                         \
+#define NESTREN_HANDLE(name)                                                                       \
     struct name {                                                                                  \
         name(uint16_t id)                                                                          \
             : id(id) {}                                                                            \
         name()                                                                                     \
-            : id(NESTREN_INVALID_HANDLE) {}                                                          \
+            : id(NESTREN_INVALID_HANDLE) {}                                                        \
         uint16_t id;                                                                               \
         bool isValid() {                                                                           \
-            return id != NESTREN_INVALID_HANDLE;                                                     \
+            return id != NESTREN_INVALID_HANDLE;                                                   \
         }                                                                                          \
     };
 
@@ -86,7 +86,6 @@ struct FrameBufferSpecification {
     FrameBufferAttachment attachments[MAX_FRAMEBUFFER_ATTACHMENTS];
     uint32_t num;
 };
-
 
 struct TransientIndexBuffer {
     TransientIndexBuffer()

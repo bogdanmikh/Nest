@@ -97,10 +97,7 @@ struct CreateIndexBufferCommand {
     size_t count;
 
     CreateIndexBufferCommand(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     )
         : handle(handle)
         , indices(indices)
@@ -115,10 +112,7 @@ struct CreateDynamicIndexBufferCommand {
     size_t count;
 
     CreateDynamicIndexBufferCommand(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     )
         : handle(handle)
         , indices(indices)
@@ -131,9 +125,7 @@ struct UpdateDynamicIndexBufferCommand {
     Memory indices;
     size_t count;
 
-    UpdateDynamicIndexBufferCommand(
-        IndexBufferHandle handle, Memory indices, size_t count
-    )
+    UpdateDynamicIndexBufferCommand(IndexBufferHandle handle, Memory indices, size_t count)
         : handle(handle)
         , indices(indices)
         , count(count) {}
@@ -153,10 +145,7 @@ struct CreateVertexBufferCommand {
     uint32_t size;
 
     CreateVertexBufferCommand(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     )
         : handle(handle)
         , layoutHandle(layoutHandle)
@@ -171,10 +160,7 @@ struct CreateDynamicVertexBufferCommand {
     uint32_t size;
 
     CreateDynamicVertexBufferCommand(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     )
         : handle(handle)
         , layoutHandle(layoutHandle)
@@ -187,9 +173,7 @@ struct UpdateDynamicVertexBufferCommand {
     Memory data;
     uint32_t size;
 
-    UpdateDynamicVertexBufferCommand(
-        VertexBufferHandle handle, Memory data, uint32_t size
-    )
+    UpdateDynamicVertexBufferCommand(VertexBufferHandle handle, Memory data, uint32_t size)
         : handle(handle)
         , data(data)
         , size(size) {}
@@ -218,4 +202,4 @@ struct DeleteVertexLayoutCommand {
         : handle(handle) {}
 };
 
-} // namespace Miren
+} // namespace NestRen

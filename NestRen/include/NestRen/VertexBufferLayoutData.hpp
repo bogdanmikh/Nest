@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Nest/Logger/Logger.hpp>
+#include "Nest/Logger/Logger.hpp"
 #include <Nest/Logger/Assert.hpp>
 
 #define MAX_VERTEX_LAYOUT_ELEMENTS 20
@@ -89,4 +89,4 @@ public:
     uint32_t m_stride;
 };
 
-}
+} // namespace NestRen

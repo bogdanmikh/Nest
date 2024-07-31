@@ -57,7 +57,7 @@ RendererOpenGL::RendererOpenGL() {
 #ifdef PLATFORM_IOS
     context = ALLOC(getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = (GraphicsContext*) NEW(OpenGLContext);
+    context = (GraphicsContext *)NEW(OpenGLContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -66,7 +66,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    LOG_INFO("OPENGL VERSION {}", (const char*)glGetString(GL_VERSION));
+    LOG_INFO("OPENGL VERSION {}", (const char *)glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(gpuErrorCallback, nullptr);
@@ -120,20 +120,14 @@ void RendererOpenGL::deleteTexture(TextureHandle handle) {
 }
 
 void RendererOpenGL::createIndexBuffer(
-    IndexBufferHandle handle,
-    Memory indices,
-    BufferElementType elementType,
-    size_t count
+    IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
 ) {
     indexBuffers[handle.id].create(indices.data, elementType, count, false);
     indices.release();
 }
 
 void RendererOpenGL::createDynamicIndexBuffer(
-    IndexBufferHandle handle,
-    Memory indices,
-    BufferElementType elementType,
-    size_t count
+    IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
 ) {
     indexBuffers[handle.id].create(indices.data, elementType, count, true);
     indices.release();
@@ -151,10 +145,7 @@ void RendererOpenGL::deleteIndexBuffer(IndexBufferHandle handle) {
 }
 
 void RendererOpenGL::createVertexBuffer(
-    VertexBufferHandle handle,
-    Memory data,
-    uint32_t size,
-    VertexLayoutHandle layoutHandle
+    VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
 ) {
     vertexBuffers[handle.id].create(data.data, size, false);
     vertexBuffers[handle.id].setLayoutHandle(layoutHandle);
@@ -162,10 +153,7 @@ void RendererOpenGL::createVertexBuffer(
 }
 
 void RendererOpenGL::createDynamicVertexBuffer(
-    VertexBufferHandle handle,
-    Memory data,
-    uint32_t size,
-    VertexLayoutHandle layoutHandle
+    VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
 ) {
     vertexBuffers[handle.id].create(data.data, size, true);
     vertexBuffers[handle.id].setLayoutHandle(layoutHandle);

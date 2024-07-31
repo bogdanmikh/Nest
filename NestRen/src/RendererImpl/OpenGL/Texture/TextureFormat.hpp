@@ -44,4 +44,4 @@ GLint openGLFiltering(TextureFiltering filtering) {
     }
 }
 
-} // namespace Miren
+} // namespace NestRen

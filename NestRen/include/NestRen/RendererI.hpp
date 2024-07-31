@@ -17,8 +17,8 @@ enum class RendererType {
     // Direct3D12,   //!< Direct3D 12.0
     // Metal,        //!< Metal
     // OpenGLES, //!< OpenGL ES 2.0+
-    OpenGL,   //!< OpenGL 2.1+
-    Vulkan,       //!< Vulkan
+    OpenGL, //!< OpenGL 2.1+
+    Vulkan, //!< Vulkan
 };
 
 class RendererI {
@@ -35,26 +35,16 @@ public:
     virtual void resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) = 0;
     virtual void deleteTexture(TextureHandle handle) = 0;
     virtual void createIndexBuffer(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     ) = 0;
     virtual void createDynamicIndexBuffer(
-        IndexBufferHandle handle,
-        Memory indices,
-        BufferElementType elementType,
-        size_t count
+        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
     ) = 0;
-    virtual void updateDynamicIndexBuffer(
-        IndexBufferHandle handle, Memory indices, size_t count
-    ) = 0;
+    virtual void
+    updateDynamicIndexBuffer(IndexBufferHandle handle, Memory indices, size_t count) = 0;
     virtual void deleteIndexBuffer(IndexBufferHandle handle) = 0;
     virtual void createVertexBuffer(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     ) = 0;
     virtual void createDynamicVertexBuffer(
         VertexBufferHandle handle,
@@ -62,9 +52,8 @@ public:
         uint32_t size,
         VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
     ) = 0;
-    virtual void updateDynamicVertexBuffer(
-        VertexBufferHandle handle, Memory data, uint32_t size
-    ) = 0;
+    virtual void
+    updateDynamicVertexBuffer(VertexBufferHandle handle, Memory data, uint32_t size) = 0;
     virtual void deleteVertexBuffer(VertexBufferHandle handle) = 0;
     virtual void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) = 0;
     virtual void deleteVertexLayout(VertexLayoutHandle handle) = 0;

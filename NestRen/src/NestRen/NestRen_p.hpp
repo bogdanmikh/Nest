@@ -8,9 +8,10 @@ namespace NestRen {
 struct Context {
 public:
     void rendererExecuteCommands(const RendererCommandType *command);
+
 private:
-    RendererI* m_renderer;
+    RendererI *m_renderer;
     Frame *m_submit;
 };
 
-}
+} // namespace NestRen

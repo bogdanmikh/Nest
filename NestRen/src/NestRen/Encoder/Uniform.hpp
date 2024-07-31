@@ -39,4 +39,4 @@ struct Uniform {
         , type(UniformDataType::Int)
         , size(0) {}
 };
-}
+} // namespace NestRen
