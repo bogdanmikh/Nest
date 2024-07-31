@@ -2,11 +2,11 @@
 #include <set>
 #include "AllocatorInterface.hpp"
 
-class DefaultAllocator: public AllocatorI {
+class DefaultAllocator : public AllocatorI {
 public:
     void *realloc(void *ptr, size_t size) override {
         if (ptr == nullptr) {
-            ptr = (void*)new char(size);
+            ptr = (void *)new char(size);
             return ptr;
         } else if (size == 0) {
             delete[] ptr;
@@ -16,13 +16,14 @@ public:
         ptr = realloc(ptr, size);
         return ptr;
     }
-    inline static DefaultAllocator* getInstance() {
+    inline static DefaultAllocator *getInstance() {
         return s_instance;
     }
     ~DefaultAllocator() override {}
+
 private:
     DefaultAllocator();
-    static DefaultAllocator* s_instance;
+    static DefaultAllocator *s_instance;
 };
 
 /*
@@ -43,4 +44,3 @@ void operator delete[](void* ptr, PlacementNewTag) {
 }
 
 */
-

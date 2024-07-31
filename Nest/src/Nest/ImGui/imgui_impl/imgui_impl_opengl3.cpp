@@ -1044,43 +1044,43 @@ bool ImGui_ImplOpenGL3_CreateDeviceObjects() {
         "#ifdef GL_ES\n"
         "    precision mediump float;\n"
         "#endif\n"
-        "uniform sampler2D Texture;\n"
+        "uniform sampler2D OpenGLTexture;\n"
         "varying vec2 Frag_UV;\n"
         "varying vec4 Frag_Color;\n"
         "void main()\n"
         "{\n"
-        "    gl_FragColor = Frag_Color * texture2D(Texture, Frag_UV.st);\n"
+        "    gl_FragColor = Frag_Color * texture2D(OpenGLTexture, Frag_UV.st);\n"
         "}\n";
 
     const GLchar *fragment_shader_glsl_130 =
-        "uniform sampler2D Texture;\n"
+        "uniform sampler2D OpenGLTexture;\n"
         "in vec2 Frag_UV;\n"
         "in vec4 Frag_Color;\n"
         "out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
+        "    Out_Color = Frag_Color * texture(OpenGLTexture, Frag_UV.st);\n"
         "}\n";
 
     const GLchar *fragment_shader_glsl_300_es =
         "precision mediump float;\n"
-        "uniform sampler2D Texture;\n"
+        "uniform sampler2D OpenGLTexture;\n"
         "in vec2 Frag_UV;\n"
         "in vec4 Frag_Color;\n"
         "layout (location = 0) out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
+        "    Out_Color = Frag_Color * texture(OpenGLTexture, Frag_UV.st);\n"
         "}\n";
 
     const GLchar *fragment_shader_glsl_410_core =
         "in vec2 Frag_UV;\n"
         "in vec4 Frag_Color;\n"
-        "uniform sampler2D Texture;\n"
+        "uniform sampler2D OpenGLTexture;\n"
         "layout (location = 0) out vec4 Out_Color;\n"
         "void main()\n"
         "{\n"
-        "    Out_Color = Frag_Color * texture(Texture, Frag_UV.st);\n"
+        "    Out_Color = Frag_Color * texture(OpenGLTexture, Frag_UV.st);\n"
         "}\n";
 
     // Select shaders matching our GLSL versions
@@ -1125,7 +1125,7 @@ bool ImGui_ImplOpenGL3_CreateDeviceObjects() {
     glDeleteShader(vert_handle);
     glDeleteShader(frag_handle);
 
-    bd->AttribLocationTex = glGetUniformLocation(bd->ShaderHandle, "Texture");
+    bd->AttribLocationTex = glGetUniformLocation(bd->ShaderHandle, "OpenGLTexture");
     bd->AttribLocationProjMtx = glGetUniformLocation(bd->ShaderHandle, "ProjMtx");
     bd->AttribLocationVtxPos = (GLuint)glGetAttribLocation(bd->ShaderHandle, "Position");
     bd->AttribLocationVtxUV = (GLuint)glGetAttribLocation(bd->ShaderHandle, "UV");

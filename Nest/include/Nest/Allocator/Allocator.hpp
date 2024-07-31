@@ -6,9 +6,10 @@ FreeListAllocator *FreeListAllocator::s_instance = new FreeListAllocator(MemoryS
 
 struct Allocator {
 public:
-    static AllocatorI* get() {
+    static AllocatorI *get() {
         return allocator;
     }
+
 private:
     static AllocatorI *allocator;
 };

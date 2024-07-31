@@ -21,6 +21,7 @@ add_subdirectory(Vendor/stb_image)
 add_subdirectory(Vendor/Rain)
 
 add_subdirectory(Nest)
+add_subdirectory(NestRen)
 add_subdirectory(Examples/NestPBR)
 add_subdirectory(Examples/NestCraft)
 add_subdirectory(Examples/ContentBrowser)

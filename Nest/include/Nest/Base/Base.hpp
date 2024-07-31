@@ -40,4 +40,3 @@ struct Vec2 {
         return x == vec.x && y == vec.y;
     }
 };
-
