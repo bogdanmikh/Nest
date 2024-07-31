@@ -1,9 +1,9 @@
 #include <filesystem>
 #include "stb_image.h"
 
-#include "Nest/Renderer/CubeMap.hpp"
+#include "Nest/Renderer/OpenGL/CubeMap.hpp"
 #include "Nest/Logger/Logger.hpp"
-#include "Nest/Renderer/ErrorsOpenGL.hpp"
+#include "Nest/Renderer/OpenGL/ErrorsOpenGL.hpp"
 
 CubeMap::CubeMap(const std::array<std::string, 6> &paths) {
     create(paths);

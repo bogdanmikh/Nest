@@ -50,6 +50,7 @@ public:
     void translate(glm::vec3 v);
     void translate(float x, float y, float z);
     static void drawSettings();
+
 private:
     static Settings m_settings;
     CreateInfo m_createInfo;

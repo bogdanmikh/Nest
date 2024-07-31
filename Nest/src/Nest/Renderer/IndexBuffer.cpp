@@ -1,5 +1,5 @@
-#include "Nest/Renderer/IndexBuffer.hpp"
-#include "Nest/Renderer/ErrorsOpenGL.hpp"
+#include "Nest/Renderer/OpenGL/IndexBuffer.hpp"
+#include "Nest/Renderer/OpenGL/ErrorsOpenGL.hpp"
 
 IndexBuffer::IndexBuffer(unsigned int *data, unsigned int count) {
     create(data, count);
@@ -9,7 +9,9 @@ void IndexBuffer::create(unsigned int *data, unsigned int count) {
     m_Size = count;
     GL_CALL(glGenBuffers(1, &m_RendererID));
     GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
-    GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW));
+    GL_CALL(
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW)
+    );
 }
 
 void IndexBuffer::destroy() {

@@ -18,10 +18,10 @@ enum class VoxelType {
 struct Voxel {
     VoxelType type;
     Voxel()
-            : type(VoxelType::NOTHING) {}
+        : type(VoxelType::NOTHING) {}
 
     explicit Voxel(VoxelType type)
-            : type(type) {}
+        : type(type) {}
 
     inline bool isAir() const {
         return type == VoxelType::NOTHING;

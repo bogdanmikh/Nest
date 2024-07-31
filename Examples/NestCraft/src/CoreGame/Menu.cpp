@@ -13,7 +13,7 @@ Menu::Menu() {
 }
 
 void Menu::update(double deltaTime) {
-    auto& colors = ImGui::GetStyle().Colors;
+    auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = {0.639, 0.639, 0.639, 0.7};
 
     ImVec2 displaySize = ImGui::GetIO().DisplaySize;
@@ -22,7 +22,7 @@ void Menu::update(double deltaTime) {
 
     ImGui::Begin("Menu", nullptr);
     ImGui::TextColored({0, 1., 0, 1.}, "FPS: %d", Application::getInstance()->getFps());
-    const glm::vec3& position = Application::getInstance()->getCamera()->getPosition();
+    const glm::vec3 &position = Application::getInstance()->getCamera()->getPosition();
     ImGui::Text("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z);
     ImGui::ColorEdit3("Color", m_color);
     ImGui::Text("Time: %.3f", ImGui::GetTime());

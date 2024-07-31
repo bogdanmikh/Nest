@@ -1,6 +1,6 @@
-#include "Nest/Renderer/Shader.hpp"
+#include "Nest/Renderer/OpenGL/Shader.hpp"
 #include "Nest/Logger/Logger.hpp"
-#include "Nest/Renderer/ErrorsOpenGL.hpp"
+#include "Nest/Renderer/OpenGL/ErrorsOpenGL.hpp"
 
 #include <fstream>
 #include <iostream>

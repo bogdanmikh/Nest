@@ -16,28 +16,32 @@ namespace NestProfiler {
 
 class Instrumentor {
 public:
-    inline static Instrumentor* get() {
+    inline static Instrumentor *get() {
         return s_instance;
     }
-    void addFrame(const FrameInfo& frameInfo);
-    void setEndTimeFrame(const uint64_t& endTime);
-    void addFunc(const FuncInfo& funcInfo);
-    AppInfo& getResult();
+    void addFrame(const FrameInfo &frameInfo);
+    void setEndTimeFrame(const uint64_t &endTime);
+    void addFunc(const FuncInfo &funcInfo);
+    AppInfo &getResult();
+
 private:
-    Instrumentor() : currentFrame(-1) {}
-    static Instrumentor* s_instance;
+    Instrumentor()
+        : currentFrame(-1) {}
+    static Instrumentor *s_instance;
     int currentFrame;
     AppInfo m_appInfo;
 };
 
 static uint64_t getTimeUs() {
-    auto now = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
-    uint64_t microseconds = std::chrono::time_point_cast<std::chrono::microseconds>(now).time_since_epoch().count();
+    auto now =
+        std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::system_clock::now());
+    uint64_t microseconds =
+        std::chrono::time_point_cast<std::chrono::microseconds>(now).time_since_epoch().count();
     return microseconds;
 }
 
 struct FuncProfiler {
-    FuncProfiler (const std::string& nameFile, const std::string& nameFunc, int line)
+    FuncProfiler(const std::string &nameFile, const std::string &nameFunc, int line)
         : m_nameFile(nameFile)
         , m_nameFunc(nameFunc)
         , m_line(line)
@@ -59,7 +63,7 @@ struct FuncProfiler {
 };
 
 struct FrameProfiler {
-    FrameProfiler (const std::string &nameThread) {
+    FrameProfiler(const std::string &nameThread) {
         std::stringstream ss;
         ss << std::this_thread::get_id();
         int threadId = (int)std::stoull(ss.str());
@@ -76,7 +80,8 @@ struct FrameProfiler {
     }
 };
 
-}
+} // namespace NestProfiler
 
 #define NEST_FRAME(nameThread) NestProfiler::FrameProfiler frameProfiler(nameThread)
-#define NEST_FUNC() NestProfiler::FuncProfiler funcProfiler(CURRENT_FILE, CURRENT_FUNCTION, CURRENT_LINE)
+#define NEST_FUNC()                                                                                \
+    NestProfiler::FuncProfiler funcProfiler(CURRENT_FILE, CURRENT_FUNCTION, CURRENT_LINE)

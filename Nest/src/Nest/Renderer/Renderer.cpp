@@ -1,6 +1,6 @@
-#include "Nest/Renderer/Renderer.hpp"
+#include "Nest/Renderer/OpenGL/Renderer.hpp"
 #include "Nest/Logger/Logger.hpp"
-#include "Nest/Renderer/ErrorsOpenGL.hpp"
+#include "Nest/Renderer/OpenGL/ErrorsOpenGL.hpp"
 
 void Renderer::checkForErrors() {
     while (true) {
@@ -14,7 +14,7 @@ void Renderer::checkForErrors() {
 void Renderer::init() {
     glEnable(GL_DEPTH_TEST);
     //    glEnable(GL_CULL_FACE);
-//    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }

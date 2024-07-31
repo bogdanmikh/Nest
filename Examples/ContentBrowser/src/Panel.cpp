@@ -26,7 +26,7 @@ static std::string getString(const char8_t *ptr) {
 
 void Panel::start() {
     m_baseDirectory = std::filesystem::current_path();
-//    m_currentDirectory = std::filesystem::current_path();
+    //    m_currentDirectory = std::filesystem::current_path();
     m_currentDirectory = "/Users/bogdan";
     m_defaultFileIcon = new Texture("Icons/_blank.png", true);
     m_directoryIcon = new Texture("Icons/DirectoryIcon.png", true);
@@ -86,7 +86,9 @@ void Panel::onImGuiRender() {
                     LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath, m_currentDirectory.string());
                 } else {
                     std::filesystem::copy(dropPath, m_currentDirectory);
-                    LOG_INFO("COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string());
+                    LOG_INFO(
+                        "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
+                    );
                 }
             }
         }

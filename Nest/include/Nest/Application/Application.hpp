@@ -49,7 +49,6 @@ private:
     Camera *camera;
     glm::vec2 m_lastViewportSize;
 
-
     int fps;
     int maximumFps = 60;
     uint64_t deltaTimeMillis = 0;

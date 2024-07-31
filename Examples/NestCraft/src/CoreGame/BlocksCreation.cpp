@@ -9,10 +9,13 @@ void BlocksCreation::init() {
 }
 
 void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
-    Mesh* data = ChunkMeshGenerator::generateMesh(m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true);
+    Mesh *data = ChunkMeshGenerator::generateMesh(
+        m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
+    );
     m_chunksStorage
-        ->chunks[chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-                 chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
+        ->chunks
+            [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
+             chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ]
         .setMesh(data);
 }
 
@@ -58,7 +61,8 @@ void BlocksCreation::update(double deltaTime) {
     glm::vec3 position = m_camera->getPosition();
     glm::vec3 target = m_camera->getFront();
     auto v = m_chunksStorage->bresenham3D(
-        position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE);
+        position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
+    );
     if (v && v->voxel != nullptr) {
         if (leftPressed) {
             int x = v->end.x + v->normal.x;
@@ -107,7 +111,7 @@ void BlocksCreation::updateVoxelHand() {
     }
 }
 
-void BlocksCreation::setChunksStorage(ChunksStorage* storage) {
+void BlocksCreation::setChunksStorage(ChunksStorage *storage) {
     m_chunksStorage = storage;
 }
 

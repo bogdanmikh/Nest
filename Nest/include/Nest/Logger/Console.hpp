@@ -6,10 +6,10 @@
 #include <spdlog/fmt/bundled/core.h>
 #include "spdlog/fmt/bundled/format.h"
 
-#define VIVO_INFO(...)                                                                             \
+#define NEST_INFO(...)                                                                             \
     LOG_INFO(__VA_ARGS__);                                                                         \
     Console::get()->addTextF(__VA_ARGS__)
-#define VIVO_ERROR(...)                                                                            \
+#define NEST_ERROR(...)                                                                            \
     LOG_ERROR(__VA_ARGS__);                                                                        \
     Console::get()->addErrorF(__VA_ARGS__)
 

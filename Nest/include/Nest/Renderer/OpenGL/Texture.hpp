@@ -20,6 +20,7 @@ public:
     inline Vec2 getSize() {
         return m_size;
     }
+
 private:
     unsigned int m_rendererID = 0;
     Vec2 m_size = {0, 0};

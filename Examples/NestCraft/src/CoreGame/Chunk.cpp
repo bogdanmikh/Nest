@@ -5,7 +5,8 @@
 #include "glm/gtc/noise.hpp"
 #include <cmath>
 
-Chunk::Chunk() : m_mesh(nullptr) {
+Chunk::Chunk()
+    : m_mesh(nullptr) {
     data = new Voxel[SIZE_X * SIZE_Y * SIZE_Z];
 }
 
@@ -27,20 +28,19 @@ Voxel *Chunk::get(int x, int y, int z) {
     return &data[y * Chunk::SIZE_X * Chunk::SIZE_Z + x * Chunk::SIZE_X + z];
 }
 
-
 uint8_t Chunk::getType(int indexX, int indexY, int indexZ) {
-    Voxel* voxel = get(indexX, indexY, indexZ);
+    Voxel *voxel = get(indexX, indexY, indexZ);
     if (voxel == nullptr) {
         return 0;
     }
     return uint8_t(voxel->type);
 }
 
-void Chunk::setMesh(Mesh* mesh) {
+void Chunk::setMesh(Mesh *mesh) {
     delete m_mesh;
     m_mesh = mesh;
 }
 
-Mesh* Chunk::getMesh() {
+Mesh *Chunk::getMesh() {
     return m_mesh;
 }

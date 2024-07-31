@@ -9,7 +9,6 @@
 #include <string>
 #include <fstream>
 
-
 namespace fs = std::filesystem;
 
 void ProfilerTest::start() {}
@@ -34,11 +33,9 @@ std::thread th2;
 
 void func2() {
     NEST_FRAME("Func2");
-//    NEST_FUNC();
+    //    NEST_FUNC();
     for (int i = 0; i < 100000; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-
-        }
+        for (int j = 0; j < 1000; ++j) {}
     }
 }
 
@@ -49,7 +46,7 @@ void ProfilerTest::update(double deltaTime) {
     }
 
     th1 = std::thread(func2);
-//    func2();
+    //    func2();
     ImGui::Begin("Loshara");
     ImGui::End();
 }

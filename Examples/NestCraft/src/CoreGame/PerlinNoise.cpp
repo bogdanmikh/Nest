@@ -8,7 +8,8 @@ float interpolate(float v1, float v2, float blend) {
 }
 
 void PerlinNoise::generate2DGlm(
-    int seedValue, int octaves, float bias, float *values, int width, int height) {
+    int seedValue, int octaves, float bias, float *values, int width, int height
+) {
     glm::vec2 point;
     for (int x = 0; x < width; x++) {
         for (int y = 0; y < height; y++) {
@@ -20,7 +21,8 @@ void PerlinNoise::generate2DGlm(
 }
 
 void PerlinNoise::generate2DCustom(
-    int seedValue, int octaves, float bias, float *values, int width, int height) {
+    int seedValue, int octaves, float bias, float *values, int width, int height
+) {
     std::srand(seedValue);
     float *seed = new float[width * height];
     for (int i = 0; i < width * height; i++) {
@@ -47,9 +49,11 @@ void PerlinNoise::generate2DCustom(
                 float blendY = (float)(y - sampleY1) / (float)(dist);
 
                 float sampleT = interpolate(
-                    seed[sampleY1 * width + sampleX1], seed[sampleY1 * width + sampleX2], blendX);
+                    seed[sampleY1 * width + sampleX1], seed[sampleY1 * width + sampleX2], blendX
+                );
                 float sampleB = interpolate(
-                    seed[sampleY2 * width + sampleX1], seed[sampleY2 * width + sampleX2], blendX);
+                    seed[sampleY2 * width + sampleX1], seed[sampleY2 * width + sampleX2], blendX
+                );
                 values[x * width + y] += (blendY * (sampleB - sampleT) + sampleT) * scale;
 
                 scaleAccumulation += scale;

@@ -2,7 +2,7 @@
 
 #include "Nest/Application/Application.hpp"
 #include "Nest/Logger/Logger.hpp"
-#include "Nest/Renderer/Renderer.hpp"
+#include "Nest/Renderer/OpenGL/Renderer.hpp"
 #include "Nest/Window/Events.hpp"
 #include "Nest/ImGui/ImGui.hpp"
 #include "imgui.h"

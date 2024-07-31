@@ -20,8 +20,9 @@ void Sphere::init(const CreateInfo &createInfo) {
     m_settings.countSpheres++;
     if (std::filesystem::exists(m_createInfo.pathToGeometryShader)) {
         m_sphereShader.create(
-            m_createInfo.pathToVertexShader.c_str(), m_createInfo.pathToFragmentShader.c_str()
-            , m_createInfo.pathToGeometryShader.c_str()
+            m_createInfo.pathToVertexShader.c_str(),
+            m_createInfo.pathToFragmentShader.c_str(),
+            m_createInfo.pathToGeometryShader.c_str()
         );
     } else {
         m_sphereShader.create(
@@ -98,9 +99,9 @@ void Sphere::init(const CreateInfo &createInfo) {
         m_cubeMap.create(m_createInfo.skyTextureAsset);
     }
     std::ostringstream message;
-//    for (int i = 0; i < ; ++i) {
-//
-//    }
+    //    for (int i = 0; i < ; ++i) {
+    //
+    //    }
 }
 
 void Sphere::drawSettings() {

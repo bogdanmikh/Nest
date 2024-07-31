@@ -1,15 +1,15 @@
 #pragma once
 
 // NestRendering
-#include "Nest/Renderer/Renderer.hpp"
-#include "Nest/Renderer/Shader.hpp"
-#include "Nest/Renderer/VertexBuffer.hpp"
-#include "Nest/Renderer/IndexBuffer.hpp"
-#include "Nest/Renderer/VertexArray.hpp"
-#include "Nest/Renderer/VertexBufferLayout.hpp"
-#include "Nest/Renderer/Texture.hpp"
-#include "Nest/Renderer/CubeMap.hpp"
-#include "Nest/Renderer/Mesh.hpp"
+#include "Nest/Renderer/OpenGL/Renderer.hpp"
+#include "Nest/Renderer/OpenGL/Shader.hpp"
+#include "Nest/Renderer/OpenGL/VertexBuffer.hpp"
+#include "Nest/Renderer/OpenGL/IndexBuffer.hpp"
+#include "Nest/Renderer/OpenGL/VertexArray.hpp"
+#include "Nest/Renderer/OpenGL/VertexBufferLayout.hpp"
+#include "Nest/Renderer/OpenGL/Texture.hpp"
+#include "Nest/Renderer/OpenGL/CubeMap.hpp"
+#include "Nest/Renderer/OpenGL/Mesh.hpp"
 
 // Window
 #include "Nest/Window/Window.hpp"

@@ -17,7 +17,8 @@ public:
     void init();
     void draw() override;
     void update(double deltaTime) override;
+
 private:
-    BlocksCreation* blocksCreation;
-    ChunksStorage* chunksStorage;
+    BlocksCreation *blocksCreation;
+    ChunksStorage *chunksStorage;
 };

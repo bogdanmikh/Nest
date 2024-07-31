@@ -7,15 +7,14 @@
 #include <filesystem>
 
 void Game::start() {
-    shader = new Shader("Shaders/vst.glsl",
-                              "Shaders/fst.glsl");
+    shader = new Shader("Shaders/vst.glsl", "Shaders/fst.glsl");
     gameObjects.emplace_back(new CameraMove);
     auto *chunksRenderer = new ChunksRenderer;
     chunksRenderer->init();
     gameObjects.emplace_back(chunksRenderer);
-//    auto *cross = new Cross;
-//    cross->init();
-//    gameObjects.emplace_back(cross);
+    //    auto *cross = new Cross;
+    //    cross->init();
+    //    gameObjects.emplace_back(cross);
 }
 
 void Game::update(double deltaTime) {
@@ -29,15 +28,14 @@ void Game::update(double deltaTime) {
     shader->setMat4("u_projection", camera->getProjectionMatrix());
     shader->setVec3("u_color", menu.getColor());
     menu.update(deltaTime);
-    for (const auto &item: gameObjects) {
+    for (const auto &item : gameObjects) {
         item->update(deltaTime);
     }
 }
 
 void Game::detach() {
-    for (const auto &item: gameObjects) {
+    for (const auto &item : gameObjects) {
         delete item;
     }
     delete shader;
 }
-

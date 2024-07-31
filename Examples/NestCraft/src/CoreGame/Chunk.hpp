@@ -12,13 +12,14 @@ public:
     Chunk();
     ~Chunk();
     void set(int indexX, int indexY, int indexZ, VoxelType type);
-    Voxel* get(int indexX, int indexY, int indexZ);
+    Voxel *get(int indexX, int indexY, int indexZ);
     uint8_t getType(int indexX, int indexY, int indexZ);
 
-    void setMesh(Mesh* mesh);
-    Mesh* getMesh();
+    void setMesh(Mesh *mesh);
+    Mesh *getMesh();
 
-    Voxel* data;
+    Voxel *data;
+
 private:
-    Mesh* m_mesh;
+    Mesh *m_mesh;
 };

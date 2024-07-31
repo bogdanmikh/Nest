@@ -1,4 +1,4 @@
-#include "Nest/Renderer/VertexBuffer.hpp"
+#include "Nest/Renderer/OpenGL/VertexBuffer.hpp"
 #include "glad/glad.h"
 
 VertexBuffer::VertexBuffer(const void *data, unsigned int size) {

@@ -47,6 +47,7 @@ public:
     void rotateX(float degrees);
     void rotateY(float degrees);
     void rotateZ(float degrees);
+
 private:
     CreateInfo m_createInfo;
     CubeMap m_cubeMap;

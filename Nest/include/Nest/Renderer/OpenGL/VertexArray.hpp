@@ -11,6 +11,7 @@ public:
 
     void bind() const;
     void unbind() const;
+
 private:
     unsigned int m_rendererID;
 };

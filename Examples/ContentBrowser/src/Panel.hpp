@@ -11,6 +11,7 @@ public:
     ~Panel();
     void start();
     void onImGuiRender();
+
 private:
     SystemTools *m_systemTools;
     std::filesystem::path m_baseDirectory;

@@ -1,6 +1,7 @@
-#include "Nest/Renderer/FrameBuffer.hpp"
+#include "Nest/Renderer/OpenGL/FrameBuffer.hpp"
 #include "glad/glad.h"
-#include <Nest/Renderer/ErrorsOpenGL.hpp>
+#include <Nest/Renderer/OpenGL/ErrorsOpenGL.hpp>
+#include <Nest/Logger/Logger.hpp>
 
 FrameBuffer::FrameBuffer(const Vec2 &size)
     : m_RendererID(0) {
@@ -47,7 +48,7 @@ void FrameBuffer::unbind() const {
 }
 
 void FrameBuffer::checkStatus() {
-    VIVO_ASSERT(
+    NEST_ASSERT(
         glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
         "FRAGMENTBUFFER NOT COMPLETE"
     );

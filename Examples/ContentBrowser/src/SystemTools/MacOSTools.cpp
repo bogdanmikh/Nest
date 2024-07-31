@@ -1,6 +1,5 @@
 #include "MacOSTools.hpp"
 
-
 void MacOSTools::open(const std::string &path) {
     std::string command = "open " + path;
     system(command.c_str());

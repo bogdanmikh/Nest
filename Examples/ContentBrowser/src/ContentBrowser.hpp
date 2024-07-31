@@ -3,7 +3,7 @@
 #include <Nest.hpp>
 #include "Panel.hpp"
 
-class ContentBrowser final: public Layer {
+class ContentBrowser final : public Layer {
 public:
     ContentBrowser();
     ~ContentBrowser();
@@ -12,4 +12,3 @@ public:
     void detach() override;
     Panel panel;
 };
-

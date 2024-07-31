@@ -7,14 +7,15 @@ Cube::~Cube() {
     m_shaderCube.destroy();
 }
 
-void Cube::init(const CreateInfo& createInfo) {
+void Cube::init(const CreateInfo &createInfo) {
     m_createInfo = createInfo;
     m_model = glm::mat4(1);
     m_model = glm::translate(m_model, m_createInfo.position);
     if (std::filesystem::exists(m_createInfo.pathToGeometryShader)) {
         m_shaderCube.create(
-            m_createInfo.pathToVertexShader.c_str(), m_createInfo.pathToFragmentShader.c_str()
-                                                         , m_createInfo.pathToGeometryShader.c_str()
+            m_createInfo.pathToVertexShader.c_str(),
+            m_createInfo.pathToFragmentShader.c_str(),
+            m_createInfo.pathToGeometryShader.c_str()
         );
     } else {
         m_shaderCube.create(

@@ -6,7 +6,7 @@ CameraMove::CameraMove()
     : window(Application::getInstance()->getWindow())
     , camera(Application::getInstance()->getCamera()) {
     camera->setPosition(0.0, 10.0, 5.0);
-//    camera->rotate(20, 90, 0.f);
+    //    camera->rotate(20, 90, 0.f);
     cursorLock = false;
 }
 
@@ -30,7 +30,7 @@ void CameraMove::update(double deltaTime) {
         camera->translateLocal(cameraSpeed * deltaTime, 0., 0.);
     }
     if (Events::isKeyPressed(Key::SPACE)) {
-        camera->translateLocal( 0., cameraSpeed * deltaTime, 0.);
+        camera->translateLocal(0., cameraSpeed * deltaTime, 0.);
     }
     if (Events::isKeyPressed(Key::LEFT_CONTROL)) {
         camera->translateLocal(0., -cameraSpeed * deltaTime, 0.);
@@ -44,11 +44,13 @@ void CameraMove::update(double deltaTime) {
         cursorLock = Events::isCursorLocked();
         resetMouse = true;
     }
-    if (!Events::isCursorLocked()) return;
+    if (!Events::isCursorLocked())
+        return;
 
     glm::vec2 cursorPos = Events::getCursorPos();
     glm::vec2 diff = lastPos - cursorPos;
-    if (resetMouse) diff = glm::vec2(0);
+    if (resetMouse)
+        diff = glm::vec2(0);
     lastPos = cursorPos;
     float mouseSpeed = 0.1f;
     camera->rotate(-diff.y * mouseSpeed, -diff.x * mouseSpeed, 0.f);

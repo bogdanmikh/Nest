@@ -1,7 +1,7 @@
 #include <filesystem>
 #include "stb_image.h"
 
-#include "Nest/Renderer/Texture.hpp"
+#include "Nest/Renderer/OpenGL/Texture.hpp"
 #include "Nest/Logger/Logger.hpp"
 #include "glad/glad.h"
 

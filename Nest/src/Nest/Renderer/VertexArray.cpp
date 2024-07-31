@@ -1,5 +1,5 @@
-#include "Nest/Renderer/VertexArray.hpp"
-#include "Nest/Renderer/ErrorsOpenGL.hpp"
+#include "Nest/Renderer/OpenGL/VertexArray.hpp"
+#include "Nest/Renderer/OpenGL/ErrorsOpenGL.hpp"
 
 VertexArray::VertexArray() {
     GL_CALL(glGenVertexArrays(1, &m_rendererID));

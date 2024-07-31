@@ -30,7 +30,7 @@ void ProfilerTest::start() {
     cubeCreateInfo.position = glm::vec3(0., 0., 0.);
     cubeCreateInfo.pathToVertexShader = "Shaders/vstCube.glsl";
     cubeCreateInfo.pathToFragmentShader = "Shaders/fstCube.glsl";
-//    cubeCreateInfo.pathToGeometryShader = "Shaders/gstCube.glsl";
+    //    cubeCreateInfo.pathToGeometryShader = "Shaders/gstCube.glsl";
     cubeCreateInfo.useTexture = true;
     cubeCreateInfo.pathToTexture = "Textures/Rust.jpg";
     cubeCreateInfo.useCubeMap = true;

@@ -1,4 +1,4 @@
-#include "Nest/Renderer/Mesh.hpp"
+#include "Nest/Renderer/OpenGL/Mesh.hpp"
 #include "Nest/Logger/Logger.hpp"
 
 #include <iostream>
