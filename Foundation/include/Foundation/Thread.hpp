@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #define INVALID_HANDLE_VALUE -1
 
 namespace Foundation {
@@ -11,7 +13,7 @@ public:
     Thread();
     virtual ~Thread();
     bool
-    init(ThreadFn _fn, void *_userData = NULL, uint32_t _stackSize = 0, const char *_name = NULL);
+    init(ThreadFn _fn, void *_userData = nullptr, uint32_t _stackSize = 0, const char *_name = nullptr);
     void shutdown();
     bool isRunning() const;
     int32_t getExitCode() const;

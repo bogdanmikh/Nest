@@ -1,7 +1,8 @@
 #include "Foundation/PlatformDetection.hpp"
-#include "Foundation/Foundation.hpp"
 
 #include "Foundation/Thread.hpp"
+#include "Foundation/Logger.hpp"
+#include "Foundation/Assert.hpp"
 
 #ifdef PLATFORM_POSIX
 #    include <pthread.h>
@@ -50,7 +51,7 @@ Thread::Thread()
     , m_stackSize(0)
     , m_exitCode(0)
     , m_running(false) {
-    PND_STATIC_ASSERT(sizeof(ThreadInternal) <= sizeof(m_internal));
+    NEST_STATIC_ASSERT(sizeof(ThreadInternal) <= sizeof(m_internal));
     ThreadInternal *ti = (ThreadInternal *)m_internal;
 #ifdef PLATFORM_WINDOWS
     ti->m_handle = INVALID_HANDLE_VALUE;
@@ -67,7 +68,7 @@ Thread::~Thread() {
 }
 
 bool Thread::init(ThreadFn _fn, void *_userData, uint32_t _stackSize, const char *_name) {
-    PND_ASSERT(m_running == false, "Already running!");
+    NEST_ASSERT(m_running == false, "Already running!");
 
     m_fn = _fn;
     m_userData = _userData;
@@ -119,7 +120,7 @@ bool Thread::init(ThreadFn _fn, void *_userData, uint32_t _stackSize, const char
 }
 
 void Thread::shutdown() {
-    PND_ASSERT(m_running, "Not running!");
+    NEST_ASSERT(m_running, "Not running!");
     ThreadInternal *ti = (ThreadInternal *)m_internal;
 
 #ifdef PLATFORM_WINDOWS

@@ -1,5 +1,5 @@
 #include "Foundation/PlatformDetection.hpp"
-#include "Foundation/Foundation.hpp"
+#include "Foundation/Assert.hpp"
 
 #include "Foundation/Semaphore.hpp"
 
@@ -29,11 +29,11 @@ struct SemaphoreInternal {
 #if defined(PLATFORM_MACOS) || defined(PLATFORM_IOS)
 
 Semaphore::Semaphore(const char *name) {
-    PND_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal));
+    NEST_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal));
 
     SemaphoreInternal *si = (SemaphoreInternal *)m_internal;
     si->m_handle = dispatch_semaphore_create(0);
-    PND_ASSERT(NULL != si->m_handle, "dispatch_semaphore_create failed.");
+    NEST_ASSERT(NULL != si->m_handle, "dispatch_semaphore_create failed.");
 }
 
 Semaphore::~Semaphore() {
@@ -60,23 +60,23 @@ bool Semaphore::wait(int32_t _msecs) {
 #elif defined(PLATFORM_POSIX)
 
 Semaphore::Semaphore(const char *name) {
-    PND_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal));
+    NEST_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal));
 
     SemaphoreInternal *si = (SemaphoreInternal *)m_internal;
     si->name = name;
 
     sem_unlink(name);
     si->m_sem = sem_open(name, O_CREAT, 0644, 0);
-    PND_ASSERT(si->m_sem != SEM_FAILED, "sem_open");
+    NEST_ASSERT(si->m_sem != SEM_FAILED, "sem_open");
 }
 
 Semaphore::~Semaphore() {
     SemaphoreInternal *si = (SemaphoreInternal *)m_internal;
 
     int result = sem_close(si->m_sem);
-    PND_ASSERT_F(0 == result, "sem_close %d", result);
+    NEST_ASSERT_F(0 == result, "sem_close %d", result);
     result = sem_unlink(si->name);
-    PND_ASSERT_F(0 == result, "sem_unlink %d", result);
+    NEST_ASSERT_F(0 == result, "sem_unlink %d", result);
 }
 
 void Semaphore::post(uint32_t _count) {
@@ -86,7 +86,7 @@ void Semaphore::post(uint32_t _count) {
 
     for (uint32_t ii = 0; ii < _count; ++ii) {
         result = sem_post(si->m_sem);
-        PND_ASSERT_F(0 == result, "sem_post %d", result);
+        NEST_ASSERT_F(0 == result, "sem_post %d", result);
     }
 }
 
@@ -94,7 +94,7 @@ bool Semaphore::wait(int32_t _msecs) {
     SemaphoreInternal *si = (SemaphoreInternal *)m_internal;
 
     int result = sem_wait(si->m_sem);
-    PND_ASSERT_F(0 == result, "sem_wait %d", result);
+    NEST_ASSERT_F(0 == result, "sem_wait %d", result);
 
     return 0 == result;
 }
@@ -110,7 +110,7 @@ Semaphore::Semaphore(const char *name) {
     // #else
     // 		si->m_handle = CreateSemaphoreA(NULL, 0, LONG_MAX, NULL);
     // #endif
-    PND_ASSERT(NULL != si->m_handle, "Failed to create Semaphore!");
+    NEST_ASSERT(NULL != si->m_handle, "Failed to create Semaphore!");
 }
 
 Semaphore::~Semaphore() {
