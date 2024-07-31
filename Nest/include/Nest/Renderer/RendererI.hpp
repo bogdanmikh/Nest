@@ -1,11 +1,26 @@
-/*struct RendererI {
+#pragma once
+
+#include "Base.hpp"
+#include <cstdint>
+
+enum class RendererType {
+    Noop, //!< No rendering.
+    // Direct3D12,   //!< Direct3D 12.0
+    // Metal,        //!< Metal
+    // OpenGLES, //!< OpenGL ES 2.0+
+    OpenGL,   //!< OpenGL 2.1+
+    Vulkan,       //!< Vulkan
+};
+
+using IndexBufferHandle = uint16_t;
+using VertexBufferHandle = uint16_t;
+
+struct RendererI {
     virtual ~RendererI() = 0;
-    virtual RendererType::Enum getRendererType() const = 0;
-    virtual const char *getRendererName() const = 0;
-    virtual bool isDeviceRemoved() = 0;
-    virtual void flip() = 0;
+    virtual RendererType getRendererType() const = 0;
+//    virtual void flip() = 0;
     virtual void
-    createIndexBuffer(IndexBufferHandle handle, const Memory *_mem, uint16_t _flags) = 0;
+    createIndexBuffer(IndexBufferHandle handle, const ProgramCreate) = 0;
     virtual void destroyIndexBuffer(IndexBufferHandle handle) = 0;
     virtual void createVertexLayout(VertexLayoutHandle handle, const VertexLayout &_layout) = 0;
     virtual void destroyVertexLayout(VertexLayoutHandle handle) = 0;
@@ -83,4 +98,3 @@
     virtual void blitSetup(TextVideoMemBlitter &_blitter) = 0;
     virtual void blitRender(TextVideoMemBlitter &_blitter, uint32_t _numIndices) = 0;
 };
- */
