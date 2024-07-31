@@ -140,8 +140,8 @@ public:
     RenderDraw *getDrawCalls();
     void reset();
 
-//    TransientIndexBuffer m_transientIb;
-//    TransientVertexBuffer m_transientVb;
+    TransientIndexBuffer m_transientIb;
+    TransientVertexBuffer m_transientVb;
     uint32_t m_transientVbSize;
     uint32_t m_transientIbSize;
 

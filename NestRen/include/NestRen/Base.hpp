@@ -2,6 +2,7 @@
 
 #include "Nest/Allocator/Memory.hpp"
 #include "Nest/Logger/Assert.hpp"
+#include "VertexBufferLayoutData.hpp"
 
 #define NESTREN_INVALID_HANDLE UINT16_MAX
 #define MAX_FRAMEBUFFER_ATTACHMENTS 5
@@ -84,6 +85,33 @@ struct FrameBufferSpecification {
 
     FrameBufferAttachment attachments[MAX_FRAMEBUFFER_ATTACHMENTS];
     uint32_t num;
+};
+
+
+struct TransientIndexBuffer {
+    TransientIndexBuffer()
+        : data(nullptr)
+        , size(0)
+        , startIndex(0)
+        , handle(NESTREN_INVALID_HANDLE)
+        , elementType(BufferElementType::UnsignedInt) {}
+    uint8_t *data;
+    uint32_t size;
+    uint32_t startIndex;
+    IndexBufferHandle handle;
+    BufferElementType elementType;
+};
+
+struct TransientVertexBuffer {
+    TransientVertexBuffer()
+        : data(nullptr)
+        , size(0)
+        , startVertex(0)
+        , handle(NESTREN_INVALID_HANDLE) {}
+    uint8_t *data;
+    uint32_t size;
+    uint32_t startVertex;
+    VertexBufferHandle handle;
 };
 
 struct TextureCreate {
