@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Miren/Base.hpp"
-#include "Miren/MirenStates.hpp"
+#include "NestRen/Base.hpp"
+#include "NestRen/MirenStates.hpp"
 #include "Uniform.hpp"
 
 namespace NestRen {

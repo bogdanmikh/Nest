@@ -5,9 +5,9 @@
 #pragma once
 
 #include "NestRen/Base.hpp"
-#include "Miren/HandleAllocator.hpp"
-#include "Miren/VertexBufferLayoutData.hpp"
-#include "Miren/Encoder/RenderDraw.hpp"
+#include "Nest/Allocator/Allocator.hpp"
+#include "NestRen/VertexBufferLayoutData.hpp"
+#include "NestRen/Encoder/RenderDraw.hpp"
 
 namespace NestRen {
 

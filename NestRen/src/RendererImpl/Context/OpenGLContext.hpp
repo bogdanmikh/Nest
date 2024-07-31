@@ -4,19 +4,18 @@
 
 #pragma once
 
-#include "Miren/GraphicsContext.hpp"
+#include "NestRen//GraphicsContext.hpp"
 
-namespace Miren {
+namespace NestRen {
 
 // GLFW and GLAD based context
 class OpenGLContext : public GraphicsContext {
 public:
     void create() override;
-    void flip() override;
     uint32_t getDefaultFrameBufferId() override;
 
 private:
     void *glfwWindowHandle;
 };
 
-} // namespace Miren
+} // namespace NestRen

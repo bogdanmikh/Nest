@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Nest/Renderer/VertexBufferLayoutData.hpp"
-#include "Nest/Renderer/Base.hpp"
+#include "NestRen/VertexBufferLayoutData.hpp"
+#include "NestRen/Base.hpp"
 
 namespace NestRen {
 

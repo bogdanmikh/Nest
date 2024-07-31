@@ -5,14 +5,14 @@
 #include "RendererOpenGL.hpp"
 #include "OpenGLBase.hpp"
 
-#include <Foundation/Assert.hpp>
-#include <Foundation/Allocator.hpp>
-#include <Foundation/Logger.hpp>
+#include <Nest/Logger/Assert.hpp>
+#include <Nest/Allocator/Allocator.hpp>
+#include <Nest/Logger/Logger.hpp>
 
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
-#    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
+#    include "RendererImpl/Context/OpenGLContext.hpp"
 #endif
 
 namespace NestRen {
@@ -54,9 +54,9 @@ const char *getGLErrorStr(GLenum err) {
 RendererOpenGL::RendererOpenGL() {
     s_instance = this;
 #ifdef PLATFORM_IOS
-    context = NEW(Foundation::getAllocator(), GlesContext);
+    context = ALLOC(getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = NEW(Foundation::getAllocator(), OpenGLContext);
+    context = ALLOC(OpenGLContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -65,7 +65,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    NestRen_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
+    LOG_INFO("OPENGL VERSION {}", (const char*)glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(gpuErrorCallback, nullptr);
@@ -76,7 +76,7 @@ RendererOpenGL::RendererOpenGL() {
 
 RendererOpenGL::~RendererOpenGL() {
     GL_CALL(glDeleteVertexArrays(1, &m_uselessVao));
-    DELETE(Foundation::getAllocator(), context);
+    FREE(context);
     s_instance = nullptr;
 }
 
@@ -124,7 +124,7 @@ void RendererOpenGL::deleteTexture(TextureHandle handle) {
 
 void RendererOpenGL::createIndexBuffer(
     IndexBufferHandle handle,
-    Foundation::Memory indices,
+    Memory indices,
     BufferElementType elementType,
     size_t count
 ) {
@@ -134,7 +134,7 @@ void RendererOpenGL::createIndexBuffer(
 
 void RendererOpenGL::createDynamicIndexBuffer(
     IndexBufferHandle handle,
-    Foundation::Memory indices,
+    Memory indices,
     BufferElementType elementType,
     size_t count
 ) {
@@ -143,7 +143,7 @@ void RendererOpenGL::createDynamicIndexBuffer(
 }
 
 void RendererOpenGL::updateDynamicIndexBuffer(
-    IndexBufferHandle handle, Foundation::Memory indices, size_t count
+    IndexBufferHandle handle, Memory indices, size_t count
 ) {
     indexBuffers[handle.id].update(indices.data, count);
     indices.release();
@@ -155,7 +155,7 @@ void RendererOpenGL::deleteIndexBuffer(IndexBufferHandle handle) {
 
 void RendererOpenGL::createVertexBuffer(
     VertexBufferHandle handle,
-    Foundation::Memory data,
+    Memory data,
     uint32_t size,
     VertexLayoutHandle layoutHandle
 ) {
@@ -166,7 +166,7 @@ void RendererOpenGL::createVertexBuffer(
 
 void RendererOpenGL::createDynamicVertexBuffer(
     VertexBufferHandle handle,
-    Foundation::Memory data,
+    Memory data,
     uint32_t size,
     VertexLayoutHandle layoutHandle
 ) {
@@ -176,7 +176,7 @@ void RendererOpenGL::createDynamicVertexBuffer(
 }
 
 void RendererOpenGL::updateDynamicVertexBuffer(
-    VertexBufferHandle handle, Foundation::Memory data, uint32_t size
+    VertexBufferHandle handle, Memory data, uint32_t size
 ) {
     vertexBuffers[handle.id].update(data.data, size);
     data.release();
@@ -215,7 +215,7 @@ void RendererOpenGL::setTexture(TextureHandle handle, uint32_t slot) {
 }
 
 void RendererOpenGL::submit(Frame *frame, View *views) {
-    NestRen_LOG("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
+    LOG_INFO("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
     if (frame->m_transientVbSize > 0) {
         vertexBuffers[frame->m_transientVb.handle.id].update(
             frame->m_transientVb.data, frame->m_transientVbSize
@@ -302,10 +302,10 @@ void RendererOpenGL::submit(RenderDraw *draw) {
     }
     vertexBuffers[draw->m_vertexBuffer.id].bind();
     VertexLayoutHandle layoutHandle =
-        draw->m_vertexLayout.id != NestRen_INVALID_HANDLE
+        draw->m_vertexLayout.id != INVALID_HANDLE
             ? draw->m_vertexLayout
             : vertexBuffers[draw->m_vertexBuffer.id].getLayoutHandle();
-    PND_ASSERT(layoutHandle.id != NestRen_INVALID_HANDLE, "Invalid handle");
+    PND_ASSERT(layoutHandle.id != INVALID_HANDLE, "Invalid handle");
     VertexBufferLayoutData &layout = vertexLayouts[layoutHandle.id];
     GL_CALL(glBindVertexArray(m_uselessVao));
     shaders[draw->m_shader.id].bindAttributes(layout, draw->m_verticesOffset);
