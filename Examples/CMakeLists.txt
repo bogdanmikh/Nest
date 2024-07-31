@@ -1,0 +1,4 @@
+add_subdirectory(ContentBrowser)
+add_subdirectory(NestCraft)
+add_subdirectory(NestPBR)
+add_subdirectory(Profiler)

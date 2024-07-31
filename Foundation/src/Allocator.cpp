@@ -1,25 +1,19 @@
 #include "Foundation/Allocator.hpp"
-
-#include <cstdlib>
-#include <string>
-#include <cstring>
-#include "Foundation/Allocator.hpp"
 #include "Foundation/Assert.hpp"
-#include <Foundation/Logger.hpp>
-#include <cstdlib>
-#include <cstdio>
-#include <algorithm>
-#include <iostream>
+#include "Foundation/Logger.hpp"
+
+#include <memory>
+
 
 #ifndef CONFIG_ALLOCATOR_NATURAL_ALIGNMENT
 #    define CONFIG_ALLOCATOR_NATURAL_ALIGNMENT 8
 #endif
 
-// void *operator new(size_t, Foundation::PlacementNewTag, void *_ptr) {
-//     return _ptr;
-// }
-//
-// void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
+ void *operator new(size_t, Foundation::PlacementNewTag, void *_ptr) {
+     return _ptr;
+ }
+
+ void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
 
 namespace Foundation {
 
@@ -29,6 +23,20 @@ DefaultAllocator *DefaultAllocator::s_instance = new DefaultAllocator;
 AllocatorI *getAllocator() {
     static DefaultAllocator *allocator = DefaultAllocator::getInstance();
     return allocator;
+}
+
+void *alloc(AllocatorI *allocator, size_t size) {
+    return allocator->realloc(nullptr, size);
+}
+
+void free(AllocatorI *allocator, void *ptr) {
+    allocator->realloc(ptr, 0);
+}
+
+void *realloc(
+    AllocatorI *allocator, void *ptr, size_t size
+) {
+    return allocator->realloc(ptr, size);
 }
 
 FreeListAllocator::FreeListAllocator(size_t totalSize)

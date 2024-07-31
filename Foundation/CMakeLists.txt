@@ -1,6 +1,6 @@
 project(Foundation)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE INCLUDE src/*.hpp include/Foundation/*.hpp)
