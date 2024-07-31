@@ -21,10 +21,6 @@ void OpenGLContext::create() {
     glfwSwapInterval(1);
 }
 
-void OpenGLContext::flip() {
-    glfwSwapBuffers((GLFWwindow *)glfwWindowHandle);
-}
-
 uint32_t OpenGLContext::getDefaultFrameBufferId() {
     return 0;
 }

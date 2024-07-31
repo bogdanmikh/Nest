@@ -4,6 +4,7 @@
 
 #include "RendererOpenGL.hpp"
 #include "OpenGLBase.hpp"
+#include "NestRen/NestRenStates.hpp"
 
 #include <Nest/Logger/Assert.hpp>
 #include <Nest/Allocator/Allocator.hpp>
@@ -279,12 +280,12 @@ void RendererOpenGL::submit(RenderDraw *draw) {
         TextureBinding &textureBinding = draw->m_textureBindings[t];
         setTexture(textureBinding.m_handle, textureBinding.m_slot);
     }
-    if (draw->m_state & NestRen_STATE_CULL_FACE) {
+    if (draw->m_state & NESTREN_STATE_CULL_FACE) {
         GL_CALL(glEnable(GL_CULL_FACE));
     } else {
         GL_CALL(glDisable(GL_CULL_FACE));
     }
-    if (draw->m_state & NestRen_STATE_DEPTH_TEST) {
+    if (draw->m_state & NESTREN_STATE_DEPTH_TEST) {
         GL_CALL(glEnable(GL_DEPTH_TEST));
     } else {
         GL_CALL(glDisable(GL_DEPTH_TEST));
@@ -302,10 +303,10 @@ void RendererOpenGL::submit(RenderDraw *draw) {
     }
     vertexBuffers[draw->m_vertexBuffer.id].bind();
     VertexLayoutHandle layoutHandle =
-        draw->m_vertexLayout.id != INVALID_HANDLE
+        draw->m_vertexLayout.id != NESTREN_INVALID_HANDLE
             ? draw->m_vertexLayout
             : vertexBuffers[draw->m_vertexBuffer.id].getLayoutHandle();
-    PND_ASSERT(layoutHandle.id != INVALID_HANDLE, "Invalid handle");
+    NEST_ASSERT(layoutHandle.id != NESTREN_INVALID_HANDLE, "Invalid handle");
     VertexBufferLayoutData &layout = vertexLayouts[layoutHandle.id];
     GL_CALL(glBindVertexArray(m_uselessVao));
     shaders[draw->m_shader.id].bindAttributes(layout, draw->m_verticesOffset);

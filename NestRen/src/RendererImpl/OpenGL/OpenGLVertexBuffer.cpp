@@ -11,7 +11,7 @@ namespace NestRen {
 OpenGLVertexBuffer::OpenGLVertexBuffer()
     : m_isDynamic(false)
     , m_id(-1)
-    , m_layoutHandle(INVALID_HANDLE) {}
+    , m_layoutHandle(NESTREN_INVALID_HANDLE) {}
 
 void OpenGLVertexBuffer::terminate() {
     NEST_ASSERT(m_id != -1, "VERTEX BUFFER ALREADY DELETED");
@@ -30,7 +30,7 @@ void OpenGLVertexBuffer::create(void *data, uint32_t size, bool isDynamic) {
         );
     }
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    m_layoutHandle = INVALID_HANDLE;
+    m_layoutHandle = NESTREN_INVALID_HANDLE;
 }
 
 void OpenGLVertexBuffer::update(void *data, uint32_t size) {

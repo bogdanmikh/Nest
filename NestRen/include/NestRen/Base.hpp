@@ -3,7 +3,7 @@
 #include "Nest/Allocator/Memory.hpp"
 #include "Nest/Logger/Assert.hpp"
 
-#define INVALID_HANDLE UINT16_MAX
+#define NESTREN_INVALID_HANDLE UINT16_MAX
 #define MAX_FRAMEBUFFER_ATTACHMENTS 5
 
 namespace NestRen {
@@ -13,10 +13,10 @@ namespace NestRen {
         name(uint16_t id)                                                                          \
             : id(id) {}                                                                            \
         name()                                                                                     \
-            : id(INVALID_HANDLE) {}                                                          \
+            : id(NESTREN_INVALID_HANDLE) {}                                                          \
         uint16_t id;                                                                               \
         bool isValid() {                                                                           \
-            return id != INVALID_HANDLE;                                                     \
+            return id != NESTREN_INVALID_HANDLE;                                                     \
         }                                                                                          \
     };
 
@@ -60,7 +60,7 @@ enum class UniformDataType { Int, Mat4, IntArray };
 
 struct FrameBufferAttachment {
     FrameBufferAttachment()
-        : handle(INVALID_HANDLE) {}
+        : handle(NESTREN_INVALID_HANDLE) {}
 
     FrameBufferAttachment(TextureHandle handle)
         : handle(handle) {}
@@ -124,4 +124,58 @@ struct TextureCreate {
     }
 };
 
+struct Size {
+    int width;
+    int height;
+
+    Size()
+        : width(0)
+        , height(0) {}
+
+    Size(int width, int height)
+        : width(width)
+        , height(height) {}
+
+    inline bool isZero() {
+        return width == 0 && height == 0;
+    }
+};
+
+struct Point {
+    int x;
+    int y;
+
+    Point()
+        : x(0)
+        , y(0) {}
+
+    Point(int x, int y)
+        : x(x)
+        , y(y) {}
+
+    inline bool isZero() const {
+        return x == 0 && y == 0;
+    }
+};
+
+struct Rect {
+    Point origin;
+    Size size;
+
+    Rect()
+        : origin()
+        , size() {}
+
+    Rect(int x, int y, int width, int height)
+        : origin(x, y)
+        , size(width, height) {}
+
+    inline static Rect zero() {
+        return {};
+    }
+
+    inline bool isZero() {
+        return origin.isZero() && size.isZero();
+    }
+};
 }

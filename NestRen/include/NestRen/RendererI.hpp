@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Base.hpp"
-#include "Encoder/View.hpp"
-#include "Encoder/Frame.hpp"
-#include "Encoder/Uniform.hpp"
+#include "NestRen/Encoder/View.hpp"
+#include "NestRen/Encoder/Frame.hpp"
+#include "NestRen/Encoder/Uniform.hpp"
 #include "VertexBufferLayoutData.hpp"
 
 namespace NestRen {
@@ -16,9 +16,9 @@ enum class RendererType {
     Noop, //!< No rendering.
     // Direct3D12,   //!< Direct3D 12.0
     // Metal,        //!< Metal
-    OpenGLES, //!< OpenGL ES 2.0+
+    // OpenGLES, //!< OpenGL ES 2.0+
     OpenGL,   //!< OpenGL 2.1+
-    // Vulkan,       //!< Vulkan
+    Vulkan,       //!< Vulkan
 };
 
 class RendererI {
@@ -60,7 +60,7 @@ public:
         VertexBufferHandle handle,
         Memory data,
         uint32_t size,
-        VertexLayoutHandle layoutHandle = INVALID_HANDLE
+        VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
     ) = 0;
     virtual void updateDynamicVertexBuffer(
         VertexBufferHandle handle, Memory data, uint32_t size

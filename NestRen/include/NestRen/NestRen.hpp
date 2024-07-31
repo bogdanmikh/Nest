@@ -63,7 +63,7 @@ public:
         VertexBufferHandle handle,
         Memory data,
         uint32_t size,
-        VertexLayoutHandle layoutHandle = INVALID_HANDLE
+        VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
     ) = 0;
     virtual void updateDynamicVertexBuffer(
         VertexBufferHandle handle, Memory data, uint32_t size
