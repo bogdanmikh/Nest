@@ -4,16 +4,15 @@
 
 #include "RendererOpenGL.hpp"
 #include "OpenGLBase.hpp"
-#include "NestRen/NestRenStates.hpp"
 
-#include <Nest/Logger/Assert.hpp>
-#include <Nest/Allocator/Allocator.hpp>
-#include <Nest/Logger/Logger.hpp>
+#include <Foundation/Assert.hpp>
+#include <Foundation/Allocator.hpp>
+#include <Foundation/Logger.hpp>
 
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
-#    include "RendererImpl/Context/OpenGLContext.hpp"
+#    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
 #endif
 
 namespace NestRen {
@@ -55,9 +54,9 @@ const char *getGLErrorStr(GLenum err) {
 RendererOpenGL::RendererOpenGL() {
     s_instance = this;
 #ifdef PLATFORM_IOS
-    context = ALLOC(getAllocator(), GlesContext);
+    context = NEW(Foundation::getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = (GraphicsContext *)NEW(OpenGLContext);
+    context = NEW(Foundation::getAllocator(), OpenGLContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -66,7 +65,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    LOG_INFO("OPENGL VERSION {}", (const char *)glGetString(GL_VERSION));
+    NestRen_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(gpuErrorCallback, nullptr);
@@ -77,7 +76,7 @@ RendererOpenGL::RendererOpenGL() {
 
 RendererOpenGL::~RendererOpenGL() {
     GL_CALL(glDeleteVertexArrays(1, &m_uselessVao));
-    FREE(context);
+    DELETE(Foundation::getAllocator(), context);
     s_instance = nullptr;
 }
 
@@ -87,6 +86,10 @@ RendererType RendererOpenGL::getRendererType() const {
 #elif defined(PLATFORM_DESKTOP)
     return RendererType::OpenGL;
 #endif
+}
+
+void RendererOpenGL::flip() {
+    context->flip();
 }
 
 void RendererOpenGL::createFrameBuffer(
@@ -120,21 +123,27 @@ void RendererOpenGL::deleteTexture(TextureHandle handle) {
 }
 
 void RendererOpenGL::createIndexBuffer(
-    IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
+    IndexBufferHandle handle,
+    Foundation::Memory indices,
+    BufferElementType elementType,
+    size_t count
 ) {
     indexBuffers[handle.id].create(indices.data, elementType, count, false);
     indices.release();
 }
 
 void RendererOpenGL::createDynamicIndexBuffer(
-    IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
+    IndexBufferHandle handle,
+    Foundation::Memory indices,
+    BufferElementType elementType,
+    size_t count
 ) {
     indexBuffers[handle.id].create(indices.data, elementType, count, true);
     indices.release();
 }
 
 void RendererOpenGL::updateDynamicIndexBuffer(
-    IndexBufferHandle handle, Memory indices, size_t count
+    IndexBufferHandle handle, Foundation::Memory indices, size_t count
 ) {
     indexBuffers[handle.id].update(indices.data, count);
     indices.release();
@@ -145,7 +154,10 @@ void RendererOpenGL::deleteIndexBuffer(IndexBufferHandle handle) {
 }
 
 void RendererOpenGL::createVertexBuffer(
-    VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
+    VertexBufferHandle handle,
+    Foundation::Memory data,
+    uint32_t size,
+    VertexLayoutHandle layoutHandle
 ) {
     vertexBuffers[handle.id].create(data.data, size, false);
     vertexBuffers[handle.id].setLayoutHandle(layoutHandle);
@@ -153,7 +165,10 @@ void RendererOpenGL::createVertexBuffer(
 }
 
 void RendererOpenGL::createDynamicVertexBuffer(
-    VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
+    VertexBufferHandle handle,
+    Foundation::Memory data,
+    uint32_t size,
+    VertexLayoutHandle layoutHandle
 ) {
     vertexBuffers[handle.id].create(data.data, size, true);
     vertexBuffers[handle.id].setLayoutHandle(layoutHandle);
@@ -161,7 +176,7 @@ void RendererOpenGL::createDynamicVertexBuffer(
 }
 
 void RendererOpenGL::updateDynamicVertexBuffer(
-    VertexBufferHandle handle, Memory data, uint32_t size
+    VertexBufferHandle handle, Foundation::Memory data, uint32_t size
 ) {
     vertexBuffers[handle.id].update(data.data, size);
     data.release();
@@ -200,7 +215,7 @@ void RendererOpenGL::setTexture(TextureHandle handle, uint32_t slot) {
 }
 
 void RendererOpenGL::submit(Frame *frame, View *views) {
-    LOG_INFO("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
+    NESTREN_LOG("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
     if (frame->m_transientVbSize > 0) {
         vertexBuffers[frame->m_transientVb.handle.id].update(
             frame->m_transientVb.data, frame->m_transientVbSize

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "NestRen//Base.hpp"
+#include "NestRen/Base.hpp"
 
-#include <Nest/Platform/PlatformDetection.hpp>
+#include <Foundation/PlatformDetection.hpp>
 
 #ifdef PLATFORM_IOS
 #    include <OpenGLES/ES3/gl.h>

@@ -4,6 +4,7 @@
 
 #include "OpenGLShader.hpp"
 #include "NestRen/Base.hpp"
+#include "NestRen/PlatformData.hpp"
 
 #include "OpenGLBase.hpp"
 

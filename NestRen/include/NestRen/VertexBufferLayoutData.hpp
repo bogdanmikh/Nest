@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Nest/Logger/Logger.hpp"
-#include <Nest/Logger/Assert.hpp>
+#include <Foundation/Logger.hpp>
+#include <Foundation/Assert.hpp>
 
 #define MAX_VERTEX_LAYOUT_ELEMENTS 20
 namespace NestRen {

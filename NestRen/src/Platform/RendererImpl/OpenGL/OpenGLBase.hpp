@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Nest/Logger/Assert.hpp>
-#include <Nest/Logger/Logger.hpp>
-#include <Nest/Platform/PlatformDetection.hpp>
+#include <Foundation/Assert.hpp>
+#include <Foundation/Logger.hpp>
+#include <Foundation/PlatformDetection.hpp>
 
 #ifdef PLATFORM_IOS
 #    include <OpenGLES/ES3/gl.h>

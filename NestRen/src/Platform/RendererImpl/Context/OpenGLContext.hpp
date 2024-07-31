@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "NestRen//GraphicsContext.hpp"
+#include "NestRen/GraphicsContext.hpp"
 
 namespace NestRen {
 
@@ -12,10 +12,11 @@ namespace NestRen {
 class OpenGLContext : public GraphicsContext {
 public:
     void create() override;
+    void flip() override;
     uint32_t getDefaultFrameBufferId() override;
 
 private:
     void *glfwWindowHandle;
 };
 
-} // namespace NestRen
+} // namespace Miren

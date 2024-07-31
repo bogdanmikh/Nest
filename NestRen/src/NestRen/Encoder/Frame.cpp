@@ -4,7 +4,7 @@
 
 #include "Frame.hpp"
 
-#include <Nest/Allocator/Allocator.hpp>
+#include <Foundation/Allocator.hpp>
 
 namespace NestRen {
 
@@ -148,4 +148,4 @@ void Frame::reset() {
     draw.reset();
 }
 
-} // namespace NestRen
+} // namespace Miren

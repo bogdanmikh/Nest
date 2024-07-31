@@ -1,9 +1,11 @@
 #pragma once
 
-#include "NestRen/Base.hpp"
-#include <Nest/Logger/Logger.hpp>
+#include "NestRen/NestRen.hpp"
+
+#include <Foundation/Logger.hpp>
 
 namespace NestRen {
+
 struct Uniform {
     ProgramHandle handle;
     const char *name;
@@ -39,4 +41,5 @@ struct Uniform {
         , type(UniformDataType::Int)
         , size(0) {}
 };
-} // namespace NestRen
+
+} // namespace Miren

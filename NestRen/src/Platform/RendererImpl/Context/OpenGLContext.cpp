@@ -3,13 +3,13 @@
 //
 
 #include "OpenGLContext.hpp"
-#include "NestRen/PlatformData.hpp"
+#include "Miren/PlatformData.hpp"
 
-#include <Nest/Logger/Logger.hpp>
+#include <Foundation/Logger.hpp>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace NestRen {
+namespace Miren {
 
 void OpenGLContext::create() {
     glfwWindowHandle = PlatformData::get()->nativeWindowHandle;
@@ -21,8 +21,12 @@ void OpenGLContext::create() {
     glfwSwapInterval(1);
 }
 
+void OpenGLContext::flip() {
+    glfwSwapBuffers((GLFWwindow *)glfwWindowHandle);
+}
+
 uint32_t OpenGLContext::getDefaultFrameBufferId() {
     return 0;
 }
 
-} // namespace NestRen
+} // namespace Miren

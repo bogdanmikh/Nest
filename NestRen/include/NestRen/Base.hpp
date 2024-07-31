@@ -1,11 +1,25 @@
 #pragma once
 
-#include "Nest/Allocator/Memory.hpp"
-#include "Nest/Logger/Assert.hpp"
+#include <Foundation/Memory.hpp>
+#include <Foundation/Assert.hpp>
+#include "Config.hpp"
 #include "VertexBufferLayoutData.hpp"
 
 #define NESTREN_INVALID_HANDLE UINT16_MAX
-#define MAX_FRAMEBUFFER_ATTACHMENTS 5
+
+
+#if NESTRENLOG_ENABLED == 1
+#    define NESTREN_LOG(...) LOG_INFO(__VA_ARGS__)
+#else
+#    define NESTREN_LOG(...)
+#endif
+
+#if MIREN_CMDBUF_LOG_ENABLED == 1
+#    define CMDBUF_LOG(...) LOG_INFO(__VA_ARGS__)
+#else
+#    define CMDBUF_LOG(...)
+#endif
+
 
 namespace NestRen {
 
@@ -32,8 +46,8 @@ NESTREN_HANDLE(VertexLayoutHandle)
 using size = uint32_t;
 
 struct ProgramCreate {
-    Memory m_vertex;
-    Memory m_fragment;
+    Foundation::Memory m_vertex;
+    Foundation::Memory m_fragment;
 };
 
 enum TextureFormat {
@@ -122,7 +136,7 @@ struct TextureCreate {
     uint16_t m_height;
     uint8_t m_numMips;
     bool m_isCubeMap;
-    Memory m_data;
+    Foundation::Memory m_data;
 
     TextureCreate()
         : m_format(TextureFormat::None)

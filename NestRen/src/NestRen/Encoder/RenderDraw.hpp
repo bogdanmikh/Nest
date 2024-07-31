@@ -6,7 +6,6 @@
 
 #include "NestRen/Base.hpp"
 #include "NestRen/NestRenStates.hpp"
-#include "NestRen/Config.hpp"
 #include "Uniform.hpp"
 
 namespace NestRen {

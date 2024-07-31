@@ -4,13 +4,14 @@
 
 #pragma once
 
-#include <cstdint>
+#include "Platform/RendererImpl/OpenGL/OpenGLFrameBuffer.hpp"
 
 namespace NestRen {
 class GraphicsContext {
 public:
     virtual ~GraphicsContext() = default;
     virtual void create() = 0;
+    virtual void flip() = 0;
     virtual uint32_t getDefaultFrameBufferId() = 0;
 };
 } // namespace NestRen

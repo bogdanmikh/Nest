@@ -5,7 +5,9 @@
 #pragma once
 
 #include "NestRen/VertexBufferLayoutData.hpp"
-#include "NestRen/Base.hpp"
+#include "NestRen/RendererI.hpp"
+
+#include <Foundation/CommandBuffer.hpp>
 
 namespace NestRen {
 

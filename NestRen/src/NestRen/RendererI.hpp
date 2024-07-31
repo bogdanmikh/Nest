@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "Base.hpp"
+#include "NestRen/Base.hpp"
 #include "NestRen/Encoder/View.hpp"
 #include "NestRen/Encoder/Frame.hpp"
 #include "NestRen/Encoder/Uniform.hpp"
-#include "VertexBufferLayoutData.hpp"
+#include "NestRen/VertexBufferLayoutData.hpp"
 
 namespace NestRen {
 
@@ -16,7 +16,7 @@ enum class RendererType {
     Noop, //!< No rendering.
     // Direct3D12,   //!< Direct3D 12.0
     // Metal,        //!< Metal
-    // OpenGLES, //!< OpenGL ES 2.0+
+    OpenGLES, //!< OpenGL ES 2.0+
     OpenGL, //!< OpenGL 2.1+
     Vulkan, //!< Vulkan
 };
@@ -35,25 +35,25 @@ public:
     virtual void resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) = 0;
     virtual void deleteTexture(TextureHandle handle) = 0;
     virtual void createIndexBuffer(
-        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
+        IndexBufferHandle handle, Foundation::Memory indices, BufferElementType elementType, size_t count
     ) = 0;
     virtual void createDynamicIndexBuffer(
-        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
+        IndexBufferHandle handle, Foundation::Memory indices, BufferElementType elementType, size_t count
     ) = 0;
     virtual void
-    updateDynamicIndexBuffer(IndexBufferHandle handle, Memory indices, size_t count) = 0;
+    updateDynamicIndexBuffer(IndexBufferHandle handle, Foundation::Memory indices, size_t count) = 0;
     virtual void deleteIndexBuffer(IndexBufferHandle handle) = 0;
     virtual void createVertexBuffer(
-        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
+        VertexBufferHandle handle, Foundation::Memory data, uint32_t size, VertexLayoutHandle layoutHandle
     ) = 0;
     virtual void createDynamicVertexBuffer(
         VertexBufferHandle handle,
-        Memory data,
+        Foundation::Memory data,
         uint32_t size,
         VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
     ) = 0;
     virtual void
-    updateDynamicVertexBuffer(VertexBufferHandle handle, Memory data, uint32_t size) = 0;
+    updateDynamicVertexBuffer(VertexBufferHandle handle, Foundation::Memory data, uint32_t size) = 0;
     virtual void deleteVertexBuffer(VertexBufferHandle handle) = 0;
     virtual void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) = 0;
     virtual void deleteVertexLayout(VertexLayoutHandle handle) = 0;

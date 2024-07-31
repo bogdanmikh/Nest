@@ -5,64 +5,64 @@
 #pragma once
 
 #include "Base.hpp"
-#include "Nest/Base/Base.hpp"
-
-#include "Encoder/Frame.hpp"
-#include "Encoder/View.hpp"
-#include "Encoder/Uniform.hpp"
-#include "Nest/Allocator/Allocator.hpp"
+#include "NestRenStates.hpp"
 #include "VertexBufferLayoutData.hpp"
 
 namespace NestRen {
 
-enum class RendererType {
-    Noop, //!< No rendering.
-    // Direct3D12,   //!< Direct3D 12.0
-    // Metal,        //!< Metal
-    // OpenGLES, //!< OpenGL ES 2.0+
-    OpenGL, //!< OpenGL 2.1+
-    Vulkan, //!< Vulkan
-};
+void initialize();
+void terminate();
+// MARK: - Command buffer
+FrameBufferHandle createFrameBuffer(FrameBufferSpecification specification);
+void deleteFrameBuffer(FrameBufferHandle handle);
+ProgramHandle createProgram(ProgramCreate create);
+void deleteProgram(ProgramHandle handle);
+TextureHandle createTexture(TextureCreate create);
+void resizeTexture(TextureHandle handle, uint32_t width, uint32_t height);
+void deleteTexture(TextureHandle handle);
+IndexBufferHandle
+createIndexBuffer(Foundation::Memory indices, BufferElementType elementType, size_t count);
+IndexBufferHandle
+createDynamicIndexBuffer(Foundation::Memory indices, BufferElementType elementType, size_t count);
+void updateDynamicIndexBuffer(IndexBufferHandle, Foundation::Memory indices, size_t count);
+void deleteIndexBuffer(IndexBufferHandle handle);
+// Only next frame vertex buffer
+void allocTransientVertexBuffer(TransientVertexBuffer *buffer, uint32_t size);
+// Only next frame index buffer
+void allocTransientIndexBuffer(
+    TransientIndexBuffer *buffer, uint32_t count, BufferElementType elementType
+);
+VertexLayoutHandle createVertexLayout(VertexBufferLayoutData data);
+VertexBufferHandle
+createVertexBuffer(Foundation::Memory vertices, uint32_t size, VertexLayoutHandle layoutHandle);
+VertexBufferHandle createDynamicVertexBuffer(
+    Foundation::Memory, uint32_t size, VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
+);
+void updateDynamicVertexBuffer(VertexBufferHandle handle, Foundation::Memory data, uint32_t size);
+void deleteVertexBuffer(VertexBufferHandle handle);
+void deleteVertexLayout(VertexLayoutHandle handle);
+// MARK: - Encoder setup
+void setViewClear(ViewId id, uint32_t color);
+void setViewport(ViewId id, Rect rect);
+void setViewFrameBuffer(ViewId id, FrameBufferHandle frameBuffer);
+void setState(uint32_t state);
+void setScissorRect(Rect rect);
+void setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type);
+void setVertexBuffer(VertexBufferHandle handle, intptr_t offset = 0);
+void setIndexBuffer(IndexBufferHandle handle, intptr_t offset, size_t count);
+void setVertexLayout(VertexLayoutHandle handle);
+void setShader(ProgramHandle handle);
+void setTexture(TextureHandle textureHandle, uint32_t slot);
+/// Submit draw call
+void submit(ViewId id);
+// MARK: - Main functions
+/// Process all requests to gpu (from rendering thread)
+bool renderFrame();
+/// Frame processing finished (from app thread). Wait for renderer to finish rendering frame.
+/// Returns frame number
+uint32_t frame();
 
-class RendererI {
-public:
-    virtual ~RendererI() = default;
-    virtual RendererType getRendererType() const = 0;
-    virtual void flip() = 0;
-    virtual void
-    createFrameBuffer(FrameBufferHandle handle, FrameBufferSpecification specification) = 0;
-    virtual void deleteFrameBuffer(FrameBufferHandle handle) = 0;
-    virtual void createProgram(ProgramHandle handle, ProgramCreate) = 0;
-    virtual void deleteShader(ProgramHandle handle) = 0;
-    virtual void createTexture(TextureHandle handle, TextureCreate) = 0;
-    virtual void resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) = 0;
-    virtual void deleteTexture(TextureHandle handle) = 0;
-    virtual void createIndexBuffer(
-        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
-    ) = 0;
-    virtual void createDynamicIndexBuffer(
-        IndexBufferHandle handle, Memory indices, BufferElementType elementType, size_t count
-    ) = 0;
-    virtual void
-    updateDynamicIndexBuffer(IndexBufferHandle handle, Memory indices, size_t count) = 0;
-    virtual void deleteIndexBuffer(IndexBufferHandle handle) = 0;
-    virtual void createVertexBuffer(
-        VertexBufferHandle handle, Memory data, uint32_t size, VertexLayoutHandle layoutHandle
-    ) = 0;
-    virtual void createDynamicVertexBuffer(
-        VertexBufferHandle handle,
-        Memory data,
-        uint32_t size,
-        VertexLayoutHandle layoutHandle = NESTREN_INVALID_HANDLE
-    ) = 0;
-    virtual void
-    updateDynamicVertexBuffer(VertexBufferHandle handle, Memory data, uint32_t size) = 0;
-    virtual void deleteVertexBuffer(VertexBufferHandle handle) = 0;
-    virtual void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) = 0;
-    virtual void deleteVertexLayout(VertexLayoutHandle handle) = 0;
-    virtual void setUniform(const Uniform &uniform) = 0;
-    virtual void setTexture(TextureHandle handle, uint32_t slot) = 0;
-    virtual void submit(Frame *frame, View *views) = 0;
-};
+void renderSemaphoreWait();
+void renderSemaphorePost();
 
-} // namespace NestRen
+} // namespace Miren
