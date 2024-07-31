@@ -4,9 +4,9 @@
 
 #include "Frame.hpp"
 
-#include <Foundation/Allocator.hpp>
+#include <Nest/Allocator/Allocator.hpp>
 
-namespace Miren {
+namespace NestRen {
 
 Frame::Frame()
     : m_drawCallsCount(0) {}
@@ -148,4 +148,4 @@ void Frame::reset() {
     draw.reset();
 }
 
-} // namespace Miren
+} // namespace NestRen

@@ -35,7 +35,7 @@ void OpenGLVertexBuffer::create(void *data, uint32_t size, bool isDynamic) {
 
 void OpenGLVertexBuffer::update(void *data, uint32_t size) {
     NEST_ASSERT(m_id != -1, "VERTEX BUFFER NOT VALID");
-    NEST_ASSERT(m_isDynamic != false, "Невозможно обновить статичный буфер");
+    NEST_ASSERT(m_isDynamic != false, "Unable to update static buffer");
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_id));
     GL_CALL(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));

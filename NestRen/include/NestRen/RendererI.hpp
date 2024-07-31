@@ -73,4 +73,4 @@ public:
     virtual void submit(Frame *frame, View *views) = 0;
 };
 
-} // namespace Miren
+} // namespace NestRen

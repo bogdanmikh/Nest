@@ -13,4 +13,4 @@ public:
     virtual void create() = 0;
     virtual uint32_t getDefaultFrameBufferId() = 0;
 };
-} // namespace Miren
+} // namespace NestRen

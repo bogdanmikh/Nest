@@ -8,6 +8,7 @@
 #include <Nest/Logger/Assert.hpp>
 
 #define MAX_VERTEX_LAYOUT_ELEMENTS 20
+namespace NestRen {
 
 enum class BufferElementType { Float, UnsignedInt, UnsignedShort, UnsignedByte };
 
@@ -87,3 +88,5 @@ public:
     uint32_t m_elementsCount;
     uint32_t m_stride;
 };
+
+}

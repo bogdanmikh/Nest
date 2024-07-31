@@ -57,7 +57,7 @@ RendererOpenGL::RendererOpenGL() {
 #ifdef PLATFORM_IOS
     context = ALLOC(getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = ALLOC(OpenGLContext);
+    context = (GraphicsContext*) NEW(OpenGLContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -87,10 +87,6 @@ RendererType RendererOpenGL::getRendererType() const {
 #elif defined(PLATFORM_DESKTOP)
     return RendererType::OpenGL;
 #endif
-}
-
-void RendererOpenGL::flip() {
-    context->flip();
 }
 
 void RendererOpenGL::createFrameBuffer(

@@ -178,4 +178,4 @@ struct Rect {
         return origin.isZero() && size.isZero();
     }
 };
-}
+} // namespace NestRen

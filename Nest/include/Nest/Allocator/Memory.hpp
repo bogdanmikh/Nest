@@ -23,7 +23,7 @@ struct Memory {
      } */
 
     static Memory alloc(uint32_t size) {
-        void *data = ALLOC_ARRAY(char, size);
+        void *data = NEW_ARRAY(char, size);
         return data;
     }
 };

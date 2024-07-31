@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace Miren {
+namespace NestRen {
 
 // Указатели на главные элементы платформы (окно, контекст для рендера и т. д.)
 class PlatformData {
@@ -17,4 +17,4 @@ public:
     void *renderingContext;
 };
 
-} // namespace Miren
+} // namespace NestRen

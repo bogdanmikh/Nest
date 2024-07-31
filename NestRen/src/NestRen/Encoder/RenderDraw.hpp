@@ -5,7 +5,8 @@
 #pragma once
 
 #include "NestRen/Base.hpp"
-#include "NestRen/MirenStates.hpp"
+#include "NestRen/NestRenStates.hpp"
+#include "NestRen/Config.hpp"
 #include "Uniform.hpp"
 
 namespace NestRen {
@@ -27,32 +28,32 @@ struct TextureBinding {
 struct RenderDraw {
     RenderDraw()
         : m_isSubmitted(false)
-        , m_state(MIREN_STATE_CULL_FACE | MIREN_STATE_DEPTH_TEST)
+        , m_state(NESTREN_STATE_CULL_FACE | NESTREN_STATE_DEPTH_TEST)
         , m_numIndices(0)
         , m_uniformsCount(0)
         , m_textureBindingsCount(0)
         , m_indicesOffset(0)
         , m_verticesOffset(0)
         , m_viewId(0)
-        , m_shader(MIREN_INVALID_HANDLE)
-        , m_indexBuffer(MIREN_INVALID_HANDLE)
-        , m_vertexBuffer(MIREN_INVALID_HANDLE)
-        , m_vertexLayout(MIREN_INVALID_HANDLE)
+        , m_shader(NESTREN_INVALID_HANDLE)
+        , m_indexBuffer(NESTREN_INVALID_HANDLE)
+        , m_vertexBuffer(NESTREN_INVALID_HANDLE)
+        , m_vertexLayout(NESTREN_INVALID_HANDLE)
         , m_scissorRect(Rect::zero()) {}
 
     void reset() {
         m_isSubmitted = false;
-        m_state = MIREN_STATE_CULL_FACE | MIREN_STATE_DEPTH_TEST;
+        m_state = NESTREN_STATE_CULL_FACE | NESTREN_STATE_DEPTH_TEST;
         m_numIndices = 0;
         m_uniformsCount = 0;
         m_textureBindingsCount = 0;
         m_indicesOffset = 0;
         m_verticesOffset = 0;
         m_viewId = 0;
-        m_shader = MIREN_INVALID_HANDLE;
-        m_indexBuffer = MIREN_INVALID_HANDLE;
-        m_vertexBuffer = MIREN_INVALID_HANDLE;
-        m_vertexLayout = MIREN_INVALID_HANDLE;
+        m_shader = NESTREN_INVALID_HANDLE;
+        m_indexBuffer = NESTREN_INVALID_HANDLE;
+        m_vertexBuffer = NESTREN_INVALID_HANDLE;
+        m_vertexLayout = NESTREN_INVALID_HANDLE;
         m_scissorRect = Rect::zero();
     }
 
@@ -81,4 +82,4 @@ struct RenderDraw {
     uint32_t m_state;
 };
 
-} // namespace Miren
+} // namespace NESTREN

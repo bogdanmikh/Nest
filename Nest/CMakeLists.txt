@@ -42,4 +42,8 @@ target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 target_link_libraries(Nest spdlog)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/spdlog/include)
 
+# Dependencies - GLAD
+target_link_libraries(Nest glad)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glad/include)
+
 target_link_libraries(Nest Rain)

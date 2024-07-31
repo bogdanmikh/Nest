@@ -5,6 +5,7 @@
 #pragma once
 
 #include "NestRen/RendererI.hpp"
+#include "NestRen/GraphicsContext.hpp"
 #include "NestRen/Encoder/RenderDraw.hpp"
 #include "OpenGLFrameBuffer.hpp"
 #include "OpenGLShader.hpp"
