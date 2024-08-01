@@ -20,9 +20,10 @@ add_subdirectory(Vendor/glm)
 add_subdirectory(Vendor/imgui)
 add_subdirectory(Vendor/spdlog)
 add_subdirectory(Vendor/stb_image)
-add_subdirectory(Vendor/Rain)
+add_subdirectory(Rain)
 
 add_subdirectory(Foundation)
 add_subdirectory(NestRen)
 add_subdirectory(Nest)
+
 add_subdirectory(Examples)

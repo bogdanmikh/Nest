@@ -15,6 +15,15 @@ file(GLOB_RECURSE INCLUDE
 
 file(GLOB RESOURCE_FOLDERS res/*)
 
+file(GLOB RESOURCE_FOLDERS
+        resources/*
+        ${NEST_DIRECTORY}/resources/common/*
+)
+
+file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
+list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
+
+
 add_app(HelloTriangle "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 
 # set output directories for all builds (Debug, Release, etc.)

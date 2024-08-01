@@ -18,6 +18,15 @@ add_library(Nest STATIC "${SOURCES}" "${INCLUDE}")
 target_include_directories(Nest PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
+# Dependencies - Foundation
+target_link_libraries(Nest Foundation)
+
+# Dependencies - Rain
+target_link_libraries(Nest Rain)
+
+# Dependencies - NestRen
+target_link_libraries(Nest NestRen)
+
 # Dependencies - GLM
 target_link_libraries(Nest glm)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glm)
@@ -37,14 +46,3 @@ target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfw/include)
 # Dependencies - Dear ImGui
 target_link_libraries(Nest imgui)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
-
-# Dependencies - spdlog
-target_link_libraries(Nest spdlog)
-target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/spdlog/include)
-
-# Dependencies - GLAD
-target_link_libraries(Nest glad)
-target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glad/include)
-
-target_link_libraries(Nest Rain)
-target_link_libraries(Nest NestRen)

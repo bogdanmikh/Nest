@@ -1,10 +1,8 @@
-#include <iostream>
-
-#include <glad/glad.h>
-#include <cstring>
-
 #include "Nest/Window/Window.hpp"
 #include "Nest/Window/Events.hpp"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <Foundation/Logger.hpp>
 
@@ -33,7 +31,7 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        LOG_ERROR("Failed to initialize OpenGL context");
+        LOG_CRITICAL("Failed to initialize OpenGL context");
     }
     this->handle = window;
     Events::init(window);

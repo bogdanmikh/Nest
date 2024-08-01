@@ -1,29 +1,26 @@
 #pragma once
 
-// NestRendering
-#include "Nest/Renderer/OpenGL/Renderer.hpp"
-#include "Nest/Renderer/OpenGL/Shader.hpp"
-#include "Nest/Renderer/OpenGL/VertexBuffer.hpp"
-#include "Nest/Renderer/OpenGL/IndexBuffer.hpp"
-#include "Nest/Renderer/OpenGL/VertexArray.hpp"
-#include "Nest/Renderer/OpenGL/VertexBufferLayout.hpp"
-#include "Nest/Renderer/OpenGL/Texture.hpp"
-#include "Nest/Renderer/OpenGL/CubeMap.hpp"
-#include "Nest/Renderer/OpenGL/Mesh.hpp"
+// Base
+#include "Nest/Application/Application.hpp"
+#include "Nest/Application/ApplicationStartupSettings.hpp"
 
-// Window
-#include "Nest/Window/Window.hpp"
-#include "Nest/Window/Events.hpp"
+// Assets
+#include "Nest/Assets/AssetLoader.hpp"
 
-// NestObjects
+// Game logic
+#include "Nest/NestObjects/Camera.hpp"
 #include "Nest/NestObjects/Layer.hpp"
 
-// Application
-#include "Nest/Application/Application.hpp"
+// Renderer stuff
+#include <Nest/Renderer/Renderer2D.hpp>
+#include <Nest/Renderer/Renderer3D.hpp>
 
-// Files
-#include "Nest/Files/Files.hpp"
+// Third party
+#include <glm/ext.hpp>
 
-#include "Nest/Platform/PlatformDetection.hpp"
-#include "Nest/Logger/Logger.hpp"
-#include "Nest/ImGui/FontAwesome.h"
+// Foundation
+#include <Foundation/Foundation.hpp>
+#include <Foundation/Logger.hpp>
+#include <Foundation/Allocator.hpp>
+#include <Foundation/Buffer.hpp>
+#include <Foundation/Vector.hpp>

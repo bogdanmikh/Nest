@@ -22,6 +22,5 @@ NestEngine is a simple set of basic tools for creating a small game
 - glfw
 - glm
 - imgui
-- Rain
 - spdlog
 - stb_image

@@ -1,8 +1,5 @@
 #include "Nest/Window/Events.hpp"
 
-#include "Nest/Application/Application.hpp"
-
-#include <imgui.h>
 #include <cstring>
 
 namespace Nest {
