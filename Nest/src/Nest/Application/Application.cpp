@@ -1,16 +1,16 @@
 #include <chrono>
 
-#include "Nest/Application/Application.hpp"
-#include "Nest/Logger/Logger.hpp"
-#include "Nest/Renderer/OpenGL/Renderer.hpp"
-#include "Nest/Window/Events.hpp"
-#include "Nest/ImGui/ImGui.hpp"
 #include "imgui.h"
+#include "Nest/Application/Application.hpp"
+#include "Nest/Window/Events.hpp"
+
+#include <NestRen/NestRen.hpp>
+#include <Foundation/Logger.hpp>
+#include <Foundation/Allocator.hpp>
 
 namespace Nest {
 
-Application *Application::s_instance = new Application;
-std::shared_ptr<spdlog::logger> Logger::s_logger = nullptr;
+Application *Application::s_instance = nullptr;
 
 uint64_t getMillis() {
     auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -19,57 +19,45 @@ uint64_t getMillis() {
     return now.count();
 }
 
-Application::Application()
-    : currentLayer(nullptr)
-    , fps()
-    , timeMillis() {
-    Logger::init();
-    window = new Window;
-    window->init("Light", 800, 600, false);
 
-    camera = new Camera;
-    camera->setFieldOfView(glm::radians(60.f));
-    camera->setRotation(0.f, 50.f, 0.f);
+Application::Application(ApplicationStartupSettings &settings) {
+    s_instance = this;
+    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
+    m_ImGuiLayer->onAttach();
 
-    ImGui_Init(window->getNativeHandle());
-    Renderer::init();
-    Renderer::setClearColor(.235f, .235f, .235f, 1.0f);
+    m_currentLayer = nullptr;
+    Foundation::Logger::init();
+    m_window = new Window;
+    m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
+
     timeMillis = getMillis();
-    m_lastViewportSize = window->getSize();
+    m_lastViewportSize = m_window->getSize();
 }
 
 Application::~Application() {
-    ImGui_Shutdown();
-    delete camera;
-    delete window;
+    m_ImGuiLayer->onDetach();
+    delete m_window;
 }
+
 
 void Application::drawProperties() const {
     ImGui::Begin("Stats");
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
     ImGui::Text("FPS: %d", fps);
     ImGui::PopStyleColor();
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
-    ImGui::Text(
-        "X: %f, Y: %f, Z: %f",
-        camera->getPosition().x,
-        camera->getPosition().y,
-        camera->getPosition().z
-    );
     ImGui::PopStyleColor();
     ImGui::End();
 }
 
-void Application::updateViewport() {
-    glm::vec2 currSize = Application::getInstance()->getWindow()->getSize();
-    if (m_lastViewportSize != currSize) {
-        m_lastViewportSize = currSize;
-        Renderer::setRenderBufferSize(currSize.x, currSize.y);
-    }
+void Application::updateViewport(Size size) {
+    NestRen::Rect viewport = NestRen::Rect(
+        0, 0, size.width, size.height
+    );
+    NestRen::setViewport(0, viewport);
 }
 
 void Application::loop() {
-    while (!window->shouldClose()) {
+    while (!m_window->shouldClose()) {
         uint64_t lastTime = timeMillis;
         timeMillis = getMillis();
         deltaTimeMillis += timeMillis - lastTime;
@@ -96,26 +84,25 @@ void Application::loop() {
             Events::toggleCursorLock();
         }
 
-        Renderer::clear();
+        if (m_lastViewportSize != m_window->getSize()) {
+            updateViewport(m_window->getSize());
+        }
 
-        updateViewport();
-
-        ImGui_NewFrame();
-        camera->update();
-        if (currentLayer) {
+        m_ImGuiLayer->begin(deltaTime);
+        if (m_currentLayer) {
             deltaTime = std::min(deltaTime, 10.);
-            currentLayer->update(deltaTime);
+            m_currentLayer->update(deltaTime);
         }
         drawProperties();
-        ImGui_EndFrame();
+        m_ImGuiLayer->end();
 
         Events::resetDropPaths();
         Events::pollEvents();
-        window->swapBuffers();
+        m_window->swapBuffers();
     }
 }
 void Application::close() {
-    window->setShouldClose();
+    m_window->setShouldClose();
 }
 
 }

@@ -6,7 +6,7 @@
 
 #include <Nest.hpp>
 
-class TriangleLevel : public Panda::Level {
+class TriangleLevel : public Nest::Layer {
 public:
-    void start(Panda::World *world) override;
+    void start() override;
 };

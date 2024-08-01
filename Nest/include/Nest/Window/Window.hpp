@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "Nest/Base/Base.hpp"
 
 namespace Nest {
 
@@ -14,7 +15,7 @@ public:
     bool shouldClose();
     void setShouldClose();
     void swapBuffers();
-    glm::vec2 getSize();
+    Vec2 getSize();
     double getTime();
     void *getNativeHandle();
 

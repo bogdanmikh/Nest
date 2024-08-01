@@ -63,7 +63,7 @@ bool Window::shouldClose() {
     return glfwWindowShouldClose((GLFWwindow *)handle);
 }
 
-glm::vec2 Window::getSize() {
+Vec2 Window::getSize() {
     int x, y;
     float xscale, yscale;
     glfwGetWindowContentScale((GLFWwindow *)handle, &xscale, &yscale);

@@ -8,8 +8,10 @@
 #include "Nest/Assets/AssetLoader.hpp"
 
 // Game logic
-#include "Nest/NestObjects/Camera.hpp"
-#include "Nest/NestObjects/Layer.hpp"
+#include "Nest/GameLogic/Camera.hpp"
+#include "Nest/GameLogic/NativeScript.hpp"
+#include "Nest/GameLogic/Components/StaticMesh.hpp"
+#include "Nest/GameLogic/Components/DynamicMesh.hpp"
 
 // Renderer stuff
 #include <Nest/Renderer/Renderer2D.hpp>
@@ -22,5 +24,4 @@
 #include <Foundation/Foundation.hpp>
 #include <Foundation/Logger.hpp>
 #include <Foundation/Allocator.hpp>
-#include <Foundation/Buffer.hpp>
 #include <Foundation/Vector.hpp>

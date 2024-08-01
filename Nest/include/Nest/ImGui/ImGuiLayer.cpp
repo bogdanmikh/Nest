@@ -1,17 +1,21 @@
+#include "Panda/ImGui/ImGuiLayer.hpp"
+
 #include <imgui.h>
 
-#include "Nest/Application/Application.hpp"
+#include "Panda/Application/Application.hpp"
 
-#include "Nest/ImGui/FontAwesome.h"
-#include "Nest/ImGui/Colors.hpp"
-#include "Nest/ImGui/ImGuiFonts.hpp"
+#include "Panda/ImGui/FontAwesome.h"
+#include "Panda/ImGui/Colors.hpp"
+#include "Panda/ImGui/ImGuiFonts.hpp"
 // ImGui platform impl
-#include "imgui_impl_nest.hpp"
+#include "imgui_impl_panda.hpp"
 // ImGui renderer impl
-#include "imgui_impl_nestren.hpp"
-#include "Nest/ImGui/ImGuiLayer.hpp"
+#include "imgui_impl_miren.hpp"
 
-namespace Nest {
+namespace Panda {
+
+ImGuiLayer::ImGuiLayer()
+    : Layer("ImGuiLayer") {}
 
 void ImGuiLayer::onAttach() {
     ImGui::CreateContext();
@@ -66,18 +70,25 @@ void ImGuiLayer::onAttach() {
 
     // Setup Platform/Renderer bindings
     ImGui_ImplPanda_Init();
-    ImGui_ImplNestRen_Init();
+    ImGui_ImplMiren_Init();
 }
 
 void ImGuiLayer::onDetach() {
-    ImGui_ImplNestRen_Shutdown();
+    ImGui_ImplMiren_Shutdown();
     ImGui_ImplPanda_Shutdown();
     ImGui::DestroyContext();
 }
 
+void ImGuiLayer::onEvent(Event *event) {
+    ImGui_ImplPanda_HandleEvent(event);
+    if (!m_blockEvents) {
+        event->isHandled = false;
+    }
+}
+
 void ImGuiLayer::begin(double deltaTime) {
     ImGui_ImplPanda_NewFrame(deltaTime);
-    ImGui_ImplNestRen_NewFrame();
+    ImGui_ImplMiren_NewFrame();
     ImGui::NewFrame();
     // ImGuizmo::BeginFrame();
 }
@@ -85,7 +96,7 @@ void ImGuiLayer::begin(double deltaTime) {
 void ImGuiLayer::end() {
     // Rendering
     ImGui::Render();
-    ImGui_ImplNestRen_RenderDrawData(ImGui::GetDrawData());
+    ImGui_ImplMiren_RenderDrawData(ImGui::GetDrawData());
 }
 
 void ImGuiLayer::setDarkThemeColors() {

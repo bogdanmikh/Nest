@@ -1,24 +1,27 @@
 #pragma once
 
 #include "Nest/Window/Window.hpp"
-#include "Nest/NestObjects/Layer.hpp"
-#include "Nest/NestObjects/Camera.hpp"
+#include "Nest/Application/Layer.hpp"
+#include "ApplicationStartupSettings.hpp"
+#include "Nest/ImGui/ImGuiLayer.hpp"
 
 namespace Nest {
 
 class Application final {
 public:
     ~Application();
-    inline static Application *getInstance() {
+    Application(ApplicationStartupSettings &settings);
+
+    ImGuiLayer *getImGuiLayer() {
+        return m_ImGuiLayer;
+    }
+
+    inline static Application *get() {
         return s_instance;
     }
 
     inline Window *getWindow() const {
-        return window;
-    }
-
-    inline Camera *getCamera() const {
-        return camera;
+        return m_window;
     }
 
     inline int getMaxFps() const {
@@ -33,23 +36,23 @@ public:
     void close();
 
     inline void setLayer(Layer *layer) {
-        if (currentLayer) {
-            currentLayer->detach();
+        if (m_currentLayer) {
+            m_currentLayer->detach();
         }
-        currentLayer = layer;
-        currentLayer->start();
+        m_currentLayer = layer;
+        m_currentLayer->start();
     }
 
 private:
-    Application();
     void drawProperties() const;
-    void updateViewport();
+    void updateViewport(Size size);
     static Application *s_instance;
 
-    Window *window;
-    Layer *currentLayer;
-    Camera *camera;
-    glm::vec2 m_lastViewportSize;
+    Window *m_window;
+    Layer *m_currentLayer;
+    ImGuiLayer *m_ImGuiLayer;
+    
+    Vec2 m_lastViewportSize;
 
     int fps;
     int maximumFps = 60;

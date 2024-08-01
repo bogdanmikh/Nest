@@ -3,22 +3,22 @@
 //
 
 #include "TriangleLevel.hpp"
+#include <Nest.hpp>
 
-#include <Panda/GameLogic/Components/BaseComponents.hpp>
 
-class TriangleRenderer final : public Panda::NativeScript {
+class TriangleRenderer final : public Nest::NativeScript {
 public:
     TriangleRenderer()
         : m_vertexBuffer()
         , m_indexBuffer()
         , m_shader() {
-        using namespace Miren;
+        using namespace NestRen;
 
-        Panda::ProgramAsset programAsset = Panda::AssetLoader::loadProgram(
+        Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
             "default-shaders/checker/checker_vertex.glsl",
             "default-shaders/checker/checker_fragment.glsl"
         );
-        m_shader = createProgram(programAsset.getMirenProgramCreate());
+        m_shader = createProgram(programAsset.getNestRenProgramCreate());
 
         float rightEdge = 0.5f;
         float topEdge = 0.5f;
@@ -39,16 +39,16 @@ public:
     void initialize() override {}
 
     void update(double deltaTime) override {
-        Miren::setShader(m_shader);
-        Miren::setVertexBuffer(m_vertexBuffer);
-        Miren::setIndexBuffer(m_indexBuffer, 0, 6);
-        Miren::submit(0);
+        NestRen::setShader(m_shader);
+        NestRen::setVertexBuffer(m_vertexBuffer);
+        NestRen::setIndexBuffer(m_indexBuffer, 0, 6);
+        NestRen::submit(0);
     }
 
 private:
-    Miren::VertexBufferHandle m_vertexBuffer;
-    Miren::IndexBufferHandle m_indexBuffer;
-    Miren::ProgramHandle m_shader;
+    NestRen::VertexBufferHandle m_vertexBuffer;
+    NestRen::IndexBufferHandle m_indexBuffer;
+    NestRen::ProgramHandle m_shader;
 };
 
 void TriangleLevel::start(Panda::World *world) {

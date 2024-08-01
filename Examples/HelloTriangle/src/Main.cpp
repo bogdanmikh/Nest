@@ -8,13 +8,13 @@
 #include "TriangleLevel.hpp"
 
 int startApp(int argc, char **argv) {
-    Panda::ApplicationStartupSettings settings;
+    Nest::ApplicationStartupSettings settings;
     settings.name = "Hello triangle";
     settings.windowTitle = "Hello triangle";
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
-    auto application = new Panda::Application(settings);
-    application->startBasicGame(new TriangleLevel);
+    auto application = new Nest::Application(settings);
+    application->setLayer(new TriangleLevel);
     application->loop();
     delete application;
     return 0;

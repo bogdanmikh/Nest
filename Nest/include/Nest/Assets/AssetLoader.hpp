@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace NestRen {
+namespace Nest {
 
 struct TextureAsset {
     NestRen::TextureFormat m_format;
