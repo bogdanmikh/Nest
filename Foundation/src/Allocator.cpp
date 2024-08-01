@@ -4,7 +4,6 @@
 
 #include <memory>
 
-
 #ifndef CONFIG_ALLOCATOR_NATURAL_ALIGNMENT
 #    define CONFIG_ALLOCATOR_NATURAL_ALIGNMENT 8
 #endif
@@ -17,12 +16,11 @@
 
 namespace Foundation {
 
-DefaultAllocator *DefaultAllocator::s_instance = new DefaultAllocator;
 //FreeListAllocator *FreeListAllocator::s_instance = new FreeListAllocator(MemorySize::MEGABYTE);
 
 AllocatorI *getAllocator() {
-    static DefaultAllocator *allocator = DefaultAllocator::getInstance();
-    return allocator;
+    static DefaultAllocator allocator;
+    return &allocator;
 }
 
 void *alloc(AllocatorI *allocator, size_t size) {

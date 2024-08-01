@@ -55,14 +55,7 @@ public:
         ptr = realloc(ptr, size);
         return ptr;
     }
-    inline static DefaultAllocator *getInstance() {
-        return s_instance;
-    }
     ~DefaultAllocator() override {}
-
-private:
-    DefaultAllocator();
-    static DefaultAllocator *s_instance;
 };
 
 enum MemorySize { KILOBYTE = 1000, MEGABYTE = KILOBYTE * 1000, GIGABYTE = MEGABYTE * 1000 };
@@ -71,9 +64,6 @@ class FreeListAllocator : public AllocatorI {
 public:
     void *realloc(void *ptr, size_t size) override;
     void getInfo();
-    inline static FreeListAllocator *getInstance() {
-        return s_instance;
-    }
     ~FreeListAllocator() override;
 
 private:
@@ -116,7 +106,6 @@ private:
     void reset();
     void printAllBlocks();
     void *m_memory;
-    static FreeListAllocator *s_instance;
     std::set<Block> m_freeBlocks;
     std::set<Block> m_occupiedBlocks;
     size_t m_totalSize;

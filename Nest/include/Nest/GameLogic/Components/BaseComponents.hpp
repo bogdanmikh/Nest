@@ -8,6 +8,7 @@
 
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/DynamicMesh.hpp"
+#include "WorldCamera.hpp"
 
 #include <Foundation/Foundation.hpp>
 #include <Rain/Rain.hpp>
@@ -88,6 +89,7 @@ struct DynamicMeshComponent final {
 
 struct CameraComponent final {
     bool isPrimary = true;
+    WorldCamera camera;
 };
 
 class NativeScript;

@@ -64,7 +64,3 @@ target_include_directories(NestRen PRIVATE ${VENDOR_DIRECTORY}/glm)
 # Dependencies - GLAD
 target_link_libraries(NestRen glad)
 target_include_directories(NestRen PRIVATE ${VENDOR_DIRECTORY}/glad/include)
-
-# Dependencies - stb_image
-target_link_libraries(NestRen stb_image)
-target_include_directories(NestRen PRIVATE ${VENDOR_DIRECTORY}/stb_image)

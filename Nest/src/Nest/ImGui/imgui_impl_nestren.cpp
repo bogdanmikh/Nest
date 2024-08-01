@@ -6,6 +6,8 @@
 
 #include <glm/glm.hpp>
 
+namespace Nest {
+
 bool deviceObjectsCreated = false;
 NestRen::ProgramHandle shader;
 NestRen::VertexLayoutHandle vertexLayout;
@@ -166,4 +168,6 @@ IMGUI_IMPL_API void ImGui_ImplNestRen_DestroyDeviceObjects() {
     deleteProgram(shader);
     ImGui_ImplNestRen_DestroyFontsTexture();
     deviceObjectsCreated = false;
+}
+
 }
