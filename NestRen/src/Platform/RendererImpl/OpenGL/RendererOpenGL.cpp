@@ -65,7 +65,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    NestRen_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
+    NESTREN_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(gpuErrorCallback, nullptr);

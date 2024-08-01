@@ -47,3 +47,4 @@ target_link_libraries(Nest glad)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/glad/include)
 
 target_link_libraries(Nest Rain)
+target_link_libraries(Nest NestRen)

@@ -19,4 +19,4 @@ private:
     void *glfwWindowHandle;
 };
 
-} // namespace Miren
+} // namespace NestRen

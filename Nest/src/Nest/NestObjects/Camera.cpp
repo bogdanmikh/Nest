@@ -3,6 +3,8 @@
 #include <glm/ext.hpp>
 #include <iostream>
 
+namespace Nest {
+
 Camera::Camera()
     : fieldOfViewRadians(glm::radians(45.f))
     , aspect(1.f)
@@ -111,4 +113,6 @@ glm::vec3 Camera::getPosition() {
 
 glm::vec3 Camera::getFront() {
     return front;
+}
+
 }

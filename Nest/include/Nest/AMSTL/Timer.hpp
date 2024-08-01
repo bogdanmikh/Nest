@@ -3,6 +3,7 @@
 #include <iostream>
 #include <chrono>
 
+namespace Nest {
 class Timer {
 public:
     void start() {
@@ -19,3 +20,5 @@ public:
 private:
     std::chrono::time_point<std::chrono::high_resolution_clock> m_start;
 };
+
+}

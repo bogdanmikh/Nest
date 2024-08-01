@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+namespace Nest {
+
 class Camera {
 public:
     Camera();
@@ -36,3 +38,5 @@ private:
     float fieldOfViewRadians;
     float aspect;
 };
+
+}

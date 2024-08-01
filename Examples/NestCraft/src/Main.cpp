@@ -1,6 +1,6 @@
 #include <Nest.hpp>
 
-#include "src/Game.hpp"
+#include "Game.hpp"
 
 int main() {
     auto *application = Application::getInstance();

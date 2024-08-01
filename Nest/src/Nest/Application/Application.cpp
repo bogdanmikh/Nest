@@ -7,6 +7,8 @@
 #include "Nest/ImGui/ImGui.hpp"
 #include "imgui.h"
 
+namespace Nest {
+
 Application *Application::s_instance = new Application;
 std::shared_ptr<spdlog::logger> Logger::s_logger = nullptr;
 
@@ -114,4 +116,6 @@ void Application::loop() {
 }
 void Application::close() {
     window->setShouldClose();
+}
+
 }

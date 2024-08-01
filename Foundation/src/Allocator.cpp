@@ -111,7 +111,7 @@ void FreeListAllocator::getInfo() {
 
 FreeListAllocator::~FreeListAllocator() noexcept {
     getInfo();
-    free(m_memory);
+    std::free(m_memory);
 }
 
 void FreeListAllocator::combine(std::set<Block>::iterator newFreeBlockIt) {

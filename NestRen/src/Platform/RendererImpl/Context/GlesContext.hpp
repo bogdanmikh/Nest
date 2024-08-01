@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Miren/GraphicsContext.hpp"
+#include "NestRen/GraphicsContext.hpp"
 
-namespace Miren {
+namespace NestRen {
 
 class GlesContext : public GraphicsContext {
     void create() override;
@@ -17,4 +17,4 @@ private:
     void *context;
 };
 
-} // namespace Miren
+} // namespace NestRen

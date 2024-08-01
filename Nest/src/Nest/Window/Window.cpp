@@ -5,7 +5,10 @@
 
 #include "Nest/Window/Window.hpp"
 #include "Nest/Window/Events.hpp"
-#include "Nest/Logger/Logger.hpp"
+
+#include <Foundation/Logger.hpp>
+
+namespace Nest {
 
 void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, bool fullScreen) {
     if (glfwInit() != GLFW_TRUE) {
@@ -84,4 +87,6 @@ void Window::setShouldClose() {
 
 void *Window::getNativeHandle() {
     return handle;
+}
+
 }

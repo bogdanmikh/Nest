@@ -3,12 +3,12 @@
 //
 
 #include "GlesContext.hpp"
-#include "Miren/PlatformData.hpp"
+#include "NestRen/PlatformData.hpp"
 
 #import <UIKit/UIKit.h>
 #import <OpenGLES/ES3/gl.h>
 
-namespace Miren {
+namespace NestRen {
     GLuint colorRenderBuffer;
     GLuint depthRenderBuffer;
     GLuint frameBuffer;

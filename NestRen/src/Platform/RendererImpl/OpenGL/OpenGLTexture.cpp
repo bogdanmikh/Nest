@@ -17,7 +17,7 @@ OpenGLTexture::OpenGLTexture()
 void OpenGLTexture::create(const TextureCreate &create) {
     NEST_ASSERT(m_id == -1, "TEXTURE ALREADY CREATED");
     m_create = create;
-    NestRen_LOG("CREATE TEXTURE, w: {}, h: {}", create.m_width, create.m_height);
+    NESTREN_LOG("CREATE TEXTURE, w: {}, h: {}", create.m_width, create.m_height);
     GL_CALL(glGenTextures(1, &m_id));
 
     GLenum target = create.m_isCubeMap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;

@@ -42,4 +42,4 @@ struct Uniform {
         , size(0) {}
 };
 
-} // namespace Miren
+} // namespace NestRen

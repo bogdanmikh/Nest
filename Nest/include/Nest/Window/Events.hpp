@@ -8,6 +8,8 @@
 
 #include "Nest/Window/Key.hpp"
 
+namespace Nest {
+
 class Events final {
 public:
     static void init(void *handle);
@@ -36,3 +38,5 @@ private:
     static void mouseCallback(GLFWwindow *window, int button, int action, int mode);
     static void dropCallback(GLFWwindow *window, int count, const char **paths);
 };
+
+}

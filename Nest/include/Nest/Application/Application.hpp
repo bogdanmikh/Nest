@@ -4,6 +4,8 @@
 #include "Nest/NestObjects/Layer.hpp"
 #include "Nest/NestObjects/Camera.hpp"
 
+namespace Nest {
+
 class Application final {
 public:
     ~Application();
@@ -56,3 +58,5 @@ private:
     uint64_t timeMillis = 0;
     uint64_t oneSecondTimeCount = 0;
 };
+
+}

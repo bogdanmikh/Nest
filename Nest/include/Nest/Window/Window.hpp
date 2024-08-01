@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
+namespace Nest {
+
 class Window {
 public:
     ~Window();
@@ -20,3 +22,5 @@ public:
 private:
     void *handle;
 };
+
+}

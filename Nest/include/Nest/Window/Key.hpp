@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Nest {
+
 enum class MouseButton { LEFT = 0, RIGHT = 1, MIDDLE = 2 };
 
 enum class Key {
@@ -130,3 +132,5 @@ enum class Key {
     MOD_ALT = 4,
     MOD_SUPER = 8
 };
+
+}

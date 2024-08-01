@@ -11,4 +11,4 @@ PlatformData *PlatformData::get() {
     return &platformData;
 }
 
-} // namespace Miren
+} // namespace NestRen

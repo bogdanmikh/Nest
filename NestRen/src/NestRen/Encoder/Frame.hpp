@@ -60,4 +60,4 @@ private:
     FreeHandleQueue<IndexBufferHandle, MAX_INDEX_BUFFERS> m_indexBuffersFreeHandle;
 };
 
-} // namespace Miren
+} // namespace NestRen

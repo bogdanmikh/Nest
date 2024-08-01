@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <glm/glm.hpp>
 
+namespace Nest {
+
 struct Vec2 {
     union {
         float x;
@@ -40,3 +42,5 @@ struct Vec2 {
         return x == vec.x && y == vec.y;
     }
 };
+
+}

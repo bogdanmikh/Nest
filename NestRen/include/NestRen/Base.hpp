@@ -14,7 +14,7 @@
 #    define NESTREN_LOG(...)
 #endif
 
-#if MIREN_CMDBUF_LOG_ENABLED == 1
+#if NESTREN_CMDBUF_LOG_ENABLED == 1
 #    define CMDBUF_LOG(...) LOG_INFO(__VA_ARGS__)
 #else
 #    define CMDBUF_LOG(...)

@@ -5,6 +5,8 @@
 #include <imgui.h>
 #include <cstring>
 
+namespace Nest {
+
 bool Events::keys[];
 bool Events::mouseButtons[];
 uint32_t Events::framesKeys[];
@@ -120,4 +122,6 @@ std::vector<std::string> Events::getDropPaths() {
 
 void Events::resetDropPaths() {
     m_dropPaths.clear();
+}
+
 }
