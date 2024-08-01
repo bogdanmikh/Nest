@@ -143,12 +143,11 @@ void Application::loop() {
 //        drawProperties();
 //        m_ImGuiLayer->end();
 
-        NestRen::frame();
-        NestRen::renderFrame();
-
         Events::resetDropPaths();
         Events::pollEvents();
-        m_window->swapBuffers();
+
+        NestRen::renderFrame();
+        NestRen::frame();
     }
 }
 void Application::close() {

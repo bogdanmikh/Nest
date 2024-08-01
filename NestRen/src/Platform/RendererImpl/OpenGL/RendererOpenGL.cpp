@@ -226,13 +226,14 @@ void RendererOpenGL::submit(Frame *frame, View *views) {
             frame->m_transientIb.data, frame->m_transientIbSize / 2
         );
     }
-    LOG_INFO("CLEAR");
     if (!frame->getDrawCallsCount()) {
+        LOG_INFO("Clear");
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         GL_CALL(glClearColor(0, 0, 0, 1));
         return;
     }
     ViewId viewId = -1;
+    LOG_INFO("Draw calls size: {}", frame->getDrawCallsCount());
     for (int i = 0; i < frame->getDrawCallsCount(); i++) {
         RenderDraw &draw = frame->getDrawCalls()[i];
         if (!draw.m_isSubmitted) {
@@ -266,6 +267,7 @@ void RendererOpenGL::viewChanged(View &view) {
     uint8_t b = rgba >> 8;
     uint8_t a = rgba >> 0;
     GL_CALL(glClearColor((r) / 255.f, (g) / 255.f, (b) / 255.f, (a) / 255.f));
+//    GL_CALL(glClearColor(1., 0., 0., 1.));
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
