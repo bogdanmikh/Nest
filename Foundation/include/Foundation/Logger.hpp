@@ -23,6 +23,4 @@ private:
 #define LOG_INFO(...) Foundation::Logger::getLogger()->info(__VA_ARGS__)
 #define LOG_WARN(...) Foundation::Logger::getLogger()->warn(__VA_ARGS__)
 #define LOG_ERROR(...) Foundation::Logger::getLogger()->error(__VA_ARGS__)
-#define LOG_CRITICAL(...)                                                                          \
-    Foundation::Logger::getLogger()->critical(__VA_ARGS__);                                                    \
-    assert(false)
+#define LOG_CRITICAL(...) Foundation::Logger::getLogger()->critical(__VA_ARGS__); assert(false)

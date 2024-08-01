@@ -9,7 +9,7 @@
 
 
 #if NESTRENLOG_ENABLED == 1
-#    define NESTREN_LOG(...) LOG_INFO(__VA_ARGS__)
+#    define NESTREN_LOG(...) LOG_INFO("{}", __VA_ARGS__)
 #else
 #    define NESTREN_LOG(...)
 #endif

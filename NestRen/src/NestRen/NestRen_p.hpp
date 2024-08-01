@@ -13,8 +13,6 @@
 
 #include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Logger.hpp>
-#include <Foundation/Semaphore.hpp>
-#include <Foundation/Thread.hpp>
 
 namespace NestRen {
 
@@ -30,8 +28,7 @@ struct Context {
         , m_vertexBuffersHandleAlloc(MAX_VERTEX_BUFFERS)
         , m_indexBuffersHandleAlloc(MAX_INDEX_BUFFERS)
         , m_preCommandQueue(300000)
-        , m_postCommandQueue(300000)
-        , m_rendererSemaphore("Render semaphore") {
+        , m_postCommandQueue(300000) {
 
         m_render = &m_frame[0];
         m_submit = &m_frame[1];
@@ -56,16 +53,6 @@ struct Context {
         frame();
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererShutdown);
         m_postCommandQueue.write(cmd);
-        m_rendererSemaphore.post();
-        m_thread.shutdown();
-    }
-
-    static int32_t renderThread(Foundation::Thread *_thread, void *_userData) {
-        NESTREN_LOG("RENDER THREAD BEGIN");
-        while (NestRen::renderFrame())
-            ;
-        NESTREN_LOG("RENDER THREAD END");
-        return 0;
     }
 
     void rendererExecuteCommands(Foundation::CommandBuffer &commandBuffer) {
@@ -230,8 +217,7 @@ struct Context {
     }
 
     bool renderFrame() {
-        m_rendererSemaphore.wait();
-        NESTREN_LOG("RENDER FRAME BEGIN");
+        LOG_INFO("RENDER FRAME BEGIN");
         m_preCommandQueue.finishWriting();
         m_postCommandQueue.finishWriting();
         if (m_renderer == nullptr) {
@@ -240,19 +226,17 @@ struct Context {
         if (m_renderer == nullptr) {
             m_preCommandQueue.reset();
             m_postCommandQueue.reset();
-            m_rendererSemaphore.post();
             return true;
         }
         rendererExecuteCommands(m_preCommandQueue);
+        m_renderer->submit(m_render, m_views);
         if (m_render->getDrawCallsCount() != 0) {
-            m_renderer->submit(m_render, m_views);
             m_renderer->flip();
         }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
         m_postCommandQueue.reset();
-        NESTREN_LOG("RENDER FRAME END");
-        m_rendererSemaphore.post();
+        LOG_INFO("RENDER FRAME END");
         return m_renderer != nullptr;
     }
 
@@ -500,8 +484,7 @@ struct Context {
         m_views[id].m_frameBuffer = frameBuffer;
     }
 
-    Foundation::Thread m_thread;
-
+//    Foundation::Thread m_thread;
 private:
     RendererI *m_renderer;
     Frame m_frame[2];
@@ -524,7 +507,7 @@ private:
     Foundation::CommandBuffer m_postCommandQueue;
 
 public:
-    Foundation::Semaphore m_rendererSemaphore;
+//    Foundation::Semaphore m_rendererSemaphore;
 };
 
 } // namespace NestRen

@@ -17,10 +17,6 @@ void initialize() {
     NESTREN_LOG("FRAME DATA SIZE: {} BYTES", sizeof(Frame));
     s_context = NEW(Foundation::getAllocator(), Context);
     // Вызвано из главного потока: можно стартовать поток отрисовки.
-#ifdef PLATFORM_DESKTOP
-    s_context->m_thread.init(s_context->renderThread, nullptr, 0, "Render thread");
-#endif
-    renderSemaphorePost();
     NESTREN_LOG("NESTREN INIT END");
 }
 
@@ -207,16 +203,6 @@ void setVertexLayout(VertexLayoutHandle handle) {
 void submit(ViewId id) {
     NEST_ASSERT(s_context != nullptr, "NESTREN NOT INITIALIZED");
     s_context->submit(id);
-}
-
-void renderSemaphoreWait() {
-    NEST_ASSERT(s_context != nullptr, "NESTREN NOT INITIALIZED");
-    s_context->m_rendererSemaphore.wait();
-}
-
-void renderSemaphorePost() {
-    NEST_ASSERT(s_context != nullptr, "NESTREN NOT INITIALIZED");
-    s_context->m_rendererSemaphore.post();
 }
 
 } // namespace NESTREN

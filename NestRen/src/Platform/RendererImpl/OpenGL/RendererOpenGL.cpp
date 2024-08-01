@@ -226,9 +226,10 @@ void RendererOpenGL::submit(Frame *frame, View *views) {
             frame->m_transientIb.data, frame->m_transientIbSize / 2
         );
     }
+    LOG_INFO("CLEAR");
     if (!frame->getDrawCallsCount()) {
-        GL_CALL(glClearColor(0, 0, 0, 1));
         GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        GL_CALL(glClearColor(0, 0, 0, 1));
         return;
     }
     ViewId viewId = -1;

@@ -6,7 +6,6 @@
 namespace Nest {
 
 struct ImGui_NestPlatformData {
-
     Cursor MouseCursors[ImGuiMouseCursor_COUNT];
     bool modCtrl;
     bool modShift;

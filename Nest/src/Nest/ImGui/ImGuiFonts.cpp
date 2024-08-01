@@ -1,5 +1,6 @@
 #include "Nest/ImGui/ImGuiFonts.hpp"
 #include "Nest/Assets/AssetLoader.hpp"
+#include <filesystem>
 
 namespace Nest {
 
@@ -16,7 +17,9 @@ void Fonts::add(const FontConfiguration &config, bool isDefault) {
     imguiFontConfig.OversampleH = 4;
     imguiFontConfig.OversampleV = 4;
     auto &io = ImGui::GetIO();
-    std::string fontPath = AssetLoader::getResourcesPath() + "default-fonts/" + config.fileName;
+//    std::string fontPath = AssetLoader::getResourcesPath() + "default-fonts/" + config.fileName;
+    std::string fontPath = std::filesystem::current_path().parent_path().string() + "/Resources/default-fonts/" + config.fileName;
+    auto path = std::filesystem::current_path().string();
     ImFont *font = io.Fonts->AddFontFromFileTTF(
         fontPath.c_str(),
         config.size,

@@ -6,7 +6,7 @@ namespace NestRen {
 
 struct View {
     View()
-        : m_clearColor(0x000000ff)
+        : m_clearColor(0xFF00FF00)
         , m_viewport(Rect::zero())
         , m_frameBuffer(NESTREN_INVALID_HANDLE) {}
 

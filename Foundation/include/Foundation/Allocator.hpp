@@ -45,15 +45,13 @@ class DefaultAllocator : public AllocatorI {
 public:
     void *realloc(void *ptr, size_t size) override {
         if (ptr == nullptr) {
-            ptr = (void *)new char(size);
+            ptr = (void *)::malloc(size);
             return ptr;
         } else if (size == 0) {
-            delete[] ptr;
+            ::free(ptr);
             return nullptr;
         }
-        ptr = realloc(ptr, 0);
-        ptr = realloc(ptr, size);
-        return ptr;
+        return ::realloc(ptr, size);
     }
     ~DefaultAllocator() override {}
 };

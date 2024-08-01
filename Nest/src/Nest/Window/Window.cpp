@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Foundation/Logger.hpp>
+#include <NestRen/PlatformData.hpp>
 
 namespace Nest {
 
@@ -29,9 +30,6 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-//    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-//        LOG_CRITICAL("Failed to initialize OpenGL context");
-//    }
     this->handle = window;
     Events::init(window);
     glfwShowWindow((GLFWwindow*) handle);
@@ -53,6 +51,8 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     cursors[Cursor::RESIZE_ALL] = cursors[Cursor::ARROW];
     cursors[Cursor::NOT_ALLOWED] = cursors[Cursor::ARROW];
 #endif
+
+    NestRen::PlatformData::get()->nativeWindowHandle = handle;
 
     std::string message = {"\n       |-- \\\n"
                            "       |     \\\n"

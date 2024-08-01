@@ -22,8 +22,9 @@ uint64_t getMillis() {
 
 Application::Application(ApplicationStartupSettings &settings) {
     s_instance = this;
-    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
-    m_ImGuiLayer->onAttach();
+    NestRen::initialize();
+//    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
+//    m_ImGuiLayer->onAttach();
 
     m_currentLevel = nullptr;
     Foundation::Logger::init();
@@ -35,19 +36,19 @@ Application::Application(ApplicationStartupSettings &settings) {
 }
 
 Application::~Application() {
-    m_ImGuiLayer->onDetach();
+//    m_ImGuiLayer->onDetach();
     delete m_window;
 }
 
 
-void Application::drawProperties() const {
-    ImGui::Begin("Stats");
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    ImGui::Text("FPS: %d", fps);
-    ImGui::PopStyleColor();
-    ImGui::PopStyleColor();
-    ImGui::End();
-}
+//void Application::drawProperties() const {
+//    ImGui::Begin("Stats");
+//    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+//    ImGui::Text("FPS: %d", fps);
+//    ImGui::PopStyleColor();
+//    ImGui::PopStyleColor();
+//    ImGui::End();
+//}
 
 void Application::updateViewport(Size size) {
     NestRen::Rect viewport = NestRen::Rect(
@@ -56,7 +57,53 @@ void Application::updateViewport(Size size) {
     NestRen::setViewport(0, viewport);
 }
 
+class TriangleRenderer final {
+public:
+    TriangleRenderer()
+        : m_vertexBuffer()
+        , m_indexBuffer()
+        , m_shader() {
+        using namespace NestRen;
+
+        Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
+            "default-shaders/checker/checker_vertex.glsl",
+            "default-shaders/checker/checker_fragment.glsl"
+        );
+        m_shader = createProgram(programAsset.getNestRenProgramCreate());
+
+        float rightEdge = 0.5f;
+        float topEdge = 0.5f;
+        float leftEdge = -0.5f;
+        float bottomEdge = -0.5f;
+        float *data = new float[8]{
+            rightEdge, topEdge, leftEdge, topEdge, leftEdge, bottomEdge, rightEdge, bottomEdge
+        };
+        uint32_t *indices = new uint32_t[6]{0, 1, 2, 0, 2, 3};
+
+        VertexBufferLayoutData layoutData;
+        layoutData.pushFloat(2);
+        VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
+        m_vertexBuffer = createVertexBuffer(data, sizeof(float) * 8, vertexLayout);
+        m_indexBuffer = createIndexBuffer(indices, BufferElementType::UnsignedInt, 6);
+    }
+
+    void initialize() {}
+
+    void update(double deltaTime) {
+        NestRen::setShader(m_shader);
+        NestRen::setVertexBuffer(m_vertexBuffer);
+        NestRen::setIndexBuffer(m_indexBuffer, 0, 6);
+        NestRen::submit(0);
+    }
+
+private:
+    NestRen::VertexBufferHandle m_vertexBuffer;
+    NestRen::IndexBufferHandle m_indexBuffer;
+    NestRen::ProgramHandle m_shader;
+};
+
 void Application::loop() {
+    TriangleRenderer level;
     while (!m_window->shouldClose()) {
         uint64_t lastTime = timeMillis;
         timeMillis = getMillis();
@@ -88,12 +135,16 @@ void Application::loop() {
             updateViewport(m_window->getSize());
         }
 
-        m_ImGuiLayer->begin(deltaTime);
+//        m_ImGuiLayer->begin(deltaTime);
         if (m_currentLevel) {
             deltaTime = std::min(deltaTime, 10.);
         }
-        drawProperties();
-        m_ImGuiLayer->end();
+        level.update(deltaTime);
+//        drawProperties();
+//        m_ImGuiLayer->end();
+
+        NestRen::frame();
+        NestRen::renderFrame();
 
         Events::resetDropPaths();
         Events::pollEvents();
