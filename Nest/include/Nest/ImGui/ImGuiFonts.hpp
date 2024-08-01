@@ -1,8 +1,9 @@
 #pragma once
 
 #include <imgui.h>
-#include <unordered_map>
 #include <string>
+
+namespace Nest {
 
 struct FontConfiguration {
     std::string fontName;
@@ -18,7 +19,6 @@ public:
     static void pushFont(const std::string &fontName);
     static void popFont();
     static ImFont *get(const std::string &fontName);
-    static std::unordered_map<std::string, ImFont *> &getFonts();
-
-private:
 };
+
+} // namespace Nest

@@ -4,6 +4,7 @@
 #include "Nest/Application/Layer.hpp"
 #include "ApplicationStartupSettings.hpp"
 #include "Nest/ImGui/ImGuiLayer.hpp"
+#include "Nest/GameLogic/Level.hpp"
 
 namespace Nest {
 
@@ -35,12 +36,11 @@ public:
     void loop();
     void close();
 
-    inline void setLayer(Layer *layer) {
-        if (m_currentLayer) {
-            m_currentLayer->detach();
-        }
-        m_currentLayer = layer;
-        m_currentLayer->start();
+    inline void setLevel(Level *level) {
+        m_currentLevel = level;
+    }
+    void startBasicGame(Level *level) {
+        m_currentLevel = level;
     }
 
 private:
@@ -49,7 +49,7 @@ private:
     static Application *s_instance;
 
     Window *m_window;
-    Layer *m_currentLayer;
+    Level *m_currentLevel;
     ImGuiLayer *m_ImGuiLayer;
     
     Vec2 m_lastViewportSize;

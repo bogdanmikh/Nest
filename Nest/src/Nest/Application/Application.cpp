@@ -25,7 +25,7 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
     m_ImGuiLayer->onAttach();
 
-    m_currentLayer = nullptr;
+    m_currentLevel = nullptr;
     Foundation::Logger::init();
     m_window = new Window;
     m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
@@ -89,9 +89,8 @@ void Application::loop() {
         }
 
         m_ImGuiLayer->begin(deltaTime);
-        if (m_currentLayer) {
+        if (m_currentLevel) {
             deltaTime = std::min(deltaTime, 10.);
-            m_currentLayer->update(deltaTime);
         }
         drawProperties();
         m_ImGuiLayer->end();

@@ -1,47 +1,47 @@
 #pragma once
 
-#include "Panda/Assets/AssetLoader.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
 
-#include <Miren/Miren.hpp>
+#include <NestRen/NestRen.hpp>
 #include <cstdlib>
 
-namespace Panda {
+namespace Nest {
 class Texture {
 public:
     Texture()
-        : m_handle(MIREN_INVALID_HANDLE) {}
+        : m_handle(NESTREN_INVALID_HANDLE) {}
 
     Texture(const char *path) {
         TextureAsset asset = AssetLoader::loadTexture(path);
-        m_handle = Miren::createTexture(asset.getMirenTextureCreate());
+        m_handle = NestRen::createTexture(asset.getNestRenTextureCreate());
         LOG_INFO("CREATED TEXTURE, path: {}", path);
     }
 
     Texture(Foundation::Memory mem, uint32_t width, uint32_t height) {
-        Miren::TextureCreate create;
+        NestRen::TextureCreate create;
         create.m_data = mem;
-        create.m_format = Miren::TextureFormat::RGBA8;
+        create.m_format = NestRen::TextureFormat::RGBA8;
         create.m_numMips = 0;
         create.m_width = width;
         create.m_height = height;
-        m_handle = Miren::createTexture(create);
+        m_handle = NestRen::createTexture(create);
         LOG_INFO("CREATED TEXTURE, w: {}, h: {}", width, height);
     }
 
     Texture(Texture &&other) {
         m_handle = other.m_handle;
-        other.m_handle = MIREN_INVALID_HANDLE;
+        other.m_handle = NESTREN_INVALID_HANDLE;
         LOG_INFO("MOVED TEXTURE");
     }
 
     ~Texture() {
         if (m_handle.isValid()) {
-            Miren::deleteTexture(m_handle);
+            NestRen::deleteTexture(m_handle);
             LOG_INFO("DELETED TEXTURE");
         }
     }
 
-    inline Miren::TextureHandle getHandle() {
+    inline NestRen::TextureHandle getHandle() {
         return m_handle;
     }
 
@@ -50,6 +50,6 @@ public:
     }
 
 private:
-    Miren::TextureHandle m_handle;
+    NestRen::TextureHandle m_handle;
 };
-} // namespace Panda
+} // namespace Nest

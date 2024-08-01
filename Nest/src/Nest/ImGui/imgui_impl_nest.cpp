@@ -1,26 +1,27 @@
 #include "imgui_impl_nest.hpp"
 
-#include "Panda/Application/Application.hpp"
-#include "Panda/Events/WindowEvents.hpp"
-#include "Panda/Events/KeyEvents.hpp"
-#include "Panda/Events/MouseEvents.hpp"
+#include "Nest/Application/Application.hpp"
+#include "Nest/Window/Events.hpp"
 
-struct ImGui_PandaPlatformData {
-    Panda::Cursor MouseCursors[ImGuiMouseCursor_COUNT];
+namespace Nest {
+
+struct ImGui_NestPlatformData {
+
+    Cursor MouseCursors[ImGuiMouseCursor_COUNT];
     bool modCtrl;
     bool modShift;
     bool modAlt;
     bool modSuper;
 };
 
-static ImGui_PandaPlatformData *ImGui_ImplGlfw_GetBackendData() {
+static ImGui_NestPlatformData *ImGui_ImplGlfw_GetBackendData() {
     return ImGui::GetCurrentContext()
-               ? (ImGui_PandaPlatformData *)ImGui::GetIO().BackendPlatformUserData
+               ? (ImGui_NestPlatformData *)ImGui::GetIO().BackendPlatformUserData
                : nullptr;
 }
 
-static ImGuiKey ImGui_ImplPanda_KeyCodeToImGuiKey(Panda::Key key) {
-    using namespace Panda;
+static ImGuiKey ImGui_ImplNest_KeyCodeToImGuiKey(Nest::Key key) {
+    using namespace Nest;
     // clang-format off
     switch (key) {
         case Key::SPACE: return ImGuiKey_Space;
@@ -154,136 +155,41 @@ static ImGuiKey ImGui_ImplPanda_KeyCodeToImGuiKey(Panda::Key key) {
 
 // X11 does not include current pressed/released modifier key in 'mods' flags submitted by GLFW
 // See https://github.com/ocornut/imgui/issues/6034 and https://github.com/glfw/glfw/issues/1630
-static void ImGui_ImplPanda_UpdateKeyModifiers() {
+static void ImGui_ImplNest_UpdateKeyModifiers() {
     ImGuiIO &io = ImGui::GetIO();
-    ImGui_PandaPlatformData *pd = ImGui_ImplGlfw_GetBackendData();
+    ImGui_NestPlatformData *pd = ImGui_ImplGlfw_GetBackendData();
     io.AddKeyEvent(ImGuiMod_Ctrl, pd->modCtrl);
     io.AddKeyEvent(ImGuiMod_Shift, pd->modShift);
     io.AddKeyEvent(ImGuiMod_Alt, pd->modAlt);
     io.AddKeyEvent(ImGuiMod_Super, pd->modSuper);
 }
 
-IMGUI_IMPL_API void ImGui_ImplPanda_HandleEvent(Panda::Event *event) {
-    using namespace Panda;
-
-    ImGuiIO &io = ImGui::GetIO();
-    ImGui_PandaPlatformData *pd = ImGui_ImplGlfw_GetBackendData();
-
-    switch (event->type) {
-        case EventType::None:
-            break;
-        case EventType::WindowClose:
-            break;
-        case EventType::WindowResize: {
-            const WindowResizeEvent *ev = static_cast<const WindowResizeEvent *>(event);
-            float w = ev->getWidth();
-            float h = ev->getHeight();
-            io.DisplaySize = ImVec2((float)w, (float)h);
-            // if (w > 0 && h > 0) {
-            //     io.DisplayFramebufferScale = ImVec2((float)display_w / w, (float)display_h / h);
-            // }
-            break;
-        }
-        case EventType::KeyPressed: {
-            ImGui_ImplPanda_UpdateKeyModifiers();
-            const KeyPressedEvent *ev = static_cast<const KeyPressedEvent *>(event);
-            ImGuiKey key = ImGui_ImplPanda_KeyCodeToImGuiKey(ev->key);
-            io.AddKeyEvent(key, true);
-            pd->modShift = pd->modShift || ev->key == Panda::Key::LEFT_SHIFT ||
-                           ev->key == Panda::Key::RIGHT_SHIFT;
-            pd->modCtrl = pd->modCtrl || ev->key == Panda::Key::LEFT_CONTROL ||
-                          ev->key == Panda::Key::RIGHT_CONTROL;
-            pd->modAlt =
-                pd->modAlt || ev->key == Panda::Key::LEFT_ALT || ev->key == Panda::Key::RIGHT_ALT;
-            pd->modSuper = pd->modSuper || ev->key == Panda::Key::LEFT_SUPER ||
-                           ev->key == Panda::Key::RIGHT_SUPER;
-            event->isHandled = io.WantCaptureKeyboard;
-            break;
-        }
-        case EventType::InputCharacter: {
-            const CharacterInputEvent *ev = static_cast<const CharacterInputEvent *>(event);
-            io.AddInputCharacter(ev->c);
-            break;
-        }
-        case EventType::KeyReleased: {
-            const KeyReleasedEvent *ev = static_cast<const KeyReleasedEvent *>(event);
-            ImGuiKey key = ImGui_ImplPanda_KeyCodeToImGuiKey(ev->key);
-            io.AddKeyEvent(key, false);
-            event->isHandled = io.WantCaptureKeyboard;
-            if (ev->key == Panda::Key::LEFT_SHIFT || ev->key == Panda::Key::RIGHT_SHIFT) {
-                pd->modShift = false;
-            }
-            if (ev->key == Panda::Key::LEFT_CONTROL || ev->key == Panda::Key::RIGHT_CONTROL) {
-                pd->modCtrl = false;
-            }
-            if (ev->key == Panda::Key::LEFT_ALT || ev->key == Panda::Key::RIGHT_ALT) {
-                pd->modAlt = false;
-            }
-            if (ev->key == Panda::Key::LEFT_SUPER || ev->key == Panda::Key::RIGHT_SUPER) {
-                pd->modSuper = false;
-            }
-            break;
-        }
-        case EventType::MouseMoved: {
-            const MouseMovedEvent *ev = static_cast<const MouseMovedEvent *>(event);
-            io.AddMousePosEvent((float)ev->x, (float)ev->y);
-            event->isHandled = io.WantCaptureMouse;
-            break;
-        }
-        case EventType::MouseScrolled: {
-            const MouseScrolledEvent *ev = static_cast<const MouseScrolledEvent *>(event);
-            io.AddMouseWheelEvent(ev->xoffset, ev->yoffset);
-            event->isHandled = io.WantCaptureMouse;
-            break;
-        }
-        case EventType::MouseButtonPressed: {
-            ImGui_ImplPanda_UpdateKeyModifiers();
-            const MouseKeyEvent *ev = static_cast<const MouseKeyEvent *>(event);
-            int button = static_cast<int>(ev->button);
-            if (button >= 0 && button < ImGuiMouseButton_COUNT) {
-                io.AddMouseButtonEvent(button, true);
-            }
-            event->isHandled = io.WantCaptureMouse;
-            break;
-        }
-        case EventType::MouseButtonReleased: {
-            const MouseKeyEvent *ev = static_cast<const MouseKeyEvent *>(event);
-            int button = static_cast<int>(ev->button);
-            if (button >= 0 && button < ImGuiMouseButton_COUNT) {
-                io.AddMouseButtonEvent(button, false);
-            }
-            event->isHandled = io.WantCaptureMouse;
-            break;
-        }
-    }
-}
-
 static const char *getClipboardText(void *userData) {
-    Panda::Window *window = static_cast<Panda::Window *>(userData);
+    Nest::Window *window = static_cast<Nest::Window *>(userData);
     return window->getClipboardText();
 }
 
 static void setClipboardText(void *userData, const char *text) {
-    Panda::Window *window = static_cast<Panda::Window *>(userData);
+    Nest::Window *window = static_cast<Nest::Window *>(userData);
     window->setClipboardText(text);
 }
 
-IMGUI_IMPL_API bool ImGui_ImplPanda_Init() {
+IMGUI_IMPL_API bool ImGui_ImplNest_Init() {
     ImGuiIO &io = ImGui::GetIO();
-    io.BackendPlatformName = "imgui_impl_panda";
+    io.BackendPlatformName = "imgui_impl_Nest";
 
-    ImGui_PandaPlatformData *bd = IM_NEW(ImGui_PandaPlatformData)();
+    ImGui_NestPlatformData *bd = IM_NEW(ImGui_NestPlatformData)();
     io.BackendPlatformUserData = (void *)bd;
 
-    bd->MouseCursors[ImGuiMouseCursor_Arrow] = Panda::Cursor::ARROW;
-    bd->MouseCursors[ImGuiMouseCursor_TextInput] = Panda::Cursor::IBEAM;
-    bd->MouseCursors[ImGuiMouseCursor_ResizeNS] = Panda::Cursor::RESIZE_NS;
-    bd->MouseCursors[ImGuiMouseCursor_ResizeEW] = Panda::Cursor::RESIZE_EW;
-    bd->MouseCursors[ImGuiMouseCursor_Hand] = Panda::Cursor::POINTING_HAND;
-    bd->MouseCursors[ImGuiMouseCursor_ResizeAll] = Panda::Cursor::RESIZE_ALL;
-    bd->MouseCursors[ImGuiMouseCursor_ResizeNESW] = Panda::Cursor::RESIZE_NESW;
-    bd->MouseCursors[ImGuiMouseCursor_ResizeNWSE] = Panda::Cursor::RESIZE_NWSE;
-    bd->MouseCursors[ImGuiMouseCursor_NotAllowed] = Panda::Cursor::NOT_ALLOWED;
+    bd->MouseCursors[ImGuiMouseCursor_Arrow] = Nest::Cursor::ARROW;
+    bd->MouseCursors[ImGuiMouseCursor_TextInput] = Nest::Cursor::IBEAM;
+    bd->MouseCursors[ImGuiMouseCursor_ResizeNS] = Nest::Cursor::RESIZE_NS;
+    bd->MouseCursors[ImGuiMouseCursor_ResizeEW] = Nest::Cursor::RESIZE_EW;
+    bd->MouseCursors[ImGuiMouseCursor_Hand] = Nest::Cursor::POINTING_HAND;
+    bd->MouseCursors[ImGuiMouseCursor_ResizeAll] = Nest::Cursor::RESIZE_ALL;
+    bd->MouseCursors[ImGuiMouseCursor_ResizeNESW] = Nest::Cursor::RESIZE_NESW;
+    bd->MouseCursors[ImGuiMouseCursor_ResizeNWSE] = Nest::Cursor::RESIZE_NWSE;
+    bd->MouseCursors[ImGuiMouseCursor_NotAllowed] = Nest::Cursor::NOT_ALLOWED;
 
     bd->modCtrl = false;
     bd->modAlt = false;
@@ -299,20 +205,20 @@ IMGUI_IMPL_API bool ImGui_ImplPanda_Init() {
     // io.MouseHoveredViewport correctly (optional, not easy)
     io.SetClipboardTextFn = setClipboardText;
     io.GetClipboardTextFn = getClipboardText;
-    io.ClipboardUserData = Panda::Application::get()->getWindow();
+    io.ClipboardUserData = Nest::Application::get()->getWindow();
 
     return true;
 }
 
-IMGUI_IMPL_API void ImGui_ImplPanda_Shutdown() {
-    ImGui_PandaPlatformData *bd = ImGui_ImplGlfw_GetBackendData();
+IMGUI_IMPL_API void ImGui_ImplNest_Shutdown() {
+    ImGui_NestPlatformData *bd = ImGui_ImplGlfw_GetBackendData();
     IM_DELETE(bd);
 }
 
-IMGUI_IMPL_API void ImGui_ImplPanda_NewFrame(double deltaTime) {
+IMGUI_IMPL_API void ImGui_ImplNest_NewFrame(double deltaTime) {
     ImGuiIO &io = ImGui::GetIO();
-    ImGui_PandaPlatformData *bd = ImGui_ImplGlfw_GetBackendData();
-    using namespace Panda;
+    ImGui_NestPlatformData *bd = ImGui_ImplGlfw_GetBackendData();
+    using namespace Nest;
     Application *app = Application::get();
     Size dpi = app->getWindow()->getDpi();
     io.DisplayFramebufferScale = ImVec2(dpi.width, dpi.height);
@@ -320,4 +226,6 @@ IMGUI_IMPL_API void ImGui_ImplPanda_NewFrame(double deltaTime) {
     io.DeltaTime = (float)deltaTime;
     ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
     app->getWindow()->setCursor(bd->MouseCursors[imgui_cursor]);
+}
+
 }

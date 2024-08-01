@@ -1,6 +1,6 @@
-#include "Panda/Renderer/Renderer2D.hpp"
+#include "Nest/Renderer/Renderer2D.hpp"
 
-namespace Panda {
+namespace Nest {
 
 Renderer2D::Renderer2D()
     : m_viewId(0)
@@ -12,12 +12,12 @@ Renderer2D::Renderer2D()
         (Vertex2D *)ALLOC(Foundation::getAllocator(), sizeof(Vertex2D) * MAX_VERTICES_COUNT);
     m_drawData.indices =
         (uint16_t *)ALLOC(Foundation::getAllocator(), sizeof(uint16_t) * MAX_INDICES_COUNT);
-    Panda::ProgramAsset programAsset = Panda::AssetLoader::loadProgram(
+    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
         "default-shaders/renderer2d/renderer2d_vertex.glsl",
         "default-shaders/renderer2d/renderer2d_fragment.glsl"
     );
-    m_drawData.shader = Miren::createProgram(programAsset.getMirenProgramCreate());
-    Miren::VertexBufferLayoutData layoutData;
+    m_drawData.shader = NestRen::createProgram(programAsset.getNestRenProgramCreate());
+    NestRen::VertexBufferLayoutData layoutData;
     // Position
     layoutData.pushVec3();
     // Texture coordinates
@@ -26,7 +26,7 @@ Renderer2D::Renderer2D()
     layoutData.pushFloat(1);
     // Color
     layoutData.pushVec4();
-    m_drawData.layout = Miren::createVertexLayout(layoutData);
+    m_drawData.layout = NestRen::createVertexLayout(layoutData);
     m_drawData.textureSlotIndex = 1;
     Foundation::Memory whiteTextureData = Foundation::Memory::alloc(sizeof(uint32_t));
     *(uint32_t *)whiteTextureData.data = 0xffffffff;
@@ -35,17 +35,17 @@ Renderer2D::Renderer2D()
     for (uint32_t i = 0; i < MAX_TEXTURE_SLOTS; i++) {
         m_drawData.samplers[i] = i;
     }
-    Miren::setUniform(
-        m_drawData.shader, "u_textures", m_drawData.samplers, Miren::UniformDataType::IntArray
+    NestRen::setUniform(
+        m_drawData.shader, "u_textures", m_drawData.samplers, NestRen::UniformDataType::IntArray
     );
 }
 
 Renderer2D::~Renderer2D() {
     if (m_drawData.shader.isValid()) {
-        Miren::deleteProgram(m_drawData.shader);
+        NestRen::deleteProgram(m_drawData.shader);
     }
     if (m_drawData.layout.isValid()) {
-        Miren::deleteVertexLayout(m_drawData.layout);
+        NestRen::deleteVertexLayout(m_drawData.layout);
     }
     for (int i = 0; i < MAX_TEXTURE_SLOTS; ++i) {
         m_drawData.textures[i] = nullptr;
@@ -127,8 +127,8 @@ void Renderer2D::drawRect(glm::mat4 &transform, RectData rect) {
 
     m_drawData.vbSize += sizeof(Vertex2D) * 4;
     m_drawData.ibSize += sizeof(uint16_t) * 6;
-    PND_ASSERT(verticesCount < MAX_VERTICES_COUNT, "VERTICES LIMIT REACHED");
-    PND_ASSERT(indicesCount < MAX_INDICES_COUNT, "INDICES LIMIT REACHED");
+    NEST_ASSERT(verticesCount < MAX_VERTICES_COUNT, "VERTICES LIMIT REACHED");
+    NEST_ASSERT(indicesCount < MAX_INDICES_COUNT, "INDICES LIMIT REACHED");
     m_drawData.stats.quadCount += 1;
 }
 
@@ -140,32 +140,32 @@ void Renderer2D::end() {
     if (m_drawData.verticesCount == 0) {
         return;
     }
-    Miren::setShader(m_drawData.shader);
-    Miren::setUniform(
-        m_drawData.shader, "projViewMtx", (void *)&m_viewProj, Miren::UniformDataType::Mat4
+    NestRen::setShader(m_drawData.shader);
+    NestRen::setUniform(
+        m_drawData.shader, "projViewMtx", (void *)&m_viewProj, NestRen::UniformDataType::Mat4
     );
 
-    Miren::TransientVertexBuffer tvb;
-    Miren::allocTransientVertexBuffer(&tvb, m_drawData.vbSize);
+    NestRen::TransientVertexBuffer tvb;
+    NestRen::allocTransientVertexBuffer(&tvb, m_drawData.vbSize);
     memcpy(tvb.data, m_drawData.vertices, m_drawData.vbSize);
 
-    Miren::TransientIndexBuffer tib;
-    Miren::allocTransientIndexBuffer(
-        &tib, m_drawData.indicesCount, Miren::BufferElementType::UnsignedShort
+    NestRen::TransientIndexBuffer tib;
+    NestRen::allocTransientIndexBuffer(
+        &tib, m_drawData.indicesCount, NestRen::BufferElementType::UnsignedShort
     );
     memcpy(tib.data, m_drawData.indices, m_drawData.ibSize);
 
-    Miren::setState(0);
+    NestRen::setState(0);
     for (int i = 0; i < m_drawData.textureSlotIndex; i++) {
-        Miren::setTexture(m_drawData.textures[i]->getHandle(), i);
+        NestRen::setTexture(m_drawData.textures[i]->getHandle(), i);
     }
-    Miren::setVertexLayout(m_drawData.layout);
-    Miren::setVertexBuffer(tvb.handle, tvb.startVertex);
-    Miren::setIndexBuffer(tib.handle, tib.startIndex, m_drawData.indicesCount);
-    Miren::submit(m_viewId);
+    NestRen::setVertexLayout(m_drawData.layout);
+    NestRen::setVertexBuffer(tvb.handle, tvb.startVertex);
+    NestRen::setIndexBuffer(tib.handle, tib.startIndex, m_drawData.indicesCount);
+    NestRen::submit(m_viewId);
 }
 
-void Renderer2D::setViewId(Miren::ViewId id) {
+void Renderer2D::setViewId(NestRen::ViewId id) {
     m_viewId = id;
 }
 
@@ -173,4 +173,4 @@ void Renderer2D::setViewProj(glm::mat4 viewProj) {
     m_viewProj = viewProj;
 }
 
-} // namespace Panda
+} // namespace Nest

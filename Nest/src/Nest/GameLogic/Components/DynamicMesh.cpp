@@ -46,7 +46,7 @@ DynamicMesh::DynamicMesh(DynamicMesh &source)
     , m_shaderHandle(source.m_shaderHandle) {}
 
 void DynamicMesh::create(
-    const Panda::MeshData &data, std::vector<NestRen::TextureHandle> textures, NestRen::ProgramHandle shader
+    const Nest::MeshData &data, std::vector<NestRen::TextureHandle> textures, NestRen::ProgramHandle shader
 ) {
     NEST_ASSERT(shader.isValid(), "Invalid shader for mesh");
     m_shaderHandle = shader;

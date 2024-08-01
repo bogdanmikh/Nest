@@ -2,8 +2,25 @@
 
 #include <glm/glm.hpp>
 #include "Nest/Base/Base.hpp"
+#include <GLFW/glfw3.h>
 
 namespace Nest {
+
+
+enum Cursor {
+    ARROW = 0,
+    IBEAM = 1,
+    CROSSHAIR = 2,
+    POINTING_HAND = 3,
+    RESIZE_EW = 4,
+    RESIZE_NS = 5,
+    RESIZE_NESW = 6,
+    RESIZE_NWSE = 7,
+    RESIZE_ALL = 8,
+    NOT_ALLOWED = 9,
+    COUNT = 10
+};
+
 
 class Window {
 public:
@@ -19,8 +36,13 @@ public:
     double getTime();
     void *getNativeHandle();
 
+    Size getDpi();
+    void setCursor(Cursor cursor);
+    const char *getClipboardText();
+    void setClipboardText(const char *text);
 private:
     void *handle;
+    GLFWcursor *cursors[Cursor::COUNT];
 };
 
 }

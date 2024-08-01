@@ -2,9 +2,9 @@
 // Created by Admin on 09.02.2022.
 //
 
-#include "Panda/GameLogic/Components/TransformComponent.hpp"
+#include "Nest/GameLogic/Components/TransformComponent.hpp"
 
-namespace Panda {
+namespace Nest {
 
 TransformComponent::TransformComponent()
     : rotation(1.0f, 0.0f, 0.0f, 0.0f)

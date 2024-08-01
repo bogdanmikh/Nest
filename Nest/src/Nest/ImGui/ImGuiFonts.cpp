@@ -1,12 +1,12 @@
-#include "Panda/ImGui/ImGuiFonts.hpp"
-#include "Panda/Assets/AssetLoader.hpp"
+#include "Nest/ImGui/ImGuiFonts.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
 
-namespace Panda {
+namespace Nest {
 
 static std::unordered_map<std::string, ImFont *> s_fonts;
 
 void Fonts::add(const FontConfiguration &config, bool isDefault) {
-    PND_ASSERT_F(
+    NEST_ASSERT_F(
         s_fonts.find(config.fontName) == s_fonts.end(),
         "Tried to add font with name '{}' but that name is already taken!",
         config.fontName
@@ -23,7 +23,7 @@ void Fonts::add(const FontConfiguration &config, bool isDefault) {
         &imguiFontConfig,
         config.glyphRanges == nullptr ? io.Fonts->GetGlyphRangesDefault() : config.glyphRanges
     );
-    PND_ASSERT(font != nullptr, "Failed to load font file!");
+    NEST_ASSERT(font != nullptr, "Failed to load font file!");
     s_fonts[config.fontName] = font;
     if (isDefault) {
         io.FontDefault = font;
@@ -31,7 +31,7 @@ void Fonts::add(const FontConfiguration &config, bool isDefault) {
 }
 
 ImFont *Fonts::get(const std::string &fontName) {
-    PND_ASSERT(s_fonts.find(fontName) != s_fonts.end(), "Failed to find font with that name!");
+    NEST_ASSERT(s_fonts.find(fontName) != s_fonts.end(), "Failed to find font with that name!");
     return s_fonts.at(fontName);
 }
 

@@ -2,12 +2,14 @@
 
 // Base
 #include "Nest/Application/Application.hpp"
+#include "Nest/Application/Layer.hpp"
 #include "Nest/Application/ApplicationStartupSettings.hpp"
 
 // Assets
 #include "Nest/Assets/AssetLoader.hpp"
 
 // Game logic
+#include "Nest/GameLogic/Level.hpp"
 #include "Nest/GameLogic/Camera.hpp"
 #include "Nest/GameLogic/NativeScript.hpp"
 #include "Nest/GameLogic/Components/StaticMesh.hpp"

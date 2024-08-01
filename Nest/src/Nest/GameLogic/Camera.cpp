@@ -1,118 +1,77 @@
 #include "Nest/GameLogic/Camera.hpp"
 
-#include <glm/ext.hpp>
-#include <iostream>
-
 namespace Nest {
 
-Camera::Camera()
-    : fieldOfViewRadians(glm::radians(45.f))
-    , aspect(1.f)
-    , rotation(0.f)
-    , position(0.f)
-    , front(0.f)
-    , right(0.f)
-    , up(0.f) {
-    updateVectors();
+static const float zNearDefault = 0.1f;
+static const float zFarDefault = 1000.f;
+
+Camera::Camera(Size viewportSize)
+    : m_viewportSize(viewportSize)
+    , m_projection(1.f)
+    , m_zNear(zNearDefault)
+    , m_zFar(zFarDefault) {}
+
+float Camera::getNear() {
+    return m_zNear;
 }
 
-Camera::~Camera() {}
-
-void Camera::setFieldOfView(float radians) {
-    if (radians == this->fieldOfViewRadians) {
-        return;
-    }
-    this->fieldOfViewRadians = radians;
+float Camera::getFar() {
+    return m_zFar;
 }
 
-void Camera::updateAspectRatio(float aspect) {
-    if (aspect == this->aspect) {
-        return;
-    }
-    this->aspect = aspect;
+void Camera::setFar(float far) {
+    m_zFar = far;
+    updateProjectionMatrix();
 }
 
-glm::mat4 Camera::getProjectionMatrix() {
-    return glm::perspective(fieldOfViewRadians, aspect, 0.01f, 1000.f);
+void Camera::setNear(float near) {
+    m_zNear = near;
+    updateProjectionMatrix();
 }
 
-void Camera::rotate(float x, float y, float z) {
-    if (x == 0 && y == 0 && z == 0) {
-        return;
-    }
-    rotation += glm::vec3(x, y, z);
+glm::mat4 Camera::getProjection() {
+    return m_projection;
 }
 
-void Camera::setRotation(float x, float y, float z) {
-    if (rotation.x == x && rotation.y == y && rotation.z == z) {
-        return;
-    }
-    rotation.x = x;
-    rotation.y = y;
-    rotation.z = z;
+Size Camera::getViewportSize() {
+    return m_viewportSize;
 }
 
-void Camera::translate(float x, float y, float z) {
-    if (x == 0 && y == 0 && z == 0) {
-        return;
-    }
-    position += glm::vec3(x, y, z);
+void Camera::setViewportSize(Size size) {
+    m_viewportSize = size;
+    updateProjectionMatrix();
 }
 
-void Camera::translateLocal(float x, float y, float z) {
-    if (x == 0 && y == 0 && z == 0) {
-        return;
-    }
-    position += right * x;
-    position += up * y;
-    position += front * z;
+Vec3 Camera::screenCoordToWorld(glm::mat4 view, Vec2 screen, float distance) {
+    glm::vec4 in;
+    in.x = 2.f * screen.x / m_viewportSize.width - 1.f;
+    in.y = 1.f - 2.f * screen.y / m_viewportSize.height;
+    // То же самое ниже
+    // glm::vec4 temp = m_projection * glm::vec4(0.f, 0.f, -distance, 1.f);
+    // in.z = temp.z / temp.w;
+    float zValue = -distance * -(m_zFar + m_zNear) / (m_zFar - m_zNear) -
+                   (2 * m_zFar * m_zNear) / (m_zFar - m_zNear);
+    float wValue = distance;
+    in.z = zValue / wValue;
+    in.w = 1.f;
+    glm::mat4 viewProjection = m_projection * view;
+    glm::mat4 viewProjInverse = glm::inverse(viewProjection);
+    glm::vec4 result = viewProjInverse * in;
+    result /= result.w;
+    return Vec3(result.x, result.y, result.z);
 }
 
-void Camera::setPosition(float x, float y, float z) {
-    if (position.x == x && position.y == y && position.z == z) {
-        return;
-    }
-    position.x = x;
-    position.y = y;
-    position.z = z;
+Vec3 Camera::screenCoordToWorld(glm::mat4 view, Vec3 screen) {
+    glm::vec4 in;
+    in.x = 2.f * screen.x / m_viewportSize.width - 1.f;
+    in.y = 1.f - 2.f * screen.y / m_viewportSize.height;
+    in.z = screen.z;
+    in.w = 1.f;
+    glm::mat4 viewProjection = m_projection * view;
+    glm::mat4 viewProjInverse = glm::inverse(viewProjection);
+    glm::vec4 result = viewProjInverse * in;
+    result /= result.w;
+    return Vec3(result.x, result.y, result.z);
 }
 
-void Camera::updateVectors() {
-    glm::mat4 rotationMatrix = glm::mat4(1.f);
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    rotationMatrix = glm::transpose(rotationMatrix);
-    front = rotationMatrix * glm::vec4(0.f, 0.f, -1.f, 1.f);
-    right = rotationMatrix * glm::vec4(1.f, 0.f, 0.f, 1.f);
-    up = rotationMatrix * glm::vec4(0.f, 1.f, 0.f, 1.f);
-}
-
-glm::mat4 Camera::getViewMatrix() {
-    glm::vec3 target = position + front;
-    return glm::lookAt(position, target, up);
-}
-
-glm::mat4 Camera::getSkyViewMatrix() {
-    glm::mat4 rotationMatrix = glm::mat4(1.f);
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotationMatrix =
-        glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    return rotationMatrix;
-}
-
-glm::vec3 Camera::getPosition() {
-    return position;
-}
-
-glm::vec3 Camera::getFront() {
-    return front;
-}
-
-}
+} // namespace Nest

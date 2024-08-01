@@ -14,7 +14,7 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->setLayer(new TriangleLevel);
+    application->startBasicGame(new TriangleLevel);
     application->loop();
     delete application;
     return 0;

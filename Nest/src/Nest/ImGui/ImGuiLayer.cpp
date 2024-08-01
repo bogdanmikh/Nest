@@ -65,18 +65,18 @@ void ImGuiLayer::onAttach() {
     setDarkThemeColors();
 
     // Setup Platform/Renderer bindings
-    ImGui_ImplPanda_Init();
+    ImGui_ImplNest_Init();
     ImGui_ImplNestRen_Init();
 }
 
 void ImGuiLayer::onDetach() {
     ImGui_ImplNestRen_Shutdown();
-    ImGui_ImplPanda_Shutdown();
+    ImGui_ImplNest_Shutdown();
     ImGui::DestroyContext();
 }
 
 void ImGuiLayer::begin(double deltaTime) {
-    ImGui_ImplPanda_NewFrame(deltaTime);
+    ImGui_ImplNest_NewFrame(deltaTime);
     ImGui_ImplNestRen_NewFrame();
     ImGui::NewFrame();
     // ImGuizmo::BeginFrame();

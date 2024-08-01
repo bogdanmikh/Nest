@@ -48,5 +48,9 @@ target_link_libraries(Nest imgui)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 
 # Dependencies - GLAD
-target_link_libraries(NestRen glad)
-target_include_directories(NestRen PRIVATE ${VENDOR_DIRECTORY}/glad/include)
+target_link_libraries(Nest glad)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glad/include)
+
+# Dependencies - entt
+target_link_libraries(Nest EnTT)
+target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/entt/src)

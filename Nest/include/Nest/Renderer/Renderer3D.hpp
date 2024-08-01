@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include "Panda/GameLogic/Components/TransformComponent.hpp"
-#include "Panda/GameLogic/Components/StaticMesh.hpp"
-#include "Panda/GameLogic/Components/DynamicMesh.hpp"
-#include "Panda/GameLogic/Camera.hpp"
+#include "Nest/GameLogic/Components/TransformComponent.hpp"
+#include "Nest/GameLogic/Components/StaticMesh.hpp"
+#include "Nest/GameLogic/Components/DynamicMesh.hpp"
+#include "Nest/GameLogic/Camera.hpp"
 
 namespace Nest {
 
@@ -33,14 +33,14 @@ public:
     void end();
     Statistics getStats();
     void setViewProj(glm::mat4 viewProj);
-    void setViewId(Miren::ViewId id);
+    void setViewId(NestRen::ViewId id);
 
     Renderer3D &operator=(Renderer3D &&other);
 
 private:
     DrawData m_drawData;
-    Miren::ViewId m_viewId;
+    NestRen::ViewId m_viewId;
     glm::mat4 m_viewProj;
 };
 
-} // namespace Panda
+} // namespace Nest

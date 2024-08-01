@@ -6,7 +6,7 @@
 
 #include <Nest.hpp>
 
-class TriangleLevel : public Nest::Layer {
+class TriangleLevel : public Nest::Level {
 public:
-    void start() override;
+    void start(Nest::World *world) override;
 };

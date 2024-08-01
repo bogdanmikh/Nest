@@ -51,7 +51,7 @@ private:
     NestRen::ProgramHandle m_shader;
 };
 
-void TriangleLevel::start(Panda::World *world) {
-    Panda::Entity entity = world->instantiateEntity();
+void TriangleLevel::start(Nest::World *world) {
+    Nest::Entity entity = world->instantiateEntity();
     entity.addNativeScript<TriangleRenderer>();
 }

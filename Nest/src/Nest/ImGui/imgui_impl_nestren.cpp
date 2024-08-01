@@ -147,7 +147,7 @@ IMGUI_IMPL_API void ImGui_ImplNestRen_DestroyFontsTexture() {
 
 IMGUI_IMPL_API bool ImGui_ImplNestRen_CreateDeviceObjects() {
     using namespace NestRen;
-    NestRen::ProgramAsset programAsset = NestRen::AssetLoader::loadProgram(
+    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
         "default-shaders/imgui/imgui_vertex.glsl", "default-shaders/imgui/imgui_fragment.glsl"
     );
     shader = NestRen::createProgram(programAsset.getNestRenProgramCreate());
