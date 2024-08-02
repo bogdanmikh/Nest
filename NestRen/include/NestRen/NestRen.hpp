@@ -67,5 +67,6 @@ bool renderFrame();
 /// Frame processing finished (from app thread). Wait for renderer to finish rendering frame.
 /// Returns frame number
 uint32_t frame();
+void flip();
 
 } // namespace NestRen

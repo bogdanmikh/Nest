@@ -205,4 +205,8 @@ void submit(ViewId id) {
     s_context->submit(id);
 }
 
+void flip() {
+    s_context->flip();
+}
+
 } // namespace NESTREN

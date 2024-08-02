@@ -101,12 +101,11 @@ void Application::loop() {
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
-
         Events::resetDropPaths();
-
         NestRen::renderFrame();
         ImGui_EndFrame();
         NestRen::frame();
+        NestRen::flip();
         Events::pollEvents();
     }
 }

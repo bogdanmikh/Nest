@@ -31,26 +31,19 @@ struct Context {
         , m_preCommandQueue(300000)
         , m_postCommandQueue(300000) {
 
-        m_render = &m_frame[0];
-        m_submit = &m_frame[1];
-
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererInit);
         m_preCommandQueue.write(cmd);
-        m_submit->m_transientVb = createTransientVertexBuffer(TRANSIENT_VERTEX_BUFFER_SIZE);
-        m_submit->m_transientIb = createTransientIndexBuffer(TRANSIENT_INDEX_BUFFER_SIZE);
-        frame();
-        m_submit->m_transientVb = createTransientVertexBuffer(TRANSIENT_VERTEX_BUFFER_SIZE);
-        m_submit->m_transientIb = createTransientIndexBuffer(TRANSIENT_INDEX_BUFFER_SIZE);
-        frame();
+        m_render.m_transientVb = createTransientVertexBuffer(TRANSIENT_VERTEX_BUFFER_SIZE);
+        m_render.m_transientIb = createTransientIndexBuffer(TRANSIENT_INDEX_BUFFER_SIZE);
     }
 
     // Должно быть вызвано из главного потока и не из цикла обновления.
     ~Context() {
-        destroyTransientVertexBuffer(m_submit->m_transientVb);
-        destroyTransientIndexBuffer(m_submit->m_transientIb);
+        destroyTransientVertexBuffer(m_render.m_transientVb);
+        destroyTransientIndexBuffer(m_render.m_transientIb);
         frame();
-        destroyTransientVertexBuffer(m_submit->m_transientVb);
-        destroyTransientIndexBuffer(m_submit->m_transientIb);
+        destroyTransientVertexBuffer(m_render.m_transientVb);
+        destroyTransientIndexBuffer(m_render.m_transientIb);
         frame();
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererShutdown);
         m_postCommandQueue.write(cmd);
@@ -229,9 +222,8 @@ struct Context {
             return true;
         }
         rendererExecuteCommands(m_preCommandQueue);
-        if (m_render->getDrawCallsCount() != 0) {
-            m_renderer->submit(m_render, m_views);
-            m_renderer->flip();
+        if (m_render.getDrawCallsCount() != 0) {
+            m_renderer->submit(&m_render, m_views);
         }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
@@ -256,7 +248,7 @@ struct Context {
     }
 
     void deleteFrameBuffer(FrameBufferHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteFrameBufferCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -269,7 +261,7 @@ struct Context {
     }
 
     void deleteProgram(ProgramHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteProgramCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -287,7 +279,7 @@ struct Context {
     }
 
     void deleteTexture(TextureHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteTextureCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -316,7 +308,7 @@ struct Context {
     }
 
     void deleteIndexBuffer(IndexBufferHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteIndexBufferCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -347,7 +339,7 @@ struct Context {
     }
 
     void deleteVertexBuffer(VertexBufferHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteVertexBufferCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -360,7 +352,7 @@ struct Context {
     }
 
     void deleteVertexLayout(VertexLayoutHandle handle) {
-        m_submit->queueFree(handle);
+        m_render.queueFree(handle);
         DeleteVertexLayoutCommand cmd(handle);
         m_postCommandQueue.write(cmd);
     }
@@ -395,79 +387,78 @@ struct Context {
     }
 
     void allocTransientVertexBuffer(TransientVertexBuffer *buffer, uint32_t size) {
-        uint32_t transientVBOffset = m_submit->m_transientVbSize;
-        buffer->data = &m_submit->m_transientVb.data[transientVBOffset];
-        m_submit->m_transientVbSize += size;
+        uint32_t transientVBOffset = m_render.m_transientVbSize;
+        buffer->data = &m_render.m_transientVb.data[transientVBOffset];
+        m_render.m_transientVbSize += size;
         NEST_ASSERT(
-            m_submit->m_transientVbSize < TRANSIENT_VERTEX_BUFFER_SIZE, "INCREASE DEFAULT VB SIZE"
+            m_render.m_transientVbSize < TRANSIENT_VERTEX_BUFFER_SIZE, "INCREASE DEFAULT VB SIZE"
         );
         buffer->size = size;
         buffer->startVertex = transientVBOffset;
-        buffer->handle = m_submit->m_transientVb.handle;
+        buffer->handle = m_render.m_transientVb.handle;
     }
 
     void allocTransientIndexBuffer(
         TransientIndexBuffer *buffer, uint32_t count, BufferElementType elementType
     ) {
-        uint32_t transientIBOffset = m_submit->m_transientIbSize;
+        uint32_t transientIBOffset = m_render.m_transientIbSize;
         uint32_t elementSize = VertexBufferElement::getSizeOfType(elementType);
         uint32_t size = count * elementSize;
-        buffer->data = &m_submit->m_transientIb.data[transientIBOffset];
-        m_submit->m_transientIbSize += size;
+        buffer->data = &m_render.m_transientIb.data[transientIBOffset];
+        m_render.m_transientIbSize += size;
         NEST_ASSERT(
-            m_submit->m_transientIbSize < TRANSIENT_INDEX_BUFFER_SIZE, "INCREASE DEFAULT IB SIZE"
+            m_render.m_transientIbSize < TRANSIENT_INDEX_BUFFER_SIZE, "INCREASE DEFAULT IB SIZE"
         );
         buffer->size = size;
         buffer->startIndex = transientIBOffset;
         buffer->elementType = elementType;
-        buffer->handle = m_submit->m_transientIb.handle;
+        buffer->handle = m_render.m_transientIb.handle;
     }
 
     void setState(uint32_t state) {
-        m_submit->setState(state);
+        m_render.setState(state);
     }
 
     void setScissorRect(Rect rect) {
-        m_submit->setScissorRect(rect);
+        m_render.setScissorRect(rect);
     }
 
     void setVertexBuffer(VertexBufferHandle handle, intptr_t offset) {
-        m_submit->setVertexBuffer(handle, offset);
+        m_render.setVertexBuffer(handle, offset);
     }
 
     void setIndexBuffer(IndexBufferHandle handle, intptr_t offset, size_t count) {
-        m_submit->setIndexBuffer(handle, offset, count);
+        m_render.setIndexBuffer(handle, offset, count);
     }
 
     void setShader(ProgramHandle handle) {
-        m_submit->setShader(handle);
+        m_render.setShader(handle);
     }
 
     void setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
-        m_submit->setUniform(handle, name, value, type, count);
+        m_render.setUniform(handle, name, value, type, count);
     }
 
     void setTexture(TextureHandle textureHandle, uint32_t slot) {
-        m_submit->setTexture(textureHandle, slot);
+        m_render.setTexture(textureHandle, slot);
     }
 
     void setVertexLayout(VertexLayoutHandle handle) {
-        m_submit->setVertexLayout(handle);
+        m_render.setVertexLayout(handle);
     }
 
     void submit(ViewId id) {
-        m_submit->submitCurrentDrawCall(id);
-        m_submit->beginDrawCall();
+        m_render.submitCurrentDrawCall(id);
+        m_render.beginDrawCall();
     }
 
-    void swap() {
-        std::swap(m_render, m_submit);
+    void flip() {
+        m_renderer->flip();
     }
 
     uint32_t frame() {
-        freeAllHandles(m_submit);
-        swap();
-        m_submit->reset();
+        freeAllHandles(&m_render);
+        m_render.reset();
         return m_frameNumber++;
     }
 
@@ -486,9 +477,7 @@ struct Context {
 //    Foundation::Thread m_thread;
 private:
     RendererI *m_renderer;
-    Frame m_frame[2];
-    Frame *m_render;
-    Frame *m_submit;
+    Frame m_render;
     View m_views[MAX_VIEWS];
     uint32_t m_frameNumber;
 
