@@ -81,13 +81,21 @@ void CubeRenderer::onAttach() {
 }
 
 void CubeRenderer::onUpdate(double deltaTime) {
+    rotateZ(0.5);
+    rotateY(0.5);
     static auto camera = Nest::Application::get()->getWorldCamera();
     static auto time = Nest::Application::get()->getWindow()->getTime();
+    time = Nest::Application::get()->getWindow()->getTime();
     static auto mousePos = Nest::Events::getCursorPos();
+    mousePos = Nest::Events::getCursorPos();
     static auto resolution = Nest::Application::get()->getWindow()->getSize();
+    resolution = Nest::Application::get()->getWindow()->getSize();
     static auto viewMatrix = camera->getViewMatrix();
+    viewMatrix = camera->getViewMatrix();
     static auto projectionMatrix = camera->getProjectionMatrix();
+    projectionMatrix = camera->getProjectionMatrix();
     static auto cameraPos = camera->getPosition();
+    cameraPos = camera->getPosition();
     NestRen::setShader(m_shader);
     NestRen::setUniform(m_shader, "iTimeVec4", &time, NestRen::UniformType::Vec4); /// float
     NestRen::setUniform(m_shader, "iResolutionVec4", &resolution, NestRen::UniformType::Vec4); /// vec2

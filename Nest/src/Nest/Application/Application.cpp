@@ -34,9 +34,12 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
     m_worldCamera->setPosition(0, 0, 10);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
-    m_worldCamera->setRotation(0.f, 0.f, 0.f);
 
-    timeMillis = getMillis();
+    m_maximumFps = 60;
+    m_oneSecondTimeCount = 0;
+    m_deltaTimeMillis = 0;
+    m_thisSecondFramesCount = 0;
+    m_timeMillis = getMillis();
     m_lastViewportSize = m_window->getSize();
 }
 
@@ -58,24 +61,26 @@ void Application::updateViewport(Size size) {
 void Application::loop() {
     if (m_layer) m_layer->onAttach();
     while (!m_window->shouldClose()) {
-        uint64_t lastTime = timeMillis;
-        timeMillis = getMillis();
-        deltaTimeMillis += timeMillis - lastTime;
-        if (deltaTimeMillis < (1000ul / maximumFps)) {
+        uint64_t lastTime = m_timeMillis;
+        m_timeMillis = getMillis();
+        m_deltaTimeMillis += m_timeMillis - lastTime;
+        if (m_deltaTimeMillis < (1000 / m_maximumFps)) {
             continue;
         }
-        oneSecondTimeCount += deltaTimeMillis;
+        m_oneSecondTimeCount += m_deltaTimeMillis;
 
-        thisSecondFramesCount++;
-        if (oneSecondTimeCount >= 1000) {
-            fps = thisSecondFramesCount;
+        m_thisSecondFramesCount++;
+        if (m_oneSecondTimeCount >= 1000) {
+            fps = m_thisSecondFramesCount;
             LOG_INFO("FPS: {}", fps);
-            thisSecondFramesCount = 0;
-            oneSecondTimeCount = 0;
+            m_thisSecondFramesCount = 0;
+            m_oneSecondTimeCount = 0;
         }
-
-        double deltaTime = deltaTimeMillis / 1000.0;
-        deltaTimeMillis = 0;
+        double deltaTime = m_deltaTimeMillis / 1000.0;
+        if (deltaTime == 0) {
+            deltaTime = 0.00000001;
+        }
+        m_deltaTimeMillis = 0;
 
         if (Events::isJustKeyPressed(Key::ESCAPE)) {
             close();
@@ -89,15 +94,18 @@ void Application::loop() {
         }
 
         m_worldCamera->update();
+        if (deltaTime >= 2) {
+            LOG_ERROR("Delta time: {}", deltaTime);
+        }
         ImGui_NewFrame();
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
-        ImGui_EndFrame();
 
         Events::resetDropPaths();
 
         NestRen::renderFrame();
+        ImGui_EndFrame();
         NestRen::frame();
         Events::pollEvents();
     }

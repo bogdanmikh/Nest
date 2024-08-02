@@ -218,7 +218,6 @@ struct Context {
     }
 
     bool renderFrame() {
-        LOG_INFO("RENDER FRAME BEGIN");
         m_preCommandQueue.finishWriting();
         m_postCommandQueue.finishWriting();
         if (m_renderer == nullptr) {
@@ -231,13 +230,12 @@ struct Context {
         }
         rendererExecuteCommands(m_preCommandQueue);
         if (m_render->getDrawCallsCount() != 0) {
-            m_renderer->flip();
             m_renderer->submit(m_render, m_views);
+            m_renderer->flip();
         }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
         m_postCommandQueue.reset();
-        LOG_INFO("RENDER FRAME END");
         return m_renderer != nullptr;
     }
 

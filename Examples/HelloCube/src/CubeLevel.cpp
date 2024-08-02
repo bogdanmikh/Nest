@@ -1,9 +1,7 @@
-//
-// Created by Admin on 19/03/2022.
-//
-
-#include "CubeRenderer.hpp"
 #include "CubeLevel.hpp"
+#include "CubeRenderer.hpp"
+#include "CameraMove.hpp"
+
 #include <Nest.hpp>
 
 CubeLevel::~CubeLevel() {
@@ -11,6 +9,7 @@ CubeLevel::~CubeLevel() {
 }
 
 void CubeLevel::onAttach() {
+    addEntity(new CameraMove);
     addEntity(new CubeRenderer);
     for (auto &entity : m_entities) {
         entity->onAttach();
@@ -27,6 +26,7 @@ void CubeLevel::onUpdate(double deltaTime) {
 void CubeLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
+        delete entity;
     }
 }
 

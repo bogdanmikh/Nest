@@ -25,7 +25,7 @@ public:
     }
 
     inline int getMaxFps() const {
-        return maximumFps;
+        return m_maximumFps;
     }
 
     inline int getFps() const {
@@ -50,11 +50,14 @@ private:
     Vec2 m_lastViewportSize;
 
     int fps;
-    int maximumFps = 60;
-    uint64_t deltaTimeMillis = 0;
-    int thisSecondFramesCount = 0;
-    uint64_t timeMillis = 0;
-    uint64_t oneSecondTimeCount = 0;
+    uint64_t m_timeMillis;
+    // Таймер до 1 секундны для подсчета FPS (в миллисекундах)
+    uint64_t m_oneSecondTimeCount;
+    // Время после отрисовки предыдущего кадра
+    uint64_t m_deltaTimeMillis;
+    int m_thisSecondFramesCount;
+    // Ограничение по FPS
+    int m_maximumFps;
 };
 
 }

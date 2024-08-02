@@ -4,6 +4,7 @@
 #include <Foundation/Assert.hpp>
 #include "Config.hpp"
 #include "VertexBufferLayoutData.hpp"
+#include <glm/glm.hpp>
 
 #define NESTREN_INVALID_HANDLE UINT16_MAX
 
@@ -176,6 +177,10 @@ struct Size {
     Size(int width, int height)
         : width(width)
         , height(height) {}
+
+    Size(glm::vec2 size)
+        : width(size.x)
+        , height(size.y) {}
 
     inline bool isZero() {
         return width == 0 && height == 0;
