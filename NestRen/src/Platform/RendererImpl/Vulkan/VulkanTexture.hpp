@@ -8,9 +8,9 @@
 
 namespace NestRen {
 
-class OpenGLTexture {
+class VulkanTexture {
 public:
-    OpenGLTexture();
+    VulkanTexture();
     void create(const TextureCreate &create);
     void resize(uint32_t width, uint32_t height);
     uint16_t getWidth() {

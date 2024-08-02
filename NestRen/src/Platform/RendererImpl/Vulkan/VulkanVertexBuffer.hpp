@@ -9,9 +9,9 @@
 
 namespace NestRen {
 
-class OpenGLVertexBuffer {
+class VulkanVertexBuffer {
 public:
-    OpenGLVertexBuffer();
+    VulkanVertexBuffer();
     void create(void *data, uint32_t size, bool isDynamic);
     void update(void *data, uint32_t size);
     void terminate();

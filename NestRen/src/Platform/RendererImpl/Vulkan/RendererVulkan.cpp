@@ -3,7 +3,7 @@
 //
 
 #include "RendererVulkan.hpp"
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 #include <Foundation/Assert.hpp>
 #include <Foundation/Allocator.hpp>
@@ -12,12 +12,12 @@
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
-#    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
+#    include "Platform/RendererImpl/Context/VulkanContext.hpp"
 #endif
 
 namespace NestRen {
 
-RendererOpenGL *RendererOpenGL::s_instance;
+RendererVulkan *RendererVulkan::s_instance;
 
 void gpuErrorCallback(
     GLenum source,
@@ -29,7 +29,7 @@ void gpuErrorCallback(
     const void *userParam
 ) {
     LOG_INFO(message);
-    LOG_CRITICAL("OPENGL ERROR");
+    LOG_CRITICAL("Vulkan ERROR");
 }
 
 const char *getGLErrorStr(GLenum err) {
@@ -51,12 +51,12 @@ const char *getGLErrorStr(GLenum err) {
     }
 }
 
-RendererOpenGL::RendererOpenGL() {
+RendererVulkan::RendererVulkan() {
     s_instance = this;
 #ifdef PLATFORM_IOS
     context = NEW(Foundation::getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = NEW(Foundation::getAllocator(), OpenGLContext);
+    context = NEW(Foundation::getAllocator(), VulkanContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -65,7 +65,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    NESTREN_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
+    NESTREN_LOG("Vulkan VERSION {}", glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(gpuErrorCallback, nullptr);
@@ -74,55 +74,55 @@ RendererOpenGL::RendererOpenGL() {
     GL_CALL(glBindVertexArray(m_uselessVao));
 }
 
-RendererOpenGL::~RendererOpenGL() {
+RendererVulkan::~RendererVulkan() {
     GL_CALL(glDeleteVertexArrays(1, &m_uselessVao));
     DELETE(Foundation::getAllocator(), context);
     s_instance = nullptr;
 }
 
-RendererType RendererOpenGL::getRendererType() const {
+RendererType RendererVulkan::getRendererType() const {
 #ifdef PLATFORM_IOS
-    return RendererType::OpenGLES;
+    return RendererType::VulkanES;
 #elif defined(PLATFORM_DESKTOP)
-    return RendererType::OpenGL;
+    return RendererType::Vulkan;
 #endif
 }
 
-void RendererOpenGL::flip() {
+void RendererVulkan::flip() {
     context->flip();
 }
 
-void RendererOpenGL::createFrameBuffer(
+void RendererVulkan::createFrameBuffer(
     FrameBufferHandle handle, FrameBufferSpecification specification
 ) {
     frameBuffers[handle.id].create(specification);
 }
 
-void RendererOpenGL::deleteFrameBuffer(FrameBufferHandle handle) {
+void RendererVulkan::deleteFrameBuffer(FrameBufferHandle handle) {
     frameBuffers[handle.id].terminate();
 }
 
-void RendererOpenGL::createProgram(ProgramHandle handle, ProgramCreate create) {
+void RendererVulkan::createProgram(ProgramHandle handle, ProgramCreate create) {
     shaders[handle.id].create(create);
 }
 
-void RendererOpenGL::deleteShader(ProgramHandle handle) {
+void RendererVulkan::deleteShader(ProgramHandle handle) {
     shaders[handle.id].terminate();
 }
 
-void RendererOpenGL::createTexture(TextureHandle handle, TextureCreate create) {
+void RendererVulkan::createTexture(TextureHandle handle, TextureCreate create) {
     textures[handle.id].create(create);
 }
 
-void RendererOpenGL::resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) {
+void RendererVulkan::resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) {
     textures[handle.id].resize(width, height);
 }
 
-void RendererOpenGL::deleteTexture(TextureHandle handle) {
+void RendererVulkan::deleteTexture(TextureHandle handle) {
     textures[handle.id].terminate();
 }
 
-void RendererOpenGL::createIndexBuffer(
+void RendererVulkan::createIndexBuffer(
     IndexBufferHandle handle,
     Foundation::Memory indices,
     BufferElementType elementType,
@@ -132,7 +132,7 @@ void RendererOpenGL::createIndexBuffer(
     indices.release();
 }
 
-void RendererOpenGL::createDynamicIndexBuffer(
+void RendererVulkan::createDynamicIndexBuffer(
     IndexBufferHandle handle,
     Foundation::Memory indices,
     BufferElementType elementType,
@@ -142,18 +142,18 @@ void RendererOpenGL::createDynamicIndexBuffer(
     indices.release();
 }
 
-void RendererOpenGL::updateDynamicIndexBuffer(
+void RendererVulkan::updateDynamicIndexBuffer(
     IndexBufferHandle handle, Foundation::Memory indices, size_t count
 ) {
     indexBuffers[handle.id].update(indices.data, count);
     indices.release();
 }
 
-void RendererOpenGL::deleteIndexBuffer(IndexBufferHandle handle) {
+void RendererVulkan::deleteIndexBuffer(IndexBufferHandle handle) {
     indexBuffers[handle.id].terminate();
 }
 
-void RendererOpenGL::createVertexBuffer(
+void RendererVulkan::createVertexBuffer(
     VertexBufferHandle handle,
     Foundation::Memory data,
     uint32_t size,
@@ -164,7 +164,7 @@ void RendererOpenGL::createVertexBuffer(
     data.release();
 }
 
-void RendererOpenGL::createDynamicVertexBuffer(
+void RendererVulkan::createDynamicVertexBuffer(
     VertexBufferHandle handle,
     Foundation::Memory data,
     uint32_t size,
@@ -175,24 +175,24 @@ void RendererOpenGL::createDynamicVertexBuffer(
     data.release();
 }
 
-void RendererOpenGL::updateDynamicVertexBuffer(
+void RendererVulkan::updateDynamicVertexBuffer(
     VertexBufferHandle handle, Foundation::Memory data, uint32_t size
 ) {
     vertexBuffers[handle.id].update(data.data, size);
     data.release();
 }
 
-void RendererOpenGL::deleteVertexBuffer(VertexBufferHandle handle) {
+void RendererVulkan::deleteVertexBuffer(VertexBufferHandle handle) {
     vertexBuffers[handle.id].terminate();
 }
 
-void RendererOpenGL::createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) {
+void RendererVulkan::createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) {
     vertexLayouts[handle.id] = layout;
 }
 
-void RendererOpenGL::deleteVertexLayout(VertexLayoutHandle handle) {}
+void RendererVulkan::deleteVertexLayout(VertexLayoutHandle handle) {}
 
-void RendererOpenGL::setUniform(const Uniform &uniform) {
+void RendererVulkan::setUniform(const Uniform &uniform) {
     shaders[uniform.handle.id].bind(); switch (uniform.type) {
         case UniformType::Sampler:
             shaders[uniform.handle.id].setUniformInt(
@@ -222,11 +222,11 @@ void RendererOpenGL::setUniform(const Uniform &uniform) {
     LOG_ERROR("UNIFORM TYPE IS UNDEFINED");
 }
 
-void RendererOpenGL::setTexture(TextureHandle handle, uint32_t slot) {
+void RendererVulkan::setTexture(TextureHandle handle, uint32_t slot) {
     textures[handle.id].bind(slot);
 }
 
-void RendererOpenGL::submit(Frame *frame, View *views) {
+void RendererVulkan::submit(Frame *frame, View *views) {
     NESTREN_LOG("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
     if (frame->m_transientVbSize > 0) {
         vertexBuffers[frame->m_transientVb.handle.id].update(
@@ -257,7 +257,7 @@ void RendererOpenGL::submit(Frame *frame, View *views) {
     }
 }
 
-void RendererOpenGL::viewChanged(View &view) {
+void RendererVulkan::viewChanged(View &view) {
     if (view.m_frameBuffer.isValid()) {
         frameBuffers[view.m_frameBuffer.id].bind();
     } else {
@@ -281,7 +281,7 @@ void RendererOpenGL::viewChanged(View &view) {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void RendererOpenGL::submit(RenderDraw *draw) {
+void RendererVulkan::submit(RenderDraw *draw) {
     // TODO: Capture time
     shaders[draw->m_shader.id].bind();
     for (size_t u = 0; u < draw->m_uniformsCount; u++) {

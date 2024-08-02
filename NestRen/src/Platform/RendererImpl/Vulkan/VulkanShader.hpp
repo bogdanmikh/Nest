@@ -12,9 +12,9 @@
 
 namespace NestRen {
 
-class OpenGLShader {
+class VulkanShader {
 public:
-    OpenGLShader();
+    VulkanShader();
     void create(ProgramCreate create);
     void terminate();
     void bind();

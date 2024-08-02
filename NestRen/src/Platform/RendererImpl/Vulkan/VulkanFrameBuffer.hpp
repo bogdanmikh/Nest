@@ -6,9 +6,9 @@
 
 namespace NestRen {
 
-class OpenGLFrameBuffer {
+class VulkanFrameBuffer {
 public:
-    OpenGLFrameBuffer();
+    VulkanFrameBuffer();
     void create(FrameBufferSpecification specification);
     void terminate();
     void bind();

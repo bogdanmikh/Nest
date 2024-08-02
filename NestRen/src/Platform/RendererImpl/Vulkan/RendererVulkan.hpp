@@ -6,18 +6,18 @@
 
 #include "NestRen/RendererI.hpp"
 #include "NestRen/GraphicsContext.hpp"
-#include "OpenGLFrameBuffer.hpp"
-#include "OpenGLShader.hpp"
-#include "OpenGLTexture.hpp"
-#include "OpenGLIndexBuffer.hpp"
-#include "OpenGLVertexBuffer.hpp"
+#include "VulkanFrameBuffer.hpp"
+#include "VulkanShader.hpp"
+#include "VulkanTexture.hpp"
+#include "VulkanIndexBuffer.hpp"
+#include "VulkanVertexBuffer.hpp"
 
 namespace NestRen {
 
-class RendererOpenGL : public RendererI {
+class RendererVulkan : public RendererI {
 public:
-    RendererOpenGL();
-    ~RendererOpenGL() override;
+    RendererVulkan();
+    ~RendererVulkan() override;
     RendererType getRendererType() const override;
     void flip() override;
     void
@@ -66,8 +66,8 @@ public:
     void setTexture(TextureHandle handle, uint32_t slot) override;
     void submit(Frame *frame, View *views) override;
 
-    static RendererOpenGL *s_instance;
-    OpenGLTexture &getTexture(TextureHandle handle) {
+    static RendererVulkan *s_instance;
+    VulkanTexture &getTexture(TextureHandle handle) {
         return textures[handle.id];
     }
 
@@ -77,12 +77,12 @@ private:
 
     uint32_t m_uselessVao;
     GraphicsContext *context;
-    OpenGLFrameBuffer frameBuffers[1000];
-    OpenGLShader shaders[1000];
-    OpenGLIndexBuffer indexBuffers[1000];
+    VulkanFrameBuffer frameBuffers[1000];
+    VulkanShader shaders[1000];
+    VulkanIndexBuffer indexBuffers[1000];
     VertexBufferLayoutData vertexLayouts[1000];
-    OpenGLVertexBuffer vertexBuffers[1000];
-    OpenGLTexture textures[1000];
+    VulkanVertexBuffer vertexBuffers[1000];
+    VulkanTexture textures[1000];
 };
 
 } // namespace NestRen

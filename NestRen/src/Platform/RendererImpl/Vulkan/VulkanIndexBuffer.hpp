@@ -8,9 +8,9 @@
 
 namespace NestRen {
 
-class OpenGLIndexBuffer {
+class VulkanIndexBuffer {
 public:
-    OpenGLIndexBuffer();
+    VulkanIndexBuffer();
     void create(void *indices, BufferElementType elementType, size_t count, bool isDynamic);
     void terminate();
     void update(void *indices, size_t count);

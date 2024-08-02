@@ -9,6 +9,7 @@
 #include "NestRen/NestRenStates.hpp"
 #include "NestRen/Config.hpp"
 #include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
+#include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
 #include "RendererI.hpp"
 
 #include <Foundation/PlatformDetection.hpp>

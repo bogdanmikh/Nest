@@ -3,18 +3,18 @@
 //
 
 #include "NestRen/PlatformData.hpp"
-#include "OpenGLTexture.hpp"
+#include "VulkanTexture.hpp"
 #include "Texture/TextureFormat.hpp"
 
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 namespace NestRen {
 
-OpenGLTexture::OpenGLTexture()
+VulkanTexture::VulkanTexture()
     : m_id(-1)
     , m_create() {}
 
-void OpenGLTexture::create(const TextureCreate &create) {
+void VulkanTexture::create(const TextureCreate &create) {
     NEST_ASSERT(m_id == -1, "TEXTURE ALREADY CREATED");
     m_create = create;
     NESTREN_LOG("CREATE TEXTURE, w: {}, h: {}", create.m_width, create.m_height);
@@ -62,7 +62,7 @@ void OpenGLTexture::create(const TextureCreate &create) {
     GL_CALL(glTexParameteri(target, GL_TEXTURE_MAG_FILTER, openGLFiltering(create.m_magFiltering)));
 }
 
-void OpenGLTexture::resize(uint32_t width, uint32_t height) {
+void VulkanTexture::resize(uint32_t width, uint32_t height) {
     NEST_ASSERT(m_id != -1, "TEXTURE IS NOT CREATED");
     terminate();
     m_create.m_width = width;
@@ -70,19 +70,19 @@ void OpenGLTexture::resize(uint32_t width, uint32_t height) {
     create(m_create);
 }
 
-void OpenGLTexture::terminate() {
+void VulkanTexture::terminate() {
     NEST_ASSERT(m_id != -1, "TEXTURE ALREADY DELETED");
     GL_CALL(glDeleteTextures(1, &m_id));
     m_id = -1;
 }
 
-void OpenGLTexture::bind(unsigned int slot) {
+void VulkanTexture::bind(unsigned int slot) {
     NEST_ASSERT(m_id != -1, "TEXTURE IS NOT CREATED");
     GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
     GL_CALL(glBindTexture(m_target, m_id));
 }
 
-void OpenGLTexture::unbind() {
+void VulkanTexture::unbind() {
     GL_CALL(glBindTexture(m_target, 0));
 }
 

@@ -1,7 +1,7 @@
-#include "OpenGLFrameBuffer.hpp"
+#include "VulkanFrameBuffer.hpp"
 #include "RendererVulkan.hpp"
 
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 namespace NestRen {
 
@@ -14,25 +14,25 @@ static inline bool isDepthFormat(TextureFormat format) {
     }
 }
 
-void OpenGLFrameBuffer::checkStatus() {
+void VulkanFrameBuffer::checkStatus() {
     NEST_ASSERT(
         glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
         "Framebuffer is incomplete!"
     );
 }
 
-OpenGLFrameBuffer::OpenGLFrameBuffer()
+VulkanFrameBuffer::VulkanFrameBuffer()
     : spec()
     , m_id(-1) {}
 
-void OpenGLFrameBuffer::create(FrameBufferSpecification specification) {
+void VulkanFrameBuffer::create(FrameBufferSpecification specification) {
     NEST_ASSERT(m_id == -1, "FRAMEBUFFER ALREADY CREATED");
     // this->specification = specification;
     GL_CALL(glGenFramebuffers(1, &m_id));
     GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, m_id));
     for (int i = 0; i < specification.num; i++) {
         FrameBufferAttachment &attach = specification.attachments[i];
-        OpenGLTexture &texture = RendererOpenGL::s_instance->getTexture(attach.handle);
+        VulkanTexture &texture = RendererVulkan::s_instance->getTexture(attach.handle);
         int attachmentType;
         if (isDepthFormat(texture.getFormat())) {
             attachmentType = GL_DEPTH_ATTACHMENT;
@@ -47,15 +47,15 @@ void OpenGLFrameBuffer::create(FrameBufferSpecification specification) {
     GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void OpenGLFrameBuffer::bind() {
+void VulkanFrameBuffer::bind() {
     GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, m_id));
 }
 
-void OpenGLFrameBuffer::unbind() {
+void VulkanFrameBuffer::unbind() {
     GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void OpenGLFrameBuffer::terminate() {
+void VulkanFrameBuffer::terminate() {
     NEST_ASSERT(m_id != -1, "FRAMEBUFFER ALREADY DELETED");
     GL_CALL(glDeleteFramebuffers(1, &m_id));
     m_id = -1;

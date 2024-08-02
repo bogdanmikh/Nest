@@ -2,22 +2,22 @@
 // Created by Admin on 11.02.2022.
 //
 
-#include "OpenGLShader.hpp"
+#include "VulkanShader.hpp"
 #include "NestRen/Base.hpp"
 #include "NestRen/PlatformData.hpp"
 
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 #include <sstream>
 #include <fstream>
 
 namespace NestRen {
 
-OpenGLShader::OpenGLShader()
+VulkanShader::VulkanShader()
     : m_id(-1)
     , m_uniformLocationCache() {}
 
-void OpenGLShader::create(ProgramCreate create) {
+void VulkanShader::create(ProgramCreate create) {
     NEST_ASSERT(m_id == -1, "PROGRAM ALREADY CREATED");
     unsigned int vertex, fragment;
     // vertex shader
@@ -48,13 +48,13 @@ void OpenGLShader::create(ProgramCreate create) {
     create.m_fragment.release();
 }
 
-void OpenGLShader::terminate() {
+void VulkanShader::terminate() {
     NEST_ASSERT(m_id != -1, "PROGRAM ALREADY DELETED");
     GL_CALL(glDeleteProgram(m_id));
     m_id = -1;
 }
 
-void OpenGLShader::checkCompileErrors(unsigned int shader, const std::string &type) {
+void VulkanShader::checkCompileErrors(unsigned int shader, const std::string &type) {
     GLint success;
     GLchar infoLog[1024];
     if (type != "PROGRAM") {
@@ -71,7 +71,7 @@ void OpenGLShader::checkCompileErrors(unsigned int shader, const std::string &ty
         }
     }
 }
-int OpenGLShader::getUniformLocation(const std::string &name) {
+int VulkanShader::getUniformLocation(const std::string &name) {
     if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end()) {
         return m_uniformLocationCache[name];
     }
@@ -81,7 +81,7 @@ int OpenGLShader::getUniformLocation(const std::string &name) {
     return location;
 }
 
-void OpenGLShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex) {
+void VulkanShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex) {
     intptr_t pointer = baseVertex;
     for (int i = 0; i < layout.m_elementsCount; i++) {
         GL_CALL(glEnableVertexAttribArray(i));
@@ -114,32 +114,32 @@ void OpenGLShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseV
     }
 }
 
-void OpenGLShader::bind() {
+void VulkanShader::bind() {
     GL_CALL(glUseProgram(m_id));
 }
 
-void OpenGLShader::unbind() {
+void VulkanShader::unbind() {
     GL_CALL(glUseProgram(0));
 }
 
 
-void OpenGLShader::setUniformFloat(const char *name, float *value, int count) {
+void VulkanShader::setUniformFloat(const char *name, float *value, int count) {
     GL_CALL(glUniform1fv(getUniformLocation(name), count, value));
 }
 
-void OpenGLShader::setUniformVec4(const char *name, float *value, int count) {
+void VulkanShader::setUniformVec4(const char *name, float *value, int count) {
     GL_CALL(glUniform4fv(getUniformLocation(name), count, value));
 }
 
-void OpenGLShader::setUniformMat3(const char *name, float *value, int count) {
+void VulkanShader::setUniformMat3(const char *name, float *value, int count) {
     GL_CALL(glUniformMatrix3fv(getUniformLocation(name), count, GL_FALSE, value));
 }
 
-void OpenGLShader::setUniformMat4(const char *name, float *value, int count) {
+void VulkanShader::setUniformMat4(const char *name, float *value, int count) {
     GL_CALL(glUniformMatrix4fv(getUniformLocation(name), count, GL_FALSE, value));
 }
 
-void OpenGLShader::setUniformInt(const char *name, int *value, int count) {
+void VulkanShader::setUniformInt(const char *name, int *value, int count) {
     GL_CALL(glUniform1iv(getUniformLocation(name), count, value));
 }
 

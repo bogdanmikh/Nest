@@ -2,20 +2,20 @@
 // Created by Admin on 11.02.2022.
 //
 
-#include "OpenGLIndexBuffer.hpp"
+#include "VulkanIndexBuffer.hpp"
 
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 namespace NestRen {
 
-OpenGLIndexBuffer::OpenGLIndexBuffer()
+VulkanIndexBuffer::VulkanIndexBuffer()
     : m_id(-1)
     , m_count(0)
     , m_elementType(0)
     , m_elementSize(0)
     , m_isDynamic(false) {}
 
-void OpenGLIndexBuffer::create(
+void VulkanIndexBuffer::create(
     void *indices, BufferElementType elementType, size_t count, bool isDynamic
 ) {
     NEST_ASSERT(m_id == -1, "INDEX BUFFER ALREADY CREATED");
@@ -45,27 +45,27 @@ void OpenGLIndexBuffer::create(
     GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
-void OpenGLIndexBuffer::terminate() {
+void VulkanIndexBuffer::terminate() {
     NEST_ASSERT(m_id != -1, "INDEX BUFFER ALREADY DELETED");
     GL_CALL(glDeleteBuffers(1, &m_id));
     m_id = -1;
 }
 
-void OpenGLIndexBuffer::bind() const {
+void VulkanIndexBuffer::bind() const {
     NEST_ASSERT(m_id != -1, "INDEX BUFFER NOT VALID");
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
 }
 
-void OpenGLIndexBuffer::unbind() const {
+void VulkanIndexBuffer::unbind() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-uint32_t OpenGLIndexBuffer::getCount() const {
+uint32_t VulkanIndexBuffer::getCount() const {
     NEST_ASSERT(m_id != -1, "INDEX BUFFER NOT VALID");
     return m_count;
 }
 
-void OpenGLIndexBuffer::update(void *indices, size_t count) {
+void VulkanIndexBuffer::update(void *indices, size_t count) {
     NEST_ASSERT(m_isDynamic != false, "Невозможно обновить статичный буфер");
     m_count = count;
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);

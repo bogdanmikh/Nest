@@ -2,24 +2,24 @@
 // Created by Admin on 11.02.2022.
 //
 
-#include "OpenGLVertexBuffer.hpp"
+#include "VulkanVertexBuffer.hpp"
 
-#include "OpenGLBase.hpp"
+#include "VulkanBase.hpp"
 
 namespace NestRen {
 
-OpenGLVertexBuffer::OpenGLVertexBuffer()
+VulkanVertexBuffer::VulkanVertexBuffer()
     : m_isDynamic(false)
     , m_id(-1)
     , m_layoutHandle(NESTREN_INVALID_HANDLE) {}
 
-void OpenGLVertexBuffer::terminate() {
+void VulkanVertexBuffer::terminate() {
     NEST_ASSERT(m_id != -1, "VERTEX BUFFER ALREADY DELETED");
     GL_CALL(glDeleteBuffers(1, &m_id));
     m_id = -1;
 }
 
-void OpenGLVertexBuffer::create(void *data, uint32_t size, bool isDynamic) {
+void VulkanVertexBuffer::create(void *data, uint32_t size, bool isDynamic) {
     NEST_ASSERT(m_id == -1, "VERTEX BUFFER ALREADY CREATED");
     m_isDynamic = isDynamic;
     GL_CALL(glGenBuffers(1, &m_id));
@@ -33,7 +33,7 @@ void OpenGLVertexBuffer::create(void *data, uint32_t size, bool isDynamic) {
     m_layoutHandle = NESTREN_INVALID_HANDLE;
 }
 
-void OpenGLVertexBuffer::update(void *data, uint32_t size) {
+void VulkanVertexBuffer::update(void *data, uint32_t size) {
     NEST_ASSERT(m_id != -1, "VERTEX BUFFER NOT VALID");
     NEST_ASSERT(m_isDynamic != false, "Невозможно обновить статичный буфер");
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_id));
@@ -41,20 +41,20 @@ void OpenGLVertexBuffer::update(void *data, uint32_t size) {
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void OpenGLVertexBuffer::bind() {
+void VulkanVertexBuffer::bind() {
     NEST_ASSERT(m_id != -1, "VERTEX BUFFER NOT VALID");
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, m_id));
 }
 
-void OpenGLVertexBuffer::unbind() {
+void VulkanVertexBuffer::unbind() {
     GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void OpenGLVertexBuffer::setLayoutHandle(VertexLayoutHandle layoutHandle) {
+void VulkanVertexBuffer::setLayoutHandle(VertexLayoutHandle layoutHandle) {
     m_layoutHandle = layoutHandle;
 }
 
-VertexLayoutHandle OpenGLVertexBuffer::getLayoutHandle() {
+VertexLayoutHandle VulkanVertexBuffer::getLayoutHandle() {
     return m_layoutHandle;
 }
 
