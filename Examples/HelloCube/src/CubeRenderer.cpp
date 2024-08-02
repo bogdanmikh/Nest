@@ -2,7 +2,8 @@
 
 void CubeRenderer::onAttach() {
     using namespace NestRen;
-    m_model = glm::mat4(4);
+
+    m_model = glm::mat4(1);
     NestRen::setViewClear(0, 0x3D75C9FF);
 
     Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
@@ -12,6 +13,7 @@ void CubeRenderer::onAttach() {
     m_shader = createProgram(programAsset.getNestRenProgramCreate());
 
     Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil.png");
+
     TextureCreate textureCreate = textureAsset.getNestRenTextureCreate();
     textureCreate.m_numMips = 4;
     textureCreate.m_minFiltering = NestRen::NEAREST_MIPMAP_LINEAR;
@@ -58,7 +60,7 @@ void CubeRenderer::onAttach() {
     };
     Foundation::Memory verticesMemory = Foundation::Memory::copying(vertices, sizeof(VertexCube) * 24);
 
-    uint32_t *indices = new uint32_t[36]{
+    uint32_t indices[36] {
        0, 1, 2, 2, 3, 0,       // Front
        4, 5, 6, 6, 7, 4,       // Back
        8, 9, 10, 10, 11, 8,    // Top
@@ -94,9 +96,11 @@ void CubeRenderer::onUpdate(double deltaTime) {
     NestRen::setUniform(m_shader, "u_model", &m_model, NestRen::UniformType::Mat4); /// mat4
     NestRen::setUniform(m_shader, "u_view", &viewMatrix, NestRen::UniformType::Mat4); /// mat4
     NestRen::setUniform(m_shader, "u_projection", &projectionMatrix, NestRen::UniformType::Mat4); /// mat4
+    static int slot = 0;
+    NestRen::setTexture(m_texture, slot);
+    NestRen::setUniform(m_shader, "iTexture", &slot, NestRen::UniformType::Sampler);
     NestRen::setIndexBuffer(m_indexBuffer, 0, 36);
     NestRen::setVertexBuffer(m_vertexBuffer);
-    NestRen::setUniform(m_shader, "iTexture", &m_texture, NestRen::UniformType::Sampler);
     NestRen::submit(0);
 }
 
@@ -105,7 +109,10 @@ void CubeRenderer::onImGuiRender() {
 }
 
 void CubeRenderer::onDetach() {
-
+    deleteVertexBuffer(m_vertexBuffer);
+    deleteIndexBuffer(m_indexBuffer);
+    deleteProgram(m_shader);
+    deleteTexture(m_texture);
 }
 
 void CubeRenderer::rotateX(float degrees) {
