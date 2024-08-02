@@ -31,6 +31,10 @@ Application::Application(ApplicationStartupSettings &settings) {
 
     ImGui_Init(m_window->getNativeHandle());
 
+    m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
+    m_worldCamera->setFieldOfView(glm::radians(60.f));
+    m_worldCamera->setRotation(0.f, 50.f, 0.f);
+
     timeMillis = getMillis();
     m_lastViewportSize = m_window->getSize();
 }
@@ -38,6 +42,7 @@ Application::Application(ApplicationStartupSettings &settings) {
 Application::~Application() {
     ImGui_Shutdown();
     if (m_layer) m_layer->onDetach();
+    FREE(Foundation::getAllocator(), m_worldCamera);
     FREE(Foundation::getAllocator(), m_layer);
     FREE(Foundation::getAllocator(), m_window);
 }
@@ -82,6 +87,7 @@ void Application::loop() {
             updateViewport(m_window->getSize());
         }
 
+        m_worldCamera->update();
         ImGui_NewFrame();
         if (m_layer) {
             m_layer->onUpdate(deltaTime);

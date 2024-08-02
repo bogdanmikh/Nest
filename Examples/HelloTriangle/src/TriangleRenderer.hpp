@@ -29,8 +29,6 @@ public:
         VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
         m_vertexBuffer = createVertexBuffer(data, sizeof(float) * 8, vertexLayout);
         m_indexBuffer = createIndexBuffer(indices, BufferElementType::UnsignedInt, 6);
-        //        delete[] data;
-        //        delete[] indices;
     }
 
     void onUpdate(double deltaTime) override {

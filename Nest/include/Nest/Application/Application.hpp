@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nest/Window/Window.hpp"
+#include "Nest/GameLogic/Components/WorldCamera.hpp"
 #include "Nest/Application/Layer.hpp"
 #include "ApplicationStartupSettings.hpp"
 
@@ -17,6 +18,10 @@ public:
 
     inline Window *getWindow() const {
         return m_window;
+    }
+
+    inline WorldCamera *getWorldCamera() const {
+        return m_worldCamera;
     }
 
     inline int getMaxFps() const {
@@ -40,6 +45,7 @@ private:
 
     Window *m_window;
     Layer *m_layer;
+    WorldCamera *m_worldCamera;
 
     Vec2 m_lastViewportSize;
 

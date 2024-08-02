@@ -4,6 +4,7 @@
 #include "Nest/Application/Application.hpp"
 #include "Nest/Application/Layer.hpp"
 #include "Nest/Application/ApplicationStartupSettings.hpp"
+#include "Nest/Window/Events.hpp"
 
 // Assets
 #include "Nest/Assets/AssetLoader.hpp"
