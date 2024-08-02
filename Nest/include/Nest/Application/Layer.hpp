@@ -8,32 +8,11 @@ namespace Nest {
 
 class Layer {
 public:
-    Layer() = default;
-    ~Layer() {
-        onDetach();
-    }
-
-    void onAttach() {
-        for (auto &entity : m_entities) {
-            entity->onAttach();
-        }
-    }
-
-    void onUpdate(double deltaTime) {
-        for (auto &entity : m_entities) {
-            entity->onImGuiRender();
-            entity->onUpdate(deltaTime);
-        }
-    }
-
-    void onDetach() {
-        for (auto &entity : m_entities) {
-            entity->onDetach();
-        }
-    }
-    void addEntity(Entity *entity) {
-        m_entities.emplace_back(entity);
-    }
+    virtual ~Layer() = default;
+    virtual void onAttach() = 0;
+    virtual void onUpdate(double deltaTime) = 0;
+    virtual void onDetach() = 0;
+    virtual void addEntity(Entity *entity) = 0;
 private:
     std::vector<Entity*> m_entities;
 };

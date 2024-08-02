@@ -4,8 +4,18 @@
 
 #pragma once
 
-namespace Nest {
-class Layer;
-}
+#include <Nest.hpp>
 
-extern void initLayer(Nest::Layer* layer);
+#include "Nest/GameLogic/Entity.hpp"
+#include "Foundation/Allocator.hpp"
+
+class TriangleLevel final : public Nest::Layer {
+public:
+    ~TriangleLevel() override;
+    void onAttach() override;
+    void onUpdate(double deltaTime) override;
+    void onDetach() override;
+    void addEntity(Nest::Entity *entity) override;
+private:
+    std::vector<Nest::Entity*> m_entities;
+};

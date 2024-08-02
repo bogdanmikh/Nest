@@ -1,7 +1,5 @@
 #include "TriangleLevel.hpp"
 
-#include <Nest.hpp>
-
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
     settings.name = "Hello triangle";
@@ -9,8 +7,8 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    initLayer(Nest::Application::get()->getLayer());
+    application->setLayer(NEW(Foundation::getAllocator(), TriangleLevel));
     application->loop();
-    delete application;
+    FREE(Foundation::getAllocator(), application);
     return 0;
 }

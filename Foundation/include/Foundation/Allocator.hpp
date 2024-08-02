@@ -60,6 +60,7 @@ enum MemorySize { KILOBYTE = 1000, MEGABYTE = KILOBYTE * 1000, GIGABYTE = MEGABY
 
 class FreeListAllocator : public AllocatorI {
 public:
+    explicit FreeListAllocator(size_t totalSize);
     void *realloc(void *ptr, size_t size) override;
     void getInfo();
     ~FreeListAllocator() override;
@@ -99,7 +100,6 @@ private:
             return offset >= other.offset;
         };
     };
-    explicit FreeListAllocator(size_t totalSize);
     void combine(std::set<Block>::iterator newFreeBlockIt);
     void reset();
     void printAllBlocks();

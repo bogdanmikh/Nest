@@ -4,8 +4,8 @@
 #include "imgui.h"
 
 void CameraMove::init() {
-    window = Application::getInstance()->getWindow();
-    camera = Application::getInstance()->getCamera();
+    window = Nest::Application::get()->getWindow();
+    camera = Nest::Application::get();
     camera->setPosition(0.0, 0.0, 0.0);
     cursorLock = false;
 }

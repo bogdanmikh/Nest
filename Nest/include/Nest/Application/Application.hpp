@@ -35,8 +35,8 @@ public:
     void loop();
     void close();
 
-    inline Layer *getLayer() {
-        return m_layer;
+    inline void setLayer(Layer* layer) {
+         m_layer = layer;
     }
 
 private:

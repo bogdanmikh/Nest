@@ -31,7 +31,6 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_window = NEW(Foundation::getAllocator(), Window);
     m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
     Events::init(m_window->getNativeHandle());
-    m_layer = NEW(Foundation::getAllocator(), Layer);
 
     timeMillis = getMillis();
     m_lastViewportSize = m_window->getSize();
@@ -39,6 +38,7 @@ Application::Application(ApplicationStartupSettings &settings) {
 
 Application::~Application() {
 //    m_ImGuiLayer->onDetach();
+    if (m_layer) m_layer->onDetach();
     FREE(Foundation::getAllocator(), m_layer);
     FREE(Foundation::getAllocator(), m_window);
 }
@@ -61,7 +61,7 @@ void Application::updateViewport(Size size) {
 }
 
 void Application::loop() {
-    m_layer->onAttach();
+    if (m_layer) m_layer->onAttach();
     while (!m_window->shouldClose()) {
         uint64_t lastTime = timeMillis;
         timeMillis = getMillis();
@@ -95,7 +95,9 @@ void Application::loop() {
 
 //        m_ImGuiLayer->begin(deltaTime);
 //            deltaTime = std::min(deltaTime, 10.);
-        m_layer->onUpdate(deltaTime);
+        if (m_layer) {
+            m_layer->onUpdate(deltaTime);
+        }
 //        drawProperties();
 //        m_ImGuiLayer->end();
 
