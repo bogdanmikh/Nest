@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include "imgui.h"
+#include "Nest/ImGui/ImGui.hpp"
 #include "Nest/Application/Application.hpp"
 #include "Nest/Window/Events.hpp"
 
@@ -23,13 +23,12 @@ uint64_t getMillis() {
 Application::Application(ApplicationStartupSettings &settings) {
     s_instance = this;
     NestRen::initialize();
-//    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
-//    m_ImGuiLayer->onAttach();
 
     m_layer = nullptr;
     Foundation::Logger::init();
     m_window = NEW(Foundation::getAllocator(), Window);
     m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
+    ImGui_Init(m_window->getNativeHandle());
     Events::init(m_window->getNativeHandle());
 
     timeMillis = getMillis();
@@ -38,20 +37,11 @@ Application::Application(ApplicationStartupSettings &settings) {
 
 Application::~Application() {
 //    m_ImGuiLayer->onDetach();
+    ImGui_Shutdown();
     if (m_layer) m_layer->onDetach();
     FREE(Foundation::getAllocator(), m_layer);
     FREE(Foundation::getAllocator(), m_window);
 }
-
-
-//void Application::drawProperties() const {
-//    ImGui::Begin("Stats");
-//    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-//    ImGui::Text("FPS: %d", fps);
-//    ImGui::PopStyleColor();
-//    ImGui::PopStyleColor();
-//    ImGui::End();
-//}
 
 void Application::updateViewport(Size size) {
     NestRen::Rect viewport = NestRen::Rect(
@@ -93,13 +83,11 @@ void Application::loop() {
             updateViewport(m_window->getSize());
         }
 
-//        m_ImGuiLayer->begin(deltaTime);
-//            deltaTime = std::min(deltaTime, 10.);
+        ImGui_NewFrame();
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
-//        drawProperties();
-//        m_ImGuiLayer->end();
+        ImGui_EndFrame();
 
         Events::resetDropPaths();
         Events::pollEvents();

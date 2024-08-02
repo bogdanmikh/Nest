@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Nest {
+
 #define ICON_MIN 0xf000
 #define ICON_MAX 0xf307
 #define ICON_GLASS u8"\uf000"
@@ -711,3 +713,5 @@
 #define ICON_DOGMAZIC u8"\uf303"
 #define ICON_NEXTCLOUD u8"\uf306"
 #define ICON_NEXTCLOUD_SQUARE u8"\uf307"
+
+}

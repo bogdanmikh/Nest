@@ -1,25 +1,22 @@
-#include <imgui.h>
+#include "ImGui.hpp"
 
-#include "Nest/Application/Application.hpp"
+#include "imgui_impl/imgui_impl_glfw.h"
+#include "imgui_impl/imgui_impl_opengl3.h"
 
-#include "Nest/ImGui/FontAwesome.h"
-#include "Nest/ImGui/Colors.hpp"
+#include "imgui.h"
+
 #include "Nest/ImGui/ImGuiFonts.hpp"
-// ImGui platform impl
-#include "imgui_impl_nest.hpp"
-// ImGui renderer impl
-#include "imgui_impl_nestren.hpp"
-#include "Nest/ImGui/ImGuiLayer.hpp"
+#include "Nest/ImGui/FontAwesome.h"
 
 namespace Nest {
 
-void ImGuiLayer::onAttach() {
+void setDarkThemeColors();
+
+void ImGui_Init(void *glfwWindowHandle) {
     ImGui::CreateContext();
+
     ImGuiIO &io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     FontConfiguration fontBold;
     fontBold.fontName = "Bold";
@@ -48,6 +45,12 @@ void ImGuiLayer::onAttach() {
     fontAwesome.mergeWithLast = true;
     Fonts::add(fontAwesome);
 
+    FontConfiguration fontMono;
+    fontMono.fontName = "Mono";
+    fontMono.fileName = "SFMono/SFMono-Regular.otf";
+    fontMono.size = 17.0f;
+    Fonts::add(fontMono);
+
     FontConfiguration fontSmall;
     fontSmall.fontName = "Small";
     fontSmall.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
@@ -60,35 +63,30 @@ void ImGuiLayer::onAttach() {
     fontExtraSmall.size = 10.0f;
     Fonts::add(fontExtraSmall);
 
-    // ImGui::StyleColorsDark();
-    // ImGui::StyleColorsClassic();
-    setDarkThemeColors();
+    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(glfwWindowHandle), true);
+    ImGui_ImplOpenGL3_Init();
 
-    // Setup Platform/Renderer bindings
-    ImGui_ImplNest_Init();
-    ImGui_ImplNestRen_Init();
+    setDarkThemeColors();
 }
 
-void ImGuiLayer::onDetach() {
-    ImGui_ImplNestRen_Shutdown();
-    ImGui_ImplNest_Shutdown();
+void ImGui_NewFrame() {
+    ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui::NewFrame();
+}
+
+void ImGui_EndFrame() {
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGui_Shutdown() {
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
     ImGui::DestroyContext();
 }
 
-void ImGuiLayer::begin(double deltaTime) {
-    ImGui_ImplNest_NewFrame(deltaTime);
-    ImGui_ImplNestRen_NewFrame();
-    ImGui::NewFrame();
-    // ImGuizmo::BeginFrame();
-}
-
-void ImGuiLayer::end() {
-    // Rendering
-    ImGui::Render();
-    ImGui_ImplNestRen_RenderDrawData(ImGui::GetDrawData());
-}
-
-void ImGuiLayer::setDarkThemeColors() {
+void setDarkThemeColors() {
     auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.105f, 0.11f, 1.0f);
 
@@ -138,4 +136,4 @@ void ImGuiLayer::setDarkThemeColors() {
     colors[ImGuiCol_SliderGrabActive] = ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
 }
 
-} // namespace Nest
+}

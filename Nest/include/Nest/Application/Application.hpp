@@ -3,7 +3,6 @@
 #include "Nest/Window/Window.hpp"
 #include "Nest/Application/Layer.hpp"
 #include "ApplicationStartupSettings.hpp"
-#include "Nest/ImGui/ImGuiLayer.hpp"
 
 namespace Nest {
 
@@ -11,10 +10,6 @@ class Application final {
 public:
     ~Application();
     Application(ApplicationStartupSettings &settings);
-
-    ImGuiLayer *getImGuiLayer() {
-        return m_ImGuiLayer;
-    }
 
     inline static Application *get() {
         return s_instance;
@@ -45,8 +40,7 @@ private:
 
     Window *m_window;
     Layer *m_layer;
-    ImGuiLayer *m_ImGuiLayer;
-    
+
     Vec2 m_lastViewportSize;
 
     int fps;

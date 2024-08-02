@@ -38,7 +38,12 @@ public:
         NestRen::submit(0);
     }
 
-    void onImGuiRender() override {}
+    void onImGuiRender() override {
+        LOG_INFO("ImGUi renderer");
+        ImGui::Begin("Loshara");
+        ImGui::Text("Ya loh");
+        ImGui::End();
+    }
 
     void onDetach() override {
         deleteVertexBuffer(m_vertexBuffer);
