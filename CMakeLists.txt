@@ -4,6 +4,14 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Nest)
 
+find_package(Vulkan REQUIRED)
+
+if (${Vulkan_VERSION} VERSION_LESS "1.3.000" )
+    message( FATAL_ERROR "Minimum required Vulkan version for C++ modules is 1.1.000. "
+            "Found ${Vulkan_VERSION}."
+    )
+endif()
+
 set(BIN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(VENDOR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Vendor)
 set(NEST_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Nest)

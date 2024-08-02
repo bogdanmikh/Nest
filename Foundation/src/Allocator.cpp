@@ -20,7 +20,7 @@ namespace Foundation {
 
 AllocatorI *getAllocator() {
     static DefaultAllocator allocator;
-//    static FreeListAllocator allocator(MemorySize::MEGABYTE * 300);
+//    static FreeListAllocator allocator(MemorySize::GIGABYTE);
     return &allocator;
 }
 

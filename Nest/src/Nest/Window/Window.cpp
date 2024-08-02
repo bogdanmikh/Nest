@@ -5,6 +5,7 @@
 
 #include <Foundation/Logger.hpp>
 #include <NestRen/PlatformData.hpp>
+#include <glad/glad.h>
 
 namespace Nest {
 
@@ -30,6 +31,9 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     }
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        LOG_ERROR("Failed to initialize OpenGL context");
+    }
     this->handle = window;
     Events::init(window);
     glfwShowWindow((GLFWwindow*) handle);

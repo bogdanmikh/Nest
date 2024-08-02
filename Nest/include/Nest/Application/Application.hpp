@@ -8,8 +8,8 @@ namespace Nest {
 
 class Application final {
 public:
-    ~Application();
     Application(ApplicationStartupSettings &settings);
+    ~Application();
 
     inline static Application *get() {
         return s_instance;

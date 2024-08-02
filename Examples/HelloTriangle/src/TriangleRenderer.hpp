@@ -45,7 +45,6 @@ public:
     void onImGuiRender() override {
         ImGui::SetNextWindowPos({100, 100});
         ImGui::SetNextWindowSize({100, 100});
-        LOG_INFO("ImGUi renderer");
         ImGui::Begin("Loshara");
         ImGui::Text("Ya loh");
         ImGui::End();

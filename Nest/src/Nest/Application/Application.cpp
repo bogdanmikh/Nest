@@ -28,7 +28,7 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_window = NEW(Foundation::getAllocator(), Window);
     m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
     NestRen::initialize();
-    Events::init(m_window->getNativeHandle());
+
     ImGui_Init(m_window->getNativeHandle());
 
     timeMillis = getMillis();
@@ -36,7 +36,6 @@ Application::Application(ApplicationStartupSettings &settings) {
 }
 
 Application::~Application() {
-//    m_ImGuiLayer->onDetach();
     ImGui_Shutdown();
     if (m_layer) m_layer->onDetach();
     FREE(Foundation::getAllocator(), m_layer);
@@ -87,15 +86,13 @@ void Application::loop() {
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
-        ImGui::SetNextWindowPos({100, 100});
-        ImGui::SetNextWindowSize({100, 100});
         ImGui_EndFrame();
 
-//        Events::resetDropPaths();
-        Events::pollEvents();
+        Events::resetDropPaths();
 
         NestRen::renderFrame();
         NestRen::frame();
+        Events::pollEvents();
     }
 }
 
