@@ -185,9 +185,9 @@ void setShader(ProgramHandle handle) {
     s_context->setShader(handle);
 }
 
-void setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type) {
+void setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
     NEST_ASSERT(s_context != nullptr, "NESTREN NOT INITIALIZED");
-    s_context->setUniform(handle, name, value, type);
+    s_context->setUniform(handle, name, value, type, count);
 }
 
 void setTexture(TextureHandle textureHandle, uint32_t slot) {

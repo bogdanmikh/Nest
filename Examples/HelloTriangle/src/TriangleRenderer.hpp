@@ -7,6 +7,8 @@ public:
     void onAttach() {
         using namespace NestRen;
 
+        NestRen::setViewClear(0, 0x3D75C9FF);
+
         Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
             "default-shaders/checker/checker_vertex.glsl",
             "default-shaders/checker/checker_fragment.glsl"
@@ -33,12 +35,16 @@ public:
 
     void onUpdate(double deltaTime) override {
         NestRen::setShader(m_shader);
+        static float time = Nest::Application::get()->getWindow()->getTime();
+        NestRen::setUniform(m_shader, "iTime", &time, NestRen::UniformType::Vec4);
         NestRen::setVertexBuffer(m_vertexBuffer);
         NestRen::setIndexBuffer(m_indexBuffer, 0, 6);
         NestRen::submit(0);
     }
 
     void onImGuiRender() override {
+        ImGui::SetNextWindowPos({100, 100});
+        ImGui::SetNextWindowSize({100, 100});
         LOG_INFO("ImGUi renderer");
         ImGui::Begin("Loshara");
         ImGui::Text("Ya loh");

@@ -122,16 +122,25 @@ void OpenGLShader::unbind() {
     GL_CALL(glUseProgram(0));
 }
 
-void OpenGLShader::setUniformMat4(const char *name, float *value) {
-    GL_CALL(glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, value));
+
+void OpenGLShader::setUniformFloat(const char *name, float *value, int count) {
+    GL_CALL(glUniform1fv(getUniformLocation(name), count, value));
 }
 
-void OpenGLShader::setUniformInt(const char *name, int value) {
-    GL_CALL(glUniform1i(getUniformLocation(name), value));
+void OpenGLShader::setUniformVec4(const char *name, float *value, int count) {
+    GL_CALL(glUniform4fv(getUniformLocation(name), count, value));
 }
 
-void OpenGLShader::setUniformIntArray(const char *name, int *value) {
-    GL_CALL(glUniform1iv(getUniformLocation(name), 8, value));
+void OpenGLShader::setUniformMat3(const char *name, float *value, int count) {
+    GL_CALL(glUniformMatrix3fv(getUniformLocation(name), count, GL_FALSE, value));
+}
+
+void OpenGLShader::setUniformMat4(const char *name, float *value, int count) {
+    GL_CALL(glUniformMatrix4fv(getUniformLocation(name), count, GL_FALSE, value));
+}
+
+void OpenGLShader::setUniformInt(const char *name, int *value, int count) {
+    GL_CALL(glUniform1iv(getUniformLocation(name), count, value));
 }
 
 } // namespace NestRen

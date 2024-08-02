@@ -71,7 +71,7 @@ enum TextureFiltering {
     LINEAR_MIPMAP_LINEAR
 };
 
-enum class UniformDataType { Int, Mat4, IntArray };
+enum UniformType { Sampler, Vec4, Mat3, Mat4, Count };
 
 struct FrameBufferAttachment {
     FrameBufferAttachment()

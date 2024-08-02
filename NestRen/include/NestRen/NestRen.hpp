@@ -47,7 +47,13 @@ void setViewport(ViewId id, Rect rect);
 void setViewFrameBuffer(ViewId id, FrameBufferHandle frameBuffer);
 void setState(uint32_t state);
 void setScissorRect(Rect rect);
-void setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type);
+void setUniform(
+    ProgramHandle handle,
+    const char *name,
+    void *value,
+    UniformType type = UniformType::Sampler,
+    int count = 1
+);
 void setVertexBuffer(VertexBufferHandle handle, intptr_t offset = 0);
 void setIndexBuffer(IndexBufferHandle handle, intptr_t offset, size_t count);
 void setVertexLayout(VertexLayoutHandle handle);

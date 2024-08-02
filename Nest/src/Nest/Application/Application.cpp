@@ -22,14 +22,14 @@ uint64_t getMillis() {
 
 Application::Application(ApplicationStartupSettings &settings) {
     s_instance = this;
-    NestRen::initialize();
 
     m_layer = nullptr;
     Foundation::Logger::init();
     m_window = NEW(Foundation::getAllocator(), Window);
     m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
-    ImGui_Init(m_window->getNativeHandle());
+    NestRen::initialize();
     Events::init(m_window->getNativeHandle());
+    ImGui_Init(m_window->getNativeHandle());
 
     timeMillis = getMillis();
     m_lastViewportSize = m_window->getSize();
@@ -87,9 +87,11 @@ void Application::loop() {
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
+        ImGui::SetNextWindowPos({100, 100});
+        ImGui::SetNextWindowSize({100, 100});
         ImGui_EndFrame();
 
-        Events::resetDropPaths();
+//        Events::resetDropPaths();
         Events::pollEvents();
 
         NestRen::renderFrame();

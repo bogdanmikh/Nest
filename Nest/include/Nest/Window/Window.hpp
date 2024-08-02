@@ -6,22 +6,6 @@
 
 namespace Nest {
 
-
-enum Cursor {
-    ARROW = 0,
-    IBEAM = 1,
-    CROSSHAIR = 2,
-    POINTING_HAND = 3,
-    RESIZE_EW = 4,
-    RESIZE_NS = 5,
-    RESIZE_NESW = 6,
-    RESIZE_NWSE = 7,
-    RESIZE_ALL = 8,
-    NOT_ALLOWED = 9,
-    COUNT = 10
-};
-
-
 class Window {
 public:
     ~Window();
@@ -32,17 +16,12 @@ public:
     bool shouldClose();
     void setShouldClose();
     void swapBuffers();
-    Vec2 getSize();
+    Size getSize();
     double getTime();
     void *getNativeHandle();
 
-    Size getDpi();
-    void setCursor(Cursor cursor);
-    const char *getClipboardText();
-    void setClipboardText(const char *text);
 private:
     void *handle;
-    GLFWcursor *cursors[Cursor::COUNT];
 };
 
 }

@@ -19,9 +19,11 @@ public:
     void terminate();
     void bind();
     void unbind();
-    void setUniformMat4(const char *name, float *value);
-    void setUniformInt(const char *name, int value);
-    void setUniformIntArray(const char *name, int *value);
+    void setUniformFloat(const char *name, float *value, int count);
+    void setUniformVec4(const char *name, float *value, int count);
+    void setUniformMat3(const char *name, float *value, int count);
+    void setUniformMat4(const char *name, float *value, int count);
+    void setUniformInt(const char *name, int *value, int count);
     void bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex);
 
 private:

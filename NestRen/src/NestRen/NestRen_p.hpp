@@ -444,8 +444,8 @@ struct Context {
         m_submit->setShader(handle);
     }
 
-    void setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type) {
-        m_submit->setUniform(handle, name, value, type);
+    void setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
+        m_submit->setUniform(handle, name, value, type, count);
     }
 
     void setTexture(TextureHandle textureHandle, uint32_t slot) {

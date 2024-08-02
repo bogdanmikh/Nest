@@ -25,7 +25,7 @@ public:
     void setIsIndexed(bool value);
     void setNumberOfElements(uint32_t count);
     void setScissorRect(Rect rect);
-    void setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type);
+    void setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count);
     void setTexture(TextureHandle textureHandle, uint32_t slot);
     void submitCurrentDrawCall(ViewId id);
     void queueFree(FrameBufferHandle handle);

@@ -193,20 +193,32 @@ void RendererOpenGL::createVertexLayout(VertexLayoutHandle handle, VertexBufferL
 void RendererOpenGL::deleteVertexLayout(VertexLayoutHandle handle) {}
 
 void RendererOpenGL::setUniform(const Uniform &uniform) {
-    shaders[uniform.handle.id].bind();
-    switch (uniform.type) {
-        case UniformDataType::Mat4:
-            shaders[uniform.handle.id].setUniformMat4(
-                uniform.name, static_cast<float *>(uniform.value)
+    shaders[uniform.handle.id].bind(); switch (uniform.type) {
+        case UniformType::Sampler:
+            shaders[uniform.handle.id].setUniformInt(
+                uniform.name, static_cast<int *>(uniform.data), uniform.count
             );
             return;
-        case UniformDataType::Int:
-            shaders[uniform.handle.id].setUniformInt(uniform.name, *(int *)uniform.value);
+        case UniformType::Mat3:
+            shaders[uniform.handle.id].setUniformMat3(
+                uniform.name, static_cast<float *>(uniform.data), uniform.count
+            );
             return;
-        case UniformDataType::IntArray:
-            shaders[uniform.handle.id].setUniformIntArray(uniform.name, (int *)uniform.value);
+        case UniformType::Mat4:
+            shaders[uniform.handle.id].setUniformMat4(
+                uniform.name, static_cast<float *>(uniform.data), uniform.count
+            );
+            return;
+        case UniformType::Vec4:
+            shaders[uniform.handle.id].setUniformVec4(
+                uniform.name, static_cast<float *>(uniform.data), uniform.count
+            );
+            return;
+        case UniformType::Count:
             return;
     }
+    LOG_ERROR("UNIFORM TYPE IS UNDEFINED");
+
     LOG_ERROR("UNIFORM TYPE IS UNDEFINED");
 }
 

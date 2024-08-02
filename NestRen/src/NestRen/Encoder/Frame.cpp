@@ -45,9 +45,9 @@ void Frame::setShader(ProgramHandle handle) {
     draw.m_shader = handle;
 }
 
-void Frame::setUniform(ProgramHandle handle, const char *name, void *value, UniformDataType type) {
+void Frame::setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
     RenderDraw &draw = m_drawCalls[m_drawCallsCount];
-    draw.addUniform(handle, name, value, type);
+    draw.addUniform(handle, name, value, type, count);
 }
 
 void Frame::setTexture(TextureHandle textureHandle, uint32_t slot) {

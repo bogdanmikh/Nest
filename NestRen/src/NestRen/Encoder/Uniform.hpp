@@ -9,36 +9,26 @@ namespace NestRen {
 struct Uniform {
     ProgramHandle handle;
     const char *name;
-    void *value;
-    UniformDataType type;
-    uint32_t size;
+    UniformType type;
+    void *data;
+    uint16_t count;
+    uint16_t alignment;
+    uint16_t size;
 
-    static uint32_t getSizeOfType(UniformDataType type) {
-        switch (type) {
-            case UniformDataType::Int:
-                return sizeof(int);
-            case UniformDataType::Mat4:
-                return sizeof(float) * 16;
-            case UniformDataType::IntArray:
-                return sizeof(int) * 8;
-        }
-        LOG_ERROR("Uniform type is undefined");
-        return 0;
-    }
-
-    Uniform(ProgramHandle handle, const char *name, void *value, UniformDataType type)
+    Uniform(ProgramHandle handle, const char *name, void *data, UniformType type, uint16_t count)
         : handle(handle)
         , name(name)
-        , value(value)
-        , type(type) {
-        size = getSizeOfType(type);
-    }
+        , data(data)
+        , count(count)
+        , type(type)
+        , alignment(0)
+        , size(0) {}
 
     Uniform()
         : handle(0)
         , name(nullptr)
-        , value(nullptr)
-        , type(UniformDataType::Int)
+        , data(nullptr)
+        , type(UniformType::Sampler)
         , size(0) {}
 };
 

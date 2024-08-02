@@ -114,10 +114,10 @@ public:
         NestRen::setShader(m_shader);
         static int samplerCube = 0;
         NestRen::setTexture(m_skyTexture, samplerCube);
-        NestRen::setUniform(m_shader, "skyTexture", &samplerCube, NestRen::UniformDataType::Int);
-        NestRen::setUniform(m_shader, "model", &m_model[0][0], NestRen::UniformDataType::Mat4);
+        NestRen::setUniform(m_shader, "skyTexture", &samplerCube, NestRen::UniformType::Int);
+        NestRen::setUniform(m_shader, "model", &m_model[0][0], NestRen::UniformType::Mat4);
         NestRen::setUniform(
-            m_shader, "projViewMtx", &m_viewProjection[0][0], NestRen::UniformDataType::Mat4
+            m_shader, "projViewMtx", &m_viewProjection[0][0], NestRen::UniformType::Mat4
         );
         NestRen::setVertexBuffer(m_vertexBuffer);
         NestRen::setIndexBuffer(m_indexBuffer, 0, 36);

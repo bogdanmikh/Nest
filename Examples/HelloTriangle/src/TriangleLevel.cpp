@@ -19,8 +19,8 @@ void TriangleLevel::onAttach() {
 
 void TriangleLevel::onUpdate(double deltaTime) {
     for (auto &entity : m_entities) {
-        entity->onImGuiRender();
         entity->onUpdate(deltaTime);
+        entity->onImGuiRender();
     }
 }
 
