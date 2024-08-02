@@ -26,4 +26,4 @@ struct MeshData {
         , indicesCount(indicesCount) {}
 };
 
-} // namespace Panda
+} // namespace Nest

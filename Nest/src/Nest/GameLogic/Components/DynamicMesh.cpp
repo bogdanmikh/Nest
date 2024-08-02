@@ -70,4 +70,4 @@ void DynamicMesh::update(const MeshData &data) {
     NestRen::updateDynamicIndexBuffer(m_indexBufferHandle, data.indices, m_indicesCount);
 }
 
-} // namespace Panda
+} // namespace Nest

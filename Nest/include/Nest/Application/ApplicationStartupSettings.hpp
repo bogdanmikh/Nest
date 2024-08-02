@@ -36,4 +36,4 @@ public:
         , isMaximized(isMaximized) {}
 };
 
-} // namespace Panda
+} // namespace Nest

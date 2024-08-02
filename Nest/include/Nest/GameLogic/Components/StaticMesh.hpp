@@ -38,4 +38,4 @@ private:
     friend class Renderer3D;
 };
 
-} // namespace Panda
+} // namespace Nest

@@ -1,11 +1,6 @@
-//
-//  Application.cpp
-//  Main
-//
-//  Created by Admin on 22.07.2021.
-//
-
 #include "TriangleLevel.hpp"
+
+#include <Nest.hpp>
 
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
@@ -14,7 +9,7 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->startBasicGame(new TriangleLevel);
+    initLayer(Nest::Application::get()->getLayer());
     application->loop();
     delete application;
     return 0;

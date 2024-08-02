@@ -4,7 +4,7 @@
 
 #include <imgui.h>
 
-namespace Panda {
+namespace Nest {
 
 namespace Theme {
     constexpr auto accent = IM_COL32(236, 158, 36, 255);
@@ -26,4 +26,4 @@ namespace Theme {
     constexpr auto backgroundPopup = IM_COL32(50, 50, 50, 255);
 } // namespace Theme
 
-} // namespace Panda
+} // namespace Nest

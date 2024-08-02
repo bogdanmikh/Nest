@@ -1,25 +1,41 @@
 #pragma once
 
 #include <string>
+#include "Nest/GameLogic/Entity.hpp"
+#include "Foundation/Allocator.hpp"
 
 namespace Nest {
 
 class Layer {
 public:
-    Layer(const std::string name = "Layer");
-    virtual ~Layer() = default;
-
-    virtual void onAttach() {}
-    virtual void onDetach() {}
-    virtual void onUpdate(double deltaTime) {}
-    virtual void onImGuiRender() {}
-
-    const std::string &getName() const {
-        return m_debugName;
+    Layer() = default;
+    ~Layer() {
+        onDetach();
     }
 
-protected:
-    std::string m_debugName;
+    void onAttach() {
+        for (auto &entity : m_entities) {
+            entity->onAttach();
+        }
+    }
+
+    void onUpdate(double deltaTime) {
+        for (auto &entity : m_entities) {
+            entity->onImGuiRender();
+            entity->onUpdate(deltaTime);
+        }
+    }
+
+    void onDetach() {
+        for (auto &entity : m_entities) {
+            entity->onDetach();
+        }
+    }
+    void addEntity(Entity *entity) {
+        m_entities.emplace_back(entity);
+    }
+private:
+    std::vector<Entity*> m_entities;
 };
 
-} // namespace Panda
+} // namespace Nest

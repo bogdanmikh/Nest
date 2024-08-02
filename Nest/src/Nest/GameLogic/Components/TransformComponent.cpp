@@ -72,4 +72,4 @@ void TransformComponent::setScale(glm::vec3 _scale) {
     scale = _scale;
 }
 
-} // namespace Panda
+} // namespace Nest

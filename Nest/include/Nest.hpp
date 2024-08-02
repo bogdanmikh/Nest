@@ -9,15 +9,9 @@
 #include "Nest/Assets/AssetLoader.hpp"
 
 // Game logic
-#include "Nest/GameLogic/Level.hpp"
-#include "Nest/GameLogic/Camera.hpp"
-#include "Nest/GameLogic/NativeScript.hpp"
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/DynamicMesh.hpp"
-
-// Renderer stuff
-#include <Nest/Renderer/Renderer2D.hpp>
-#include <Nest/Renderer/Renderer3D.hpp>
+#include "Nest/GameLogic/Entity.hpp"
 
 // Third party
 #include <glm/ext.hpp>

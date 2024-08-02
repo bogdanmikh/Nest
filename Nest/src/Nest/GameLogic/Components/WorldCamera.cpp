@@ -7,60 +7,113 @@
 namespace Nest {
 
 WorldCamera::WorldCamera()
-    : Camera({200, 300})
-    , m_fieldOfView(70.f)
-    , m_projectionType(ProjectionType::PERSPECTIVE)
-    , m_orthoSize(1.f) {}
+    : fieldOfViewRadians(glm::radians(45.f))
+    , aspect(1.f)
+    , rotation(0.f)
+    , position(0.f)
+    , front(0.f)
+    , right(0.f)
+    , up(0.f) {
+    updateVectors();
+}
 
-void WorldCamera::setFieldOfView(float degrees) {
-    m_fieldOfView = degrees;
-    if (m_projectionType == ProjectionType::PERSPECTIVE) {
-        updateProjectionMatrix();
+WorldCamera::~WorldCamera() {}
+
+void WorldCamera::setFieldOfView(float radians) {
+    if (radians == this->fieldOfViewRadians) {
+        return;
     }
+    this->fieldOfViewRadians = radians;
 }
 
-void WorldCamera::updateProjectionMatrix() {
-    float aspectRatio = m_viewportSize.width / m_viewportSize.height;
-    switch (m_projectionType) {
-        case ProjectionType::PERSPECTIVE: {
-            m_projection =
-                glm::perspective<float>(glm::radians(m_fieldOfView), aspectRatio, m_zNear, m_zFar);
-            break;
-        }
-        case ProjectionType::ORTHOGRAPHIC:
-            float orthoLeft = -m_orthoSize * aspectRatio * 0.5f;
-            float orthoRight = m_orthoSize * aspectRatio * 0.5f;
-            float orthoBottom = -m_orthoSize * 0.5f;
-            float orthoTop = m_orthoSize * 0.5f;
-
-            m_projection =
-                glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop, m_zNear, m_zFar);
-            break;
+void WorldCamera::updateAspectRatio(float aspect) {
+    if (aspect == this->aspect) {
+        return;
     }
+    this->aspect = aspect;
 }
 
-WorldCamera::ProjectionType WorldCamera::getProjectionType() const {
-    return m_projectionType;
+glm::mat4 WorldCamera::getProjectionMatrix() {
+    return glm::perspective(fieldOfViewRadians, aspect, 0.01f, 1000.f);
 }
 
-void WorldCamera::setProjectionType(WorldCamera::ProjectionType type) {
-    m_projectionType = type;
-    updateProjectionMatrix();
-}
-
-void WorldCamera::setOrthoSize(float orthoSize) {
-    m_orthoSize = orthoSize;
-    if (m_projectionType == ProjectionType::ORTHOGRAPHIC) {
-        updateProjectionMatrix();
+void WorldCamera::rotate(float x, float y, float z) {
+    if (x == 0 && y == 0 && z == 0) {
+        return;
     }
+    rotation += glm::vec3(x, y, z);
 }
 
-float WorldCamera::getFieldOfView() {
-    return m_fieldOfView;
+void WorldCamera::setRotation(float x, float y, float z) {
+    if (rotation.x == x && rotation.y == y && rotation.z == z) {
+        return;
+    }
+    rotation.x = x;
+    rotation.y = y;
+    rotation.z = z;
 }
 
-float WorldCamera::getOrthoSize() {
-    return m_orthoSize;
+void WorldCamera::translate(float x, float y, float z) {
+    if (x == 0 && y == 0 && z == 0) {
+        return;
+    }
+    position += glm::vec3(x, y, z);
 }
 
-} // namespace Panda
+void WorldCamera::translateLocal(float x, float y, float z) {
+    if (x == 0 && y == 0 && z == 0) {
+        return;
+    }
+    position += right * x;
+    position += up * y;
+    position += front * z;
+}
+
+void WorldCamera::setPosition(float x, float y, float z) {
+    if (position.x == x && position.y == y && position.z == z) {
+        return;
+    }
+    position.x = x;
+    position.y = y;
+    position.z = z;
+}
+
+void WorldCamera::updateVectors() {
+    glm::mat4 rotationMatrix = glm::mat4(1.f);
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    rotationMatrix = glm::transpose(rotationMatrix);
+    front = rotationMatrix * glm::vec4(0.f, 0.f, -1.f, 1.f);
+    right = rotationMatrix * glm::vec4(1.f, 0.f, 0.f, 1.f);
+    up = rotationMatrix * glm::vec4(0.f, 1.f, 0.f, 1.f);
+}
+
+glm::mat4 WorldCamera::getViewMatrix() {
+    glm::vec3 target = position + front;
+    return glm::lookAt(position, target, up);
+}
+
+glm::mat4 WorldCamera::getSkyViewMatrix() {
+    glm::mat4 rotationMatrix = glm::mat4(1.f);
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotationMatrix =
+        glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    return rotationMatrix;
+}
+
+glm::vec3 WorldCamera::getPosition() {
+    return position;
+}
+
+glm::vec3 WorldCamera::getFront() {
+    return front;
+}
+
+} // namespace Nest

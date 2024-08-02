@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <Nest.hpp>
+namespace Nest {
+class Layer;
+}
 
-class TriangleLevel : public Nest::Level {
-public:
-    void start(Nest::World *world) override;
-};
+extern void initLayer(Nest::Layer* layer);

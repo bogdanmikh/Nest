@@ -5,13 +5,9 @@
 #include "TriangleLevel.hpp"
 #include <Nest.hpp>
 
-
-class TriangleRenderer final : public Nest::NativeScript {
+class TriangleRenderer final : public Nest::Entity {
 public:
-    TriangleRenderer()
-        : m_vertexBuffer()
-        , m_indexBuffer()
-        , m_shader() {
+    void onAttach() {
         using namespace NestRen;
 
         Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
@@ -24,25 +20,34 @@ public:
         float topEdge = 0.5f;
         float leftEdge = -0.5f;
         float bottomEdge = -0.5f;
-        float *data = new float[8]{
+        auto *data = new float[8]{
             rightEdge, topEdge, leftEdge, topEdge, leftEdge, bottomEdge, rightEdge, bottomEdge
         };
-        uint32_t *indices = new uint32_t[6]{0, 1, 2, 0, 2, 3};
+        auto *indices = new uint32_t[6]{0, 1, 2, 0, 2, 3};
 
         VertexBufferLayoutData layoutData;
         layoutData.pushFloat(2);
         VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
         m_vertexBuffer = createVertexBuffer(data, sizeof(float) * 8, vertexLayout);
         m_indexBuffer = createIndexBuffer(indices, BufferElementType::UnsignedInt, 6);
+//        delete[] data;
+//        delete[] indices;
     }
 
-    void initialize() override {}
-
-    void update(double deltaTime) override {
+    void onUpdate(double deltaTime) override {
+        LOG_INFO("onUpdate");
         NestRen::setShader(m_shader);
         NestRen::setVertexBuffer(m_vertexBuffer);
         NestRen::setIndexBuffer(m_indexBuffer, 0, 6);
         NestRen::submit(0);
+    }
+
+    void onImGuiRender() override {}
+
+    void onDetach() override {
+        deleteVertexBuffer(m_vertexBuffer);
+        deleteIndexBuffer(m_indexBuffer);
+        deleteProgram(m_shader);
     }
 
 private:
@@ -51,7 +56,6 @@ private:
     NestRen::ProgramHandle m_shader;
 };
 
-void TriangleLevel::start(Nest::World *world) {
-    Nest::Entity entity = world->instantiateEntity();
-    entity.addNativeScript<TriangleRenderer>();
+void initLayer(Nest::Layer* layer) {
+    layer->addEntity(new TriangleRenderer);
 }

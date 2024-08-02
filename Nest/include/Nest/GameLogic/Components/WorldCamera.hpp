@@ -1,29 +1,42 @@
 #pragma once
 
-#include "Nest/GameLogic/Camera.hpp"
 #include "Nest/Base/Base.hpp"
 
 namespace Nest {
 
-class WorldCamera : public Camera {
+class WorldCamera {
 public:
-    enum class ProjectionType { PERSPECTIVE = 0, ORTHOGRAPHIC = 1 };
     WorldCamera();
-    ProjectionType getProjectionType() const;
-    void setProjectionType(ProjectionType type);
-    // MARK: Perspective parameters
-    void setFieldOfView(float degrees);
-    float getFieldOfView();
-    // MARK: Orthographic parameters
-    float getOrthoSize();
-    void setOrthoSize(float orthoSize);
+    ~WorldCamera();
+
+    void update() {
+        updateVectors();
+    }
+
+    void setFieldOfView(float radians);
+    void updateAspectRatio(float aspect);
+    void rotate(float x, float y, float z);
+    void setRotation(float x, float y, float z);
+    void translate(float x, float y, float z);
+    void setPosition(float x, float y, float z);
+    void translateLocal(float x, float y, float z);
+    glm::mat4 getViewMatrix();
+    glm::mat4 getSkyViewMatrix();
+    glm::mat4 getProjectionMatrix();
+
+    glm::vec3 getPosition();
+    glm::vec3 getFront();
 
 private:
-    void updateProjectionMatrix() override;
+    void updateVectors();
 
-    ProjectionType m_projectionType;
-    float m_fieldOfView;
-    float m_orthoSize;
+    glm::vec3 rotation;
+    glm::vec3 position;
+    glm::vec3 front;
+    glm::vec3 right;
+    glm::vec3 up;
+    float fieldOfViewRadians;
+    float aspect;
 };
 
-} // namespace Panda
+} // namespace Nest

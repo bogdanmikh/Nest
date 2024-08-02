@@ -52,4 +52,4 @@ public:
 private:
     static std::string resourcesPath;
 };
-} // namespace Panda
+} // namespace Nest

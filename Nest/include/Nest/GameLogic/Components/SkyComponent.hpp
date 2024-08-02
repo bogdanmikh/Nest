@@ -140,4 +140,4 @@ private:
     NestRen::VertexBufferHandle m_vertexBuffer;
 };
 
-} // namespace Panda
+} // namespace Nest

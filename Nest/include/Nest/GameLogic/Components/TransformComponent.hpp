@@ -38,4 +38,4 @@ private:
     glm::vec3 scale;
 };
 
-} // namespace Panda
+} // namespace Nest
