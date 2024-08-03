@@ -50,6 +50,7 @@ public:
     void rotateY(float degrees);
     void rotateZ(float degrees);
     void translate(glm::vec3 offset);
+    void setPosition(glm::vec3 position);
 private:
     NestRen::TextureHandle m_texture;
     NestRen::VertexBufferHandle m_vertexBuffer;

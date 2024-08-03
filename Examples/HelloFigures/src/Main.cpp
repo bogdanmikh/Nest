@@ -1,4 +1,4 @@
-#include "SphereLevel.hpp"
+#include "FiguresLevel.hpp"
 
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
@@ -7,7 +7,7 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->setLayer(NEW(Foundation::getAllocator(), SphereLevel));
+    application->setLayer(NEW(Foundation::getAllocator(), FigureLevel));
     application->loop();
     FREE(Foundation::getAllocator(), application);
     return 0;

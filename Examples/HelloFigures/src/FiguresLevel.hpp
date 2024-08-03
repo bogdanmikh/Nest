@@ -6,9 +6,9 @@
 
 #include <Nest.hpp>
 
-class SphereLevel final : public Nest::Layer {
+class FigureLevel final : public Nest::Layer {
 public:
-    ~SphereLevel() override;
+    ~FigureLevel() override;
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onDetach() override;

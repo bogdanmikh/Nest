@@ -5,6 +5,8 @@ void SphereRenderer::onAttach() {
     m_countIndices = 0;
 
     m_model = glm::mat4(1);
+    translate({2., 0., 0});
+    m_model = glm::translate(m_model, m_position);
     NestRen::setViewClear(0, 0x3D75C9FF);
 
     Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
@@ -13,7 +15,7 @@ void SphereRenderer::onAttach() {
     );
     m_shader = createProgram(programAsset.getNestRenProgramCreate());
 
-    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil.png");
+    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil2.png");
 
     TextureCreate textureCreate = textureAsset.getNestRenTextureCreate();
     textureCreate.m_numMips = 4;
@@ -87,11 +89,14 @@ void SphereRenderer::onAttach() {
 }
 
 void SphereRenderer::onUpdate(double deltaTime) {
-    rotateZ(0.5);
-    rotateY(0.5);
-    glm::vec3 offset = {0.01, 0., 0};
-    offset *= deltaTime;
-//    translate(offset);
+    static bool keyP = false;
+    if (Nest::Events::isJustKeyPressed(Nest::Key::P)) {
+        keyP = !keyP;
+    }
+    if (!keyP) {
+        rotateZ(0.5);
+        rotateY(0.5);
+    }
     static auto camera = Nest::Application::get()->getWorldCamera();
     static auto time = Nest::Application::get()->getWindow()->getTime();
     time = Nest::Application::get()->getWindow()->getTime();
@@ -147,4 +152,7 @@ void SphereRenderer::rotateZ(float degrees) {
 void SphereRenderer::translate(glm::vec3 offset) {
     m_position += offset;
     m_model = glm::translate(m_model, m_position);
+}
+void SphereRenderer::setPosition(glm::vec3 position) {
+    m_position = position;
 }
