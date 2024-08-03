@@ -37,20 +37,17 @@ struct VertexCube {
 
 class CubeRenderer final : public Nest::Entity {
 public:
+    CubeRenderer();
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onImGuiRender() override;
     void onDetach() override;
-    void rotateX(float degrees);
-    void rotateY(float degrees);
-    void rotateZ(float degrees);
-    void translate(glm::vec3 offset);
-    void setPosition(glm::vec3 position);
+    Nest::TransformComponent &getTransform();
+
 private:
     NestRen::TextureHandle m_texture;
     NestRen::VertexBufferHandle m_vertexBuffer;
     NestRen::IndexBufferHandle m_indexBuffer;
     NestRen::ProgramHandle m_shader;
-    glm::mat4 m_model;
-    glm::vec3 m_position;
+    Nest::TransformComponent m_transformComponent;
 };

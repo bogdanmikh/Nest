@@ -1,10 +1,10 @@
 #include "CubeRenderer.hpp"
 
-void CubeRenderer::onAttach() {
+CubeRenderer::CubeRenderer() {}
+
+          void CubeRenderer::onAttach() {
     using namespace NestRen;
 
-    m_model = glm::mat4(1);
-    m_model = glm::translate(m_model, m_position);
     NestRen::setViewClear(0, 0x3D75C9FF);
 
     Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
@@ -82,8 +82,6 @@ void CubeRenderer::onAttach() {
 }
 
 void CubeRenderer::onUpdate(double deltaTime) {
-    rotateZ(0.5);
-    rotateY(0.5);
     static auto camera = Nest::Application::get()->getWorldCamera();
     static auto time = Nest::Application::get()->getWindow()->getTime();
     time = Nest::Application::get()->getWindow()->getTime();
@@ -97,12 +95,14 @@ void CubeRenderer::onUpdate(double deltaTime) {
     projectionMatrix = camera->getProjectionMatrix();
     static auto cameraPos = camera->getPosition();
     cameraPos = camera->getPosition();
+    static auto model = m_transformComponent.getTransform();
+    model = m_transformComponent.getTransform();
     NestRen::setShader(m_shader);
     NestRen::setUniform(m_shader, "iTimeVec4", &time, NestRen::UniformType::Vec4); /// float
     NestRen::setUniform(m_shader, "iResolutionVec4", &resolution, NestRen::UniformType::Vec4); /// vec2
     NestRen::setUniform(m_shader, "iMouseVec4", &mousePos, NestRen::UniformType::Vec4); /// vec2
     NestRen::setUniform(m_shader, "iCameraPosVec4", &cameraPos, NestRen::UniformType::Vec4); /// vec4
-    NestRen::setUniform(m_shader, "u_model", &m_model, NestRen::UniformType::Mat4); /// mat4
+    NestRen::setUniform(m_shader, "u_model", &model, NestRen::UniformType::Mat4); /// mat4
     NestRen::setUniform(m_shader, "u_view", &viewMatrix, NestRen::UniformType::Mat4); /// mat4
     NestRen::setUniform(m_shader, "u_projection", &projectionMatrix, NestRen::UniformType::Mat4); /// mat4
     static int slot = 0;
@@ -124,22 +124,6 @@ void CubeRenderer::onDetach() {
     deleteTexture(m_texture);
 }
 
-void CubeRenderer::rotateX(float degrees) {
-    m_model = glm::rotate(m_model, glm::radians(degrees), glm::vec3(1.0f, 0.0f, 0.0f));
-}
-
-void CubeRenderer::rotateY(float degrees) {
-    m_model = glm::rotate(m_model, glm::radians(degrees), glm::vec3(0.0f, 1.0f, 0.0f));
-}
-
-void CubeRenderer::rotateZ(float degrees) {
-    m_model = glm::rotate(m_model, glm::radians(degrees), glm::vec3(0.0f, 0.0f, 1.0f));
-}
-
-void CubeRenderer::translate(glm::vec3 offset) {
-    m_position += offset;
-    m_model = glm::translate(m_model, m_position);
-}
-void CubeRenderer::setPosition(glm::vec3 position) {
-    m_position = position;
+Nest::TransformComponent &CubeRenderer::getTransform() {
+    return m_transformComponent;
 }

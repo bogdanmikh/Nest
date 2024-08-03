@@ -12,6 +12,7 @@
 // Game logic
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/DynamicMesh.hpp"
+#include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/GameLogic/Entity.hpp"
 
 // Third party

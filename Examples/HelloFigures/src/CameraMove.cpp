@@ -6,7 +6,7 @@ void CameraMove::onAttach() {
     m_window = Nest::Application::get()->getWindow();
     m_worldCamera = Nest::Application::get()->getWorldCamera();
     m_worldCamera->setPosition(0.0, 0.0, 10.0);
-    m_worldCamera->setFieldOfView(glm::radians(10.f));
+    m_worldCamera->setFieldOfView(glm::radians(60.f));
     cursorLock = false;
 }
 
