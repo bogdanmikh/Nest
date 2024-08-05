@@ -18,13 +18,13 @@
 #else
 #    define ALLOC(allocator, size) Foundation::alloc(allocator, size)
 #    define FREE(allocator, ptr) Foundation::free(allocator, ptr)
-#    define DELETE(_allocator, _ptr)                                                               \
-        Foundation::deleteObject(_allocator, _ptr)
+#    define DELETE(_allocator, _ptr) Foundation::deleteObject(_allocator, _ptr)
 #endif
 
 #define PLACEMENT_NEW(_ptr, _type) ::new (Foundation::PlacementNewTag(), _ptr) _type
 #define NEW(_allocator, _type) PLACEMENT_NEW(ALLOC(_allocator, sizeof(_type)), _type)
-#define NEW_ARRAY(_allocator, _type, _size) PLACEMENT_NEW(ALLOC(_allocator, sizeof(_type) * _size), _type)
+#define NEW_ARRAY(_allocator, _type, _size)                                                        \
+    PLACEMENT_NEW(ALLOC(_allocator, sizeof(_type) * _size), _type)
 
 namespace Foundation {
 struct PlacementNewTag {};
@@ -110,21 +110,12 @@ private:
     size_t m_used;
 };
 
-void *alloc(
-    AllocatorI *allocator,
-    size_t size
-);
+void *alloc(AllocatorI *allocator, size_t size);
 
-void free(
-    AllocatorI *allocator,
-    void *ptr
-);
+void free(AllocatorI *allocator, void *ptr);
 
 template<typename ObjectT>
-inline void deleteObject(
-    AllocatorI *_allocator,
-    ObjectT *_object
-) {
+inline void deleteObject(AllocatorI *_allocator, ObjectT *_object) {
     if (_object == nullptr) {
         return;
     }

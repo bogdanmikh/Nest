@@ -24,4 +24,4 @@ private:
     void *handle;
 };
 
-}
+} // namespace Nest

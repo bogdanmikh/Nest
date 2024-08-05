@@ -8,19 +8,19 @@
 #    define CONFIG_ALLOCATOR_NATURAL_ALIGNMENT 8
 #endif
 
- void *operator new(size_t, Foundation::PlacementNewTag, void *_ptr) {
-     return _ptr;
- }
+void *operator new(size_t, Foundation::PlacementNewTag, void *_ptr) {
+    return _ptr;
+}
 
- void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
+void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
 
 namespace Foundation {
 
-//FreeListAllocator *FreeListAllocator::s_instance = new FreeListAllocator(MemorySize::MEGABYTE);
+// FreeListAllocator *FreeListAllocator::s_instance = new FreeListAllocator(MemorySize::MEGABYTE);
 
 AllocatorI *getAllocator() {
     static DefaultAllocator allocator;
-//    static FreeListAllocator allocator(MemorySize::GIGABYTE);
+    //    static FreeListAllocator allocator(MemorySize::GIGABYTE);
     return &allocator;
 }
 
@@ -32,9 +32,7 @@ void free(AllocatorI *allocator, void *ptr) {
     allocator->realloc(ptr, 0);
 }
 
-void *realloc(
-    AllocatorI *allocator, void *ptr, size_t size
-) {
+void *realloc(AllocatorI *allocator, void *ptr, size_t size) {
     return allocator->realloc(ptr, size);
 }
 

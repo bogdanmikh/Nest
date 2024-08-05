@@ -122,7 +122,6 @@ void OpenGLShader::unbind() {
     GL_CALL(glUseProgram(0));
 }
 
-
 void OpenGLShader::setUniformFloat(const char *name, float *value, int count) {
     GL_CALL(glUniform1fv(getUniformLocation(name), count, value));
 }

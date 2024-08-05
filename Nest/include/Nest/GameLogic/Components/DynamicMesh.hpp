@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Nest/Renderer/MeshData.hpp"
+#include "Nest/Renderer/TextureBinding.hpp"
 
 #include <NestRen/NestRen.hpp>
 
@@ -17,11 +18,15 @@ public:
     DynamicMesh(DynamicMesh &&source);
     DynamicMesh(DynamicMesh &source);
 
-    void create(const MeshData &data, std::vector<NestRen::TextureHandle> textures, NestRen::ProgramHandle shader);
+    void create(
+        const MeshData &data,
+        std::vector<TextureBinding> bindings,
+        NestRen::ProgramHandle shader
+    );
     void update(const MeshData &data);
 
 private:
-    std::vector<NestRen::TextureHandle> m_textures;
+    std::vector<TextureBinding> m_bindings;
     NestRen::ProgramHandle m_shaderHandle;
     NestRen::VertexLayoutHandle m_bufferLayoutHandle;
     NestRen::IndexBufferHandle m_indexBufferHandle;

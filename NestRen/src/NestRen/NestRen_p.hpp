@@ -435,7 +435,8 @@ struct Context {
         m_render.setShader(handle);
     }
 
-    void setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
+    void
+    setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
         m_render.setUniform(handle, name, value, type, count);
     }
 
@@ -474,7 +475,7 @@ struct Context {
         m_views[id].m_frameBuffer = frameBuffer;
     }
 
-//    Foundation::Thread m_thread;
+    //    Foundation::Thread m_thread;
 private:
     RendererI *m_renderer;
     Frame m_render;
@@ -495,7 +496,7 @@ private:
     Foundation::CommandBuffer m_postCommandQueue;
 
 public:
-//    Foundation::Semaphore m_rendererSemaphore;
+    //    Foundation::Semaphore m_rendererSemaphore;
 };
 
 } // namespace NestRen

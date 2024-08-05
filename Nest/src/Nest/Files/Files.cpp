@@ -21,4 +21,4 @@ bool Nest::readBinaryFile(const std::string &filename, char *data, uint32_t size
     return true;
 }
 
-}
+} // namespace Nest

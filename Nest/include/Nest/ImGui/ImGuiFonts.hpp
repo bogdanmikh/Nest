@@ -23,4 +23,4 @@ public:
     static std::unordered_map<std::string, ImFont *> &getFonts();
 };
 
-}
+} // namespace Nest

@@ -35,8 +35,8 @@ public:
     void loop();
     void close();
 
-    inline void setLayer(Layer* layer) {
-         m_layer = layer;
+    inline void setLayer(Layer *layer) {
+        m_layer = layer;
     }
 
 private:
@@ -60,4 +60,4 @@ private:
     int m_maximumFps;
 };
 
-}
+} // namespace Nest

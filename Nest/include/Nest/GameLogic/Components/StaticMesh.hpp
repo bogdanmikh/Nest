@@ -24,7 +24,8 @@ public:
         , m_shaderHandle(NESTREN_INVALID_HANDLE) {}
     ~StaticMesh();
 
-    void create(const MeshData &data, NestRen::TextureHandle texture, NestRen::ProgramHandle shader);
+    void
+    create(const MeshData &data, NestRen::TextureHandle texture, NestRen::ProgramHandle shader);
 
 private:
     NestRen::TextureHandle m_textureHandle;

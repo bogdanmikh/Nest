@@ -193,7 +193,8 @@ void RendererOpenGL::createVertexLayout(VertexLayoutHandle handle, VertexBufferL
 void RendererOpenGL::deleteVertexLayout(VertexLayoutHandle handle) {}
 
 void RendererOpenGL::setUniform(const Uniform &uniform) {
-    shaders[uniform.handle.id].bind(); switch (uniform.type) {
+    shaders[uniform.handle.id].bind();
+    switch (uniform.type) {
         case UniformType::Sampler:
             shaders[uniform.handle.id].setUniformInt(
                 uniform.name, static_cast<int *>(uniform.data), uniform.count
@@ -277,7 +278,7 @@ void RendererOpenGL::viewChanged(View &view) {
     uint8_t b = rgba >> 8;
     uint8_t a = rgba >> 0;
     GL_CALL(glClearColor((r) / 255.f, (g) / 255.f, (b) / 255.f, (a) / 255.f));
-//    GL_CALL(glClearColor(1., 0., 0., 1.));
+    //    GL_CALL(glClearColor(1., 0., 0., 1.));
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 

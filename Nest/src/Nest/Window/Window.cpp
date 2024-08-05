@@ -36,8 +36,8 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     }
     this->handle = window;
     Events::init(window);
-    glfwShowWindow((GLFWwindow*) handle);
-    glfwFocusWindow((GLFWwindow*) handle);
+    glfwShowWindow((GLFWwindow *)handle);
+    glfwFocusWindow((GLFWwindow *)handle);
 
     NestRen::PlatformData::get()->nativeWindowHandle = handle;
 
@@ -92,4 +92,4 @@ void *Window::getNativeHandle() {
     return handle;
 }
 
-}
+} // namespace Nest

@@ -121,4 +121,4 @@ void Events::resetDropPaths() {
     m_dropPaths.clear();
 }
 
-}
+} // namespace Nest

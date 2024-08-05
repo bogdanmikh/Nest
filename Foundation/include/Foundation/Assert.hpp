@@ -15,4 +15,4 @@ namespace Foundation {
     if (_condition == false) {                                                                     \
         LOG_CRITICAL("CHECK " _format, __VA_ARGS__);                                               \
     }
-}
+} // namespace Foundation

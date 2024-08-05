@@ -39,4 +39,4 @@ private:
     static void dropCallback(GLFWwindow *window, int count, const char **paths);
 };
 
-}
+} // namespace Nest

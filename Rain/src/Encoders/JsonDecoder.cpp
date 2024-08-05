@@ -156,7 +156,6 @@ bool JsonDecoder::decode(const char *key, uint64_t &data) {
     return true;
 }
 
-
 bool JsonDecoder::decode(const char *key, float &data) {
     if (m_isArray) {
         const auto &member = *m_arrayIteratorStack.back();

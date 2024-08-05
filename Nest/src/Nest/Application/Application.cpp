@@ -19,14 +19,15 @@ uint64_t getMillis() {
     return now.count();
 }
 
-
 Application::Application(ApplicationStartupSettings &settings) {
     s_instance = this;
 
     m_layer = nullptr;
     Foundation::Logger::init();
     m_window = NEW(Foundation::getAllocator(), Window);
-    m_window->init(settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen);
+    m_window->init(
+        settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
+    );
     NestRen::initialize();
 
     ImGui_Init(m_window->getNativeHandle());
@@ -45,21 +46,21 @@ Application::Application(ApplicationStartupSettings &settings) {
 
 Application::~Application() {
     ImGui_Shutdown();
-    if (m_layer) m_layer->onDetach();
+    if (m_layer)
+        m_layer->onDetach();
     FREE(Foundation::getAllocator(), m_worldCamera);
     FREE(Foundation::getAllocator(), m_layer);
     FREE(Foundation::getAllocator(), m_window);
 }
 
 void Application::updateViewport(Size size) {
-    NestRen::Rect viewport = NestRen::Rect(
-        0, 0, size.width, size.height
-    );
+    NestRen::Rect viewport = NestRen::Rect(0, 0, size.width, size.height);
     NestRen::setViewport(0, viewport);
 }
 
 void Application::loop() {
-    if (m_layer) m_layer->onAttach();
+    if (m_layer)
+        m_layer->onAttach();
     while (!m_window->shouldClose()) {
         uint64_t lastTime = m_timeMillis;
         m_timeMillis = getMillis();
@@ -114,4 +115,4 @@ void Application::close() {
     m_window->setShouldClose();
 }
 
-}
+} // namespace Nest

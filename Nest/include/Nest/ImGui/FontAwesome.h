@@ -714,4 +714,4 @@ namespace Nest {
 #define ICON_NEXTCLOUD u8"\uf306"
 #define ICON_NEXTCLOUD_SQUARE u8"\uf307"
 
-}
+} // namespace Nest

@@ -50,4 +50,4 @@ std::unordered_map<std::string, ImFont *> &Fonts::getFonts() {
     return fonts;
 }
 
-}
+} // namespace Nest

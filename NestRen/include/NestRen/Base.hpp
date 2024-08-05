@@ -8,7 +8,6 @@
 
 #define NESTREN_INVALID_HANDLE UINT16_MAX
 
-
 #if NESTRENLOG_ENABLED == 1
 #    define NESTREN_LOG(...) LOG_INFO("{}", __VA_ARGS__)
 #else
@@ -20,7 +19,6 @@
 #else
 #    define CMDBUF_LOG(...)
 #endif
-
 
 namespace NestRen {
 

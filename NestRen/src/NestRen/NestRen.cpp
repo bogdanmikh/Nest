@@ -9,7 +9,7 @@ namespace NestRen {
 // MARK: - PUBLIC METHODS IMPL
 
 static Context *s_context = nullptr;
-//static const int CONTEXT_ALIGNMENT = 64;
+// static const int CONTEXT_ALIGNMENT = 64;
 
 void initialize() {
     NESTREN_LOG("NESTREN INIT BEGIN");
@@ -209,4 +209,4 @@ void flip() {
     s_context->flip();
 }
 
-} // namespace NESTREN
+} // namespace NestRen

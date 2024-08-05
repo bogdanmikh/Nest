@@ -133,4 +133,4 @@ enum class Key {
     MOD_SUPER = 8
 };
 
-}
+} // namespace Nest

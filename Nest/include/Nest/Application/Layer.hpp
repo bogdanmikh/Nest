@@ -13,8 +13,9 @@ public:
     virtual void onUpdate(double deltaTime) = 0;
     virtual void onDetach() = 0;
     virtual void addEntity(Entity *entity) = 0;
+
 private:
-    std::vector<Entity*> m_entities;
+    std::vector<Entity *> m_entities;
 };
 
 } // namespace Nest

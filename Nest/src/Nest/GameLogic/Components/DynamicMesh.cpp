@@ -21,7 +21,7 @@ DynamicMesh::DynamicMesh(DynamicMesh &&source)
     , m_indexBufferHandle(source.m_indexBufferHandle)
     , m_vertexBufferHandle(source.m_vertexBufferHandle)
     , m_indicesCount(source.m_indicesCount)
-    , m_textures(source.m_textures)
+    , m_bindings(source.m_bindings)
     , m_shaderHandle(source.m_shaderHandle) {
     source.m_vertexBufferHandle = NESTREN_INVALID_HANDLE;
     source.m_indexBufferHandle = NESTREN_INVALID_HANDLE;
@@ -33,7 +33,7 @@ DynamicMesh::DynamicMesh()
     , m_indexBufferHandle(NESTREN_INVALID_HANDLE)
     , m_vertexBufferHandle(NESTREN_INVALID_HANDLE)
     , m_indicesCount(0)
-    , m_textures()
+    , m_bindings()
     , m_shaderHandle(NESTREN_INVALID_HANDLE) {}
 
 DynamicMesh::DynamicMesh(DynamicMesh &source)
@@ -42,15 +42,17 @@ DynamicMesh::DynamicMesh(DynamicMesh &source)
     , m_indexBufferHandle(source.m_indexBufferHandle)
     , m_vertexBufferHandle(source.m_vertexBufferHandle)
     , m_indicesCount(source.m_indicesCount)
-    , m_textures(source.m_textures)
+    , m_bindings(source.m_bindings)
     , m_shaderHandle(source.m_shaderHandle) {}
 
 void DynamicMesh::create(
-    const Nest::MeshData &data, std::vector<NestRen::TextureHandle> textures, NestRen::ProgramHandle shader
+    const Nest::MeshData &data,
+    std::vector<TextureBinding> bindings,
+    NestRen::ProgramHandle shader
 ) {
     NEST_ASSERT(shader.isValid(), "Invalid shader for mesh");
     m_shaderHandle = shader;
-    m_textures = textures;
+    m_bindings = bindings;
     m_indicesCount = data.indicesCount;
     m_bufferLayoutHandle = data.layoutHandle;
     m_vertexBufferHandle = NestRen::createDynamicVertexBuffer(

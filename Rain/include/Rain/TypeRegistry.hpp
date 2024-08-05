@@ -347,7 +347,6 @@ struct TypeEncoder<double> {
     }
 };
 
-
 /** BOOL */
 template<>
 struct TypeEncoder<bool> {

@@ -56,7 +56,8 @@ struct RenderDraw {
         m_scissorRect = Rect::zero();
     }
 
-    void addUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
+    void
+    addUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
         m_uniformBuffer[m_uniformsCount++] = Uniform(handle, name, value, type, count);
     }
 

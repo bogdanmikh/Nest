@@ -10,4 +10,4 @@ void ImGui_EndFrame();
 
 void ImGui_Shutdown();
 
-}
+} // namespace Nest

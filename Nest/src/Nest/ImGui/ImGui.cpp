@@ -136,4 +136,4 @@ void setDarkThemeColors() {
     colors[ImGuiCol_SliderGrabActive] = ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
 }
 
-}
+} // namespace Nest
