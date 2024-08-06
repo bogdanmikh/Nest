@@ -45,9 +45,9 @@ public:
     Nest::TransformComponent &getTransform();
 
 private:
-    NestRen::TextureHandle m_texture;
-    NestRen::VertexBufferHandle m_vertexBuffer;
-    NestRen::IndexBufferHandle m_indexBuffer;
-    NestRen::ProgramHandle m_shader;
+    Bird::TextureHandle m_texture;
+    Bird::VertexBufferHandle m_vertexBuffer;
+    Bird::IndexBufferHandle m_indexBuffer;
+    Bird::ProgramHandle m_shader;
     Nest::TransformComponent m_transformComponent;
 };

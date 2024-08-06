@@ -16,7 +16,7 @@ set(BIN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(VENDOR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Vendor)
 set(NEST_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Nest)
 set(FOUNDATION_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Foundation)
-set(NESTREN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/NestRen)
+set(BIRD_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Bird)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
@@ -32,7 +32,7 @@ add_subdirectory(Vendor/assimp)
 add_subdirectory(Rain)
 
 add_subdirectory(Foundation)
-add_subdirectory(NestRen)
+add_subdirectory(Bird)
 add_subdirectory(Nest)
 
 add_subdirectory(Examples)

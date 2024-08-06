@@ -41,9 +41,9 @@ void CameraMove::onUpdate(double deltaTime) {
 
     glm::vec2 resolution = m_window->getSize();
     m_worldCamera->updateAspectRatio(resolution.x / resolution.y);
-    NestRen::Rect viewportSize;
+    Bird::Rect viewportSize;
     viewportSize.size = resolution;
-    NestRen::setViewport(0, viewportSize);
+    Bird::setViewport(0, viewportSize);
     bool resetMouse = false;
     if (Events::isCursorLocked() != cursorLock) {
         cursorLock = Events::isCursorLocked();

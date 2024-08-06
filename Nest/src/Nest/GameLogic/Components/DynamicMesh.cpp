@@ -8,10 +8,10 @@ namespace Nest {
 
 DynamicMesh::~DynamicMesh() {
     if (m_vertexBufferHandle.isValid()) {
-        NestRen::deleteVertexBuffer(m_vertexBufferHandle);
+        Bird::deleteVertexBuffer(m_vertexBufferHandle);
     }
     if (m_indexBufferHandle.isValid()) {
-        NestRen::deleteIndexBuffer(m_indexBufferHandle);
+        Bird::deleteIndexBuffer(m_indexBufferHandle);
     }
 }
 
@@ -23,18 +23,18 @@ DynamicMesh::DynamicMesh(DynamicMesh &&source)
     , m_indicesCount(source.m_indicesCount)
     , m_bindings(source.m_bindings)
     , m_shaderHandle(source.m_shaderHandle) {
-    source.m_vertexBufferHandle = NESTREN_INVALID_HANDLE;
-    source.m_indexBufferHandle = NESTREN_INVALID_HANDLE;
+    source.m_vertexBufferHandle = BIRD_INVALID_HANDLE;
+    source.m_indexBufferHandle = BIRD_INVALID_HANDLE;
 }
 
 DynamicMesh::DynamicMesh()
     : m_model(1.f)
-    , m_bufferLayoutHandle(NESTREN_INVALID_HANDLE)
-    , m_indexBufferHandle(NESTREN_INVALID_HANDLE)
-    , m_vertexBufferHandle(NESTREN_INVALID_HANDLE)
+    , m_bufferLayoutHandle(BIRD_INVALID_HANDLE)
+    , m_indexBufferHandle(BIRD_INVALID_HANDLE)
+    , m_vertexBufferHandle(BIRD_INVALID_HANDLE)
     , m_indicesCount(0)
     , m_bindings()
-    , m_shaderHandle(NESTREN_INVALID_HANDLE) {}
+    , m_shaderHandle(BIRD_INVALID_HANDLE) {}
 
 DynamicMesh::DynamicMesh(DynamicMesh &source)
     : m_model(source.m_model)
@@ -46,30 +46,28 @@ DynamicMesh::DynamicMesh(DynamicMesh &source)
     , m_shaderHandle(source.m_shaderHandle) {}
 
 void DynamicMesh::create(
-    const Nest::MeshData &data,
-    std::vector<TextureBinding> bindings,
-    NestRen::ProgramHandle shader
+    const Nest::MeshData &data, std::vector<TextureBinding> bindings, Bird::ProgramHandle shader
 ) {
     NEST_ASSERT(shader.isValid(), "Invalid shader for mesh");
     m_shaderHandle = shader;
     m_bindings = bindings;
     m_indicesCount = data.indicesCount;
     m_bufferLayoutHandle = data.layoutHandle;
-    m_vertexBufferHandle = NestRen::createDynamicVertexBuffer(
+    m_vertexBufferHandle = Bird::createDynamicVertexBuffer(
         data.vertexBuffer, data.vertexBufferSize, m_bufferLayoutHandle
     );
-    m_indexBufferHandle = NestRen::createDynamicIndexBuffer(
-        data.indices, NestRen::BufferElementType::UnsignedInt, data.indicesCount
+    m_indexBufferHandle = Bird::createDynamicIndexBuffer(
+        data.indices, Bird::BufferElementType::UnsignedInt, data.indicesCount
     );
 }
 
 void DynamicMesh::update(const MeshData &data) {
     NEST_ASSERT(m_shaderHandle.isValid(), "Invalid shader for mesh");
     m_indicesCount = data.indicesCount;
-    NestRen::updateDynamicVertexBuffer(
+    Bird::updateDynamicVertexBuffer(
         m_vertexBufferHandle, data.vertexBuffer, data.vertexBufferSize
     );
-    NestRen::updateDynamicIndexBuffer(m_indexBufferHandle, data.indices, m_indicesCount);
+    Bird::updateDynamicIndexBuffer(m_indexBufferHandle, data.indices, m_indicesCount);
 }
 
 } // namespace Nest

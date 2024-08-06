@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <Foundation/Logger.hpp>
-#include <NestRen/PlatformData.hpp>
+#include <Bird/PlatformData.hpp>
 #include <glad/glad.h>
 
 namespace Nest {
@@ -39,7 +39,7 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     glfwShowWindow((GLFWwindow *)handle);
     glfwFocusWindow((GLFWwindow *)handle);
 
-    NestRen::PlatformData::get()->nativeWindowHandle = handle;
+    Bird::PlatformData::get()->nativeWindowHandle = handle;
 
     std::string message = {"\n       |-- \\\n"
                            "       |     \\\n"

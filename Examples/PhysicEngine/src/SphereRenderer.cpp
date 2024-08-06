@@ -1,21 +1,21 @@
 #include "SphereRenderer.hpp"
 
 void SphereRenderer::onAttach() {
-    using namespace NestRen;
+    using namespace Bird;
     m_countIndices = 0;
 
-    NestRen::setViewClear(0, 0x3D75C9FF);
+    Bird::setViewClear(0, 0x3D75C9FF);
 
     Nest::ProgramAsset programAsset =
         Nest::AssetLoader::loadProgram("Shaders/vstSphere.glsl", "Shaders/fstSphere.glsl");
-    m_shader = createProgram(programAsset.getNestRenProgramCreate());
+    m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil2.png");
 
-    TextureCreate textureCreate = textureAsset.getNestRenTextureCreate();
+    TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
     textureCreate.m_numMips = 4;
-    textureCreate.m_minFiltering = NestRen::NEAREST_MIPMAP_LINEAR;
-    textureCreate.m_magFiltering = NestRen::NEAREST;
+    textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+    textureCreate.m_magFiltering = Bird::NEAREST;
     m_texture = createTexture(textureCreate);
 
     std::vector<SphereVertex> vertices;
@@ -103,26 +103,26 @@ void SphereRenderer::onUpdate(double deltaTime) {
     cameraPos = camera->getPosition();
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
-    NestRen::setShader(m_shader);
-    NestRen::setUniform(m_shader, "iTimeVec4", &time, NestRen::UniformType::Vec4); /// float
-    NestRen::setUniform(
-        m_shader, "iResolutionVec4", &resolution, NestRen::UniformType::Vec4
+    Bird::setShader(m_shader);
+    Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4); /// float
+    Bird::setUniform(
+        m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4
     );                                                                                  /// vec2
-    NestRen::setUniform(m_shader, "iMouseVec4", &mousePos, NestRen::UniformType::Vec4); /// vec2
-    NestRen::setUniform(
-        m_shader, "iCameraPosVec4", &cameraPos, NestRen::UniformType::Vec4
+    Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(
+        m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4
     );                                                                                /// vec4
-    NestRen::setUniform(m_shader, "u_model", &model, NestRen::UniformType::Mat4);     /// mat4
-    NestRen::setUniform(m_shader, "u_view", &viewMatrix, NestRen::UniformType::Mat4); /// mat4
-    NestRen::setUniform(
-        m_shader, "u_projection", &projectionMatrix, NestRen::UniformType::Mat4
+    Bird::setUniform(m_shader, "u_model", &model, Bird::UniformType::Mat4);     /// mat4
+    Bird::setUniform(m_shader, "u_view", &viewMatrix, Bird::UniformType::Mat4); /// mat4
+    Bird::setUniform(
+        m_shader, "u_projection", &projectionMatrix, Bird::UniformType::Mat4
     ); /// mat4
     static int slot = 0;
-    NestRen::setTexture(m_texture, slot);
-    NestRen::setUniform(m_shader, "iTexture", &slot, NestRen::UniformType::Sampler);
-    NestRen::setIndexBuffer(m_indexBuffer, 0, m_countIndices);
-    NestRen::setVertexBuffer(m_vertexBuffer);
-    NestRen::submit(0);
+    Bird::setTexture(m_texture, slot);
+    Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);
+    Bird::setIndexBuffer(m_indexBuffer, 0, m_countIndices);
+    Bird::setVertexBuffer(m_vertexBuffer);
+    Bird::submit(0);
 }
 
 void SphereRenderer::onImGuiRender() {}

@@ -4,7 +4,7 @@
 #include "Nest/Application/Application.hpp"
 #include "Nest/Window/Events.hpp"
 
-#include <NestRen/NestRen.hpp>
+#include <Bird/Bird.hpp>
 #include <Foundation/Logger.hpp>
 #include <Foundation/Allocator.hpp>
 
@@ -28,12 +28,12 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_window->init(
         settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
     );
-    NestRen::initialize();
+    Bird::initialize();
 
     ImGui_Init(m_window->getNativeHandle());
 
     m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
-    m_worldCamera->setPosition(0, 0, 10);
+    m_worldCamera->setPosition(0, 0, 0);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
 
     m_maximumFps = 60;
@@ -54,8 +54,8 @@ Application::~Application() {
 }
 
 void Application::updateViewport(Size size) {
-    NestRen::Rect viewport = NestRen::Rect(0, 0, size.width, size.height);
-    NestRen::setViewport(0, viewport);
+    Bird::Rect viewport = Bird::Rect(0, 0, size.width, size.height);
+    Bird::setViewport(0, viewport);
 }
 
 void Application::loop() {
@@ -103,10 +103,10 @@ void Application::loop() {
             m_layer->onUpdate(deltaTime);
         }
         Events::resetDropPaths();
-        NestRen::renderFrame();
+        Bird::renderFrame();
         ImGui_EndFrame();
-        NestRen::frame();
-        NestRen::flip();
+        Bird::frame();
+        Bird::flip();
         Events::pollEvents();
     }
 }

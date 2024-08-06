@@ -6,7 +6,7 @@
 
 #include "Nest/Renderer/MeshData.hpp"
 
-#include <NestRen/NestRen.hpp>
+#include <Bird/Bird.hpp>
 
 namespace Nest {
 
@@ -16,23 +16,23 @@ class StaticMesh {
 public:
     StaticMesh()
         : m_model(1.f)
-        , m_bufferLayoutHandle(NESTREN_INVALID_HANDLE)
-        , m_indexBufferHandle(NESTREN_INVALID_HANDLE)
-        , m_vertexBufferHandle(NESTREN_INVALID_HANDLE)
+        , m_bufferLayoutHandle(BIRD_INVALID_HANDLE)
+        , m_indexBufferHandle(BIRD_INVALID_HANDLE)
+        , m_vertexBufferHandle(BIRD_INVALID_HANDLE)
         , m_indicesCount(0)
-        , m_textureHandle(NESTREN_INVALID_HANDLE)
-        , m_shaderHandle(NESTREN_INVALID_HANDLE) {}
+        , m_textureHandle(BIRD_INVALID_HANDLE)
+        , m_shaderHandle(BIRD_INVALID_HANDLE) {}
     ~StaticMesh();
 
     void
-    create(const MeshData &data, NestRen::TextureHandle texture, NestRen::ProgramHandle shader);
+    create(const MeshData &data, Bird::TextureHandle texture, Bird::ProgramHandle shader);
 
 private:
-    NestRen::TextureHandle m_textureHandle;
-    NestRen::ProgramHandle m_shaderHandle;
-    NestRen::VertexLayoutHandle m_bufferLayoutHandle;
-    NestRen::IndexBufferHandle m_indexBufferHandle;
-    NestRen::VertexBufferHandle m_vertexBufferHandle;
+    Bird::TextureHandle m_textureHandle;
+    Bird::ProgramHandle m_shaderHandle;
+    Bird::VertexLayoutHandle m_bufferLayoutHandle;
+    Bird::IndexBufferHandle m_indexBufferHandle;
+    Bird::VertexBufferHandle m_vertexBufferHandle;
     glm::mat4 m_model;
     uint32_t m_indicesCount;
 

@@ -4,7 +4,7 @@
 #include "Nest/Application/Application.hpp"
 
 #include <glm/glm.hpp>
-#include <NestRen/NestRen.hpp>
+#include <Bird/Bird.hpp>
 
 namespace Nest {
 
@@ -21,7 +21,7 @@ public:
 
     SkyComponent()
         : m_sceneViewId(0) {
-        using namespace NestRen;
+        using namespace Bird;
         SkyVertex vertices[24] = {
             // Front
             SkyVertex(-1.0f, -1.0f, 1.0f), // 0
@@ -66,17 +66,17 @@ public:
         };
         // clang-format on
 
-        NestRen::VertexBufferLayoutData layoutData;
+        Bird::VertexBufferLayoutData layoutData;
         layoutData.pushVec3();
-        NestRen::VertexLayoutHandle layoutHandle = NestRen::createVertexLayout(layoutData);
+        Bird::VertexLayoutHandle layoutHandle = Bird::createVertexLayout(layoutData);
         Foundation::Memory verticesMemory =
             Foundation::Memory::copying(vertices, sizeof(SkyVertex) * 24);
         Foundation::Memory indicesMemory =
             Foundation::Memory::copying(indices, sizeof(uint32_t) * 36);
         m_vertexBuffer =
-            NestRen::createVertexBuffer(verticesMemory, 24 * sizeof(SkyVertex), layoutHandle);
+            Bird::createVertexBuffer(verticesMemory, 24 * sizeof(SkyVertex), layoutHandle);
         m_indexBuffer =
-            NestRen::createIndexBuffer(indicesMemory, NestRen::BufferElementType::UnsignedInt, 36);
+            Bird::createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, 36);
 
         Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture({
             "default-textures/skybox/px.png",
@@ -86,58 +86,58 @@ public:
             "default-textures/skybox/pz.png",
             "default-textures/skybox/nz.png",
         });
-        NestRen::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getNestRenTextureCreate();
+        Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
         m_skyTextureConfig.m_minFiltering = NEAREST;
         m_skyTextureConfig.m_magFiltering = LINEAR;
-        m_skyTexture = NestRen::createTexture(m_skyTextureConfig);
+        m_skyTexture = Bird::createTexture(m_skyTextureConfig);
 
         ProgramAsset programAsset = AssetLoader::loadProgram(
             "default-shaders/sky/sky_vertex.glsl", "default-shaders/sky/sky_fragment.glsl"
         );
-        m_shader = NestRen::createProgram(programAsset.getNestRenProgramCreate());
+        m_shader = Bird::createProgram(programAsset.getBirdProgramCreate());
         m_model = glm::mat4(1.f);
     }
 
     ~SkyComponent() {
-        NestRen::deleteVertexBuffer(m_vertexBuffer);
-        NestRen::deleteIndexBuffer(m_indexBuffer);
-        NestRen::deleteProgram(m_shader);
-        NestRen::deleteTexture(m_skyTexture);
+        Bird::deleteVertexBuffer(m_vertexBuffer);
+        Bird::deleteIndexBuffer(m_indexBuffer);
+        Bird::deleteProgram(m_shader);
+        Bird::deleteTexture(m_skyTexture);
     }
 
-    NestRen::TextureHandle getSkyTexture() {
+    Bird::TextureHandle getSkyTexture() {
         return m_skyTexture;
     }
 
     void update(glm::mat4 &viewProjection) {
         m_viewProjection = viewProjection;
-        NestRen::setShader(m_shader);
+        Bird::setShader(m_shader);
         static int samplerCube = 0;
-        NestRen::setTexture(m_skyTexture, samplerCube);
-        NestRen::setUniform(m_shader, "skyTexture", &samplerCube, NestRen::UniformType::Int);
-        NestRen::setUniform(m_shader, "model", &m_model[0][0], NestRen::UniformType::Mat4);
-        NestRen::setUniform(
-            m_shader, "projViewMtx", &m_viewProjection[0][0], NestRen::UniformType::Mat4
+        Bird::setTexture(m_skyTexture, samplerCube);
+        Bird::setUniform(m_shader, "skyTexture", &samplerCube, Bird::UniformType::Int);
+        Bird::setUniform(m_shader, "model", &m_model[0][0], Bird::UniformType::Mat4);
+        Bird::setUniform(
+            m_shader, "projViewMtx", &m_viewProjection[0][0], Bird::UniformType::Mat4
         );
-        NestRen::setVertexBuffer(m_vertexBuffer);
-        NestRen::setIndexBuffer(m_indexBuffer, 0, 36);
-        NestRen::setState(0);
-        NestRen::submit(m_sceneViewId);
+        Bird::setVertexBuffer(m_vertexBuffer);
+        Bird::setIndexBuffer(m_indexBuffer, 0, 36);
+        Bird::setState(0);
+        Bird::submit(m_sceneViewId);
     }
 
-    void setViewId(NestRen::ViewId viewId) {
+    void setViewId(Bird::ViewId viewId) {
         m_sceneViewId = viewId;
     }
 
 private:
     glm::mat4 m_model;
     glm::mat4 m_viewProjection;
-    NestRen::ViewId m_sceneViewId;
+    Bird::ViewId m_sceneViewId;
 
-    NestRen::TextureHandle m_skyTexture;
-    NestRen::ProgramHandle m_shader;
-    NestRen::IndexBufferHandle m_indexBuffer;
-    NestRen::VertexBufferHandle m_vertexBuffer;
+    Bird::TextureHandle m_skyTexture;
+    Bird::ProgramHandle m_shader;
+    Bird::IndexBufferHandle m_indexBuffer;
+    Bird::VertexBufferHandle m_vertexBuffer;
 };
 
 } // namespace Nest

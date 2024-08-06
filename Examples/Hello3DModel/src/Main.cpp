@@ -1,4 +1,4 @@
-#include "FiguresLevel.hpp"
+#include "Model3DLevel.hpp"
 
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
@@ -7,7 +7,7 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->setLayer(NEW(Foundation::getAllocator(), FigureLevel));
+    application->setLayer(NEW(Foundation::getAllocator(), Model3DLevel));
     application->loop();
     FREE(Foundation::getAllocator(), application);
     return 0;

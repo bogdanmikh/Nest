@@ -24,8 +24,8 @@ target_link_libraries(Nest Foundation)
 # Dependencies - Rain
 target_link_libraries(Nest Rain)
 
-# Dependencies - NestRen
-target_link_libraries(Nest NestRen)
+# Dependencies - Bird
+target_link_libraries(Nest Bird)
 
 # Dependencies - GLM
 target_link_libraries(Nest glm)

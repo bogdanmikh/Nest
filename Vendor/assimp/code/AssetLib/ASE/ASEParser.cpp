@@ -606,7 +606,7 @@ void Parser::ParseLV2MaterialBlock(ASE::Material &mat) {
                 continue;
             }
             // material shininess strength
-            if (TokenMatch(mFilePtr, "MATERIAL_SHINESTRENGTH", 22)) {
+            if (TokenMatch(mFilePtr, "MATERIAL_SHIBIRDGTH", 22)) {
                 ParseLV4MeshReal(mat.mShininessStrength);
                 continue;
             }
@@ -646,7 +646,7 @@ void Parser::ParseLV2MaterialBlock(ASE::Material &mat) {
                 ParseLV3MapBlock(mat.sTexBump);
             }
             // specular/shininess map
-            if (TokenMatch(mFilePtr, "MAP_SHINESTRENGTH", 17)) {
+            if (TokenMatch(mFilePtr, "MAP_SHIBIRDGTH", 17)) {
                 // parse the texture block
                 ParseLV3MapBlock(mat.sTexShininess);
                 continue;

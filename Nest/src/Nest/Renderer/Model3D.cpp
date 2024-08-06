@@ -2,12 +2,4 @@
 
 namespace Nest {
 
-Model3D::Model3D(const char *path) {
-    create(path);
-}
-
-void Model3D::create(const char *path) {
-
-}
-
-}
+} // namespace Nest

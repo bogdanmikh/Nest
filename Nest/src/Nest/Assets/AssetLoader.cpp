@@ -24,17 +24,17 @@ TextureAsset AssetLoader::loadTexture(const std::string &path) {
 
     TextureAsset texture;
     if (channels == 1) {
-        texture.m_format = NestRen::TextureFormat::RED_INTEGER;
+        texture.m_format = Bird::TextureFormat::RED_INTEGER;
     } else if (channels == 3) {
-        texture.m_format = NestRen::TextureFormat::RGB8;
+        texture.m_format = Bird::TextureFormat::RGB8;
     } else {
-        texture.m_format = NestRen::TextureFormat::RGBA8;
+        texture.m_format = Bird::TextureFormat::RGBA8;
     }
     texture.m_width = width;
     texture.m_height = height;
     texture.m_data = Foundation::Memory(image);
     texture.m_data.releaseFn = &releaseImage;
-    texture.m_wrap = NestRen::TextureWrapMode::REPEAT;
+    texture.m_wrap = Bird::TextureWrapMode::REPEAT;
     texture.m_isCubeMap = false;
     return texture;
 }
@@ -53,13 +53,13 @@ TextureAsset AssetLoader::loadCubeMapTexture(std::array<std::string, 6> paths) {
             continue;
         }
         if (channels == 1) {
-            texture.m_format = NestRen::TextureFormat::RED_INTEGER;
+            texture.m_format = Bird::TextureFormat::RED_INTEGER;
             bytesPerColor = 1;
         } else if (channels == 3) {
-            texture.m_format = NestRen::TextureFormat::RGB8;
+            texture.m_format = Bird::TextureFormat::RGB8;
             bytesPerColor = 3;
         } else {
-            texture.m_format = NestRen::TextureFormat::RGBA8;
+            texture.m_format = Bird::TextureFormat::RGBA8;
             bytesPerColor = 4;
         }
         texture.m_width = width;
@@ -74,7 +74,7 @@ TextureAsset AssetLoader::loadCubeMapTexture(std::array<std::string, 6> paths) {
         ptr += imageSize;
         stbi_image_free(images[side]);
     }
-    texture.m_wrap = NestRen::TextureWrapMode::REPEAT;
+    texture.m_wrap = Bird::TextureWrapMode::REPEAT;
     texture.m_isCubeMap = true;
     return texture;
 }

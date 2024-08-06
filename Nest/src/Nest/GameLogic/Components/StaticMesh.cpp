@@ -8,24 +8,24 @@ namespace Nest {
 
 StaticMesh::~StaticMesh() {
     if (m_vertexBufferHandle.isValid()) {
-        NestRen::deleteVertexBuffer(m_vertexBufferHandle);
+        Bird::deleteVertexBuffer(m_vertexBufferHandle);
     }
     if (m_indexBufferHandle.isValid()) {
-        NestRen::deleteIndexBuffer(m_indexBufferHandle);
+        Bird::deleteIndexBuffer(m_indexBufferHandle);
     }
 }
 
 void StaticMesh::create(
-    const Nest::MeshData &data, NestRen::TextureHandle texture, NestRen::ProgramHandle shader
+    const Nest::MeshData &data, Bird::TextureHandle texture, Bird::ProgramHandle shader
 ) {
     m_shaderHandle = shader;
     m_textureHandle = texture;
     m_indicesCount = data.indicesCount;
     m_bufferLayoutHandle = data.layoutHandle;
     m_vertexBufferHandle =
-        NestRen::createVertexBuffer(data.vertexBuffer, data.vertexBufferSize, m_bufferLayoutHandle);
-    m_indexBufferHandle = NestRen::createIndexBuffer(
-        data.indices, NestRen::BufferElementType::UnsignedInt, data.indicesCount
+        Bird::createVertexBuffer(data.vertexBuffer, data.vertexBufferSize, m_bufferLayoutHandle);
+    m_indexBufferHandle = Bird::createIndexBuffer(
+        data.indices, Bird::BufferElementType::UnsignedInt, data.indicesCount
     );
 }
 

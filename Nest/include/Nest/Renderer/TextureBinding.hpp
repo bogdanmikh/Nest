@@ -1,12 +1,13 @@
 #pragma once
 
-#include <NestRen/NestRen.hpp>
+#include <Bird/Bird.hpp>
 
 namespace Nest {
 
 struct TextureBinding {
     std::string name;
-    NestRen::TextureHandle texture;
+    Bird::TextureHandle texture;
+    //    TextureBinding(std)
 };
 
-} // namespace Panda
+} // namespace Nest

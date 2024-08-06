@@ -1,19 +1,19 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <NestRen/NestRen.hpp>
+#include <Bird/Bird.hpp>
 
 namespace Nest {
 
 struct MeshData {
-    NestRen::VertexLayoutHandle layoutHandle;
+    Bird::VertexLayoutHandle layoutHandle;
     Foundation::Memory vertexBuffer;
     uint32_t vertexBufferSize;
     Foundation::Memory indices;
     uint32_t indicesCount;
 
     MeshData(
-        NestRen::VertexLayoutHandle layoutHandle,
+        Bird::VertexLayoutHandle layoutHandle,
         Foundation::Memory vertexBuffer,
         uint32_t vertexBufferSize,
         Foundation::Memory indices,

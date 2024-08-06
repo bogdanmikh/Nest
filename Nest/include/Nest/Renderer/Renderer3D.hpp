@@ -36,4 +36,4 @@ private:
     glm::mat4 m_viewProj;
 };
 
-} // namespace Panda
+} // namespace Nest

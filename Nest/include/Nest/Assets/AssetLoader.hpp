@@ -1,21 +1,21 @@
 #pragma once
 
-#include <NestRen/Base.hpp>
+#include <Bird/Base.hpp>
 
 #include <string>
 
 namespace Nest {
 
 struct TextureAsset {
-    NestRen::TextureFormat m_format;
-    NestRen::TextureWrapMode m_wrap;
+    Bird::TextureFormat m_format;
+    Bird::TextureWrapMode m_wrap;
     uint16_t m_width;
     uint16_t m_height;
     Foundation::Memory m_data;
     bool m_isCubeMap;
 
-    NestRen::TextureCreate getNestRenTextureCreate() {
-        NestRen::TextureCreate create;
+    Bird::TextureCreate getBirdTextureCreate() {
+        Bird::TextureCreate create;
         create.m_data = m_data;
         create.m_format = m_format;
         create.m_wrap = m_wrap;
@@ -30,7 +30,7 @@ struct ProgramAsset {
     Foundation::Memory m_vertex;
     Foundation::Memory m_fragment;
 
-    NestRen::ProgramCreate getNestRenProgramCreate() {
+    Bird::ProgramCreate getBirdProgramCreate() {
         return {m_vertex, m_fragment};
     }
 };
