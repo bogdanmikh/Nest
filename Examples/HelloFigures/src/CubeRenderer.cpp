@@ -87,14 +87,16 @@ void CubeRenderer::onUpdate(double deltaTime) {
     mousePos = Nest::Events::getCursorPos();
     static auto resolution = Nest::Application::get()->getWindow()->getSize();
     resolution = Nest::Application::get()->getWindow()->getSize();
-    static auto viewMatrix = camera->getViewMatrix();
-    viewMatrix = camera->getViewMatrix();
-    static auto projectionMatrix = camera->getProjectionMatrix();
-    projectionMatrix = camera->getProjectionMatrix();
+
+    static auto projViewMtx = camera->getViewMatrix();
+    projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+
     static auto cameraPos = camera->getPosition();
     cameraPos = camera->getPosition();
+
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
+
     Bird::setShader(m_shader);
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4); /// float
     Bird::setUniform(
@@ -104,11 +106,8 @@ void CubeRenderer::onUpdate(double deltaTime) {
     Bird::setUniform(
         m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4
     );                                                                                /// vec4
-    Bird::setUniform(m_shader, "u_model", &model, Bird::UniformType::Mat4);     /// mat4
-    Bird::setUniform(m_shader, "u_view", &viewMatrix, Bird::UniformType::Mat4); /// mat4
-    Bird::setUniform(
-        m_shader, "u_projection", &projectionMatrix, Bird::UniformType::Mat4
-    ); /// mat4
+    Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);     /// mat4
+    Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4); /// mat4
     static int slot = 0;
     Bird::setTexture(m_texture, slot);
     Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);

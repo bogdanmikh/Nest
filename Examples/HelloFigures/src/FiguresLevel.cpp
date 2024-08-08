@@ -24,7 +24,10 @@ void FigureLevel::onAttach() {
 
 void FigureLevel::onUpdate(double deltaTime) {
     //    m_cubeRenderer->getTransform().translate(offset);
-    m_sphereRenderer->getTransform().setRotationEuler({0., 10., 0});
+    auto rotationCube = m_cubeRenderer->getTransform().getRotationEuler();
+    rotationCube.x += 10;
+    rotationCube.y += 10;
+    m_cubeRenderer->getTransform().setRotationEuler(rotationCube);
     for (auto &entity : m_entities) {
         entity->onUpdate(deltaTime);
         entity->onImGuiRender();
