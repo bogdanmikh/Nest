@@ -17,7 +17,45 @@ void Game::start() {
     //    gameObjects.emplace_back(cross);
 }
 
+void drawCross() {
+    int width, height;
+    width = Application::getInstance()->getWindow()->getSize().x;
+    height = Application::getInstance()->getWindow()->getSize().y;
+
+    ImGui::SetNextWindowPos(ImVec2(width / 2, height / 2), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(0, 0));
+    ImGui::Begin("##crosshair");
+//    ImGui::Begin("##crosshair", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 p = ImGui::GetCursorScreenPos();
+    drawList->AddLine(ImVec2(p.x - 10, p.y), ImVec2(p.x + 10, p.y), IM_COL32(0, 0, 0, 255), 2.0f);
+    drawList->AddLine(ImVec2(p.x, p.y - 10), ImVec2(p.x, p.y + 10), IM_COL32(0, 0, 0, 255), 2.0f);
+    ImGui::End();
+}
+
+void DrawCross() {
+    ImGui::Begin("##crosshair", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+//    ImGui::Begin("##crosshair");
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+    ImGuiIO& io = ImGui::GetIO();
+    float windowWidth = io.DisplaySize.x;
+    float windowHeight = io.DisplaySize.y;
+
+    float centerX = windowWidth / 2.0f;
+    float centerY = windowHeight / 2.0f;
+
+    float lineLength = 20.0f;
+
+    auto color = IM_COL32(255, 0, 0, 255);
+    drawList->AddLine(ImVec2(centerX - lineLength, centerY), ImVec2(centerX + lineLength, centerY), color);
+    drawList->AddLine(ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color);
+    ImGui::End();
+}
+
 void Game::update(double deltaTime) {
+    DrawCross();
     auto camera = Application::getInstance()->getCamera();
     shader->use();
     shader->setFloat("u_time", Application::getInstance()->getWindow()->getTime());
