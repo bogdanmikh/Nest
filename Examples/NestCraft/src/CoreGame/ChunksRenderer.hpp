@@ -10,13 +10,15 @@
 #include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
 
-class ChunksRenderer final : public GameObject {
+class ChunksRenderer final : public Nest::Entity {
 public:
     ChunksRenderer();
     ~ChunksRenderer() override;
-    void init();
-    void draw() override;
-    void update(double deltaTime) override;
+    void onAttach() override;
+    void onUpdate(double deltaTime) override;
+    void onImGuiRender() override {}
+    void onDetach() override;
+    void draw();
 
 private:
     BlocksCreation *blocksCreation;

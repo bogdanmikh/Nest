@@ -6,6 +6,7 @@
 #include "Nest/Application/ApplicationStartupSettings.hpp"
 #include "Nest/Window/Events.hpp"
 #include "Nest/Renderer/Model3D.hpp"
+#include "Nest/Renderer/Texture.hpp"
 
 // Assets
 #include "Nest/Assets/AssetLoader.hpp"

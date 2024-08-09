@@ -2,48 +2,54 @@
 
 #include <Nest.hpp>
 
-CameraMove::CameraMove()
-    : window(Application::getInstance()->getWindow())
-    , camera(Application::getInstance()->getCamera()) {
-    camera->setPosition(0.0, 10.0, 5.0);
-    //    camera->rotate(20, 90, 0.f);
+void CameraMove::onAttach() {
+    m_window = Nest::Application::get()->getWindow();
+    m_worldCamera = Nest::Application::get()->getWorldCamera();
+    m_worldCamera->setPosition(0.0, 0.0, 10.0);
+    m_worldCamera->setFieldOfView(glm::radians(60.f));
     cursorLock = false;
 }
 
-void CameraMove::update(double deltaTime) {
+void CameraMove::onUpdate(double deltaTime) {
+    using namespace Nest;
     if (Events::isKeyPressed(Key::LEFT_SHIFT)) {
-        cameraSpeed = 20.f;
+        cameraSpeed = 30.f;
     } else {
-        cameraSpeed = 5.f;
+        cameraSpeed = 20.f;
     }
-
+    if (deltaTime >= 1) {
+        LOG_ERROR("Delta: {}", deltaTime);
+    }
     if (Events::isKeyPressed(Key::W)) {
-        camera->translateLocal(0., 0., cameraSpeed * deltaTime);
+        m_worldCamera->translateLocal(0., 0., cameraSpeed * deltaTime);
     }
     if (Events::isKeyPressed(Key::S)) {
-        camera->translateLocal(0., 0., -cameraSpeed * deltaTime);
+        m_worldCamera->translateLocal(0., 0., -cameraSpeed * deltaTime);
     }
     if (Events::isKeyPressed(Key::A)) {
-        camera->translateLocal(-cameraSpeed * deltaTime, 0., 0.);
+        m_worldCamera->translateLocal(-cameraSpeed * deltaTime, 0., 0.);
     }
     if (Events::isKeyPressed(Key::D)) {
-        camera->translateLocal(cameraSpeed * deltaTime, 0., 0.);
+        m_worldCamera->translateLocal(cameraSpeed * deltaTime, 0., 0.);
     }
     if (Events::isKeyPressed(Key::SPACE)) {
-        camera->translateLocal(0., cameraSpeed * deltaTime, 0.);
+        m_worldCamera->translateLocal(0., cameraSpeed * deltaTime, 0.);
     }
     if (Events::isKeyPressed(Key::LEFT_CONTROL)) {
-        camera->translateLocal(0., -cameraSpeed * deltaTime, 0.);
+        m_worldCamera->translateLocal(0., -cameraSpeed * deltaTime, 0.);
     }
 
-    glm::vec2 resolution = window->getSize();
-    camera->updateAspectRatio(resolution.x / resolution.y);
-    Renderer::setRenderBufferSize(resolution.x, resolution.y);
+    glm::vec2 resolution = m_window->getSize();
+    m_worldCamera->updateAspectRatio(resolution.x / resolution.y);
+    Bird::Rect viewportSize;
+    viewportSize.size = resolution;
+    Bird::setViewport(0, viewportSize);
     bool resetMouse = false;
     if (Events::isCursorLocked() != cursorLock) {
         cursorLock = Events::isCursorLocked();
         resetMouse = true;
     }
+
     if (!Events::isCursorLocked())
         return;
 
@@ -53,7 +59,16 @@ void CameraMove::update(double deltaTime) {
         diff = glm::vec2(0);
     lastPos = cursorPos;
     float mouseSpeed = 0.1f;
-    camera->rotate(-diff.y * mouseSpeed, -diff.x * mouseSpeed, 0.f);
+    m_worldCamera->rotate(-diff.y * mouseSpeed, -diff.x * mouseSpeed, 0.f);
 }
 
-void CameraMove::draw() {}
+void CameraMove::onImGuiRender() {
+    ImGui::Begin("Camera stats");
+    ImGui::Text(
+        "Pos x: %f, y: %f, z: %f",
+        m_worldCamera->getPosition().x,
+        m_worldCamera->getPosition().y,
+        m_worldCamera->getPosition().z
+    );
+    ImGui::End();
+}

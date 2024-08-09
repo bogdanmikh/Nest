@@ -3,11 +3,11 @@
 #include "ChunksRenderer.hpp"
 
 ChunksRenderer::ChunksRenderer() {
-    chunksStorage = new ChunksStorage();
+    chunksStorage = NEW(Foundation::getAllocator(), ChunksStorage);
     LOG_INFO("WORLD GENERATED");
-    blocksCreation = new BlocksCreation();
+    blocksCreation = NEW(Foundation::getAllocator(), BlocksCreation);
     blocksCreation->init();
-    blocksCreation->setCamera(Application::getInstance()->getCamera());
+    blocksCreation->setCamera(Nest::Application::get()->getWorldCamera());
     blocksCreation->setChunksStorage(chunksStorage);
 }
 
@@ -16,11 +16,11 @@ ChunksRenderer::~ChunksRenderer() {
     delete chunksStorage;
 }
 
-void ChunksRenderer::init() {
+void ChunksRenderer::onAttach() {
     for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
         for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
             for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
-                Mesh *mesh =
+                Nest::DynamicMesh *mesh =
                     ChunkMeshGenerator::generateMesh(chunksStorage, indexX, indexY, indexZ, true);
                 chunksStorage
                     ->chunks
@@ -39,9 +39,9 @@ void ChunksRenderer::init() {
     LOG_INFO("MESHES GENERATED");
 }
 
-void ChunksRenderer::update(double deltaTime) {
-    if (Events::isJustKeyPressed(Key::Q)) {
-        auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
+void ChunksRenderer::onUpdate(double deltaTime) {
+    /*if (Nest::Events::isJustKeyPressed(Key::Q)) {
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ);
         chunksStorage->saveWorld(data);
         if (!NestFiles::writeBinaryFile(
                 "world.bin", (const char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
@@ -50,8 +50,8 @@ void ChunksRenderer::update(double deltaTime) {
         }
         delete[] data;
     }
-    if (Events::isJustKeyPressed(Key::E)) {
-        auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
+    if (Nest::Events::isJustKeyPressed(Key::E)) {
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ);
         if (!NestFiles::readBinaryFile(
                 "world.bin", (char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
@@ -61,6 +61,7 @@ void ChunksRenderer::update(double deltaTime) {
         delete[] data;
         init();
     }
+     */
     blocksCreation->update(deltaTime);
     draw();
 }

@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Nest.hpp>
-#include "CoreGame/GameObject.hpp"
 
-class CameraMove : public GameObject {
+class CameraMove : public Nest::Entity {
 public:
-    CameraMove();
-    void update(double deltaTime) override;
-    void draw() override;
+    void onAttach() override;
+    void onDetach() override {}
+    void onUpdate(double deltaTime) override;
+    void onImGuiRender() override;
 
 private:
     bool cursorLock;
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;
 
-    Window *window;
-    Camera *camera;
+    Nest::Window *m_window;
+    Nest::WorldCamera *m_worldCamera;
 };

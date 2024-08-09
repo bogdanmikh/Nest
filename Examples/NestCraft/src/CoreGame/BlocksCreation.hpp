@@ -18,7 +18,7 @@ public:
     void draw() override {}
     void onImGuiRender();
     void setChunksStorage(ChunksStorage *storage);
-    void setCamera(Camera *camera);
+    void setCamera(Nest::WorldCamera *camera);
 
 private:
     void setVoxel(int x, int y, int z, VoxelType type);
@@ -26,6 +26,6 @@ private:
 
     void updateVoxelHand();
     ChunksStorage *m_chunksStorage;
-    Camera *m_camera;
+    Nest::WorldCamera *m_camera;
     VoxelType m_selectedBlock;
 };

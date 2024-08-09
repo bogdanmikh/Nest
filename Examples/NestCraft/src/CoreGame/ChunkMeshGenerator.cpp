@@ -11,7 +11,7 @@ glm::vec2 getUV(uint8_t tileIndex) {
     return {u, v};
 }
 
-Mesh *ChunkMeshGenerator::generateMesh(
+Nest::StaticMesh *ChunkMeshGenerator::generateMesh(
     ChunksStorage *chunksStorage,
     int chunkIndexX,
     int chunkIndexY,
@@ -21,8 +21,8 @@ Mesh *ChunkMeshGenerator::generateMesh(
     Chunk &chunk = chunksStorage->chunks
                        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
-    auto *vertices = new Vertex[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
-    auto *indices = new uint32_t[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
+    Vertex vertices[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
+    uint32_t indices[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
     uint32_t verticesCount = 0;
     uint32_t indicesCount = 0;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
@@ -431,9 +431,22 @@ Mesh *ChunkMeshGenerator::generateMesh(
             }
         }
     }
-    Mesh *mesh = new Mesh(vertices, verticesCount, indices, indicesCount);
-    delete[] vertices;
-    delete[] indices;
+    Foundation::Memory verticesMemory =
+        Foundation::Memory::copying(vertices, sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24);
+    Foundation::Memory indicesMemory =
+        Foundation::Memory::copying(indices, sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36);
+
+    Bird::VertexBufferLayoutData layoutData;
+    layoutData.pushVec3();
+    layoutData.pushVec2();
+    layoutData.pushVec3();
+    Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
+    auto vb = createVertexBuffer(verticesMemory, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24 * sizeof(Vertex), vertexLayout);
+    auto ib =
+        createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36);
+
+    Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    mesh->create();
     return mesh;
 }
 

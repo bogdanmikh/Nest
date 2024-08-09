@@ -1,13 +1,14 @@
-#include <Nest.hpp>
+#include "NestCraftLevel.hpp"
 
-#include "Game.hpp"
-
-int main() {
-    auto *application = Application::getInstance();
-    auto *layer = new Game();
-    application->setLayer(layer);
+int startApp(int argc, char **argv) {
+    Nest::ApplicationStartupSettings settings;
+    settings.name = "Hello triangle";
+    settings.windowTitle = "Hello triangle";
+    settings.windowSize = {900, 600};
+    settings.isFullScreen = false;
+    auto application = new Nest::Application(settings);
+    application->setLayer(NEW(Foundation::getAllocator(), NestCraftLevel));
     application->loop();
-    layer->detach();
-    delete layer;
-    delete application;
+    FREE(Foundation::getAllocator(), application);
+    return 0;
 }
