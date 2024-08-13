@@ -15,11 +15,11 @@ public:
     Voxel *get(int indexX, int indexY, int indexZ);
     uint8_t getType(int indexX, int indexY, int indexZ);
 
-    void setMesh(Mesh *mesh);
-    Mesh *getMesh();
+    void setMesh(Nest::StaticMesh *mesh);
+    Nest::StaticMesh *getMesh();
 
     Voxel *data;
 
 private:
-    Mesh *m_mesh;
+    Nest::StaticMesh *m_mesh;
 };

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Nest/Renderer/MeshData.hpp"
+#include "Nest/Renderer/TextureBinding.hpp"
 
 #include <Bird/Bird.hpp>
 
@@ -20,15 +21,16 @@ public:
         , m_indexBufferHandle(BIRD_INVALID_HANDLE)
         , m_vertexBufferHandle(BIRD_INVALID_HANDLE)
         , m_indicesCount(0)
-        , m_textureHandle(BIRD_INVALID_HANDLE)
-        , m_shaderHandle(BIRD_INVALID_HANDLE) {}
+        , m_shaderHandle(BIRD_INVALID_HANDLE) {
+        m_textureBinding.texture = BIRD_INVALID_HANDLE;
+    }
     ~StaticMesh();
 
     void
-    create(const MeshData &data, Bird::TextureHandle texture, Bird::ProgramHandle shader);
+    create(const MeshData &data, TextureBinding textureBinding, Bird::ProgramHandle shader);
 
 private:
-    Bird::TextureHandle m_textureHandle;
+    TextureBinding m_textureBinding;
     Bird::ProgramHandle m_shaderHandle;
     Bird::VertexLayoutHandle m_bufferLayoutHandle;
     Bird::IndexBufferHandle m_indexBufferHandle;

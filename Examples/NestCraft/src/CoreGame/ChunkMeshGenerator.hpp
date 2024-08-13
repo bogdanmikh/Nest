@@ -5,7 +5,31 @@
 
 class ChunkMeshGenerator {
 public:
-    static Mesh *generateMesh(
+    struct Vertex {
+        // position
+        glm::vec3 Position;
+        // texCoords
+        glm::vec2 TexCoords;
+        // light
+        float light;
+
+        Vertex()
+            : Position(0, 0, 0)
+            , TexCoords(0, 0)
+            , light(0) {};
+
+        Vertex(glm::vec3 aPosition, glm::vec2 aTexCoords, float light = 1.f)
+            : Position(aPosition)
+            , TexCoords(aTexCoords)
+            , light(light) {};
+
+        Vertex(float x, float y, float z, float aTexCoordX, float aTexCoordY, float light = 1.f)
+            : Position(x, y, z)
+            , TexCoords(aTexCoordX, aTexCoordY)
+            , light(light) {};
+    };
+
+    static Nest::StaticMesh *generateMesh(
         ChunksStorage *chunksStorage,
         int chunkIndexX,
         int chunkIndexY,

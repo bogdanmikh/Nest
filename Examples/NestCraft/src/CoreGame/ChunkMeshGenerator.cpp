@@ -444,7 +444,7 @@ Nest::StaticMesh *ChunkMeshGenerator::generateMesh(
     auto vb = createVertexBuffer(verticesMemory, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24 * sizeof(Vertex), vertexLayout);
     auto ib =
         createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36);
-
+    Nest::MeshData *meshData = NEW(Foundation::getAllocator(), Nest::MeshData)(vertexLayout, );
     Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
     mesh->create();
     return mesh;

@@ -30,7 +30,15 @@ void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
-    Bird::setTexture(mesh->m_textureHandle, 0);
+    Bird::setTexture(mesh->m_textureBinding.texture, 0);
+    int slot = 0;
+    Bird::setUniform(
+        mesh->m_shaderHandle,
+        mesh->m_textureBinding.name.c_str(),
+        &slot,
+        Bird::UniformType::Sampler
+    );
+
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
     Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid index buffer for mesh");

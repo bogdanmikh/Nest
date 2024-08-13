@@ -20,13 +20,14 @@ void ChunksRenderer::onAttach() {
     for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
         for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
             for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
-                Nest::DynamicMesh *mesh =
+                Nest::StaticMesh *mesh =
                     ChunkMeshGenerator::generateMesh(chunksStorage, indexX, indexY, indexZ, true);
                 chunksStorage
                     ->chunks
                         [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                          indexX * ChunksStorage::SIZE_X + indexZ]
                     .setMesh(mesh);
+
                 chunksStorage
                     ->chunks
                         [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
@@ -67,7 +68,10 @@ void ChunksRenderer::onUpdate(double deltaTime) {
 }
 
 void ChunksRenderer::draw() {
+    m_renderer3D.begin();
+    static Nest::TransformComponent transform;
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
-        chunksStorage->chunks[i].getMesh()->draw();
+        m_renderer3D.submit(&transform, chunksStorage->chunks[i].getMesh());
     }
+    m_renderer3D.end();
 }

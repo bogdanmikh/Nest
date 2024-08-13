@@ -4,6 +4,8 @@
 
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 
+#include <utility>
+
 namespace Nest {
 
 StaticMesh::~StaticMesh() {
@@ -16,10 +18,10 @@ StaticMesh::~StaticMesh() {
 }
 
 void StaticMesh::create(
-    const Nest::MeshData &data, Bird::TextureHandle texture, Bird::ProgramHandle shader
+    const Nest::MeshData &data, TextureBinding textureBinding, Bird::ProgramHandle shader
 ) {
     m_shaderHandle = shader;
-    m_textureHandle = texture;
+    m_textureBinding = std::move(textureBinding);
     m_indicesCount = data.indicesCount;
     m_bufferLayoutHandle = data.layoutHandle;
     m_vertexBufferHandle =

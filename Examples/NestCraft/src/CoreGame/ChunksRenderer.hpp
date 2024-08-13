@@ -21,6 +21,7 @@ public:
     void draw();
 
 private:
+    Nest::Renderer3D m_renderer3D;
     BlocksCreation *blocksCreation;
     ChunksStorage *chunksStorage;
 };
