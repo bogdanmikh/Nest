@@ -1,5 +1,5 @@
 //
-// Created by Admin on 14.03.2022.
+// Created by Bogdan
 //
 
 #include "RendererOpenGL.hpp"

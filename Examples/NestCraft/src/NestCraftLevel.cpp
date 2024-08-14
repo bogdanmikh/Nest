@@ -13,7 +13,7 @@ void NestCraftLevel::onAttach() {
     auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
 
-    auto  chunksRenderer = new ChunksRenderer;
+    auto chunksRenderer = new ChunksRenderer;
     chunksRenderer->onAttach();
     addEntity(chunksRenderer);
     //    auto *cross = new Cross;
@@ -22,26 +22,16 @@ void NestCraftLevel::onAttach() {
 }
 
 void NestCraftLevel::onUpdate(double deltaTime) {
-    auto camera = Application::getInstance()->getCamera();
-    shader->use();
-    shader->setFloat("u_time", Application::getInstance()->getWindow()->getTime());
-    shader->setVec2("u_mouse", Events::getCursorPos());
-    shader->setVec2("u_resolution", Application::getInstance()->getWindow()->getSize());
-    shader->setMat4("u_model", glm::mat4(1));
-    shader->setMat4("u_view", camera->getViewMatrix());
-    shader->setMat4("u_projection", camera->getProjectionMatrix());
-    shader->setVec3("u_color", menu.getColor());
-    menu.update(deltaTime);
-    for (const auto &item : NestCraftLevelObjects) {
-        item->update(deltaTime);
+    for (const auto &item : m_entities) {
+        item->onUpdate(deltaTime);
     }
 }
 
 void NestCraftLevel::onDetach() {
-    for (const auto &item : NestCraftLevelObjects) {
+    for (const auto &item : m_entities) {
+        item->onDetach();
         delete item;
     }
-    delete shader;
 }
 
 void NestCraftLevel::addEntity(Nest::Entity *entity) {

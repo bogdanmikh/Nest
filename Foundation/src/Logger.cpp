@@ -1,5 +1,5 @@
 //
-// Created by Admin on 03.02.2022.
+// Created by Bogdan
 //
 
 #include "Foundation/Logger.hpp"

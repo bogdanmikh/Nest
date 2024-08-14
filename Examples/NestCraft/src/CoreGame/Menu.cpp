@@ -5,6 +5,7 @@
 #include <imgui.h>
 
 #include "Menu.hpp"
+#include <Nest.hpp>
 
 Menu::Menu() {
     m_color[0] = 1.0f;
@@ -21,8 +22,8 @@ void Menu::update(double deltaTime) {
     ImGui::SetNextWindowSize(ImVec2(displaySize.x / 4 - 10, displaySize.y / 4 + 30));
 
     ImGui::Begin("Menu", nullptr);
-    ImGui::TextColored({0, 1., 0, 1.}, "FPS: %d", Application::getInstance()->getFps());
-    const glm::vec3 &position = Application::getInstance()->getCamera()->getPosition();
+    ImGui::TextColored({0, 1., 0, 1.}, "FPS: %d", Nest::Application::get()->getFps());
+    const glm::vec3 &position = Nest::Application::get()->getWorldCamera()->getPosition();
     ImGui::Text("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z);
     ImGui::ColorEdit3("Color", m_color);
     ImGui::Text("Time: %.3f", ImGui::GetTime());

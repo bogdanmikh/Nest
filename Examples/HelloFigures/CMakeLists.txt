@@ -3,7 +3,6 @@ project(HelloFigures)
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE SOURCES
-        main.cpp
         src/*.cpp
 )
 
@@ -22,7 +21,6 @@ file(GLOB RESOURCE_FOLDERS
 
 file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
 list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
-
 
 add_app(HelloFigures "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 

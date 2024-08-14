@@ -12,7 +12,6 @@
 
 class ChunksRenderer final : public Nest::Entity {
 public:
-    ChunksRenderer();
     ~ChunksRenderer() override;
     void onAttach() override;
     void onUpdate(double deltaTime) override;
@@ -22,6 +21,7 @@ public:
 
 private:
     Nest::Renderer3D m_renderer3D;
-    BlocksCreation *blocksCreation;
-    ChunksStorage *chunksStorage;
+    Bird::ProgramHandle m_shader;
+    BlocksCreation *m_blocksCreation;
+    ChunksStorage *m_chunksStorage;
 };

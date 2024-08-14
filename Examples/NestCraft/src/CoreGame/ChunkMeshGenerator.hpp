@@ -30,6 +30,7 @@ public:
     };
 
     static Nest::StaticMesh *generateMesh(
+        Bird::ProgramHandle programHandle,
         ChunksStorage *chunksStorage,
         int chunkIndexX,
         int chunkIndexY,

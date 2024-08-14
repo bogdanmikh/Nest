@@ -1,5 +1,5 @@
 //
-// Created by Admin on 11.02.2022.
+// Created by Bogdan
 //
 
 #include "OpenGLContext.hpp"

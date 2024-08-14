@@ -4,13 +4,14 @@
 
 #include <imgui.h>
 
-void BlocksCreation::init() {
+void BlocksCreation::init(Bird::ProgramHandle shaderHandle) {
+    m_shader = shaderHandle;
     m_selectedBlock = VoxelType(11);
 }
 
 void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
-    Mesh *data = ChunkMeshGenerator::generateMesh(
-        m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
+    Nest::StaticMesh *data = ChunkMeshGenerator::generateMesh(
+        m_shader, m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
     );
     m_chunksStorage
         ->chunks

@@ -12,6 +12,7 @@ glm::vec2 getUV(uint8_t tileIndex) {
 }
 
 Nest::StaticMesh *ChunkMeshGenerator::generateMesh(
+    Bird::ProgramHandle programHandle,
     ChunksStorage *chunksStorage,
     int chunkIndexX,
     int chunkIndexY,
@@ -441,12 +442,10 @@ Nest::StaticMesh *ChunkMeshGenerator::generateMesh(
     layoutData.pushVec2();
     layoutData.pushVec3();
     Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
-    auto vb = createVertexBuffer(verticesMemory, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24 * sizeof(Vertex), vertexLayout);
-    auto ib =
-        createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36);
-    Nest::MeshData *meshData = NEW(Foundation::getAllocator(), Nest::MeshData)(vertexLayout, );
+    static Nest::Texture* texture = NEW(Foundation::getAllocator(), Nest::Texture)("Textures/BlocksTile.png");
+    Nest::MeshData *meshData = NEW(Foundation::getAllocator(), Nest::MeshData)(vertexLayout, verticesMemory, verticesCount, indicesMemory, indicesCount);
     Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
-    mesh->create();
+    mesh->create(*meshData, {"texture", texture->getHandle()}, programHandle);
     return mesh;
 }
 

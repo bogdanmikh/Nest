@@ -6,7 +6,7 @@
 
 class NestCraftLevel final : public Nest::Layer {
 public:
-    ~NestCraftLevel() override;
+    ~NestCraftLevel() override {}
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onDetach() override;
