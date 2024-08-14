@@ -7,12 +7,12 @@
 
 Chunk::Chunk()
     : m_mesh(nullptr) {
-    data = new Voxel[SIZE_X * SIZE_Y * SIZE_Z];
+    data = NEW_ARRAY(Foundation::getAllocator(), Voxel, SIZE_X * SIZE_Y * SIZE_Z);
 }
 
 Chunk::~Chunk() {
-    delete m_mesh;
-    delete[] data;
+    FREE(Foundation::getAllocator(), m_mesh);
+    FREE(Foundation::getAllocator(), data);
 }
 
 void Chunk::set(int x, int y, int z, VoxelType type) {

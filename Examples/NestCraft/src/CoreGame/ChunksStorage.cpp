@@ -3,11 +3,11 @@
 #include "ChunkMeshGenerator.hpp"
 
 ChunksStorage::~ChunksStorage() {
-    delete[] chunks;
+    FREE(Foundation::getAllocator(), chunks);
 }
 
 ChunksStorage::ChunksStorage() {
-    chunks = new Chunk[SIZE_X * SIZE_Y * SIZE_Z];
+    chunks = NEW_ARRAY(Foundation::getAllocator(), Chunk, SIZE_X * SIZE_Y * SIZE_Z);
     float terrain[WORLD_SIZE_X * WORLD_SIZE_Z];
     PerlinNoise::generate2DGlm(2, 10, 1.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
 
