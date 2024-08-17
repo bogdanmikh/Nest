@@ -109,6 +109,6 @@ void ChunksRenderer::draw() {
     m_renderer3D.end();
 }
 void ChunksRenderer::onDetach() {
-    FREE(Foundation::getAllocator(), m_blocksCreation);
-    FREE(Foundation::getAllocator(), m_chunksStorage);
+    DELETE(Foundation::getAllocator(), m_blocksCreation);
+    DELETE(Foundation::getAllocator(), m_chunksStorage);
 }

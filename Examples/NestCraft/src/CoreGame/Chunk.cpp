@@ -13,9 +13,9 @@ void Chunk::init() {
     }
 }
 
-Chunk::~Chunk() {
-    FREE(Foundation::getAllocator(), m_mesh);
-    FREE(Foundation::getAllocator(), data);
+void Chunk::detach() {
+    DELETE(Foundation::getAllocator(), m_mesh);
+    DELETE(Foundation::getAllocator(), data);
 }
 
 void Chunk::set(int x, int y, int z, VoxelType type) {

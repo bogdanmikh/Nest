@@ -48,9 +48,9 @@ Application::~Application() {
     ImGui_Shutdown();
     if (m_layer)
         m_layer->onDetach();
-    FREE(Foundation::getAllocator(), m_worldCamera);
-    FREE(Foundation::getAllocator(), m_layer);
-    FREE(Foundation::getAllocator(), m_window);
+    DELETE(Foundation::getAllocator(), m_worldCamera);
+    DELETE(Foundation::getAllocator(), m_layer);
+    DELETE(Foundation::getAllocator(), m_window);
 }
 
 void Application::updateViewport(Size size) {

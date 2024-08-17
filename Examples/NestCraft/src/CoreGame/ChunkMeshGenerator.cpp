@@ -446,9 +446,7 @@ Nest::StaticMesh *generateMesh(
     }
 
     Foundation::Memory verticesMemory = Foundation::Memory(vertices);
-    //    FREE(Foundation::getAllocator(), vertices);
     Foundation::Memory indicesMemory = Foundation::Memory(indices);
-    //    FREE(Foundation::getAllocator(), indices);
 
     Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
@@ -460,7 +458,7 @@ Nest::StaticMesh *generateMesh(
     Nest::MeshData meshData(
         vertexLayout, verticesMemory, verticesCount * sizeof(Vertex), indicesMemory, indicesCount
     );
-    Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    auto *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
     mesh->create(meshData, {"texture1", textureHandle}, programHandle);
     return mesh;
 }

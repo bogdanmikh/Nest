@@ -7,17 +7,38 @@
 #include <filesystem>
 
 void NestCraftLevel::onAttach() {
+    Bird::setViewClear(0, 0x3D75C9FF);
     auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
 
     auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
     addEntity(chunksRenderer);
-    //    auto *cross = new Cross;
-    //    cross->init();
-    //    NestCraftLevelObjects.emplace_back(cross);
+}
+
+
+static void drawCross() {
+    ImGui::Begin("##crosshair", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
+//  ImGui::Begin("##crosshair");
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+    ImGuiIO& io = ImGui::GetIO();
+    float windowWidth = io.DisplaySize.x;
+    float windowHeight = io.DisplaySize.y;
+
+    float centerX = windowWidth / 2.0f;
+    float centerY = windowHeight / 2.0f;
+
+    float lineLength = 20.0f;
+
+    auto color = IM_COL32(255, 0, 0, 255);
+    drawList->AddLine(ImVec2(centerX - lineLength, centerY), ImVec2(centerX + lineLength, centerY), color);
+    drawList->AddLine(ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color);
+    ImGui::End();
 }
 
 void NestCraftLevel::onUpdate(double deltaTime) {
+    drawCross();
     for (const auto &entity : m_entities) {
         entity->onUpdate(deltaTime);
         entity->onImGuiRender();
@@ -27,7 +48,7 @@ void NestCraftLevel::onUpdate(double deltaTime) {
 void NestCraftLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
-        FREE(Foundation::getAllocator(), entity);
+        DELETE(Foundation::getAllocator(), entity);
     }
 }
 

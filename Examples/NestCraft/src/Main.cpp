@@ -6,9 +6,9 @@ int startApp(int argc, char **argv) {
     settings.windowTitle = "Hello triangle";
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
-    auto application = new Nest::Application(settings);
+    auto application = NEW(Foundation::getAllocator(), Nest::Application(settings));
     application->setLayer(NEW(Foundation::getAllocator(), NestCraftLevel));
     application->loop();
-    FREE(Foundation::getAllocator(), application);
+    DELETE(Foundation::getAllocator(), application);
     return 0;
 }

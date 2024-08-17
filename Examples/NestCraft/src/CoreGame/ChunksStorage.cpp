@@ -3,7 +3,10 @@
 #include "ChunkMeshGenerator.hpp"
 
 ChunksStorage::~ChunksStorage() {
-    FREE(Foundation::getAllocator(), chunks);
+    for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
+        chunks[i].detach();
+    }
+    DELETE(Foundation::getAllocator(), chunks);
 }
 
 ChunksStorage::ChunksStorage() {
