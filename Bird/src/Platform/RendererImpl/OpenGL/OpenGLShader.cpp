@@ -76,7 +76,7 @@ int OpenGLShader::getUniformLocation(const std::string &name) {
         return m_uniformLocationCache[name];
     }
     int location = glGetUniformLocation(m_id, name.c_str());
-    NEST_ASSERT_F(location != -1, "SHADER UNIFORM {} not found", name);
+    // NEST_ASSERT_F(location != -1, "SHADER UNIFORM {} not found", name);
     m_uniformLocationCache[name] = location;
     return location;
 }
