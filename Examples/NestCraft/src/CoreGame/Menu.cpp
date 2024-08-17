@@ -13,7 +13,7 @@ Menu::Menu() {
     m_color[2] = 1.0f;
 }
 
-void Menu::update(double deltaTime) {
+void Menu::update() {
     auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = {0.639, 0.639, 0.639, 0.7};
 
@@ -26,6 +26,7 @@ void Menu::update(double deltaTime) {
     const glm::vec3 &position = Nest::Application::get()->getWorldCamera()->getPosition();
     ImGui::Text("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z);
     ImGui::ColorEdit3("Color", m_color);
+    ImGui::Text("Color: %f, %f, %f", m_color[0], m_color[1], m_color[2]);
     ImGui::Text("Time: %.3f", ImGui::GetTime());
     ImGui::Text("1 - ground");
     ImGui::Text("2 - boards");

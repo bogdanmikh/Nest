@@ -20,6 +20,7 @@ void NestCraftLevel::onAttach() {
 void NestCraftLevel::onUpdate(double deltaTime) {
     for (const auto &entity : m_entities) {
         entity->onUpdate(deltaTime);
+        entity->onImGuiRender();
     }
 }
 

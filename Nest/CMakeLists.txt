@@ -52,5 +52,7 @@ target_link_libraries(Nest glad)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glad/include)
 
 # Dependencies - assimp
-target_link_libraries(Nest assimp)
-target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/assimp/include)
+if (USE_ASSIMP)
+    target_link_libraries(Nest assimp)
+    target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/assimp/include)
+endif ()

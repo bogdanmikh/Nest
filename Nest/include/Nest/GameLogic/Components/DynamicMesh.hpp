@@ -18,9 +18,8 @@ public:
     DynamicMesh(DynamicMesh &&source);
     DynamicMesh(DynamicMesh &source);
 
-    void create(
-        const MeshData &data, std::vector<TextureBinding> bindings, Bird::ProgramHandle shader
-    );
+    void
+    create(const MeshData &data, std::vector<TextureBinding> bindings, Bird::ProgramHandle shader);
     void update(const MeshData &data);
 
 private:

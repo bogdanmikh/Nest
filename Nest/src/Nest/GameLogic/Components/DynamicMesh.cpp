@@ -64,9 +64,7 @@ void DynamicMesh::create(
 void DynamicMesh::update(const MeshData &data) {
     NEST_ASSERT(m_shaderHandle.isValid(), "Invalid shader for mesh");
     m_indicesCount = data.indicesCount;
-    Bird::updateDynamicVertexBuffer(
-        m_vertexBufferHandle, data.vertexBuffer, data.vertexBufferSize
-    );
+    Bird::updateDynamicVertexBuffer(m_vertexBufferHandle, data.vertexBuffer, data.vertexBufferSize);
     Bird::updateDynamicIndexBuffer(m_indexBufferHandle, data.indices, m_indicesCount);
 }
 

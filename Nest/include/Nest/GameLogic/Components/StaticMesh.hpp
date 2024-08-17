@@ -26,8 +26,11 @@ public:
     }
     ~StaticMesh();
 
-    void
-    create(const MeshData &data, TextureBinding textureBinding, Bird::ProgramHandle shader);
+    void create(const MeshData &data, TextureBinding textureBinding, Bird::ProgramHandle shader);
+
+    Bird::ProgramHandle getShaderHandle() {
+        return m_shaderHandle;
+    }
 
 private:
     TextureBinding m_textureBinding;

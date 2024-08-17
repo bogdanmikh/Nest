@@ -11,7 +11,7 @@ FigureLevel::~FigureLevel() {
 
 void FigureLevel::onAttach() {
     m_sphereRenderer = NEW(Foundation::getAllocator(), SphereRenderer);
-    m_cameraMove =  NEW(Foundation::getAllocator(), CameraMove);
+    m_cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     m_cubeRenderer = NEW(Foundation::getAllocator(), CubeRenderer);
     m_sphereRenderer->getTransform().setPosition({4., 0., 0.});
     addEntity(m_sphereRenderer);

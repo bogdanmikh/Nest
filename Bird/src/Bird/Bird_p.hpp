@@ -369,7 +369,7 @@ struct Context {
 
     TransientIndexBuffer createTransientIndexBuffer(uint32_t size) {
         TransientIndexBuffer tib;
-        tib.data = (uint8_t *) ALLOC(Foundation::getAllocator(), size);
+        tib.data = (uint8_t *)ALLOC(Foundation::getAllocator(), size);
         tib.size = size;
         tib.startIndex = 0;
         tib.handle = createDynamicIndexBuffer(nullptr, BufferElementType::UnsignedShort, size / 2);

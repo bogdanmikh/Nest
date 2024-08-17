@@ -5,10 +5,8 @@
 class Menu {
 public:
     Menu();
-    void update(double deltaTime);
-    void draw() {}
+    void update();
     glm::vec3 getColor();
-
 private:
     float m_color[3];
 };

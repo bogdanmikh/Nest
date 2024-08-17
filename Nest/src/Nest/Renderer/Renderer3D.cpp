@@ -22,21 +22,16 @@ void Renderer3D::begin() {
 
 void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
-    Bird::setShader(mesh->m_shaderHandle);
+    //    Bird::setShader(mesh->m_shaderHandle);
     updateModel(transform, mesh->m_model);
-    Bird::setUniform(
-        mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
-    );
+    Bird::setUniform(mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4);
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
     Bird::setTexture(mesh->m_textureBinding.texture, 0);
     int slot = 0;
     Bird::setUniform(
-        mesh->m_shaderHandle,
-        mesh->m_textureBinding.name.c_str(),
-        &slot,
-        Bird::UniformType::Sampler
+        mesh->m_shaderHandle, mesh->m_textureBinding.name.c_str(), &slot, Bird::UniformType::Sampler
     );
 
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
@@ -51,19 +46,14 @@ void Renderer3D::submit(TransformComponent *transform, DynamicMesh *mesh) {
     NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
     Bird::setShader(mesh->m_shaderHandle);
     updateModel(transform, mesh->m_model);
-    Bird::setUniform(
-        mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
-    );
+    Bird::setUniform(mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4);
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
     for (int i = 0; i < mesh->m_bindings.size(); i++) {
         Bird::setTexture(mesh->m_bindings[i].texture, i);
         Bird::setUniform(
-            mesh->m_shaderHandle,
-            mesh->m_bindings[i].name.c_str(),
-            &i,
-            Bird::UniformType::Sampler
+            mesh->m_shaderHandle, mesh->m_bindings[i].name.c_str(), &i, Bird::UniformType::Sampler
         );
     }
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");

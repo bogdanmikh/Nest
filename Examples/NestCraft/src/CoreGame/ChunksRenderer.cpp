@@ -18,12 +18,11 @@ void ChunksRenderer::onAttach() {
     for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
         for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
             for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
-                intptr_t ptr = (intptr_t) m_chunksStorage;
-                
-                
+
                 Nest::StaticMesh *mesh;
-//                mesh = ChunkMeshGenerator::generateMesh(m_shader, (ChunksStorage*) ptr, indexX, indexY, indexZ, true);
-                mesh = ChunkMeshGenerator::generateMesh(m_shader, m_chunksStorage, indexX, indexY, indexZ, true);
+                mesh = ChunkMeshGenerator::generateMesh(
+                    m_shader, m_chunksStorage, indexX, indexY, indexZ, true
+                );
                 m_chunksStorage
                     ->chunks
                         [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
@@ -37,9 +36,8 @@ void ChunksRenderer::onAttach() {
 
 void ChunksRenderer::onUpdate(double deltaTime) {
     /*if (Nest::Events::isJustKeyPressed(Key::Q)) {
-        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ);
-        m_chunksStorage->saveWorld(data);
-        if (!NestFiles::writeBinaryFile(
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
+    Chunk::SIZE_XYZ); m_chunksStorage->saveWorld(data); if (!NestFiles::writeBinaryFile(
                 "world.bin", (const char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_SAVED");
@@ -47,9 +45,9 @@ void ChunksRenderer::onUpdate(double deltaTime) {
         delete[] data;
     }
     if (Nest::Events::isJustKeyPressed(Key::E)) {
-        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ);
-        if (!NestFiles::readBinaryFile(
-                "world.bin", (char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
+    Chunk::SIZE_XYZ); if (!NestFiles::readBinaryFile( "world.bin", (char *)data,
+    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_LOAD");
         }
@@ -63,9 +61,40 @@ void ChunksRenderer::onUpdate(double deltaTime) {
 }
 
 void ChunksRenderer::draw() {
+    static auto camera = Nest::Application::get()->getWorldCamera();
+    m_renderer3D.setViewProj(camera->getProjectionMatrix() * camera->getViewMatrix());
     m_renderer3D.begin();
     static Nest::TransformComponent transform;
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        //        Bird::setShader(m_shader);
+        Bird::setShader(m_chunksStorage->chunks[i].getMesh()->getShaderHandle());
+
+        static auto time = Nest::Application::get()->getWindow()->getTime();
+        time = Nest::Application::get()->getWindow()->getTime();
+        static auto mousePos = Nest::Events::getCursorPos();
+        mousePos = Nest::Events::getCursorPos();
+        static auto resolution = Nest::Application::get()->getWindow()->getSize();
+        resolution = Nest::Application::get()->getWindow()->getSize();
+
+        static auto projViewMtx = camera->getViewMatrix();
+        projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+
+        static auto cameraPos = camera->getPosition();
+        cameraPos = camera->getPosition();
+
+        static auto model = transform.getTransform();
+        model = transform.getTransform();
+
+        Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4); /// float
+        Bird::setUniform(
+            m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4
+        );                                                                            /// vec2
+        Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4); /// vec2
+        Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);
+        static glm::vec3 color;
+        color = m_menu.getColor();
+        LOG_INFO("Color: {}, {}, {}", color.x, color.y, color.z);
+        Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);
         m_renderer3D.submit(&transform, m_chunksStorage->chunks[i].getMesh());
     }
     m_renderer3D.end();

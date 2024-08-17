@@ -4,9 +4,9 @@
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/Renderer/Renderer3D.hpp"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+// #include <assimp/Importer.hpp>
+// #include <assimp/scene.h>
+// #include <assimp/postprocess.h>
 
 namespace Nest {
 
@@ -33,13 +33,15 @@ public:
     TransformComponent &getTransform();
 
     void draw();
+
 private:
+    /*
     void loadModel(const std::string& path);
     void processNode(aiNode *node, const aiScene *scene);
     DynamicMesh processMesh(aiMesh *mesh, const aiScene *scene);
     std::vector<TextureBinding>
     loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
-
+    */
     void rendererMesh();
 
     struct TextureData {

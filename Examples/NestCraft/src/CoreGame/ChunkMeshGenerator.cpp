@@ -24,13 +24,17 @@ Nest::StaticMesh *generateMesh(
     Chunk &chunk = chunksStorage->chunks
                        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
-    int countVertices = Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24;
-    Vertex *vertices = (Vertex*) ALLOC(Foundation::getAllocator(), sizeof(Vertex) * countVertices);
-    for (int i = 0; i < countVertices; ++i) {
+    Vertex *vertices = (Vertex *)ALLOC(
+        Foundation::getAllocator(),
+        sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24
+    );
+    for (int i = 0; i < Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24; ++i) {
         vertices[i] = Vertex();
     }
-    int countIndices = Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36;
-    uint32_t *indices = (uint32_t*) ALLOC(Foundation::getAllocator(), sizeof(uint32_t) * countIndices);
+    uint32_t *indices = (uint32_t *)ALLOC(
+        Foundation::getAllocator(),
+        sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36
+    );
     uint32_t verticesCount = 0;
     uint32_t indicesCount = 0;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
@@ -439,27 +443,26 @@ Nest::StaticMesh *generateMesh(
             }
         }
     }
-    Foundation::Memory verticesMemory = Foundation::Memory::copying(
-        vertices, sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24
-    );
-    FREE(Foundation::getAllocator(), vertices);
-    Foundation::Memory indicesMemory = Foundation::Memory::copying(
-        indices, sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36
-    );
-    FREE(Foundation::getAllocator(), indices);
+    static Nest::Texture *texture =
+        NEW(Foundation::getAllocator(), Nest::Texture)("Textures/BlocksTile.png");
+
+    Foundation::Memory verticesMemory = Foundation::Memory(vertices);
+    //    FREE(Foundation::getAllocator(), vertices);
+    Foundation::Memory indicesMemory = Foundation::Memory(indices);
+    //    FREE(Foundation::getAllocator(), indices);
 
     Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
     layoutData.pushVec2();
-    layoutData.pushVec3();
+    layoutData.pushFloat(1);
+
     Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
-    Nest::Texture *texture =
-        NEW(Foundation::getAllocator(), Nest::Texture)("Textures/BlocksTile.png");
-    Nest::MeshData *meshData = NEW(Foundation::getAllocator(), Nest::MeshData)(
-        vertexLayout, verticesMemory, verticesCount, indicesMemory, indicesCount
+
+    Nest::MeshData meshData(
+        vertexLayout, verticesMemory, verticesCount * sizeof(Vertex), indicesMemory, indicesCount
     );
     Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
-    mesh->create(*meshData, {"texture", texture->getHandle()}, programHandle);
+    mesh->create(meshData, {"texture1", texture->getHandle()}, programHandle);
     return mesh;
 }
 
@@ -480,4 +483,4 @@ void addFaceIndices(uint32_t offset, uint32_t &indicesCount, uint32_t *indices) 
     indices[indicesCount++] = offset;
 }
 
-}
+} // namespace ChunkMeshGenerator

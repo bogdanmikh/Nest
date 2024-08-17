@@ -7,7 +7,7 @@
 
 void Chunk::init() {
     m_mesh = nullptr;
-    data = (Voxel*) ALLOC(Foundation::getAllocator(), sizeof(Voxel) * SIZE_X * SIZE_Y * SIZE_Z);
+    data = (Voxel *)ALLOC(Foundation::getAllocator(), sizeof(Voxel) * SIZE_X * SIZE_Y * SIZE_Z);
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         data[i] = Voxel();
     }

@@ -116,9 +116,7 @@ public:
         Bird::setTexture(m_skyTexture, samplerCube);
         Bird::setUniform(m_shader, "skyTexture", &samplerCube, Bird::UniformType::Int);
         Bird::setUniform(m_shader, "model", &m_model[0][0], Bird::UniformType::Mat4);
-        Bird::setUniform(
-            m_shader, "projViewMtx", &m_viewProjection[0][0], Bird::UniformType::Mat4
-        );
+        Bird::setUniform(m_shader, "projViewMtx", &m_viewProjection[0][0], Bird::UniformType::Mat4);
         Bird::setVertexBuffer(m_vertexBuffer);
         Bird::setIndexBuffer(m_indexBuffer, 0, 36);
         Bird::setState(0);

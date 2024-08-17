@@ -10,6 +10,7 @@ public:
     void onImGuiRender() override;
     void onDetach() override;
     Nest::TransformComponent &getTransform();
+
 private:
     Nest::Model3D m_model3D;
 };

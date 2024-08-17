@@ -8,7 +8,7 @@ ChunksStorage::~ChunksStorage() {
 
 ChunksStorage::ChunksStorage() {
     int count = SIZE_X * SIZE_Y * SIZE_Z;
-    chunks = (Chunk*) ALLOC(Foundation::getAllocator(), sizeof(Chunk) * count);
+    chunks = (Chunk *)ALLOC(Foundation::getAllocator(), sizeof(Chunk) * count);
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         chunks[i].init();
     }
