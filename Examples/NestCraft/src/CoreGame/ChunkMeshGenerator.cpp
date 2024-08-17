@@ -14,6 +14,7 @@ glm::vec2 getUV(uint8_t tileIndex) {
 }
 
 Nest::StaticMesh *generateMesh(
+    Bird::TextureHandle textureHandle,
     Bird::ProgramHandle programHandle,
     ChunksStorage *chunksStorage,
     int chunkIndexX,
@@ -443,8 +444,6 @@ Nest::StaticMesh *generateMesh(
             }
         }
     }
-    static Nest::Texture *texture =
-        NEW(Foundation::getAllocator(), Nest::Texture)("Textures/BlocksTile.png");
 
     Foundation::Memory verticesMemory = Foundation::Memory(vertices);
     //    FREE(Foundation::getAllocator(), vertices);
@@ -462,7 +461,7 @@ Nest::StaticMesh *generateMesh(
         vertexLayout, verticesMemory, verticesCount * sizeof(Vertex), indicesMemory, indicesCount
     );
     Nest::StaticMesh *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
-    mesh->create(meshData, {"texture1", texture->getHandle()}, programHandle);
+    mesh->create(meshData, {"texture1", textureHandle}, programHandle);
     return mesh;
 }
 

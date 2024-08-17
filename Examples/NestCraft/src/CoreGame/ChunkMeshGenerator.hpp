@@ -4,6 +4,7 @@
 #include "ChunksStorage.hpp"
 
 namespace ChunkMeshGenerator {
+
 struct Vertex {
     // position
     glm::vec3 Position;
@@ -29,6 +30,7 @@ struct Vertex {
 };
 
 Nest::StaticMesh *generateMesh(
+    Bird::TextureHandle textureHandle,
     Bird::ProgramHandle programHandle,
     ChunksStorage *chunksStorage,
     int chunkIndexX,

@@ -4,14 +4,15 @@
 
 #include <imgui.h>
 
-void BlocksCreation::init(Bird::ProgramHandle shaderHandle) {
+void BlocksCreation::init(Bird::ProgramHandle shaderHandle, Bird::TextureHandle textureHandle) {
     m_shader = shaderHandle;
     m_selectedBlock = VoxelType(11);
+    m_textureHandle = textureHandle;
 }
 
 void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
     Nest::StaticMesh *data = ChunkMeshGenerator::generateMesh(
-        m_shader, m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
+        m_textureHandle, m_shader, m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
     );
     m_chunksStorage
         ->chunks

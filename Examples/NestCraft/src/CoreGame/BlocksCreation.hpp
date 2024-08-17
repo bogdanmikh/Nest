@@ -13,7 +13,7 @@ class BlocksCreation final : public GameObject {
 public:
     const int MAXIMUM_DISTANCE = 100;
 
-    void init(Bird::ProgramHandle shaderHandle);
+    void init(Bird::ProgramHandle shaderHandle, Bird::TextureHandle textureHandle);
     void update(double deltaTime) override;
     void draw() override {}
     void onImGuiRender();
@@ -28,5 +28,6 @@ private:
     ChunksStorage *m_chunksStorage;
     Nest::WorldCamera *m_camera;
     Bird::ProgramHandle m_shader;
+    Bird::TextureHandle m_textureHandle;
     VoxelType m_selectedBlock;
 };

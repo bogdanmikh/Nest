@@ -28,8 +28,8 @@ void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
-    Bird::setTexture(mesh->m_textureBinding.texture, 0);
-    int slot = 0;
+    static int slot = 0;
+    Bird::setTexture(mesh->m_textureBinding.texture, slot);
     Bird::setUniform(
         mesh->m_shaderHandle, mesh->m_textureBinding.name.c_str(), &slot, Bird::UniformType::Sampler
     );

@@ -8,10 +8,11 @@ void ChunksRenderer::onAttach() {
         Nest::AssetLoader::loadProgram("Shaders/vst.glsl", "Shaders/fst.glsl");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
+
     m_chunksStorage = NEW(Foundation::getAllocator(), ChunksStorage);
     LOG_INFO("WORLD GENERATED");
     m_blocksCreation = NEW(Foundation::getAllocator(), BlocksCreation);
-    m_blocksCreation->init(m_shader);
+    m_blocksCreation->init(m_shader, m_texture.getHandle());
     m_blocksCreation->setCamera(Nest::Application::get()->getWorldCamera());
     m_blocksCreation->setChunksStorage(m_chunksStorage);
 
@@ -21,7 +22,7 @@ void ChunksRenderer::onAttach() {
 
                 Nest::StaticMesh *mesh;
                 mesh = ChunkMeshGenerator::generateMesh(
-                    m_shader, m_chunksStorage, indexX, indexY, indexZ, true
+                    m_texture.getHandle(), m_shader, m_chunksStorage, indexX, indexY, indexZ, true
                 );
                 m_chunksStorage
                     ->chunks
@@ -93,8 +94,9 @@ void ChunksRenderer::draw() {
         Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);
         static glm::vec3 color;
         color = m_menu.getColor();
-        LOG_INFO("Color: {}, {}, {}", color.x, color.y, color.z);
+//        LOG_INFO("Color: {}, {}, {}", color.x, color.y, color.z);
         Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);
+//        Bird::setTexture();
         m_renderer3D.submit(&transform, m_chunksStorage->chunks[i].getMesh());
     }
     m_renderer3D.end();
