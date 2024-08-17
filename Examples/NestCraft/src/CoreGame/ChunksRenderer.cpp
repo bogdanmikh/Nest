@@ -8,11 +8,18 @@ void ChunksRenderer::onAttach() {
         Nest::AssetLoader::loadProgram("Shaders/vst.glsl", "Shaders/fst.glsl");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
+    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/BlocksTile.png");
+
+    Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+    textureCreate.m_numMips = 4;
+    textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+    textureCreate.m_magFiltering = Bird::NEAREST;
+    m_texture = createTexture(textureCreate);
 
     m_chunksStorage = NEW(Foundation::getAllocator(), ChunksStorage);
     LOG_INFO("WORLD GENERATED");
     m_blocksCreation = NEW(Foundation::getAllocator(), BlocksCreation);
-    m_blocksCreation->init(m_shader, m_texture.getHandle());
+    m_blocksCreation->init(m_shader, m_texture);
     m_blocksCreation->setCamera(Nest::Application::get()->getWorldCamera());
     m_blocksCreation->setChunksStorage(m_chunksStorage);
 
@@ -22,7 +29,7 @@ void ChunksRenderer::onAttach() {
 
                 Nest::StaticMesh *mesh;
                 mesh = ChunkMeshGenerator::generateMesh(
-                    m_texture.getHandle(), m_shader, m_chunksStorage, indexX, indexY, indexZ, true
+                    m_texture, m_shader, m_chunksStorage, indexX, indexY, indexZ, true
                 );
                 m_chunksStorage
                     ->chunks

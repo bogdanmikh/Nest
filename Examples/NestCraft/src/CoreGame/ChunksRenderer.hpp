@@ -13,8 +13,7 @@
 
 class ChunksRenderer final : public Nest::Entity {
 public:
-    ChunksRenderer()
-        : m_texture("Textures/BlocksTile.png") {}
+    ChunksRenderer() {}
     ~ChunksRenderer() override;
     void onAttach() override;
     void onUpdate(double deltaTime) override;
@@ -28,7 +27,7 @@ private:
     Menu m_menu;
     Nest::Renderer3D m_renderer3D;
     Bird::ProgramHandle m_shader;
-    Nest::Texture m_texture;
+    Bird::TextureHandle m_texture;
     BlocksCreation *m_blocksCreation;
     ChunksStorage *m_chunksStorage;
 };
