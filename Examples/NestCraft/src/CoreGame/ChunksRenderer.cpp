@@ -1,4 +1,3 @@
-#pragma comment(linker, "/STACK:16777216")
 #include "BlocksCreation.hpp"
 #include "ChunksRenderer.hpp"
 
@@ -23,7 +22,6 @@ void ChunksRenderer::onAttach() {
                 
                 
                 Nest::StaticMesh *mesh;
-                LOG_INFO("ERROR 1");
 //                mesh = ChunkMeshGenerator::generateMesh(m_shader, (ChunksStorage*) ptr, indexX, indexY, indexZ, true);
                 mesh = ChunkMeshGenerator::generateMesh(m_shader, m_chunksStorage, indexX, indexY, indexZ, true);
                 m_chunksStorage

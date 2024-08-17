@@ -28,6 +28,15 @@ namespace ChunkMeshGenerator {
             , light(light) {};
     };
 
+    Nest::StaticMesh *generateMesh1(
+        Bird::ProgramHandle programHandle,
+        ChunksStorage *chunksStorage,
+        int chunkIndexX,
+        int chunkIndexY,
+        int chunkIndexZ,
+        bool ambientOcclusion
+    );
+
     Nest::StaticMesh *generateMesh(
         Bird::ProgramHandle programHandle,
         ChunksStorage *chunksStorage,

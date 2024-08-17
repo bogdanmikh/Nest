@@ -24,8 +24,13 @@ Nest::StaticMesh *generateMesh(
     Chunk &chunk = chunksStorage->chunks
                        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
-    Vertex vertices[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
-    uint32_t indices[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
+    int countVertices = Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24;
+    Vertex *vertices = (Vertex*) ALLOC(Foundation::getAllocator(), sizeof(Vertex) * countVertices);
+    for (int i = 0; i < countVertices; ++i) {
+        vertices[i] = Vertex();
+    }
+    int countIndices = Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36;
+    uint32_t *indices = (uint32_t*) ALLOC(Foundation::getAllocator(), sizeof(uint32_t) * countIndices);
     uint32_t verticesCount = 0;
     uint32_t indicesCount = 0;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
@@ -437,9 +442,11 @@ Nest::StaticMesh *generateMesh(
     Foundation::Memory verticesMemory = Foundation::Memory::copying(
         vertices, sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24
     );
+    FREE(Foundation::getAllocator(), vertices);
     Foundation::Memory indicesMemory = Foundation::Memory::copying(
         indices, sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36
     );
+    FREE(Foundation::getAllocator(), indices);
 
     Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
