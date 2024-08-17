@@ -3,8 +3,7 @@
 #include "Nest.hpp"
 #include "ChunksStorage.hpp"
 
-class ChunkMeshGenerator {
-public:
+namespace ChunkMeshGenerator {
     struct Vertex {
         // position
         glm::vec3 Position;
@@ -29,7 +28,7 @@ public:
             , light(light) {};
     };
 
-    static Nest::StaticMesh *generateMesh(
+    Nest::StaticMesh *generateMesh(
         Bird::ProgramHandle programHandle,
         ChunksStorage *chunksStorage,
         int chunkIndexX,
@@ -38,8 +37,7 @@ public:
         bool ambientOcclusion
     );
 
-private:
-    static bool isAir(int localX, int localY, int localZ, ChunksStorage *chunkManager);
-    static void addFaceIndices(uint32_t offset, uint32_t &indicesCount, uint32_t *indices);
-    static constexpr float ambientOcclusionFactor = 0.2f;
+    bool isAir(int localX, int localY, int localZ, ChunksStorage *chunkManager);
+    void addFaceIndices(uint32_t offset, uint32_t &indicesCount, uint32_t *indices);
+    constexpr float ambientOcclusionFactor = 0.2f;
 };

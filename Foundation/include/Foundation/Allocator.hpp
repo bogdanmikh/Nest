@@ -24,7 +24,6 @@
 //#   define NEW(_allocator, _type, ...) ALLOC(_allocator, sizeof(_type))(__VA_ARGS__)
 #define PLACEMENT_NEW(_ptr, _type) ::new (Foundation::PlacementNewTag(), _ptr) _type
 #define NEW(_allocator, _type) PLACEMENT_NEW(ALLOC(_allocator, sizeof(_type)), _type)
-#   define NEW_ARRAY(_allocator, _type, _size) PLACEMENT_NEW(ALLOC(_allocator, sizeof(_type) * _size), _type)
 
 namespace Foundation {
 struct PlacementNewTag {};

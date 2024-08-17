@@ -1,4 +1,4 @@
-#include <thread>
+#pragma comment(linker, "/STACK:16777216")
 #include "BlocksCreation.hpp"
 #include "ChunksRenderer.hpp"
 
@@ -19,8 +19,13 @@ void ChunksRenderer::onAttach() {
     for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
         for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
             for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
-                Nest::StaticMesh *mesh =
-                    ChunkMeshGenerator::generateMesh(m_shader, m_chunksStorage, indexX, indexY, indexZ, true);
+                intptr_t ptr = (intptr_t) m_chunksStorage;
+                
+                
+                Nest::StaticMesh *mesh;
+                LOG_INFO("ERROR 1");
+//                mesh = ChunkMeshGenerator::generateMesh(m_shader, (ChunksStorage*) ptr, indexX, indexY, indexZ, true);
+                mesh = ChunkMeshGenerator::generateMesh(m_shader, m_chunksStorage, indexX, indexY, indexZ, true);
                 m_chunksStorage
                     ->chunks
                         [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +

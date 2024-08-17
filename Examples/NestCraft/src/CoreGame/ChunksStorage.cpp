@@ -7,7 +7,11 @@ ChunksStorage::~ChunksStorage() {
 }
 
 ChunksStorage::ChunksStorage() {
-    chunks = NEW_ARRAY(Foundation::getAllocator(), Chunk, SIZE_X * SIZE_Y * SIZE_Z);
+    int count = SIZE_X * SIZE_Y * SIZE_Z;
+    chunks = (Chunk*) ALLOC(Foundation::getAllocator(), sizeof(Chunk) * count);
+    for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
+        chunks[i].init();
+    }
     float terrain[WORLD_SIZE_X * WORLD_SIZE_Z];
     PerlinNoise::generate2DGlm(2, 10, 1.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
 

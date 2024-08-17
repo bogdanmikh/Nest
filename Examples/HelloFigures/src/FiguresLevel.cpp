@@ -10,9 +10,9 @@ FigureLevel::~FigureLevel() {
 }
 
 void FigureLevel::onAttach() {
-    m_sphereRenderer = new SphereRenderer;
-    m_cameraMove = new CameraMove;
-    m_cubeRenderer = new CubeRenderer;
+    m_sphereRenderer = NEW(Foundation::getAllocator(), SphereRenderer);
+    m_cameraMove =  NEW(Foundation::getAllocator(), CameraMove);
+    m_cubeRenderer = NEW(Foundation::getAllocator(), CubeRenderer);
     m_sphereRenderer->getTransform().setPosition({4., 0., 0.});
     addEntity(m_sphereRenderer);
     addEntity(m_cameraMove);
@@ -37,7 +37,7 @@ void FigureLevel::onUpdate(double deltaTime) {
 void FigureLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
-        delete entity;
+        FREE(Foundation::getAllocator(), entity);
     }
 }
 

@@ -7,14 +7,10 @@
 #include <filesystem>
 
 void NestCraftLevel::onAttach() {
-    Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram("Shaders/vst.glsl", "Shaders/fst.glsl");
-    m_shader = createProgram(programAsset.getBirdProgramCreate());
     auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
 
-    auto chunksRenderer = new ChunksRenderer;
-    chunksRenderer->onAttach();
+    auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
     addEntity(chunksRenderer);
     //    auto *cross = new Cross;
     //    cross->init();
@@ -22,18 +18,19 @@ void NestCraftLevel::onAttach() {
 }
 
 void NestCraftLevel::onUpdate(double deltaTime) {
-    for (const auto &item : m_entities) {
-        item->onUpdate(deltaTime);
+    for (const auto &entity : m_entities) {
+        entity->onUpdate(deltaTime);
     }
 }
 
 void NestCraftLevel::onDetach() {
-    for (const auto &item : m_entities) {
-        item->onDetach();
-        delete item;
+    for (auto &entity : m_entities) {
+        entity->onDetach();
+        FREE(Foundation::getAllocator(), entity);
     }
 }
 
 void NestCraftLevel::addEntity(Nest::Entity *entity) {
+    entity->onAttach();
     m_entities.emplace_back(entity);
 }

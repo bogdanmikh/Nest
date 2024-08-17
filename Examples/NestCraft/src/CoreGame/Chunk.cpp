@@ -5,9 +5,12 @@
 #include "glm/gtc/noise.hpp"
 #include <cmath>
 
-Chunk::Chunk()
-    : m_mesh(nullptr) {
-    data = NEW_ARRAY(Foundation::getAllocator(), Voxel, SIZE_X * SIZE_Y * SIZE_Z);
+void Chunk::init() {
+    m_mesh = nullptr;
+    data = (Voxel*) ALLOC(Foundation::getAllocator(), sizeof(Voxel) * SIZE_X * SIZE_Y * SIZE_Z);
+    for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
+        data[i] = Voxel();
+    }
 }
 
 Chunk::~Chunk() {
