@@ -11,6 +11,7 @@ public:
     void onUpdate(double deltaTime) override;
     void onDetach() override;
     void addEntity(Nest::Entity *entity) override {}
+
 private:
     ContentBrowser panel;
 };

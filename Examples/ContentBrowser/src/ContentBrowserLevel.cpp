@@ -29,4 +29,4 @@ void ContentBrowserLevel::onUpdate(double deltaTime) {
 
 ContentBrowserLevel::~ContentBrowserLevel() {}
 
-void ContentBrowserLevel::onDetach(){}
+void ContentBrowserLevel::onDetach() {}

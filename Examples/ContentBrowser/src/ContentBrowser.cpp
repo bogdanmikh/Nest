@@ -56,23 +56,22 @@ void ContentBrowser::onImGuiRender() {
     float ContentBrowserWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(ContentBrowserWidth / cellSize);
     columnCount = std::max(columnCount, 1);
-     if (!Nest::Events::getDropPaths().empty()) {
-         if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
-             const auto &dropPaths = Nest::Events::getDropPaths();
-             for (const auto &dropPath : dropPaths) {
-                 if (std::filesystem::is_directory(dropPath)) {
-                     SystemTools::copyFolder(dropPath, m_currentDirectory.string());
-                     LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath,
-                     m_currentDirectory.string());
-                 } else {
-                     std::filesystem::copy(dropPath, m_currentDirectory);
-                     LOG_INFO(
-                         "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
-                     );
-                 }
-             }
-         }
-     }
+    if (!Nest::Events::getDropPaths().empty()) {
+        if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
+            const auto &dropPaths = Nest::Events::getDropPaths();
+            for (const auto &dropPath : dropPaths) {
+                if (std::filesystem::is_directory(dropPath)) {
+                    SystemTools::copyFolder(dropPath, m_currentDirectory.string());
+                    LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath, m_currentDirectory.string());
+                } else {
+                    std::filesystem::copy(dropPath, m_currentDirectory);
+                    LOG_INFO(
+                        "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
+                    );
+                }
+            }
+        }
+    }
 
     ImGui::Columns(columnCount, 0, false);
     for (auto &directoryEntry : std::filesystem::directory_iterator(m_currentDirectory)) {
@@ -109,8 +108,8 @@ void ContentBrowser::onImGuiRender() {
         ImGui::PopID();
     }
     ImGui::Columns(1);
-     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
-     ImGui::SliderFloat("Padding", &padding, 0, 32);
+    ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
+    ImGui::SliderFloat("Padding", &padding, 0, 32);
     ImGui::End();
 }
 

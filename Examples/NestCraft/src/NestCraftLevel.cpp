@@ -25,7 +25,7 @@ static void drawCross() {
             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
     );
-//      ImGui::Begin("##crosshair");
+    //      ImGui::Begin("##crosshair");
 
     ImDrawList *drawList = ImGui::GetWindowDrawList();
 

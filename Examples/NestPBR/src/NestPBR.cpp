@@ -16,9 +16,9 @@ void NestPBR::onAttach() {
     };
     Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
     Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
-    m_skyComponent =
-        NEW(Foundation::getAllocator(),
-            Nest::SkyComponent)({skyTextureAssetNotBlur, skyPathToVertexShader, skyPathToFragmentShader});
+    m_skyComponent = NEW(Foundation::getAllocator(), Nest::SkyComponent)(
+        {skyTextureAssetNotBlur, skyPathToVertexShader, skyPathToFragmentShader}
+    );
 
     //    std::array<std::string, 6> skyTextureAssetBlur = {
     //        "Textures/skybox/blur/px.png",
