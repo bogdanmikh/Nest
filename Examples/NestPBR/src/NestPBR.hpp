@@ -1,22 +1,22 @@
 #pragma once
 
-#include "SkyComponent.hpp"
-#include "SkyComponent.hpp"
-#include "Cube.hpp"
-#include "Sphere.hpp"
+#include "SphereRenderer.hpp"
+#include "CubeRenderer.hpp"
 #include "CameraMove.hpp"
 
 #include <Nest.hpp>
 
-class ProfilerTest final : public Layer {
+class NestPBR final : public Nest::Layer {
 public:
-    void start() override;
-    void detach() override;
-    void update(double deltaTime) override;
+    ~NestPBR() override;
+    void onAttach() override;
+    void onUpdate(double deltaTime) override;
+    void onDetach() override;
+    void addEntity(Nest::Entity *entity) override;
 
 private:
-    SkyComponent m_skyComponent;
-    Cube m_cube;
-    std::vector<Sphere> m_spheres;
+//    SkyComponent m_skyComponent;
+    CubeRenderer m_cubeRenderer;
+    std::vector<SphereRenderer> m_spheres;
     CameraMove m_cameraMove;
 };

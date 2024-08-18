@@ -11,7 +11,7 @@ void CubeRenderer::onAttach() {
         Nest::AssetLoader::loadProgram("Shaders/vstCube.glsl", "Shaders/fstCube.glsl");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
-    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil.png");
+    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil5.png");
 
     TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
     textureCreate.m_numMips = 4;
@@ -81,17 +81,17 @@ void CubeRenderer::onAttach() {
 
 void CubeRenderer::onUpdate(double deltaTime) {
     static auto camera = Nest::Application::get()->getWorldCamera();
-    static auto time = Nest::Application::get()->getWindow()->getTime();
+    static double time;
     time = Nest::Application::get()->getWindow()->getTime();
-    static auto mousePos = Nest::Events::getCursorPos();
+    static glm::vec2 mousePos;
     mousePos = Nest::Events::getCursorPos();
-    static auto resolution = Nest::Application::get()->getWindow()->getSize();
+    static glm::vec2 resolution;
     resolution = Nest::Application::get()->getWindow()->getSize();
 
-    static auto projViewMtx = camera->getViewMatrix();
+    static glm::mat4 projViewMtx;
     projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
 
-    static auto cameraPos = camera->getPosition();
+    static glm::vec3 cameraPos = camera->getPosition();
     cameraPos = camera->getPosition();
 
     static auto model = m_transformComponent.getTransform();

@@ -4,12 +4,21 @@ in vec2 TexCoord;
 in vec3 Normal;
 in vec3 Position;
 
-uniform float iTime;
-uniform vec2 iResolution;
-uniform vec2 iMouse;
-uniform vec3 cameraPos;
-uniform float metallic;
-//uniform vec3 iColor;
+
+uniform vec4 iTimeVec4;
+uniform vec4 iResolutionVec4;
+uniform vec4 iMouseVec4;
+uniform vec4 iCameraPosVec4;
+uniform vec4 iColorVec4;
+
+float iTime = iTimeVec4.x;
+vec2 iResolution = iResolutionVec4.xy;
+vec2 iMouse = iMouseVec4.xy;
+vec3 cameraPos = iCameraPosVec4.xyz;
+vec3 iColor = iColorVec4.xyz;
+uniform vec4 iMetallicVec4;
+
+float metallic = iMetallicVec4.r;
 
 uniform sampler2D iTexture;
 uniform samplerCube iSky;

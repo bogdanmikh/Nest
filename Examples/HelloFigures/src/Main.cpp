@@ -9,6 +9,6 @@ int startApp(int argc, char **argv) {
     auto application = new Nest::Application(settings);
     application->setLayer(NEW(Foundation::getAllocator(), FigureLevel));
     application->loop();
-    FREE(Foundation::getAllocator(), application);
+    DELETE(Foundation::getAllocator(), application);
     return 0;
 }

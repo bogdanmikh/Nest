@@ -9,7 +9,7 @@
 #define BIRD_INVALID_HANDLE UINT16_MAX
 
 #if BIRDLOG_ENABLED == 1
-#    define BIRD_LOG(...) LOG_INFO("{}", __VA_ARGS__)
+#    define BIRD_LOG(...) LOG_INFO(__VA_ARGS__)
 #else
 #    define BIRD_LOG(...)
 #endif

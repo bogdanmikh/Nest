@@ -3,7 +3,6 @@ project(NestPBR)
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE SOURCES
-        main.cpp
         src/*.cpp
 )
 
@@ -14,6 +13,14 @@ file(GLOB_RECURSE INCLUDE
 )
 
 file(GLOB RESOURCE_FOLDERS res/*)
+
+file(GLOB RESOURCE_FOLDERS
+        resources/*
+        ${NEST_DIRECTORY}/resources/common/*
+)
+
+file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
+list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
 
 add_app(NestPBR "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 

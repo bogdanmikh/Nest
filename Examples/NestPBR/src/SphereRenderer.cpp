@@ -1,8 +1,8 @@
 #include "SphereRenderer.hpp"
 
 void SphereRenderer::onAttach() {
-    using namespace Bird;
     m_countIndices = 0;
+    metallic = 0.5;
 
     Bird::setViewClear(0, 0x3D75C9FF);
 
@@ -10,15 +10,21 @@ void SphereRenderer::onAttach() {
         Nest::AssetLoader::loadProgram("Shaders/vstSphere.glsl", "Shaders/fstSphere.glsl");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
-    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil6.png");
 
-    TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-    textureCreate.m_numMips = 4;
-    textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
-    textureCreate.m_magFiltering = Bird::NEAREST;
-    m_texture = createTexture(textureCreate);
+    if (m_createInfo.useTexture) {
+        Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
 
-    std::vector<SphereVertex> vertices;
+        Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+        textureCreate.m_numMips = 4;
+        textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+        textureCreate.m_magFiltering = Bird::NEAREST;
+        m_texture = createTexture(textureCreate);
+    }
+    if (m_createInfo.useCubeMap) {
+        //        m_cubeMap.create(m_createInfo.skyTextureAsset);
+    }
+
+    std::vector<VertexFigure> vertices;
     std::vector<uint32_t> indices;
     int sectorCount = 36, stackCount = 18;
     float radius = 1.0f;
@@ -72,19 +78,19 @@ void SphereRenderer::onAttach() {
     // clang-format on
     m_countIndices = indices.size();
     Foundation::Memory verticesMemory =
-        Foundation::Memory::copying(vertices.data(), sizeof(SphereVertex) * vertices.size());
+        Foundation::Memory::copying(vertices.data(), sizeof(VertexFigure) * vertices.size());
     Foundation::Memory indicesMemory =
         Foundation::Memory::copying(indices.data(), sizeof(uint32_t) * m_countIndices);
 
-    VertexBufferLayoutData layoutData;
+    Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
     layoutData.pushVec2();
     layoutData.pushVec3();
-    VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
+    Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
     m_vertexBuffer =
-        createVertexBuffer(verticesMemory, vertices.size() * sizeof(SphereVertex), vertexLayout);
+        createVertexBuffer(verticesMemory, vertices.size() * sizeof(VertexFigure), vertexLayout);
     m_indexBuffer =
-        createIndexBuffer(indicesMemory, BufferElementType::UnsignedInt, m_countIndices);
+        createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, m_countIndices);
 }
 
 void SphereRenderer::onUpdate(double deltaTime) {
@@ -105,16 +111,30 @@ void SphereRenderer::onUpdate(double deltaTime) {
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
+    static auto color = glm::vec3(1., 1., 1.);
+
     Bird::setShader(m_shader);
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
     Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
     Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4);        /// vec2
     Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);   /// vec4
+    Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec4
     Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
-    static int slot = 0;
-    Bird::setTexture(m_texture, slot);
-    Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);
+    Bird::setUniform(m_shader, "iMetallicVec4", &metallic, Bird::UniformType::Vec4);     /// float
+
+    /// texture using
+    if (m_createInfo.useTexture) {
+        static int slot = 0;
+        Bird::setTexture(m_texture, slot);
+        Bird::setUniform(m_shader, m_createInfo.nameTexture.c_str(), &slot, Bird::UniformType::Sampler);
+    }
+
+    /// cubemap using
+    if (m_createInfo.useCubeMap) {
+
+    }
+
     Bird::setIndexBuffer(m_indexBuffer, 0, m_countIndices);
     Bird::setVertexBuffer(m_vertexBuffer);
     Bird::submit(0);
@@ -127,8 +147,4 @@ void SphereRenderer::onDetach() {
     deleteIndexBuffer(m_indexBuffer);
     deleteProgram(m_shader);
     deleteTexture(m_texture);
-}
-
-Nest::TransformComponent &SphereRenderer::getTransform() {
-    return m_transformComponent;
 }

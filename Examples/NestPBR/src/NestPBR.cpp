@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-void ProfilerTest::start() {
+void NestPBR::onAttach() {
     std::array<std::string, 6> skyTextureAssetNotBlur = {
         "Textures/skybox/notblur/px.png",
         "Textures/skybox/notblur/nx.png",
@@ -24,7 +24,6 @@ void ProfilerTest::start() {
         "Textures/skybox/blur/pz.png",
         "Textures/skybox/blur/nz.png"
     };
-    m_skyComponent.init(skyTextureAssetNotBlur);
 
     CreateInfo cubeCreateInfo;
     cubeCreateInfo.position = glm::vec3(0., 0., 0.);
@@ -37,7 +36,7 @@ void ProfilerTest::start() {
     cubeCreateInfo.skyTextureAsset = skyTextureAssetNotBlur;
     cubeCreateInfo.nameTexture = "iTexture";
     cubeCreateInfo.nameCubeMap = "iSky";
-    m_cube.init(cubeCreateInfo);
+    m_cubeRenderer.onAttachFigure(cubeCreateInfo);
 
     CreateInfo sphereCreateInfo;
     sphereCreateInfo.position = glm::vec3(3., 0., 0.);
@@ -50,33 +49,41 @@ void ProfilerTest::start() {
     sphereCreateInfo.nameTexture = "iTexture";
     sphereCreateInfo.nameCubeMap = "iSky";
     m_spheres.resize(3);
-    m_spheres[0].init(sphereCreateInfo);
+    m_spheres[0].onAttachFigure(sphereCreateInfo);
 
     sphereCreateInfo.position = glm::vec3(6., 0., 0.);
     sphereCreateInfo.pathToTexture = "Textures/Rust.jpg";
-    m_spheres[1].init(sphereCreateInfo);
+    m_spheres[1].onAttachFigure(sphereCreateInfo);
 
     sphereCreateInfo.position = glm::vec3(8., 0., 0.);
     sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
-    m_spheres[2].init(sphereCreateInfo);
+    m_spheres[2].onAttachFigure(sphereCreateInfo);
 
-    m_cameraMove.init();
+    m_cameraMove.onAttach();
 }
 
-void ProfilerTest::detach() {}
+void NestPBR::onDetach() {
+    m_cameraMove.onDetach();
+    m_cubeRenderer.onDetach();
+    for (auto &sphere : m_spheres) {
+        sphere.onDetach();
+    }
+}
 
-void ProfilerTest::update(double deltaTime) {
-    m_cameraMove.update(deltaTime);
-    m_skyComponent.draw();
-    m_cube.rotateZ(0.5);
-    m_cube.rotateY(0.5);
-    m_cube.draw(deltaTime);
+void NestPBR::onUpdate(double deltaTime) {
+    m_cameraMove.onUpdate(deltaTime);
+    auto rotationCube = m_cubeRenderer.getTransform().getRotationEuler();
+    rotationCube.x += 0.5;
+    rotationCube.y += 0.5;
+    m_cubeRenderer.getTransform().setRotationEuler(rotationCube);
+    m_cubeRenderer.onUpdate(deltaTime);
 
     // spheres
-    Sphere::drawSettings();
-    float speed = 0.00001;
-    for (auto &sphere : m_spheres) {
-        sphere.draw(deltaTime);
-    }
-    Renderer::checkForErrors();
+//    for (auto &sphere : m_spheres) {
+//        sphere.onUpdate(deltaTime);
+//    }
 }
+
+void NestPBR::addEntity(Nest::Entity *entity) {}
+
+NestPBR::~NestPBR() {}
