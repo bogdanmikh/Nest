@@ -61,14 +61,14 @@ public:
 
         /// create shader
         Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
-            m_createInfo.pathToVertexShader, m_createInfo.pathToFragmentShader
+            m_createInfo.pathToVertexShader.string(), m_createInfo.pathToFragmentShader.string()
         );
         m_shader = createProgram(programAsset.getBirdProgramCreate());
 
         /// create texture
         if (m_createInfo.useTexture) {
             Nest::TextureAsset textureAsset =
-                Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
+                Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture.string());
 
             Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
             textureCreate.m_numMips = 4;

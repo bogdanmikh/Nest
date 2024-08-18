@@ -29,7 +29,7 @@ void gpuErrorCallback(
     const void *userParam
 ) {
     LOG_INFO(message);
-    LOG_CRITICAL("OPENGL ERROR");
+    // LOG_CRITICAL("OPENGL ERROR");
 }
 
 const char *getGLErrorStr(GLenum err) {

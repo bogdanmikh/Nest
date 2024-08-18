@@ -5,17 +5,15 @@
 
 #include <Nest.hpp>
 
-FigureLevel::~FigureLevel() {
-    onDetach();
-}
+FigureLevel::~FigureLevel() {}
 
 void FigureLevel::onAttach() {
     m_sphereRenderer = NEW(Foundation::getAllocator(), SphereRenderer);
     m_cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     m_cubeRenderer = NEW(Foundation::getAllocator(), CubeRenderer);
     m_sphereRenderer->getTransform().setPosition({4., 0., 0.});
-    addEntity(m_sphereRenderer);
     addEntity(m_cameraMove);
+    addEntity(m_sphereRenderer);
     addEntity(m_cubeRenderer);
     for (auto &entity : m_entities) {
         entity->onAttach();
@@ -37,7 +35,7 @@ void FigureLevel::onUpdate(double deltaTime) {
 void FigureLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
-        FREE(Foundation::getAllocator(), entity);
+        DELETE(Foundation::getAllocator(), entity);
     }
 }
 
