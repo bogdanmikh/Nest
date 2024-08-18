@@ -3,6 +3,7 @@ project(ContentBrowser)
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE SOURCES
+        main.cpp
         src/*.cpp
 )
 
@@ -13,6 +14,15 @@ file(GLOB_RECURSE INCLUDE
 )
 
 file(GLOB RESOURCE_FOLDERS res/*)
+
+file(GLOB RESOURCE_FOLDERS
+        resources/*
+        ${NEST_DIRECTORY}/resources/common/*
+)
+
+file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
+list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
+
 
 add_app(ContentBrowser "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 
@@ -34,6 +44,3 @@ set_target_properties(ContentBrowser
 # Dependencies - Nest
 target_link_libraries(ContentBrowser Nest)
 target_include_directories(ContentBrowser PRIVATE ${NEST_DIRECTORY}/include)
-
-# Dependencies - Rain
-target_link_libraries(ContentBrowser Rain)

@@ -92,6 +92,11 @@ void RendererVulkan::flip() {
     context->flip();
 }
 
+void RendererVulkan::clear() {
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GL_CALL(glClearColor(0, 0, 0, 1));
+}
+
 void RendererVulkan::createFrameBuffer(
     FrameBufferHandle handle, FrameBufferSpecification specification
 ) {

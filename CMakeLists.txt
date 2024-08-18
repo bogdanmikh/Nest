@@ -29,6 +29,8 @@ add_subdirectory(Vendor/glm)
 add_subdirectory(Vendor/imgui)
 add_subdirectory(Vendor/spdlog)
 add_subdirectory(Vendor/stb_image)
+add_subdirectory(Vendor/dylib)
+add_subdirectory(Vendor/nfd)
 add_subdirectory(Vendor/assimp)
 add_subdirectory(Rain)
 

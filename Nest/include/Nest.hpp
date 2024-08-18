@@ -3,10 +3,14 @@
 // Base
 #include "Nest/Application/Application.hpp"
 #include "Nest/Application/Layer.hpp"
+#include "Nest/Platform/PlatformDetection.hpp"
 #include "Nest/Application/ApplicationStartupSettings.hpp"
 #include "Nest/Window/Events.hpp"
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Renderer/Texture.hpp"
+
+// SystemTools
+#include "Nest/SystemTools/SystemTools.hpp"
 
 // Assets
 #include "Nest/Assets/AssetLoader.hpp"

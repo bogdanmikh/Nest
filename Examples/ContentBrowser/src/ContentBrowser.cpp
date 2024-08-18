@@ -1,85 +1,120 @@
+
 #include "ContentBrowser.hpp"
+#include "Nest/ImGui/FontAwesome.h"
+#include "Nest/Window/Events.hpp"
+
 #include <imgui.h>
-#include <iostream>
-#include <filesystem>
-#include <sstream>
-#include <string>
 
-namespace fs = std::filesystem;
-
-ContentBrowser::ContentBrowser() {
-    panel.start();
+ContentBrowser::ContentBrowser()
+    : m_baseDirectory()
+    , m_currentDirectory()
+    , m_defaultFileIcon("Icons/_plain.png")
+    , m_directoryIcon("Icons/DirectoryIcon.png")
+    , m_fileIcons() {
+    m_fileIcons.emplace(".avi", Texture("Icons/avi.png"));
+    m_fileIcons.emplace(".bmp", Texture("Icons/bmp.png"));
+    m_fileIcons.emplace(".c", Texture("Icons/c.png"));
+    m_fileIcons.emplace(".cpp", Texture("Icons/cpp.png"));
+    m_fileIcons.emplace(".gif", Texture("Icons/gif.png"));
+    m_fileIcons.emplace(".h", Texture("Icons/h.png"));
+    m_fileIcons.emplace(".hpp", Texture("Icons/hpp.png"));
+    m_fileIcons.emplace(".html", Texture("Icons/html.png"));
+    m_fileIcons.emplace(".jpg", Texture("Icons/jpg.png"));
+    m_fileIcons.emplace(".mp3", Texture("Icons/mp3.png"));
+    m_fileIcons.emplace(".mp4", Texture("Icons/mp4.png"));
+    m_fileIcons.emplace(".png", Texture("Icons/png.png"));
+    m_fileIcons.emplace(".tga", Texture("Icons/tga.png"));
+    m_fileIcons.emplace(".tiff", Texture("Icons/tiff.png"));
+    m_fileIcons.emplace(".txt", Texture("Icons/txt.png"));
+    m_fileIcons.emplace(".wav", Texture("Icons/wav.png"));
+    m_fileIcons.emplace(".xml", Texture("Icons/xml.png"));
+    m_fileIcons.emplace(".yml", Texture("Icons/yml.png"));
+    m_fileIcons.emplace(".zip", Texture("Icons/zip.png"));
 }
 
-void ContentBrowser::start() {}
-
-std::string getFolderName(const std::string &path) {
-    std::ostringstream res;
-    for (int i = path.size(); i >= 0 && path[i] != fs::path::preferred_separator; ++i) {
-        res << path[i];
-    }
-    auto resStr = res.str();
-    std::reverse(resStr.begin(), resStr.end());
-    return resStr;
+bool isMouseInsideWindow(ImVec2 windowPos, ImVec2 windowSize) {
+    ImVec2 maxSize = windowPos;
+    maxSize.x += windowSize.x;
+    maxSize.y += windowSize.y;
+    return ImGui::IsMouseHoveringRect(windowPos, maxSize);
 }
 
-void ContentBrowser::update(double deltaTime) {
-    /*
-    const static std::string path = "/home/bogdan/Documents/VivoProjects";
-    static fs::path folder = fs::directory_entry(path);
-    ImGui::Begin("File");
-    if (ImGui::Button((const char *)ICON_ARROW_LEFT)) {
-        folder = folder.parent_path();
-        LOG_INFO("PATH: {}", folder.string());
+void ContentBrowser::onImGuiRender() {
+    if (m_currentDirectory.empty()) {
+        return;
     }
-    if (fs::exists(path)) {
-        for (const auto &entry : fs::directory_iterator(folder)) {
-            auto filename = entry.path().filename();
-            if (filename.empty() || filename.string()[0] == '.') {
-                continue;
-            }
-            std::string text = std::string((const char *)ICON_FILE) + " " + filename.string();
-            if (fs::is_regular_file(entry.status())) {
-                if (filename.string().find(".cpp") != std::string::npos) {
-                    text = std::string((const char *)ICON_FILE_CODE_O) + " " + filename.string();
-                } else if (filename.string().find(".txt") != std::string::npos) {
-                    text = std::string((const char *)ICON_FILE_TEXT) + " " + filename.string();
-                }
-            } else if (fs::is_directory(entry.status())) {
-                text = std::string((const char *)ICON_FOLDER) + " " + filename.string();
-            }
-            ImGuiTreeNodeFlags flags = 0;
-            //                flags |= ImGuiTreeNodeFlags_Selected;
-            flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-            flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen;
-            flags |= ImGuiTreeNodeFlags_Leaf;
-//            flags |= ImGuiTreeNodeFlags_;
-            flags |= ImGuiTreeNodeFlags_Bullet;
-            ImGui::TreeNodeEx(text.c_str(), flags);
-            if (ImGui::IsItemClicked() && fs::is_directory(entry.status())) {
-                folder = entry.path();
-//                path = path + fs::path::preferred_separator + filename.string();
-            }
-            if (ImGui::BeginPopupContextItem()) {
-                ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
-                if (ImGui::Button("Rename", ImVec2(75, ImGui::GetTextLineHeight() + 5))) {
+    ImGui::Begin("Content Browser");
+    if (m_currentDirectory != Nest::Path(m_baseDirectory)) {
+        if (ImGui::Button(getString(ICON_ARROW_LEFT).c_str())) {
+            m_currentDirectory = m_currentDirectory.parent_path();
+        }
+    }
+    static float padding = 8.0f;
+    static float thumbnailSize = 90.0f;
+    float cellSize = thumbnailSize + padding;
 
-                } else if (ImGui::Button("Delete", ImVec2(75, ImGui::GetTextLineHeight() + 5))) {
-                }
-                ImGui::PopStyleVar();
-                ImGui::EndPopup();
+    float ContentBrowserWidth = ImGui::GetContentRegionAvail().x;
+    int columnCount = (int)(ContentBrowserWidth / cellSize);
+    columnCount = std::max(columnCount, 1);
+     if (!Nest::Events::getDropPaths().empty()) {
+         if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
+             const auto &dropPaths = Nest::Events::getDropPaths();
+             for (const auto &dropPath : dropPaths) {
+                 if (std::filesystem::is_directory(dropPath)) {
+                     SystemTools::copyFolder(dropPath, m_currentDirectory.string());
+                     LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath,
+                     m_currentDirectory.string());
+                 } else {
+                     std::filesystem::copy(dropPath, m_currentDirectory);
+                     LOG_INFO(
+                         "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
+                     );
+                 }
+             }
+         }
+     }
+
+    ImGui::Columns(columnCount, 0, false);
+    for (auto &directoryEntry : std::filesystem::directory_iterator(m_currentDirectory)) {
+        const auto &path = directoryEntry.path();
+        std::string filenameString = path.filename().string();
+
+        ImGui::PushID(filenameString.c_str());
+        Texture *icon;
+        if (directoryEntry.is_directory()) {
+            icon = &m_directoryIcon;
+        } else {
+            if (m_fileIcons.find(path.extension().string()) != m_fileIcons.end()) {
+                icon = &m_fileIcons[path.extension().string()];
+            } else {
+                icon = &m_defaultFileIcon;
             }
         }
-    } else {
-        std::cout << "Path not found\n";
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        ImGui::ImageButton(
+            (ImTextureID)(intptr_t)icon->getHandle().id, {thumbnailSize, thumbnailSize}
+        );
+        ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+            if (directoryEntry.is_directory()) {
+                m_currentDirectory /= path.filename();
+            }
+        }
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) &&
+            !is_directory(path)) {
+            SystemTools::open(path);
+        }
+        ImGui::TextWrapped("%s", filenameString.c_str());
+        ImGui::NextColumn();
+        ImGui::PopID();
     }
+    ImGui::Columns(1);
+     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
+     ImGui::SliderFloat("Padding", &padding, 0, 32);
     ImGui::End();
-     */
-    panel.onImGuiRender();
 }
 
-ContentBrowser::~ContentBrowser() {}
-
-void ContentBrowser::detach() {
-    LOG_INFO("END");
+void ContentBrowser::setBaseDirectory(const Path &path) {
+    m_baseDirectory = path;
+    m_currentDirectory = path;
 }

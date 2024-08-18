@@ -1,14 +1,14 @@
-#include <Nest.hpp>
+#include "ContentBrowserLevel.hpp"
 
-#include "ContentBrowser.hpp"
-
-int main() {
-    auto *application = Application::getInstance();
-    auto *layer = new ContentBrowser();
-    layer->start();
-    application->setLayer(layer);
+int startApp(int argc, char **argv) {
+    Nest::ApplicationStartupSettings settings;
+    settings.name = "ContentBrowser";
+    settings.windowTitle = "ContentBrowser";
+    settings.windowSize = {900, 600};
+    settings.isFullScreen = false;
+    auto application = new Nest::Application(settings);
+    application->setLayer(NEW(Foundation::getAllocator(), ContentBrowserLevel));
     application->loop();
-    layer->detach();
-    delete layer;
-    delete application;
+    DELETE(Foundation::getAllocator(), application);
+    return 0;
 }
