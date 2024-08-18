@@ -92,6 +92,11 @@ void RendererOpenGL::flip() {
     context->flip();
 }
 
+void RendererOpenGL::clear() {
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GL_CALL(glClearColor(0, 0, 0, 1));
+}
+
 void RendererOpenGL::createFrameBuffer(
     FrameBufferHandle handle, FrameBufferSpecification specification
 ) {
@@ -240,8 +245,7 @@ void RendererOpenGL::submit(Frame *frame, View *views) {
         );
     }
     if (!frame->getDrawCallsCount()) {
-        GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-        GL_CALL(glClearColor(0, 0, 0, 1));
+        clear();
         return;
     }
     ViewId viewId = -1;

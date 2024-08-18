@@ -38,20 +38,20 @@ struct Context {
         m_render.m_transientVbSize = 0;
         m_render.m_transientIbSize = 0;
         m_render.reset();
-//        for (int i = 0; i < MAX_DRAW_CALLS; ++i) {
-//            RenderDraw &draw = m_render.getDrawCalls()[i];
-//            draw.reset();
-//        }
+        //        for (int i = 0; i < MAX_DRAW_CALLS; ++i) {
+        //            RenderDraw &draw = m_render.getDrawCalls()[i];
+        //            draw.reset();
+        //        }
     }
 
     // Должно быть вызвано из главного потока и не из цикла обновления.
     ~Context() {
         destroyTransientVertexBuffer(m_render.m_transientVb);
         destroyTransientIndexBuffer(m_render.m_transientIb);
-//        frame();
-//        destroyTransientVertexBuffer(m_render.m_transientVb);
-//        destroyTransientIndexBuffer(m_render.m_transientIb);
-//        frame();
+        //        frame();
+        //        destroyTransientVertexBuffer(m_render.m_transientVb);
+        //        destroyTransientIndexBuffer(m_render.m_transientIb);
+        //        frame();
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererShutdown);
         m_postCommandQueue.write(cmd);
     }

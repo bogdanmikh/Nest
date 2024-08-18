@@ -51,6 +51,9 @@ target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 target_link_libraries(Nest glad)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glad/include)
 
+# Dependencies - nfd
+target_link_libraries(Nest nfd)
+
 # Dependencies - assimp
 if (USE_ASSIMP)
     target_link_libraries(Nest assimp)

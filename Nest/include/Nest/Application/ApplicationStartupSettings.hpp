@@ -17,7 +17,7 @@ public:
 
     ApplicationStartupSettings()
         : name("Nest Sandbox App")
-        , windowTitle("Panda")
+        , windowTitle("Nest")
         , windowSize(Size(600, 400))
         , isFullScreen(false)
         , isMaximized(false) {}

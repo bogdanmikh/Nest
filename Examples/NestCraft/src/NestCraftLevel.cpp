@@ -16,6 +16,8 @@ void NestCraftLevel::onAttach() {
 }
 
 static void drawCross() {
+    ImGuiIO &io = ImGui::GetIO();
+    ImGui::SetNextWindowSize(io.DisplaySize);
     ImGui::Begin(
         "##crosshair",
         nullptr,
@@ -23,11 +25,10 @@ static void drawCross() {
             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
     );
-    //  ImGui::Begin("##crosshair");
+    //      ImGui::Begin("##crosshair");
 
     ImDrawList *drawList = ImGui::GetWindowDrawList();
 
-    ImGuiIO &io = ImGui::GetIO();
     float windowWidth = io.DisplaySize.x;
     float windowHeight = io.DisplaySize.y;
 

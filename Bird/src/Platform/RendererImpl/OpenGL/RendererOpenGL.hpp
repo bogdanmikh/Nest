@@ -20,6 +20,7 @@ public:
     ~RendererOpenGL() override;
     RendererType getRendererType() const override;
     void flip() override;
+    void clear() override;
     void
     createFrameBuffer(FrameBufferHandle handle, FrameBufferSpecification specification) override;
     void deleteFrameBuffer(FrameBufferHandle handle) override;

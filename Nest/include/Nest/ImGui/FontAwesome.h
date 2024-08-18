@@ -1,6 +1,8 @@
 #pragma once
 
-namespace Nest {
+static inline std::string getString(const char8_t *ptr) {
+    return (const char *)ptr;
+}
 
 #define ICON_MIN 0xf000
 #define ICON_MAX 0xf307
@@ -713,5 +715,3 @@ namespace Nest {
 #define ICON_DOGMAZIC u8"\uf303"
 #define ICON_NEXTCLOUD u8"\uf306"
 #define ICON_NEXTCLOUD_SQUARE u8"\uf307"
-
-} // namespace Nest
