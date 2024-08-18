@@ -1,17 +1,11 @@
-#version 330
+#version 330 core
 
 in vec3 TexCoord;
 
-uniform float iTime;
-uniform vec2 iResolution;
-uniform vec2 iMouse;
-//uniform vec3 iColor;
+out vec4 FragColor;
 
-uniform samplerCube iSky;
-
-out vec4 fragColor;
+uniform samplerCube skyTexture;
 
 void main() {
-    vec2 st = gl_FragCoord.xy / iResolution;
-    fragColor = texture(iSky, TexCoord);
+    FragColor = texture(skyTexture, TexCoord);
 }

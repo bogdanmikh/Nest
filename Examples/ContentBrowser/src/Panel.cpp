@@ -62,7 +62,7 @@ bool isMouseInsideWindow(ImVec2 windowPos, ImVec2 windowSize) {
 void Panel::onImGuiRender() {
     static bool showHiddenFiles = true;
     ImGui::Begin("Content Browser");
-    if (m_currentDirectory != std::filesystem::path(m_baseDirectory)) {
+    if (m_currentDirectory != Nest::Path(m_baseDirectory)) {
         if (ImGui::Button(getString(ICON_ARROW_LEFT).c_str())) {
             m_currentDirectory = m_currentDirectory.parent_path();
         }

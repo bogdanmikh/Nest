@@ -15,8 +15,9 @@ public:
     void addEntity(Nest::Entity *entity) override;
 
 private:
-//    SkyComponent m_skyComponent;
+    //    SkyComponent m_skyComponent;
     CubeRenderer m_cubeRenderer;
     std::vector<SphereRenderer> m_spheres;
     CameraMove m_cameraMove;
+    Nest::SkyComponent *m_skyComponent;
 };

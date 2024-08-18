@@ -5,6 +5,7 @@
 
 #include <glm/glm.hpp>
 #include <Bird/Bird.hpp>
+#include <filesystem>
 
 namespace Nest {
 
@@ -15,11 +16,23 @@ struct SkyVertex {
         : pos(x, y, z) {}
 };
 
+struct SkyCreateInfo {
+    std::array<Path, 6> pathsSkyTextures;
+    Path pathToVertexShader;
+    Path pathToFragmentShader;
+    SkyCreateInfo(
+        std::array<Path, 6> pathSkyTextures, Path pathToVertexShader, Path pathToFragmentShader
+    )
+        : pathsSkyTextures(pathSkyTextures)
+        , pathToVertexShader(pathToVertexShader)
+        , pathToFragmentShader(pathToFragmentShader) {}
+};
+
 class SkyComponent final {
 public:
     SkyComponent(SkyComponent &other) = delete;
 
-    SkyComponent()
+    SkyComponent(const SkyCreateInfo &skyCreateInfo)
         : m_sceneViewId(0) {
         using namespace Bird;
         SkyVertex vertices[24] = {
@@ -78,21 +91,21 @@ public:
         m_indexBuffer =
             Bird::createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, 36);
 
-        Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture({
-            "default-textures/skybox/px.png",
-            "default-textures/skybox/nx.png",
-            "default-textures/skybox/py.png",
-            "default-textures/skybox/ny.png",
-            "default-textures/skybox/pz.png",
-            "default-textures/skybox/nz.png",
-        });
+        Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture(
+            {skyCreateInfo.pathsSkyTextures[0],
+             skyCreateInfo.pathsSkyTextures[1],
+             skyCreateInfo.pathsSkyTextures[2],
+             skyCreateInfo.pathsSkyTextures[3],
+             skyCreateInfo.pathsSkyTextures[4],
+             skyCreateInfo.pathsSkyTextures[5]}
+        );
         Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
         m_skyTextureConfig.m_minFiltering = NEAREST;
         m_skyTextureConfig.m_magFiltering = LINEAR;
         m_skyTexture = Bird::createTexture(m_skyTextureConfig);
 
         ProgramAsset programAsset = AssetLoader::loadProgram(
-            "default-shaders/sky/sky_vertex.glsl", "default-shaders/sky/sky_fragment.glsl"
+            skyCreateInfo.pathToVertexShader, skyCreateInfo.pathToFragmentShader
         );
         m_shader = Bird::createProgram(programAsset.getBirdProgramCreate());
         m_model = glm::mat4(1.f);
@@ -114,7 +127,7 @@ public:
         Bird::setShader(m_shader);
         static int samplerCube = 0;
         Bird::setTexture(m_skyTexture, samplerCube);
-        Bird::setUniform(m_shader, "skyTexture", &samplerCube, Bird::UniformType::Int);
+        Bird::setUniform(m_shader, "skyTexture", &samplerCube, Bird::UniformType::Sampler);
         Bird::setUniform(m_shader, "model", &m_model[0][0], Bird::UniformType::Mat4);
         Bird::setUniform(m_shader, "projViewMtx", &m_viewProjection[0][0], Bird::UniformType::Mat4);
         Bird::setVertexBuffer(m_vertexBuffer);

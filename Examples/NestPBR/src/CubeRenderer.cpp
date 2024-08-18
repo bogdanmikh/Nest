@@ -1,17 +1,18 @@
 #include "CubeRenderer.hpp"
 
-
 void CubeRenderer::onAttach() {
     m_transformComponent.setPosition(m_createInfo.position);
 
     Bird::setViewClear(0, 0x3D75C9FF);
 
-    Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram(m_createInfo.pathToVertexShader, m_createInfo.pathToFragmentShader);
+    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
+        m_createInfo.pathToVertexShader, m_createInfo.pathToFragmentShader
+    );
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     if (m_createInfo.useTexture) {
-        Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
+        Nest::TextureAsset textureAsset =
+            Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
 
         Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
         textureCreate.m_numMips = 4;
@@ -21,7 +22,7 @@ void CubeRenderer::onAttach() {
     }
 
     if (m_createInfo.useCubeMap) {
-//        m_cubeMap.create(m_createInfo.skyTextureAsset);
+        //        m_cubeMap.create(m_createInfo.skyTextureAsset);
     }
 
     // clang-format off
@@ -112,16 +113,22 @@ void CubeRenderer::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec3
     Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
+    static int slot = 0;
     /// texture using
     if (m_createInfo.useTexture) {
-        static int slot = 0;
+        slot = 0;
         Bird::setTexture(m_texture, slot);
-        Bird::setUniform(m_shader, m_createInfo.nameTexture.c_str(), &slot, Bird::UniformType::Sampler);
+        Bird::setUniform(
+            m_shader, m_createInfo.nameTexture.c_str(), &slot, Bird::UniformType::Sampler
+        );
     }
-
     /// cubemap using
     if (m_createInfo.useCubeMap) {
-
+        slot = 1;
+        Bird::setTexture(m_createInfo.skyComponentHandle, slot);
+        Bird::setUniform(
+            m_shader, m_createInfo.nameSkyTexture.c_str(), &slot, Bird::UniformType::Sampler
+        );
     }
 
     Bird::setIndexBuffer(m_indexBuffer, 0, 36);

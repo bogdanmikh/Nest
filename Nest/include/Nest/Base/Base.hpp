@@ -5,8 +5,11 @@
 #include <imgui.h>
 #include <Rain/Rain.hpp>
 #include <Rain/Codable.hpp>
+#include <filesystem>
 
 namespace Nest {
+
+using Path = std::filesystem::path;
 
 struct Vec2 : public Rain::Codable {
     union {

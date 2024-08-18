@@ -7,20 +7,18 @@
 struct CreateInfo {
     bool useTexture;
     bool useCubeMap;
+    Bird::TextureHandle skyComponentHandle;
     glm::vec3 position;
-    std::filesystem::path pathToTexture;
-    std::array<std::string, 6> skyTextureAsset;
-    std::filesystem::path pathToVertexShader;
-    std::filesystem::path pathToFragmentShader;
+    Nest::Path pathToTexture;
+    Nest::Path pathToVertexShader;
+    Nest::Path pathToFragmentShader;
     std::string nameTexture;
-    std::string nameCubeMap;
+    std::string nameSkyTexture;
     CreateInfo()
-    : useTexture(false)
-    , useCubeMap(false)
-    , position(0, 0, 0)
-    , nameCubeMap("") {}
+        : useTexture(false)
+        , useCubeMap(false)
+        , position(0, 0, 0) {}
 };
-
 
 struct VertexFigure {
     // position
@@ -55,10 +53,9 @@ struct VertexFigure {
         , Normal(aNormalX, aNormalY, aNormalZ) {};
 };
 
-
 struct Figure : public Nest::Entity {
 public:
-    void onAttachFigure(const CreateInfo& createInfo) {
+    void onAttachFigure(const CreateInfo &createInfo) {
         m_createInfo = createInfo;
         onAttach();
     }
@@ -70,6 +67,7 @@ public:
     virtual void onImGuiRender() override = 0;
     virtual void onDetach() override = 0;
     virtual ~Figure() override {}
+
 protected:
     virtual void onAttach() override = 0;
     CreateInfo m_createInfo;

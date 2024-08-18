@@ -14,8 +14,8 @@ public:
 
 private:
     SystemTools *m_systemTools;
-    std::filesystem::path m_baseDirectory;
-    std::filesystem::path m_currentDirectory;
+    Nest::Path m_baseDirectory;
+    Nest::Path m_currentDirectory;
     Texture *m_directoryIcon;
     Texture *m_defaultFileIcon;
     std::map<std::string, Texture *> m_fileIcons;

@@ -5,10 +5,8 @@
 #include <sstream>
 #include <string>
 
-namespace fs = std::filesystem;
-
 void NestPBR::onAttach() {
-    std::array<std::string, 6> skyTextureAssetNotBlur = {
+    std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
         "Textures/skybox/notblur/px.png",
         "Textures/skybox/notblur/nx.png",
         "Textures/skybox/notblur/py.png",
@@ -16,14 +14,20 @@ void NestPBR::onAttach() {
         "Textures/skybox/notblur/pz.png",
         "Textures/skybox/notblur/nz.png"
     };
-    std::array<std::string, 6> skyTextureAssetBlur = {
-        "Textures/skybox/blur/px.png",
-        "Textures/skybox/blur/nx.png",
-        "Textures/skybox/blur/py.png",
-        "Textures/skybox/blur/ny.png",
-        "Textures/skybox/blur/pz.png",
-        "Textures/skybox/blur/nz.png"
-    };
+    Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
+    Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
+    m_skyComponent =
+        NEW(Foundation::getAllocator(),
+            Nest::SkyComponent)({skyTextureAssetNotBlur, skyPathToVertexShader, skyPathToFragmentShader});
+
+    //    std::array<std::string, 6> skyTextureAssetBlur = {
+    //        "Textures/skybox/blur/px.png",
+    //        "Textures/skybox/blur/nx.png",
+    //        "Textures/skybox/blur/py.png",
+    //        "Textures/skybox/blur/ny.png",
+    //        "Textures/skybox/blur/pz.png",
+    //        "Textures/skybox/blur/nz.png"
+    //    };
 
     CreateInfo cubeCreateInfo;
     cubeCreateInfo.position = glm::vec3(0., 0., 0.);
@@ -31,10 +35,10 @@ void NestPBR::onAttach() {
     cubeCreateInfo.pathToFragmentShader = "Shaders/fstCube.glsl";
     cubeCreateInfo.useTexture = true;
     cubeCreateInfo.pathToTexture = "Textures/Rust.jpg";
-    cubeCreateInfo.useCubeMap = true;
-    cubeCreateInfo.skyTextureAsset = skyTextureAssetNotBlur;
+    cubeCreateInfo.useCubeMap = false;
+    cubeCreateInfo.skyComponentHandle = m_skyComponent->getSkyTexture();
     cubeCreateInfo.nameTexture = "iTexture";
-    cubeCreateInfo.nameCubeMap = "iSky";
+    cubeCreateInfo.nameSkyTexture = "iSky";
     m_cubeRenderer.onAttachFigure(cubeCreateInfo);
 
     CreateInfo sphereCreateInfo;
@@ -43,10 +47,10 @@ void NestPBR::onAttach() {
     sphereCreateInfo.pathToFragmentShader = "Shaders/fstSphere.glsl";
     sphereCreateInfo.useTexture = true;
     sphereCreateInfo.pathToTexture = "Textures/Sphere.jpg";
-    sphereCreateInfo.useCubeMap = true;
-    sphereCreateInfo.skyTextureAsset = skyTextureAssetNotBlur;
+    sphereCreateInfo.useCubeMap = false;
     sphereCreateInfo.nameTexture = "iTexture";
-    sphereCreateInfo.nameCubeMap = "iSky";
+    sphereCreateInfo.skyComponentHandle = m_skyComponent->getSkyTexture();
+    sphereCreateInfo.nameSkyTexture = "iSky";
     m_spheres.resize(3);
     m_spheres[0].onAttachFigure(sphereCreateInfo);
 
@@ -67,9 +71,15 @@ void NestPBR::onDetach() {
     for (auto &sphere : m_spheres) {
         sphere.onDetach();
     }
+    DELETE(Foundation::getAllocator(), m_skyComponent);
 }
 
 void NestPBR::onUpdate(double deltaTime) {
+    static auto camera = Nest::Application::get()->getWorldCamera();
+    static glm::mat4 projViewMtx;
+    projViewMtx = camera->getProjectionMatrix() * camera->getSkyViewMatrix();
+    m_skyComponent->update(projViewMtx);
+
     m_cameraMove.onUpdate(deltaTime);
     auto rotationCube = m_cubeRenderer.getTransform().getRotationEuler();
     rotationCube.x += 0.5;

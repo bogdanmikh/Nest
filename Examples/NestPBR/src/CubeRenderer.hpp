@@ -8,6 +8,7 @@ public:
     void onUpdate(double deltaTime) override;
     void onImGuiRender() override;
     void onDetach() override;
+
 private:
     void onAttach() override;
     Bird::TextureHandle m_texture;

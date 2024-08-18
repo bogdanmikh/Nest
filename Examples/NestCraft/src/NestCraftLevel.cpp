@@ -15,14 +15,19 @@ void NestCraftLevel::onAttach() {
     addEntity(chunksRenderer);
 }
 
-
 static void drawCross() {
-    ImGui::Begin("##crosshair", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground);
-//  ImGui::Begin("##crosshair");
+    ImGui::Begin(
+        "##crosshair",
+        nullptr,
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
+            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
+    );
+    //  ImGui::Begin("##crosshair");
 
-    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImDrawList *drawList = ImGui::GetWindowDrawList();
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     float windowWidth = io.DisplaySize.x;
     float windowHeight = io.DisplaySize.y;
 
@@ -32,8 +37,12 @@ static void drawCross() {
     float lineLength = 20.0f;
 
     auto color = IM_COL32(255, 0, 0, 255);
-    drawList->AddLine(ImVec2(centerX - lineLength, centerY), ImVec2(centerX + lineLength, centerY), color);
-    drawList->AddLine(ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color);
+    drawList->AddLine(
+        ImVec2(centerX - lineLength, centerY), ImVec2(centerX + lineLength, centerY), color
+    );
+    drawList->AddLine(
+        ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color
+    );
     ImGui::End();
 }
 
