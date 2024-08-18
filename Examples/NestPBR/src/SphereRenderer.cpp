@@ -1,27 +1,10 @@
 #include "SphereRenderer.hpp"
 
 void SphereRenderer::onAttach() {
-    m_transformComponent.setPosition(m_createInfo.position);
-
     m_countIndices = 0;
     metallic = 0.5;
 
     Bird::setViewClear(0, 0x3D75C9FF);
-
-    Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram("Shaders/vstSphere.glsl", "Shaders/fstSphere.glsl");
-    m_shader = createProgram(programAsset.getBirdProgramCreate());
-
-    if (m_createInfo.useTexture) {
-        Nest::TextureAsset textureAsset =
-            Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
-
-        Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-        textureCreate.m_numMips = 4;
-        textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
-        textureCreate.m_magFiltering = Bird::NEAREST;
-        m_texture = createTexture(textureCreate);
-    }
 
     std::vector<VertexFigure> vertices;
     std::vector<uint32_t> indices;
@@ -122,10 +105,9 @@ void SphereRenderer::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
     Bird::setUniform(m_shader, "iMetallicVec4", &metallic, Bird::UniformType::Vec4);     /// float
 
-    static int slot = 0;
     /// texture using
     if (m_createInfo.useTexture) {
-        slot = 0;
+        static int slot = 0;
         Bird::setTexture(m_texture, slot);
         Bird::setUniform(
             m_shader, m_createInfo.nameTexture.c_str(), &slot, Bird::UniformType::Sampler
@@ -133,7 +115,7 @@ void SphereRenderer::onUpdate(double deltaTime) {
     }
     /// cubemap using
     if (m_createInfo.useCubeMap) {
-        slot = 1;
+        static int slot = 1;
         Bird::setTexture(m_createInfo.skyComponentHandle, slot);
         Bird::setUniform(
             m_shader, m_createInfo.nameSkyTexture.c_str(), &slot, Bird::UniformType::Sampler

@@ -11,8 +11,6 @@ public:
 
 private:
     void onAttach() override;
-    Bird::TextureHandle m_texture;
     Bird::VertexBufferHandle m_vertexBuffer;
     Bird::IndexBufferHandle m_indexBuffer;
-    Bird::ProgramHandle m_shader;
 };

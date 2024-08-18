@@ -1,29 +1,7 @@
 #include "CubeRenderer.hpp"
 
 void CubeRenderer::onAttach() {
-    m_transformComponent.setPosition(m_createInfo.position);
-
     Bird::setViewClear(0, 0x3D75C9FF);
-
-    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
-        m_createInfo.pathToVertexShader, m_createInfo.pathToFragmentShader
-    );
-    m_shader = createProgram(programAsset.getBirdProgramCreate());
-
-    if (m_createInfo.useTexture) {
-        Nest::TextureAsset textureAsset =
-            Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
-
-        Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-        textureCreate.m_numMips = 4;
-        textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
-        textureCreate.m_magFiltering = Bird::NEAREST;
-        m_texture = createTexture(textureCreate);
-    }
-
-    if (m_createInfo.useCubeMap) {
-        //        m_cubeMap.create(m_createInfo.skyTextureAsset);
-    }
 
     // clang-format off
     VertexFigure vertices[24] = {
@@ -105,6 +83,8 @@ void CubeRenderer::onUpdate(double deltaTime) {
 
     static auto color = glm::vec3(1., 1., 1.);
 
+    static float metallic = 0.5;
+
     Bird::setShader(m_shader);
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
     Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
@@ -113,10 +93,11 @@ void CubeRenderer::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec3
     Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
-    static int slot = 0;
+    Bird::setUniform(m_shader, "iMetallicVec4", &metallic, Bird::UniformType::Vec4);     /// float
+
     /// texture using
     if (m_createInfo.useTexture) {
-        slot = 0;
+        static int slot = 0;
         Bird::setTexture(m_texture, slot);
         Bird::setUniform(
             m_shader, m_createInfo.nameTexture.c_str(), &slot, Bird::UniformType::Sampler
@@ -124,7 +105,7 @@ void CubeRenderer::onUpdate(double deltaTime) {
     }
     /// cubemap using
     if (m_createInfo.useCubeMap) {
-        slot = 1;
+        static int slot = 1;
         Bird::setTexture(m_createInfo.skyComponentHandle, slot);
         Bird::setUniform(
             m_shader, m_createInfo.nameSkyTexture.c_str(), &slot, Bird::UniformType::Sampler

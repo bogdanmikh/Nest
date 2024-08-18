@@ -57,6 +57,26 @@ struct Figure : public Nest::Entity {
 public:
     void onAttachFigure(const CreateInfo &createInfo) {
         m_createInfo = createInfo;
+        m_transformComponent.setPosition(m_createInfo.position);
+
+        /// create shader
+        Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
+            m_createInfo.pathToVertexShader, m_createInfo.pathToFragmentShader
+        );
+        m_shader = createProgram(programAsset.getBirdProgramCreate());
+
+        /// create texture
+        if (m_createInfo.useTexture) {
+            Nest::TextureAsset textureAsset =
+                Nest::AssetLoader::loadTexture(m_createInfo.pathToTexture);
+
+            Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+            textureCreate.m_numMips = 4;
+            textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+            textureCreate.m_magFiltering = Bird::NEAREST;
+            m_texture = createTexture(textureCreate);
+        }
+
         onAttach();
     }
     Nest::TransformComponent &getTransform() {
@@ -72,4 +92,6 @@ protected:
     virtual void onAttach() override = 0;
     CreateInfo m_createInfo;
     Nest::TransformComponent m_transformComponent;
+    Bird::TextureHandle m_texture;
+    Bird::ProgramHandle m_shader;
 };

@@ -35,23 +35,24 @@ void NestPBR::onAttach() {
     cubeCreateInfo.pathToFragmentShader = "Shaders/fstCube.glsl";
     cubeCreateInfo.useTexture = true;
     cubeCreateInfo.pathToTexture = "Textures/Rust.jpg";
-    cubeCreateInfo.useCubeMap = false;
+    cubeCreateInfo.useCubeMap = true;
     cubeCreateInfo.skyComponentHandle = m_skyComponent->getSkyTexture();
     cubeCreateInfo.nameTexture = "iTexture";
     cubeCreateInfo.nameSkyTexture = "iSky";
     m_cubeRenderer.onAttachFigure(cubeCreateInfo);
 
+    m_spheres.resize(3);
+
     CreateInfo sphereCreateInfo;
-    sphereCreateInfo.position = glm::vec3(3., 0., 0.);
     sphereCreateInfo.pathToVertexShader = "Shaders/vstSphere.glsl";
     sphereCreateInfo.pathToFragmentShader = "Shaders/fstSphere.glsl";
     sphereCreateInfo.useTexture = true;
     sphereCreateInfo.pathToTexture = "Textures/Sphere.jpg";
-    sphereCreateInfo.useCubeMap = false;
+    sphereCreateInfo.useCubeMap = true;
     sphereCreateInfo.nameTexture = "iTexture";
     sphereCreateInfo.skyComponentHandle = m_skyComponent->getSkyTexture();
     sphereCreateInfo.nameSkyTexture = "iSky";
-    m_spheres.resize(3);
+    sphereCreateInfo.position = glm::vec3(3., 0., 0.);
     m_spheres[0].onAttachFigure(sphereCreateInfo);
 
     sphereCreateInfo.position = glm::vec3(6., 0., 0.);

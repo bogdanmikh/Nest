@@ -92,12 +92,12 @@ public:
             Bird::createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, 36);
 
         Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture(
-            {skyCreateInfo.pathsSkyTextures[0],
-             skyCreateInfo.pathsSkyTextures[1],
-             skyCreateInfo.pathsSkyTextures[2],
-             skyCreateInfo.pathsSkyTextures[3],
-             skyCreateInfo.pathsSkyTextures[4],
-             skyCreateInfo.pathsSkyTextures[5]}
+            {skyCreateInfo.pathsSkyTextures[0].string(),
+             skyCreateInfo.pathsSkyTextures[1].string(),
+             skyCreateInfo.pathsSkyTextures[2].string(),
+             skyCreateInfo.pathsSkyTextures[3].string(),
+             skyCreateInfo.pathsSkyTextures[4].string(),
+             skyCreateInfo.pathsSkyTextures[5].string()}
         );
         Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
         m_skyTextureConfig.m_minFiltering = NEAREST;
@@ -105,7 +105,7 @@ public:
         m_skyTexture = Bird::createTexture(m_skyTextureConfig);
 
         ProgramAsset programAsset = AssetLoader::loadProgram(
-            skyCreateInfo.pathToVertexShader, skyCreateInfo.pathToFragmentShader
+            skyCreateInfo.pathToVertexShader.string(), skyCreateInfo.pathToFragmentShader.string()
         );
         m_shader = Bird::createProgram(programAsset.getBirdProgramCreate());
         m_model = glm::mat4(1.f);
