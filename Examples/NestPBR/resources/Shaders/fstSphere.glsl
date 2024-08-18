@@ -30,6 +30,7 @@ void main() {
     vec2 st = gl_FragCoord.xy / iResolution;
     vec3 I = normalize(Position - cameraPos);
     vec3 R = reflect(I, normalize(Normal));
-    vec3 color = mix(texture(iTexture, TexCoord).rgb, texture(iSky, R).rgb, metallic);
+//    vec3 color = mix(texture(iTexture, TexCoord).rgb, texture(iSky, R).rgb, metallic);
+    vec3 color = texture(iTexture, TexCoord).rgb;
     fragColor = vec4(color, 1.0);
 }

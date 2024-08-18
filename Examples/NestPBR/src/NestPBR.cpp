@@ -29,7 +29,6 @@ void NestPBR::onAttach() {
     cubeCreateInfo.position = glm::vec3(0., 0., 0.);
     cubeCreateInfo.pathToVertexShader = "Shaders/vstCube.glsl";
     cubeCreateInfo.pathToFragmentShader = "Shaders/fstCube.glsl";
-    //    cubeCreateInfo.pathToGeometryShader = "Shaders/gstCube.glsl";
     cubeCreateInfo.useTexture = true;
     cubeCreateInfo.pathToTexture = "Textures/Rust.jpg";
     cubeCreateInfo.useCubeMap = true;
@@ -79,9 +78,9 @@ void NestPBR::onUpdate(double deltaTime) {
     m_cubeRenderer.onUpdate(deltaTime);
 
     // spheres
-//    for (auto &sphere : m_spheres) {
-//        sphere.onUpdate(deltaTime);
-//    }
+    for (auto &sphere : m_spheres) {
+        sphere.onUpdate(deltaTime);
+    }
 }
 
 void NestPBR::addEntity(Nest::Entity *entity) {}

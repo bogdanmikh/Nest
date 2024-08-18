@@ -18,7 +18,7 @@ vec3 iColor = iColorVec4.xyz;
 //uniform vec3 iColor;
 
 uniform sampler2D iTexture;
-uniform samplerCube iSky;
+//uniform samplerCube iSky;
 
 out vec4 fragColor;
 
@@ -28,7 +28,8 @@ void main() {
     vec2 st = gl_FragCoord.xy / iResolution;
     vec3 I = normalize(Position - cameraPos);
     vec3 R = reflect(I, normalize(Normal));
-    vec3 color = mix(texture(iTexture, TexCoord).rgb, texture(iSky, R).rgb, metalic);
+//    vec3 color = mix(texture(iTexture, TexCoord).rgb, texture(iSky, R).rgb, metalic);
+    vec3 color = texture(iTexture, TexCoord).rgb;
 //    fragColor = vec4(1., 0., 1., 1.);
     fragColor = vec4(color, 1.0);
 }

@@ -1,6 +1,8 @@
 #include "SphereRenderer.hpp"
 
 void SphereRenderer::onAttach() {
+    m_transformComponent.setPosition(m_createInfo.position);
+
     m_countIndices = 0;
     metallic = 0.5;
 
@@ -20,6 +22,7 @@ void SphereRenderer::onAttach() {
         textureCreate.m_magFiltering = Bird::NEAREST;
         m_texture = createTexture(textureCreate);
     }
+
     if (m_createInfo.useCubeMap) {
         //        m_cubeMap.create(m_createInfo.skyTextureAsset);
     }
