@@ -72,6 +72,7 @@ void ContentBrowser::onImGuiRender() {
             }
         }
     }
+    ImGui::ShowDemoWindow();
 
     ImGui::Columns(columnCount, 0, false);
     for (auto &directoryEntry : std::filesystem::directory_iterator(m_currentDirectory)) {
@@ -79,6 +80,7 @@ void ContentBrowser::onImGuiRender() {
         std::string filenameString = path.filename().string();
 
         ImGui::PushID(filenameString.c_str());
+
         Texture *icon;
         if (directoryEntry.is_directory()) {
             icon = &m_directoryIcon;
@@ -91,7 +93,7 @@ void ContentBrowser::onImGuiRender() {
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
         ImGui::ImageButton(
-            (ImTextureID)(intptr_t)icon->getHandle().id, {thumbnailSize, thumbnailSize}
+            (ImTextureID)icon->getHandle().id, {thumbnailSize, thumbnailSize}
         );
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
@@ -99,6 +101,14 @@ void ContentBrowser::onImGuiRender() {
                 m_currentDirectory /= path.filename();
             }
         }
+        if (directoryEntry.is_directory() && ImGui::BeginPopupContextItem()) {
+            if (ImGui::MenuItem("Open in Finder")) {
+                SystemTools::open(path.c_str());
+                LOG_INFO("PATH: {}", path.c_str());
+            }
+            ImGui::EndPopup();
+        }
+
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left) &&
             !is_directory(path)) {
             SystemTools::open(path);
@@ -106,6 +116,12 @@ void ContentBrowser::onImGuiRender() {
         ImGui::TextWrapped("%s", filenameString.c_str());
         ImGui::NextColumn();
         ImGui::PopID();
+    }
+    if (ImGui::Button("LOH") && ImGui::BeginPopupContextItem()) {
+        if (ImGui::Button("Open in Finder")) {
+//            SystemTools::openFolderDialog(path.c_str());
+        }
+        ImGui::EndPopup();
     }
     ImGui::Columns(1);
     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);

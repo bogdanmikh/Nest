@@ -231,6 +231,8 @@ struct Context {
         rendererExecuteCommands(m_preCommandQueue);
         if (m_render.getDrawCallsCount() != 0) {
             m_renderer->submit(&m_render, m_views);
+        } else {
+            m_renderer->clear();
         }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
