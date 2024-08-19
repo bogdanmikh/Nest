@@ -40,7 +40,7 @@ uint8_t Chunk::getType(int indexX, int indexY, int indexZ) {
 }
 
 void Chunk::setMesh(Nest::StaticMesh *mesh) {
-    delete m_mesh;
+    DELETE(Foundation::getAllocator(), m_mesh);
     m_mesh = mesh;
 }
 

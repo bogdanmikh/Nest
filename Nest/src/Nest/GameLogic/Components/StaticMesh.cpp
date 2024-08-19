@@ -15,6 +15,9 @@ StaticMesh::~StaticMesh() {
     if (m_indexBufferHandle.isValid()) {
         Bird::deleteIndexBuffer(m_indexBufferHandle);
     }
+    if (m_bufferLayoutHandle.isValid()) {
+        deleteVertexLayout(m_bufferLayoutHandle);
+    }
 }
 
 void StaticMesh::create(

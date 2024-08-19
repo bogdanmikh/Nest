@@ -92,9 +92,7 @@ void ContentBrowser::onImGuiRender() {
             }
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        ImGui::ImageButton(
-            (ImTextureID)icon->getHandle().id, {thumbnailSize, thumbnailSize}
-        );
+        ImGui::ImageButton((ImTextureID)icon->getHandle().id, {thumbnailSize, thumbnailSize});
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
             if (directoryEntry.is_directory()) {
@@ -119,7 +117,7 @@ void ContentBrowser::onImGuiRender() {
     }
     if (ImGui::Button("LOH") && ImGui::BeginPopupContextItem()) {
         if (ImGui::Button("Open in Finder")) {
-//            SystemTools::openFolderDialog(path.c_str());
+            //            SystemTools::openFolderDialog(path.c_str());
         }
         ImGui::EndPopup();
     }

@@ -16,7 +16,7 @@ cmake -G "Visual Studio 16 2019" ..
 start NestCraft.sln
 ```
 
-### Linux or Macos
+### Linux or MacOS
 Build with CMake:
 ``` sh
 git clone https://github.com/bogdanmikh/Nest.git
