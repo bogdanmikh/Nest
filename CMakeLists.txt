@@ -17,7 +17,8 @@ set(VENDOR_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Vendor)
 set(NEST_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Nest)
 set(FOUNDATION_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Foundation)
 set(BIRD_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Bird)
-option(USE_ASSIMP "Use Assimp Library" OFF)
+set(ENET_STATIC ON)
+set(USE_ASSIMP OFF)
 
 set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 
@@ -32,6 +33,7 @@ add_subdirectory(Vendor/stb_image)
 add_subdirectory(Vendor/dylib)
 add_subdirectory(Vendor/nfd)
 add_subdirectory(Vendor/assimp)
+add_subdirectory(Vendor/enet)
 add_subdirectory(Rain)
 
 add_subdirectory(Foundation)

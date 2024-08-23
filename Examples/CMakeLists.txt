@@ -1,3 +1,4 @@
+add_subdirectory(Atoms)
 add_subdirectory(ContentBrowser)
 add_subdirectory(NestCraft)
 add_subdirectory(NestPBR)

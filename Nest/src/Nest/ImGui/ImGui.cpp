@@ -63,6 +63,12 @@ void ImGui_Init(void *glfwWindowHandle) {
     fontExtraSmall.size = 10.0f;
     Fonts::add(fontExtraSmall);
 
+    FontConfiguration fontExtraBig;
+    fontExtraBig.fontName = "ExtraBig";
+    fontExtraBig.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
+    fontExtraBig.size = 30.0f;
+    Fonts::add(fontExtraBig);
+
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(glfwWindowHandle), true);
     ImGui_ImplOpenGL3_Init();
 
