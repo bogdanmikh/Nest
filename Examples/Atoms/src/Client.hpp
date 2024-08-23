@@ -7,12 +7,6 @@
 
 namespace Nest {
 
-    struct ServerData {
-        // localhost 127.0.0.1
-        std::string ip;
-        int port;
-    };
-
     class Client {
     public:
         void onAttach(const ServerData& serverData);
@@ -26,7 +20,7 @@ namespace Nest {
         ENetPeer* m_server = nullptr;
         ENetEvent m_event;
 
-        PushData m_data;
+        PlayersData m_worldData;
         bool m_connected = false;
     };
 

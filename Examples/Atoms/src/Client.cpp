@@ -14,6 +14,7 @@ namespace Nest {
         }
 
         m_client = nullptr;
+        m_server = nullptr;
         m_client = enet_host_create(nullptr /* create a client host */,
                                   1 /* only allow 1 outgoing connection */,
                                   2 /* allow up 2 channels to be used, 0 and 1 */,
@@ -27,7 +28,6 @@ namespace Nest {
         m_event.channelID = 0;
 
         ENetAddress address = { 0 };
-        /* Connect to some.server.net:1234. */
 
         enet_address_set_host(&address, serverData.ip.c_str());
         address.port = serverData.port;
@@ -48,16 +48,21 @@ namespace Nest {
                 std::cout << "Connected to server!" << std::endl;
                 enet_host_flush(m_client);
             } else if (m_event.type == ENET_EVENT_TYPE_RECEIVE) {
-                auto data = (PushData*)m_event.packet->data;
-                std::cout << "Message from Server: " << data->message << std::endl;
+                auto worldData = (PlayersData*)m_event.packet->data;
+                memcpy(&m_worldData, worldData, sizeof(worldData->players) + sizeof(worldData->currentIndex));
                 enet_packet_destroy(m_event.packet);
-//                std::cin >> m_data.message;
-//                sendData((void*)&m_data, sizeof(m_data));
             } else if (m_event.type == ENET_EVENT_TYPE_DISCONNECT) {
                 puts("Disconnection succeeded.");
                 m_connected = false;
             }
         }
+        if (!m_connected || m_worldData.players.size() == 0) {
+            return;
+        }
+        auto &currPlayer = m_worldData.players[m_worldData.currentIndex];
+        currPlayer.position += 0.1;
+        printf("CLIENT: X: %f, Y: %f, Z: %f\n", currPlayer.position.x, currPlayer.position.y, currPlayer.position.z);
+        sendData(&currPlayer, sizeof(currPlayer));
     }
 
     void Client::onDetach() {
@@ -78,8 +83,8 @@ namespace Nest {
 
     void Client::sendData(const void* data, size_t size) {
         ENetPacket *packet = enet_packet_create(data, size, ENET_PACKET_FLAG_RELIABLE);
-        //the second parameter is the channel id
+
         enet_peer_send(m_server, 0, packet);
-        enet_host_flush(m_client);
+        enet_host_flush(m_server->host);
     }
 }

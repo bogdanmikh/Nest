@@ -5,8 +5,12 @@
 #include "Server.hpp"
 #include <iostream>
 
+
 namespace Nest {
     void Server::onAttach(const ServerCreateInfo& serverCreateInfo) {
+        m_serverWorldData.players.assign(maxClients, {});
+        m_clients.assign(maxClients, nullptr);
+
         if (enet_initialize() != 0) {
             printf("An error occurred while initializing ENet.\n");
             return;
@@ -35,37 +39,63 @@ namespace Nest {
         ENetEvent event;
         while (enet_host_service(m_server, &event, 10) > 0) {
             if (event.type == ENET_EVENT_TYPE_CONNECT) {
-                m_clients.emplace_back(event.peer);
-                printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
-            } else if (event.type == ENET_EVENT_TYPE_RECEIVE) {
-                std::cout << "Message from Client: " << (char *) (event.packet->data) << std::endl;
-                enet_packet_destroy(event.packet);
-            } else if (event.type == ENET_EVENT_TYPE_DISCONNECT) {
-                for (int i = 0; i < m_clients.size(); ++i) {
-                    if (event.peer == m_clients[i]) {
-                        m_clients.erase(m_clients.begin() + i);
+                for (int i = 0; i < maxClients; ++i) {
+                    if (!m_serverWorldData.players[i].isValid()) {
+                        m_serverWorldData.players[i].m_id = i;
+                        m_serverWorldData.players[i].playerData.color = glm::vec3(1);
+                        m_serverWorldData.players[i].playerData.position = glm::vec3(0);
+                        m_clients[i] = event.peer;
                         break;
                     }
                 }
-                event.peer->data = nullptr;
-            } else if (event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT) {
-                printf("%s disconnected due to timeout.\n", event.peer->data);
-                /* Reset the peer's client information. */
+            } else if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+                for (int i = 0; i < maxClients; ++i) {
+                    if (m_clients[i] == event.peer) {
+                        auto playerData = (PlayerData*)event.packet->data;
+                        auto &clientData = m_serverWorldData.players[i];
+                        memcpy(&clientData.playerData, playerData, sizeof(PlayerData));
+                        enet_packet_destroy(event.packet);
+                        break;
+                    }
+                }
+            } else if (event.type == ENET_EVENT_TYPE_DISCONNECT || event.type == ENET_EVENT_TYPE_DISCONNECT_TIMEOUT) {
+                for (int i = 0; i < maxClients; ++i) {
+                    if (event.peer == m_clients[i]) {
+                        m_clients[i] = nullptr;
+                        m_serverWorldData.players[i].m_id = ClientData::invalidId;
+                        break;
+                    }
+                }
                 event.peer->data = nullptr;
             } else if (event.type == ENET_EVENT_TYPE_NONE) {
                 /// ...
             }
         }
-        if (m_clients.size() < 1) {
-            return;
+
+        PlayersData players;
+        players.players.reserve(maxClients);
+        int cntPlayers = 0;
+        for (int i = 0; i < maxClients; ++i) {
+            if (m_serverWorldData.players[i].isValid()) {
+                auto playerData = m_serverWorldData.players[i].playerData;
+                players.players.emplace_back(playerData);
+                cntPlayers++;
+                printf("SERVER: X: %f, Y: %f, Z: %f\n", playerData.position.x, playerData.position.y, playerData.position.z);
+            }
         }
-        std::cin >> m_data.message;
-        for (auto client : m_clients) {
-            sendData((void*)&m_data, sizeof(m_data), client);
+        printf("Count Players: %d\n", cntPlayers);
+        for (int i = 0; i < maxClients; ++i) {
+            if (m_serverWorldData.players[i].isValid()) {
+                players.currentIndex = m_serverWorldData.players[i].m_id;
+                sendData(&players, sizeof(players), m_clients[i]);
+            }
         }
     }
 
     void Server::onDetach() {
+        for (int i = 0; i < maxClients; ++i) {
+            enet_peer_reset(m_clients[i]);
+        }
         enet_host_destroy(m_server);
         enet_deinitialize();
     }

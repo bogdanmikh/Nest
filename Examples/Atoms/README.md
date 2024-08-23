@@ -1,11 +1,10 @@
 # Atoms
 
+<img src="AtomsIcon.png" width="700" alt="Reduced image">
+
 ### Game on NestEngine
 
 This mini game is written on the NestEngine. It supports playing over a local network. Enjoy the game!
-
-[//]: # (![Alt text]&#40;Screenshot.png "Screenshot"&#41;)
-[//]: # (<img src="Screenshot.png" width="900" alt="Reduced image">)
 
 ### Windows
 Build with CMake:

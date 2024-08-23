@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <enet.h>
+#include <glm/glm.hpp>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -16,7 +16,14 @@
 #include <string.h>
 #endif
 
+using Id = uint16_t;
 namespace Nest {
+
+struct ServerData {
+    // localhost 127.0.0.1
+    std::string ip;
+    int port;
+};
 
 static std::vector<std::string> getLocalIPAddresses() {
     std::vector<std::string> ipAddresses;
@@ -55,13 +62,33 @@ static std::vector<std::string> getLocalIPAddresses() {
     }
     freeifaddrs(ifaddr);
 #endif
-
     return ipAddresses;
 }
 
-struct PushData {
-    /// something data
-    std::string message;
+class PlayerData {
+public:
+    glm::vec3 position;
+    glm::vec3 color;
 };
 
-}
+struct ClientData {
+    ClientData() : m_id(invalidId) {}
+    PlayerData playerData;
+    const static Id invalidId = UINT16_MAX;
+    Id m_id;
+    inline bool isValid() const {
+        return m_id != invalidId;
+    }
+};
+
+struct ServerWorldData {
+    std::vector<ClientData> players;
+};
+
+struct PlayersData {
+    std::vector<PlayerData> players;
+    size_t currentIndex;
+};
+
+
+};

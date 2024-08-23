@@ -22,7 +22,7 @@ namespace Nest {
         void onUpdate();
         void onDetach();
     private:
-        PushData m_data;
+        ServerWorldData m_serverWorldData;
         static const int maxClients = 4;
         void sendData(const void* data, size_t size, ENetPeer *client);
         ENetHost* m_server;
