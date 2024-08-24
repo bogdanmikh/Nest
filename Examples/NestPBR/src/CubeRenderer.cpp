@@ -81,7 +81,7 @@ void CubeRenderer::onUpdate(double deltaTime) {
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
-    static auto color = glm::vec3(1., 1., 1.);
+    static auto color = glm::vec3(0.);
 
     static float metallic = 0.5;
 

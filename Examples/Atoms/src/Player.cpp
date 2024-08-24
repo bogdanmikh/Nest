@@ -65,6 +65,8 @@ void Player::onUpdate(double deltaTime) {
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
+    static auto color = glm::vec3(0.7, 0.35, 1);
+
     Bird::setShader(m_shader);
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
     Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
@@ -72,7 +74,7 @@ void Player::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);   /// vec4
     Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
-
+    Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec3
     static int slot = 0;
     Bird::setTexture(m_texture, slot);
     Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);
