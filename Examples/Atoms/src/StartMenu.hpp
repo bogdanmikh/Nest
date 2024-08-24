@@ -9,6 +9,7 @@ public:
     inline bool isServer() const {
         return m_isServer;
     }
+
 private:
     bool m_isServer, m_isClient;
 };

@@ -11,22 +11,23 @@
 #include <vector>
 
 namespace Nest {
-    struct ServerCreateInfo {
-        std::string name;
-        int port;
-    };
+struct ServerCreateInfo {
+    std::string name;
+    int port;
+};
 
-    class Server {
-    public:
-        void onAttach(const ServerCreateInfo& serverCreateInfo);
-        void onUpdate();
-        void onDetach();
-    private:
-        ServerWorldData m_serverWorldData;
-        static const int maxClients = 4;
-        void sendData(const void* data, size_t size, ENetPeer *client);
-        ENetHost* m_server;
-        std::vector<ENetPeer*> m_clients;
-    };
+class Server {
+public:
+    void onAttach(const ServerCreateInfo &serverCreateInfo);
+    void onUpdate();
+    void onDetach();
 
-}
+private:
+    ServerWorldData m_serverWorldData;
+    static const int maxClients = 4;
+    void sendData(const void *data, size_t size, ENetPeer *client);
+    ENetHost *m_server;
+    std::vector<ENetPeer *> m_clients;
+};
+
+} // namespace Nest

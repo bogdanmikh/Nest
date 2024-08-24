@@ -21,7 +21,7 @@ void Player::onAttach() {
     textureCreate.m_magFiltering = Bird::NEAREST;
     m_texture = createTexture(textureCreate);
 
-    VertexCircle vertices[4] {
+    VertexCircle vertices[4]{
         VertexCircle(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f),
         VertexCircle(-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f),
         VertexCircle(-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f),
@@ -41,8 +41,7 @@ void Player::onAttach() {
     layoutData.pushVec2();
     layoutData.pushVec3();
     VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
-    m_vertexBuffer =
-        createVertexBuffer(verticesMemory, 4 * sizeof(VertexCircle), vertexLayout);
+    m_vertexBuffer = createVertexBuffer(verticesMemory, 4 * sizeof(VertexCircle), vertexLayout);
     m_indexBuffer =
         createIndexBuffer(indicesMemory, BufferElementType::UnsignedInt, m_countIndices);
 }

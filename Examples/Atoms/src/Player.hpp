@@ -2,7 +2,6 @@
 
 #include <Nest.hpp>
 
-
 struct VertexCircle {
     // position
     glm::vec3 Position;
@@ -10,7 +9,7 @@ struct VertexCircle {
     glm::vec2 TexCoords;
     // normal
     glm::vec3 Normal;
-    
+
     VertexCircle()
         : Position(0, 0, 0)
         , TexCoords(0, 0)
@@ -42,6 +41,7 @@ public:
     void onImGuiRender();
     void onDetach();
     Nest::TransformComponent &getTransform();
+
 private:
     Bird::TextureHandle m_texture;
     Bird::VertexBufferHandle m_vertexBuffer;

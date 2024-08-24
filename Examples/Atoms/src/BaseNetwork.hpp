@@ -6,14 +6,14 @@
 #include <glm/glm.hpp>
 
 #ifdef _WIN32
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#pragma comment(lib, "ws2_32.lib")
+#    include <winsock2.h>
+#    include <ws2tcpip.h>
+#    pragma comment(lib, "ws2_32.lib")
 #else
-#include <arpa/inet.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <string.h>
+#    include <arpa/inet.h>
+#    include <ifaddrs.h>
+#    include <netinet/in.h>
+#    include <string.h>
 #endif
 
 using Id = uint16_t;
@@ -31,7 +31,7 @@ static std::vector<std::string> getLocalIPAddresses() {
 #ifdef _WIN32
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
-    
+
     char hostname[256];
     gethostname(hostname, sizeof(hostname));
 
@@ -55,7 +55,9 @@ static std::vector<std::string> getLocalIPAddresses() {
     for (struct ifaddrs *ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
         if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {
             char ip[INET_ADDRSTRLEN];
-            if (inet_ntop(AF_INET, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, ip, sizeof(ip))) {
+            if (inet_ntop(
+                    AF_INET, &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr, ip, sizeof(ip)
+                )) {
                 ipAddresses.push_back(ip);
             }
         }
@@ -72,7 +74,8 @@ public:
 };
 
 struct ClientData {
-    ClientData() : m_id(invalidId) {}
+    ClientData()
+        : m_id(invalidId) {}
     PlayerData playerData;
     const static Id invalidId = UINT16_MAX;
     Id m_id;
@@ -90,5 +93,4 @@ struct PlayersData {
     size_t currentIndex;
 };
 
-
-};
+}; // namespace Nest

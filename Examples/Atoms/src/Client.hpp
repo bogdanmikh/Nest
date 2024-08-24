@@ -7,21 +7,22 @@
 
 namespace Nest {
 
-    class Client {
-    public:
-        void onAttach(const ServerData& serverData);
-        void onUpdate();
-        void onDetach();
-        bool serverValid();
-    private:
-        void sendData(const void* data, size_t size);
+class Client {
+public:
+    void onAttach(const ServerData &serverData);
+    void onUpdate();
+    void onDetach();
+    bool serverValid();
 
-        ENetHost *m_client = nullptr;
-        ENetPeer* m_server = nullptr;
-        ENetEvent m_event;
+private:
+    void sendData(const void *data, size_t size);
 
-        PlayersData m_worldData;
-        bool m_connected = false;
-    };
+    ENetHost *m_client = nullptr;
+    ENetPeer *m_server = nullptr;
+    ENetEvent m_event;
 
-}
+    PlayersData m_worldData;
+    bool m_connected = false;
+};
+
+} // namespace Nest
