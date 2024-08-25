@@ -100,15 +100,27 @@ void Player::onMove(double deltaTime) {
     using namespace Nest;
 
     if (Events::isKeyPressed(Key::W)) {
-        m_transformComponent.translate({0., 0., speed * deltaTime});
+        m_transformComponent.translate({0., speed * deltaTime, 0.});
     }
+
     if (Events::isKeyPressed(Key::S)) {
-        m_transformComponent.translate({0., 0., -speed * deltaTime});
+        m_transformComponent.translate({0., -speed * deltaTime, 0.});
     }
+
     if (Events::isKeyPressed(Key::A)) {
         m_transformComponent.translate({-speed * deltaTime, 0., 0.});
     }
+
     if (Events::isKeyPressed(Key::D)) {
         m_transformComponent.translate({speed * deltaTime, 0., 0.});
     }
+
+    float borderX = 32.9, borderY = 21.5;
+    auto pos = m_transformComponent.getPosition();
+    pos.x = std::max(-borderX, pos.x);
+    pos.x = std::min(borderX, pos.x);
+
+    pos.y = std::max(-borderY, pos.y);
+    pos.y = std::min(borderY, pos.y);
+    m_transformComponent.setPosition(pos);
 }

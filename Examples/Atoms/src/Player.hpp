@@ -46,7 +46,7 @@ public:
 
 private:
     glm::vec3 m_color;
-    constexpr const static float speed = 10.;
+    constexpr const static float speed = 30.;
     Bird::TextureHandle m_texture;
     Bird::VertexBufferHandle m_vertexBuffer;
     Bird::IndexBufferHandle m_indexBuffer;

@@ -8,13 +8,14 @@ AtomsGameLevel::~AtomsGameLevel() {}
 
 void AtomsGameLevel::onAttach() {
     auto worldCamera = Nest::Application::get()->getWorldCamera();
-    worldCamera->setPosition(0, 0, 10);
+    worldCamera->setPosition(0, 0, 40);
     m_player.onAttach();
 }
 
 void AtomsGameLevel::onUpdate(double deltaTime) {
     m_player.onUpdate(deltaTime);
-    m_player.setColor({ Nest::getRandomFloat(0., 1.), Nest::getRandomFloat(0., 1.), Nest::getRandomFloat(0., 1.) });
+    m_player.onMove(deltaTime);
+//    m_player.setColor({ Nest::getRandomFloat(0., 1.), Nest::getRandomFloat(0., 1.), Nest::getRandomFloat(0., 1.) });
 }
 
 void AtomsGameLevel::onDetach() {

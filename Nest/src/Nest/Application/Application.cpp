@@ -84,6 +84,9 @@ void Application::loop() {
         if (deltaTime == 0) {
             deltaTime = 0.00000001;
         }
+        if (deltaTime >= 2) {
+            LOG_ERROR("Delta time: {}", deltaTime);
+        }
         m_deltaTimeMillis = 0;
 
         if (Events::isJustKeyPressed(Key::ESCAPE)) {
@@ -98,9 +101,6 @@ void Application::loop() {
         }
 
         m_worldCamera->update();
-        if (deltaTime >= 2) {
-            LOG_ERROR("Delta time: {}", deltaTime);
-        }
         ImGui_NewFrame();
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
