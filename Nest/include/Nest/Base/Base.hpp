@@ -6,6 +6,7 @@
 #include <Rain/Rain.hpp>
 #include <Rain/Codable.hpp>
 #include <filesystem>
+#include <random>
 
 namespace Nest {
 
@@ -157,5 +158,18 @@ using id_t = int32_t;
 using Size = Vec2;
 using Color = Vec4;
 using Quat = Vec4;
+
+static int getRandomInt(int min, int max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(min, max);
+    return distr(gen);
+}
+
+static float getRandomFloat(float min, float max) {
+    float random = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+
+    return min + random * (max - min);
+}
 
 } // namespace Nest

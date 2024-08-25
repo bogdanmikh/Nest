@@ -64,8 +64,6 @@ void Player::onUpdate(double deltaTime) {
     static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
-    static auto color = glm::vec3(0.7, 0.35, 1);
-
     Bird::setShader(m_shader);
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
     Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
@@ -73,7 +71,7 @@ void Player::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);   /// vec4
     Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
     Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
-    Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec3
+    Bird::setUniform(m_shader, "iColorVec4", &m_color, Bird::UniformType::Vec4);         /// vec3
     static int slot = 0;
     Bird::setTexture(m_texture, slot);
     Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);
@@ -92,4 +90,25 @@ void Player::onDetach() {
 
 Nest::TransformComponent &Player::getTransform() {
     return m_transformComponent;
+}
+
+void Player::setColor(glm::vec3 color) {
+    m_color = color;
+}
+
+void Player::onMove(double deltaTime) {
+    using namespace Nest;
+
+    if (Events::isKeyPressed(Key::W)) {
+        m_transformComponent.translate({0., 0., speed * deltaTime});
+    }
+    if (Events::isKeyPressed(Key::S)) {
+        m_transformComponent.translate({0., 0., -speed * deltaTime});
+    }
+    if (Events::isKeyPressed(Key::A)) {
+        m_transformComponent.translate({-speed * deltaTime, 0., 0.});
+    }
+    if (Events::isKeyPressed(Key::D)) {
+        m_transformComponent.translate({speed * deltaTime, 0., 0.});
+    }
 }

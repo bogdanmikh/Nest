@@ -20,6 +20,8 @@ uint64_t getMillis() {
 }
 
 Application::Application(ApplicationStartupSettings &settings) {
+    std::srand(static_cast<unsigned int>(std::time(0)));
+
     s_instance = this;
 
     m_layer = nullptr;
@@ -35,6 +37,7 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
     m_worldCamera->setPosition(0, 0, 0);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
+    m_worldCamera->updateAspectRatio(m_window->getSize().x / m_window->getSize().y);
 
     m_maximumFps = 60;
     m_oneSecondTimeCount = 0;

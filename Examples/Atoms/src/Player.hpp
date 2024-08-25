@@ -41,8 +41,12 @@ public:
     void onImGuiRender();
     void onDetach();
     Nest::TransformComponent &getTransform();
+    void setColor(glm::vec3 color);
+    void onMove(double deltaTime);
 
 private:
+    glm::vec3 m_color;
+    constexpr const static float speed = 10.;
     Bird::TextureHandle m_texture;
     Bird::VertexBufferHandle m_vertexBuffer;
     Bird::IndexBufferHandle m_indexBuffer;
