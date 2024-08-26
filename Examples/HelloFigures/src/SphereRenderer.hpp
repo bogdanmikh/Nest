@@ -56,4 +56,13 @@ private:
     size_t m_countIndices;
 
     Nest::TransformComponent m_transformComponent;
+
+    // uniforms
+    Nest::WorldCamera* m_camera;
+    glm::mat4 projViewMtx;
+    glm::mat4 model;
+    glm::vec3 cameraPos;
+    glm::vec2 mousePos;
+    glm::vec2 resolution;
+    double time;
 };

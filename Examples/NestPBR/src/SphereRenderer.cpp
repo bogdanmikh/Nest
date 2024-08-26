@@ -1,6 +1,8 @@
 #include "SphereRenderer.hpp"
 
 void SphereRenderer::onAttach() {
+    m_camera = Nest::Application::get()->getWorldCamera();
+
     m_countIndices = 0;
     metallic = 0.5;
 
@@ -76,21 +78,14 @@ void SphereRenderer::onAttach() {
 }
 
 void SphereRenderer::onUpdate(double deltaTime) {
-    static auto camera = Nest::Application::get()->getWorldCamera();
-    static double time;
     time = Nest::Application::get()->getWindow()->getTime();
-    static glm::vec2 mousePos;
     mousePos = Nest::Events::getCursorPos();
-    static glm::vec2 resolution;
     resolution = Nest::Application::get()->getWindow()->getSize();
 
-    static glm::mat4 projViewMtx;
-    projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+    projViewMtx = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();
 
-    static glm::vec3 cameraPos = camera->getPosition();
-    cameraPos = camera->getPosition();
+    cameraPos = m_camera->getPosition();
 
-    static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
     static auto color = glm::vec3(1., 1., 1.);

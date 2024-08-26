@@ -3,9 +3,9 @@
 CubeRenderer::CubeRenderer() {}
 
 void CubeRenderer::onAttach() {
-    using namespace Bird;
+    m_camera = Nest::Application::get()->getWorldCamera();
 
-    Bird::setViewClear(0, 0x3D75C9FF);
+    using namespace Bird;
 
     Nest::ProgramAsset programAsset =
         Nest::AssetLoader::loadProgram("Shaders/vstCube.glsl", "Shaders/fstCube.glsl");
@@ -80,21 +80,14 @@ void CubeRenderer::onAttach() {
 }
 
 void CubeRenderer::onUpdate(double deltaTime) {
-    static auto camera = Nest::Application::get()->getWorldCamera();
-    static double time;
     time = Nest::Application::get()->getWindow()->getTime();
-    static glm::vec2 mousePos;
     mousePos = Nest::Events::getCursorPos();
-    static glm::vec2 resolution;
     resolution = Nest::Application::get()->getWindow()->getSize();
 
-    static glm::mat4 projViewMtx;
-    projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+    projViewMtx = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();
 
-    static glm::vec3 cameraPos = camera->getPosition();
-    cameraPos = camera->getPosition();
+    cameraPos = m_camera->getPosition();
 
-    static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
     Bird::setShader(m_shader);

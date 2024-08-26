@@ -6,7 +6,6 @@
 #include <string>
 
 void NestPBR::onAttach() {
-
     m_cameraMove.onAttach();
 
     std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
@@ -44,7 +43,7 @@ void NestPBR::onAttach() {
     cubeCreateInfo.nameSkyTexture = "iSky";
     m_cubeRenderer.onAttachFigure(cubeCreateInfo);
 
-    m_spheres.resize(2);
+    m_spheres.resize(3);
 
     CreateInfo sphereCreateInfo;
     sphereCreateInfo.pathToVertexShader = "Shaders/vstSphere.glsl";
@@ -61,11 +60,10 @@ void NestPBR::onAttach() {
     sphereCreateInfo.position = glm::vec3(6., 0., 0.);
     sphereCreateInfo.pathToTexture = "Textures/Rust.jpg";
     m_spheres[1].onAttachFigure(sphereCreateInfo);
-//
-//    sphereCreateInfo.position = glm::vec3(8., 0., 0.);
-//    sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
-//    m_spheres[2].onAttachFigure(sphereCreateInfo);
-//
+
+    sphereCreateInfo.position = glm::vec3(8., 0., 0.);
+    sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
+    m_spheres[2].onAttachFigure(sphereCreateInfo);
 }
 
 void NestPBR::onUpdate(double deltaTime) {
