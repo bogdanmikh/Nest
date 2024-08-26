@@ -1,5 +1,8 @@
 #pragma once
 
+#define RENDERER_OPENGL
+// #define RENDERER_VULKAN
+
 #define BIRDLOG_ENABLED 0
 #define BIRD_CMDBUF_LOG_ENABLED 0
 #define MAX_VERTEX_BUFFERS 1000

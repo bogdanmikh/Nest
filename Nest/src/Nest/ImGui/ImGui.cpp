@@ -1,7 +1,13 @@
 #include "ImGui.hpp"
-#include "imgui_impl/imgui_impl_glfw.h"
 
-#include "imgui_impl/imgui_impl_opengl3.h"
+#include <Bird/Bird.hpp>
+
+#ifdef RENDERER_OPENGL
+#    include "imgui_impl/imgui_impl_glfw.h"
+#    include "imgui_impl/imgui_impl_opengl3.h"
+#elif defined(RENDERER_VULKAN)
+#    include "imgui_impl/imgui_impl_vulkan.h"
+#endif
 
 #include "imgui.h"
 

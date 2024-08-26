@@ -15,7 +15,7 @@ void AtomsGameLevel::onAttach() {
 void AtomsGameLevel::onUpdate(double deltaTime) {
     m_player.onUpdate(deltaTime);
     m_player.onMove(deltaTime);
-    m_player.setColor({ Nest::getRandomFloat(0., 1.), 1., 0.});
+    m_player.setColor({Nest::getRandomFloat(0., 1.), 1., 0.});
 }
 
 void AtomsGameLevel::onDetach() {

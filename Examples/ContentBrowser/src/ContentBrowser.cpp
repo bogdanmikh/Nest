@@ -62,24 +62,25 @@ void ContentBrowser::onImGuiRender() {
     float ContentBrowserWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(ContentBrowserWidth / cellSize);
     columnCount = std::max(columnCount, 1);
-//    if (!Nest::Events::getDropPaths().empty()) {
-//        if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
-//            const auto &dropPaths = Nest::Events::getDropPaths();
-//            for (const auto &dropPath : dropPaths) {
-//                if (std::filesystem::is_directory(dropPath)) {
-//                    SystemTools::copyFolder(dropPath, m_currentDirectory.string());
-//                    LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath, m_currentDirectory.string());
-//                } else {
-//                    std::filesystem::copy(dropPath, m_currentDirectory);
-//                    LOG_INFO(
-//                        "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
-//                    );
-//                }
-//            }
-//        }
-//    }
+    //    if (!Nest::Events::getDropPaths().empty()) {
+    //        if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
+    //            const auto &dropPaths = Nest::Events::getDropPaths();
+    //            for (const auto &dropPath : dropPaths) {
+    //                if (std::filesystem::is_directory(dropPath)) {
+    //                    SystemTools::copyFolder(dropPath, m_currentDirectory.string());
+    //                    LOG_INFO("COPY DIR THIS: {}, THERE: {}", dropPath,
+    //                    m_currentDirectory.string());
+    //                } else {
+    //                    std::filesystem::copy(dropPath, m_currentDirectory);
+    //                    LOG_INFO(
+    //                        "COPY FILE THIS: {}, THERE: {}", dropPath, m_currentDirectory.string()
+    //                    );
+    //                }
+    //            }
+    //        }
+    //    }
 
-//    ImGui::ShowDemoWindow();
+    //    ImGui::ShowDemoWindow();
 
     ImGui::Columns(columnCount, 0, false);
     for (auto &directoryEntry : std::filesystem::directory_iterator(m_currentDirectory)) {
@@ -103,7 +104,9 @@ void ContentBrowser::onImGuiRender() {
             }
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        ImGui::ImageButton((ImTextureID)(intptr_t)icon->getHandle().id, {thumbnailSize, thumbnailSize});
+        ImGui::ImageButton(
+            (ImTextureID)(intptr_t)icon->getHandle().id, {thumbnailSize, thumbnailSize}
+        );
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
             if (directoryEntry.is_directory()) {
@@ -113,7 +116,7 @@ void ContentBrowser::onImGuiRender() {
         if (ImGui::BeginPopupContextItem()) {
             if (ImGui::MenuItem("Show in Finder")) {
                 SystemTools::show(path.c_str());
-//                LOG_INFO("PATH: {}", path.c_str());
+                //                LOG_INFO("PATH: {}", path.c_str());
             }
             ImGui::EndPopup();
         }
@@ -126,12 +129,12 @@ void ContentBrowser::onImGuiRender() {
         ImGui::NextColumn();
         ImGui::PopID();
     }
-//    if (ImGui::Button("LOH") && ImGui::BeginPopupContextItem()) {
-//        if (ImGui::Button("Open in Finder")) {
-//            //            SystemTools::openFolderDialog(path.c_str());
-//        }
-//        ImGui::EndPopup();
-//    }
+    //    if (ImGui::Button("LOH") && ImGui::BeginPopupContextItem()) {
+    //        if (ImGui::Button("Open in Finder")) {
+    //            //            SystemTools::openFolderDialog(path.c_str());
+    //        }
+    //        ImGui::EndPopup();
+    //    }
     ImGui::Columns(1);
     ImGui::SliderFloat("Thumbnail Size", &thumbnailSize, 16, 512);
     ImGui::SliderFloat("Padding", &padding, 0, 32);

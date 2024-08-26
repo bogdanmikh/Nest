@@ -72,7 +72,6 @@ void CubeRenderer::onUpdate(double deltaTime) {
 
     cameraPos = m_camera->getPosition();
 
-    static auto model = m_transformComponent.getTransform();
     model = m_transformComponent.getTransform();
 
     static auto color = glm::vec3(0.);

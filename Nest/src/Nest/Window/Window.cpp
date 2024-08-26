@@ -35,7 +35,7 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
         LOG_ERROR("Failed to initialize OpenGL context");
     }
     this->handle = window;
-    Events::init(window);
+    Events::init(handle);
     glfwShowWindow((GLFWwindow *)handle);
     glfwFocusWindow((GLFWwindow *)handle);
 

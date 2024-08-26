@@ -8,8 +8,11 @@
 #include "HandleAllocator.hpp"
 #include "Bird/BirdStates.hpp"
 #include "Bird/Config.hpp"
-#include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
-#include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
+#ifdef RENDERER_OPENGL
+#    include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
+#elif defined(RENDERER_VULKAN)
+#    include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
+#endif
 #include "RendererI.hpp"
 
 #include <Foundation/PlatformDetection.hpp>
@@ -212,7 +215,11 @@ struct Context {
                 command->type == RendererCommandType::RendererInit,
                 "First command should be RendererInit"
             );
+#ifdef RENDERER_OPENGL
             m_renderer = NEW(Foundation::getAllocator(), RendererOpenGL);
+#elif defined(RENDERER_VULKAN)
+            m_renderer = NEW(Foundation::getAllocator(), RendererOpenGL);
+#endif
             BIRD_LOG("RENDERER CREATED");
         }
     }

@@ -17,7 +17,7 @@ private:
 
     /// uniforms
     float metallic;
-    Nest::WorldCamera* m_camera;
+    Nest::WorldCamera *m_camera;
     glm::mat4 projViewMtx;
     glm::mat4 model;
     glm::vec3 cameraPos;

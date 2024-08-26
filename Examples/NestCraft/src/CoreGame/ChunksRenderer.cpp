@@ -84,7 +84,7 @@ void ChunksRenderer::draw() {
         static auto resolution = Nest::Application::get()->getWindow()->getSize();
         resolution = Nest::Application::get()->getWindow()->getSize();
 
-        static auto projViewMtx = camera->getViewMatrix();
+        static auto projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
         projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
 
         static auto cameraPos = camera->getPosition();

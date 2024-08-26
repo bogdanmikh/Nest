@@ -52,4 +52,5 @@ public:
 private:
     Bird::TextureHandle m_handle;
 };
+
 } // namespace Nest
