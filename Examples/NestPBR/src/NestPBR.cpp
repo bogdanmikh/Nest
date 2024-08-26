@@ -6,6 +6,9 @@
 #include <string>
 
 void NestPBR::onAttach() {
+
+    m_cameraMove.onAttach();
+
     std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
         "Textures/skybox/notblur/px.png",
         "Textures/skybox/notblur/nx.png",
@@ -41,7 +44,7 @@ void NestPBR::onAttach() {
     cubeCreateInfo.nameSkyTexture = "iSky";
     m_cubeRenderer.onAttachFigure(cubeCreateInfo);
 
-    m_spheres.resize(3);
+    m_spheres.resize(2);
 
     CreateInfo sphereCreateInfo;
     sphereCreateInfo.pathToVertexShader = "Shaders/vstSphere.glsl";
@@ -58,30 +61,21 @@ void NestPBR::onAttach() {
     sphereCreateInfo.position = glm::vec3(6., 0., 0.);
     sphereCreateInfo.pathToTexture = "Textures/Rust.jpg";
     m_spheres[1].onAttachFigure(sphereCreateInfo);
-
-    sphereCreateInfo.position = glm::vec3(8., 0., 0.);
-    sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
-    m_spheres[2].onAttachFigure(sphereCreateInfo);
-
-    m_cameraMove.onAttach();
-}
-
-void NestPBR::onDetach() {
-    m_cameraMove.onDetach();
-    m_cubeRenderer.onDetach();
-    for (auto &sphere : m_spheres) {
-        sphere.onDetach();
-    }
-    DELETE(Foundation::getAllocator(), m_skyComponent);
+//
+//    sphereCreateInfo.position = glm::vec3(8., 0., 0.);
+//    sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
+//    m_spheres[2].onAttachFigure(sphereCreateInfo);
+//
 }
 
 void NestPBR::onUpdate(double deltaTime) {
+    m_cameraMove.onUpdate(deltaTime);
+
     static auto camera = Nest::Application::get()->getWorldCamera();
     static glm::mat4 projViewMtx;
     projViewMtx = camera->getProjectionMatrix() * camera->getSkyViewMatrix();
     m_skyComponent->update(projViewMtx);
 
-    m_cameraMove.onUpdate(deltaTime);
     auto rotationCube = m_cubeRenderer.getTransform().getRotationEuler();
     rotationCube.x += 0.5;
     rotationCube.y += 0.5;
@@ -92,6 +86,15 @@ void NestPBR::onUpdate(double deltaTime) {
     for (auto &sphere : m_spheres) {
         sphere.onUpdate(deltaTime);
     }
+}
+
+void NestPBR::onDetach() {
+    m_cameraMove.onDetach();
+    m_cubeRenderer.onDetach();
+    for (auto &sphere : m_spheres) {
+        sphere.onDetach();
+    }
+    DELETE(Foundation::getAllocator(), m_skyComponent);
 }
 
 void NestPBR::addEntity(Nest::Entity *entity) {}

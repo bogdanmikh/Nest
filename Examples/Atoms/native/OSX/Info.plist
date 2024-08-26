@@ -5,19 +5,19 @@
 	<key>BuildMachineOSBuild</key>
 	<string>21A559</string>
 	<key>CFBundleDisplayName</key>
-	<string>ContentBrowser</string>
+	<string>Atoms</string>
 	<key>CFBundleExecutable</key>
-	<string>ContentBrowser</string>
+	<string>Atoms</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIconName</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.contentbrowser.ContentBrowser</string>
+	<string>com.Atoms.Atoms</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ContentBrowser</string>
+	<string>Atoms</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSupportedPlatforms</key>

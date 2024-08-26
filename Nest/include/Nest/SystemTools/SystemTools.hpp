@@ -15,6 +15,7 @@ public:
     );
     static void copyFolder(const Path &sourcePath, const Path &newPath);
     static void open(const Path &path);
+    static void show(const Path &path);
 };
 
 } // namespace Nest

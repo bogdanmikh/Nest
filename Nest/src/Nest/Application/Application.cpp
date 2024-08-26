@@ -49,8 +49,9 @@ Application::Application(ApplicationStartupSettings &settings) {
 
 Application::~Application() {
     ImGui_Shutdown();
-    if (m_layer)
+    if (m_layer) {
         m_layer->onDetach();
+    }
     DELETE(Foundation::getAllocator(), m_worldCamera);
     DELETE(Foundation::getAllocator(), m_layer);
     DELETE(Foundation::getAllocator(), m_window);
@@ -67,7 +68,7 @@ void Application::loop() {
     while (!m_window->shouldClose()) {
         uint64_t lastTime = m_timeMillis;
         m_timeMillis = getMillis();
-        m_deltaTimeMillis += m_timeMillis - lastTime;
+        m_deltaTimeMillis += (m_timeMillis - lastTime);
         if (m_deltaTimeMillis < (1000 / m_maximumFps)) {
             continue;
         }

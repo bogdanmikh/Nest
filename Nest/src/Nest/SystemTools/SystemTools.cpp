@@ -60,10 +60,22 @@ void SystemTools::copyFolder(const Path &sourcePath, const Path &newPath) {
 
 void SystemTools::open(const Path &path) {
 #ifdef PLATFORM_POSIX
-    std::string command = "open " + path.string();
+    std::string command = "open \"" + path.string() + "\"";
     system(command.c_str());
 #elif defined(PLATFORM_WINDOWS)
-    std::string command = "start " + path.string();
+    std::string command = "start \"" + path.string() + "\"";
+    system(command.c_str());
+#else
+#    error Unsupported platrofm
+#endif
+}
+
+void SystemTools::show(const Path &path) {
+#ifdef PLATFORM_POSIX
+    std::string command = "open -R \"" + path.string() + "\"";
+    system(command.c_str());
+#elif defined(PLATFORM_WINDOWS)
+    std::string command = "explorer /select, \"" + path.string() + "\"";
     system(command.c_str());
 #else
 #    error Unsupported platrofm
