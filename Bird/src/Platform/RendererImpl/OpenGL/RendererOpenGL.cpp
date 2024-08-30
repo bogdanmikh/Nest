@@ -93,7 +93,7 @@ void RendererOpenGL::flip() {
 }
 
 void RendererOpenGL::clear() {
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
     GL_CALL(glClearColor(0, 0, 0, 1));
 }
 
@@ -230,6 +230,10 @@ void RendererOpenGL::setUniform(const Uniform &uniform) {
 
 void RendererOpenGL::setTexture(TextureHandle handle, uint32_t slot) {
     textures[handle.id].bind(slot);
+}
+
+int RendererOpenGL::getNativeTextureHandle(TextureHandle textureHandle) {
+    return textures[textureHandle.id].getId();
 }
 
 void RendererOpenGL::submit(Frame *frame, View *views) {

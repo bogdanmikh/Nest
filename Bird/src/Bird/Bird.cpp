@@ -195,6 +195,11 @@ void setTexture(TextureHandle textureHandle, uint32_t slot) {
     s_context->setTexture(textureHandle, slot);
 }
 
+int getNativeTextureHandle(TextureHandle textureHandle) {
+    NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
+    return s_context->getNativeTextureHandle(textureHandle);
+}
+
 void setVertexLayout(VertexLayoutHandle handle) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     s_context->setVertexLayout(handle);

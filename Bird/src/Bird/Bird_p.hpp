@@ -238,8 +238,6 @@ struct Context {
         rendererExecuteCommands(m_preCommandQueue);
         if (m_render.getDrawCallsCount() != 0) {
             m_renderer->submit(&m_render, m_views);
-        } else {
-            m_renderer->clear();
         }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
@@ -489,6 +487,11 @@ struct Context {
 
     void setViewFrameBuffer(ViewId id, FrameBufferHandle frameBuffer) {
         m_views[id].m_frameBuffer = frameBuffer;
+    }
+
+    int getNativeTextureHandle(TextureHandle textureHandle) {
+        if(!m_renderer) { return 0; }
+        return m_renderer->getNativeTextureHandle(textureHandle);
     }
 
     //    Foundation::Thread m_thread;

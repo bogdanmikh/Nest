@@ -10,7 +10,7 @@ ContentBrowser::ContentBrowser()
     , m_currentDirectory()
     , m_defaultFileIcon("Icons/_plain.png")
     , m_directoryIcon("Icons/DirectoryIcon.png")
-    , m_fileIcons() {
+    , m_fileIcons(20) {
     m_fileIcons.emplace(".avi", Texture("Icons/avi.png"));
     m_fileIcons.emplace(".bmp", Texture("Icons/bmp.png"));
     m_fileIcons.emplace(".c", Texture("Icons/c.png"));
@@ -104,8 +104,9 @@ void ContentBrowser::onImGuiRender() {
             }
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+        int native = Bird::getNativeTextureHandle(icon->getHandle());
         ImGui::ImageButton(
-            (ImTextureID)(intptr_t)icon->getHandle().id, {thumbnailSize, thumbnailSize}
+            (ImTextureID)(intptr_t)native, {thumbnailSize, thumbnailSize}
         );
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
@@ -116,7 +117,7 @@ void ContentBrowser::onImGuiRender() {
         if (ImGui::BeginPopupContextItem()) {
             if (ImGui::MenuItem("Show in Finder")) {
                 SystemTools::show(path.c_str());
-                //                LOG_INFO("PATH: {}", path.c_str());
+                // LOG_INFO("PATH: {}", path.c_str());
             }
             ImGui::EndPopup();
         }

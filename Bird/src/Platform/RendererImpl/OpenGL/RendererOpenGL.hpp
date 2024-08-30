@@ -66,6 +66,7 @@ public:
     void setUniform(const Uniform &uniform) override;
     void setTexture(TextureHandle handle, uint32_t slot) override;
     void submit(Frame *frame, View *views) override;
+    int getNativeTextureHandle(TextureHandle textureHandle) override;
 
     static RendererOpenGL *s_instance;
     OpenGLTexture &getTexture(TextureHandle handle) {

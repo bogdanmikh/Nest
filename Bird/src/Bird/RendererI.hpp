@@ -71,6 +71,7 @@ public:
     virtual void deleteVertexLayout(VertexLayoutHandle handle) = 0;
     virtual void setUniform(const Uniform &uniform) = 0;
     virtual void setTexture(TextureHandle handle, uint32_t slot) = 0;
+    virtual int getNativeTextureHandle(TextureHandle textureHandle) = 0;
     virtual void submit(Frame *frame, View *views) = 0;
 };
 

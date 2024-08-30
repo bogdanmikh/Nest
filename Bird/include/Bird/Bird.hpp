@@ -59,6 +59,7 @@ void setIndexBuffer(IndexBufferHandle handle, intptr_t offset, size_t count);
 void setVertexLayout(VertexLayoutHandle handle);
 void setShader(ProgramHandle handle);
 void setTexture(TextureHandle textureHandle, uint32_t slot);
+int getNativeTextureHandle(TextureHandle textureHandle);
 /// Submit draw call
 void submit(ViewId id);
 // MARK: - Main functions

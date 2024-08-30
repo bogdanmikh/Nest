@@ -20,5 +20,5 @@ private:
     Path m_currentDirectory;
     Texture m_directoryIcon;
     Texture m_defaultFileIcon;
-    std::map<std::string, Texture> m_fileIcons;
+    std::unordered_map<std::string, Texture> m_fileIcons;
 };
