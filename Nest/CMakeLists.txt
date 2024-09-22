@@ -56,7 +56,7 @@ target_link_libraries(Nest nfd)
 
 # Dependencies - enet
 target_link_libraries(Nest enet_static)
-target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/enet)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)
 
 # Dependencies - assimp
 if (USE_ASSIMP)

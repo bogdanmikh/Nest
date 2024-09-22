@@ -7,8 +7,8 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->setLayer(NEW(Foundation::getAllocator(), Model3DLevel));
+    application->setLayer(new Model3DLevel);
     application->loop();
-    FREE(Foundation::getAllocator(), application);
+    delete application;
     return 0;
 }

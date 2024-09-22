@@ -20,7 +20,7 @@ namespace Foundation {
 
 AllocatorI *getAllocator() {
     static DefaultAllocator allocator;
-    //    static FreeListAllocator allocator(MemorySize::GIGABYTE);
+    // static FreeListAllocator allocator(MemorySize::MEGABYTE * 1000);
     return &allocator;
 }
 
@@ -39,13 +39,13 @@ void *realloc(AllocatorI *allocator, void *ptr, size_t size) {
 FreeListAllocator::FreeListAllocator(size_t totalSize)
     : m_totalSize(totalSize) {
     //    LOG_INFO("Allocator createdLOG_INFO");
-    m_memory = malloc(m_totalSize);
+    m_memory = std::malloc(m_totalSize);
     reset();
 }
 
 void *FreeListAllocator::realloc(void *ptr, size_t size) {
     if (ptr == nullptr) {
-        NEST_ASSERT(size > (m_totalSize - m_used), "Allocation size must be bigger");
+        NEST_ASSERT(size < m_totalSize - m_used, "Allocation size must be bigger");
         auto freeBlockIt =
             std::find_if(m_freeBlocks.begin(), m_freeBlocks.end(), [size](const Block &b) {
                 return size <= b.blockSize;
@@ -81,7 +81,7 @@ void *FreeListAllocator::realloc(void *ptr, size_t size) {
     } else if (size == 0) {
         // get offset at pointer
         size_t offset = static_cast<char *>(ptr) - static_cast<char *>(m_memory);
-        NEST_ASSERT(offset > m_totalSize || offset < 0, "Pointer exit for borders");
+        NEST_ASSERT(offset >= 0 && offset <= m_totalSize, "Pointer exit for borders");
         auto occupiedBlockIt = std::find_if(
             m_occupiedBlocks.begin(),
             m_occupiedBlocks.end(),

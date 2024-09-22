@@ -6,9 +6,9 @@ int startApp(int argc, char **argv) {
     settings.windowTitle = "Hello figures";
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
-    auto application = NEW(Foundation::getAllocator(), Nest::Application(settings));
-    application->setLayer(NEW(Foundation::getAllocator(), FigureLevel));
+    auto application = new Nest::Application(settings);
+    application->setLayer(new FigureLevel);
     application->loop();
-    DELETE(Foundation::getAllocator(), application);
+    delete application;
     return 0;
 }

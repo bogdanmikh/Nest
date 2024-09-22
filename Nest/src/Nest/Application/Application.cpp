@@ -53,8 +53,8 @@ Application::~Application() {
         m_layer->onDetach();
     }
     DELETE(Foundation::getAllocator(), m_worldCamera);
-    DELETE(Foundation::getAllocator(), m_layer);
     DELETE(Foundation::getAllocator(), m_window);
+    delete m_layer;
 }
 
 void Application::updateViewport(Size size) {
