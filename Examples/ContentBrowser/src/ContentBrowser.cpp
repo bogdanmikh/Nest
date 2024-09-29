@@ -105,9 +105,7 @@ void ContentBrowser::onImGuiRender() {
         }
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
         int native = Bird::getNativeTextureHandle(icon->getHandle());
-        ImGui::ImageButton(
-            (ImTextureID)(intptr_t)native, {thumbnailSize, thumbnailSize}
-        );
+        ImGui::ImageButton((ImTextureID)(intptr_t)native, {thumbnailSize, thumbnailSize});
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
             if (directoryEntry.is_directory()) {

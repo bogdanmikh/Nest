@@ -490,7 +490,9 @@ struct Context {
     }
 
     int getNativeTextureHandle(TextureHandle textureHandle) {
-        if(!m_renderer) { return 0; }
+        if (!m_renderer) {
+            return 0;
+        }
         return m_renderer->getNativeTextureHandle(textureHandle);
     }
 

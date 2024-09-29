@@ -1,12 +1,14 @@
 #pragma once
 
 #include <Bird/Bird.hpp>
+#include "Nest/Base/Base.hpp"
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/Renderer/Renderer3D.hpp"
-// #include <assimp/Importer.hpp>
-// #include <assimp/scene.h>
-// #include <assimp/postprocess.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace Nest {
 
@@ -29,7 +31,7 @@ public:
         float m_Weights[4];
     };
 
-    void create(Bird::ProgramHandle shader, const char *path, const char *nameModel3D);
+    void create(Bird::ProgramHandle shader, Path pathToModel);
     TransformComponent &getTransform();
 
     void draw();

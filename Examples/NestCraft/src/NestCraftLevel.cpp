@@ -4,6 +4,8 @@
 #include "CoreGame/Menu.hpp"
 #include "CameraMove.hpp"
 #include "CoreGame/Cross.hpp"
+#include "Effects/DrunkEffect.hpp"
+
 #include <filesystem>
 
 void NestCraftLevel::onAttach() {
@@ -13,6 +15,8 @@ void NestCraftLevel::onAttach() {
 
     auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
     addEntity(chunksRenderer);
+    auto drunkEffect = NEW(Foundation::getAllocator(), DrunkEffect);
+    addEntity(drunkEffect);
 }
 
 static void drawCross() {

@@ -24,7 +24,3 @@ void CarRenderer::onUpdate(double deltaTime) {
 void CarRenderer::onImGuiRender() {}
 
 void CarRenderer::onDetach() {}
-
-Nest::TransformComponent &CarRenderer::getTransform() {
-    return m_model3D.getTransform();
-}
