@@ -24,6 +24,7 @@ public:
     ~Renderer3D() = default;
     void begin();
     void submit(TransformComponent *transform, StaticMesh *mesh);
+    void submitToFB(TransformComponent *transform, StaticMesh *mesh, Bird::ViewId viewId);
     void submit(TransformComponent *transform, DynamicMesh *mesh);
     void end();
     Statistics getStats();

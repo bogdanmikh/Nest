@@ -42,6 +42,28 @@ void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     m_drawData.stats.drawCalls += 1;
 }
 
+void Renderer3D::submitToFB(TransformComponent *transform, StaticMesh *mesh, Bird::ViewId viewId) {
+    NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
+    //    Bird::setShader(mesh->m_shaderHandle);
+    updateModel(transform, mesh->m_model);
+    Bird::setUniform(mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4);
+    Bird::setUniform(
+        mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
+    );
+    static int slot = 0;
+    Bird::setTexture(mesh->m_textureBinding.texture, slot);
+    Bird::setUniform(
+        mesh->m_shaderHandle, mesh->m_textureBinding.name.c_str(), &slot, Bird::UniformType::Sampler
+    );
+
+    NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
+    Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
+    NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid index buffer for mesh");
+    Bird::setIndexBuffer(mesh->m_indexBufferHandle, 0, mesh->m_indicesCount);
+    Bird::submit(viewId);
+    m_drawData.stats.drawCalls += 1;
+}
+
 void Renderer3D::submit(TransformComponent *transform, DynamicMesh *mesh) {
     NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
     Bird::setShader(mesh->m_shaderHandle);

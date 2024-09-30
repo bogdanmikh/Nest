@@ -3,6 +3,7 @@
 #include <Nest.hpp>
 #include "CoreGame/GameObject.hpp"
 #include "CoreGame/Menu.hpp"
+#include "Viewport.hpp"
 
 class NestCraftLevel final : public Nest::Layer {
 public:
@@ -13,7 +14,7 @@ public:
     void addEntity(Nest::Entity *entity) override;
 
 private:
-    Bird::ProgramHandle m_shader;
     Menu m_menu;
+    Nest::Viewport m_viewport;
     std::vector<Nest::Entity *> m_entities;
 };

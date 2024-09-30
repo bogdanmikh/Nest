@@ -23,6 +23,6 @@ void main() {
     vec2 st = gl_FragCoord.xy / iResolution;
     vec2 m = gl_FragCoord.xy / iMouse;
 
-    vec4 res = vec4(Light * iColor.x, Light * iColor.y, Light * iColor.z, 1.) * texture(texture1, TexCoord);;
+    vec4 res = vec4(Light * iColor.x, Light * iColor.y, Light * iColor.z, 1.) * texture(texture1, TexCoord);
     fragColor = res;
 }

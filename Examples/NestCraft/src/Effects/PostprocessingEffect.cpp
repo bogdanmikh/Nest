@@ -2,13 +2,13 @@
 // Created by Bogdan on 29.09.2024.
 //
 
-#include "DrunkEffect.hpp"
+#include "PostprocessingEffect.hpp"
 
-void DrunkEffect::onAttach() {
+void PostprocessingEffect::onAttach() {
     using namespace Bird;
 
     Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram("Shaders/vstDrunk.glsl", "Shaders/fstDrunk.glsl");
+        Nest::AssetLoader::loadProgram(m_vertexPath, m_fragmentPath);
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     // clang-format off
@@ -33,7 +33,7 @@ void DrunkEffect::onAttach() {
     m_indexBuffer = createIndexBuffer(indicesMemory, BufferElementType::UnsignedInt, 6);
 }
 
-void DrunkEffect::onUpdate(double deltaTime) {
+void PostprocessingEffect::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
     mousePos = Nest::Events::getCursorPos();
     resolution = Nest::Application::get()->getWindow()->getSize();
@@ -42,6 +42,10 @@ void DrunkEffect::onUpdate(double deltaTime) {
     Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
     Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
     Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4);        /// vec2
+    if (m_textureHandle.isValid()) {
+        Bird::setTexture(m_textureHandle, slot);
+        Bird::setUniform(m_shader, "iChannel0", &slot, Bird::UniformType::Sampler);
+    }
 
     Bird::setShader(m_shader);
     Bird::setIndexBuffer(m_indexBuffer, 0, 6);
@@ -49,10 +53,19 @@ void DrunkEffect::onUpdate(double deltaTime) {
     Bird::submit(0);
 }
 
-void DrunkEffect::onImGuiRender() {}
+void PostprocessingEffect::onImGuiRender() {}
 
-void DrunkEffect::onDetach() {
+void PostprocessingEffect::onDetach() {
     deleteVertexBuffer(m_vertexBuffer);
     deleteIndexBuffer(m_indexBuffer);
     deleteProgram(m_shader);
+}
+
+void PostprocessingEffect::setPathToShaders(const std::string &vertexPath, const std::string &fragmentPath) {
+    m_vertexPath = vertexPath;
+    m_fragmentPath = fragmentPath;
+}
+
+void PostprocessingEffect::setFBTexture(Bird::TextureHandle textureHandle) {
+    m_textureHandle = textureHandle;
 }

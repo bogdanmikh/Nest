@@ -6,14 +6,20 @@
 
 #include <Nest.hpp>
 
-class DrunkEffect : public Nest::Entity {
+class PostprocessingEffect : public Nest::Entity {
 public:
+    void setFBTexture(Bird::TextureHandle textureHandle);
+    void setPathToShaders(const std::string &vertexPath, const std::string &fragmentPath);
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onImGuiRender() override;
     void onDetach() override;
 
 private:
+    std::string m_vertexPath;
+    std::string m_fragmentPath;
+
+    Bird::TextureHandle m_textureHandle;
     Bird::VertexBufferHandle m_vertexBuffer;
     Bird::IndexBufferHandle m_indexBuffer;
     Bird::ProgramHandle m_shader;
@@ -21,5 +27,7 @@ private:
     // uniforms
     glm::vec2 mousePos;
     glm::vec2 resolution;
-    double time;
+    float time;
+
+    int slot = 0;
 };

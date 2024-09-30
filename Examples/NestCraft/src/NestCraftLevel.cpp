@@ -4,19 +4,34 @@
 #include "CoreGame/Menu.hpp"
 #include "CameraMove.hpp"
 #include "CoreGame/Cross.hpp"
-#include "Effects/DrunkEffect.hpp"
+#include "Effects/PostprocessingEffect.hpp"
 
 #include <filesystem>
 
 void NestCraftLevel::onAttach() {
+    m_viewport.init();
     Bird::setViewClear(0, 0x3D75C9FF);
+
     auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
 
     auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
     addEntity(chunksRenderer);
-    auto drunkEffect = NEW(Foundation::getAllocator(), DrunkEffect);
-    addEntity(drunkEffect);
+
+//    auto pixelEffect = NEW(Foundation::getAllocator(), PostprocessingEffect);
+//    pixelEffect->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstPixel.glsl");
+//    pixelEffect->setFBTexture(m_viewport.getTextureHandle());
+//    addEntity(pixelEffect);
+
+    auto waveEffect = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    waveEffect->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstWave.glsl");
+    waveEffect->setFBTexture(m_viewport.getTextureHandle());
+    addEntity(waveEffect);
+
+//    auto tv = NEW(Foundation::getAllocator(), PostprocessingEffect);
+//    tv->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstTv.glsl");
+//    tv->setFBTexture(m_viewport.getTextureHandle());
+//    addEntity(tv);
 }
 
 static void drawCross() {
@@ -53,6 +68,7 @@ static void drawCross() {
 
 void NestCraftLevel::onUpdate(double deltaTime) {
     drawCross();
+    m_viewport.update();
     for (const auto &entity : m_entities) {
         entity->onUpdate(deltaTime);
         entity->onImGuiRender();
