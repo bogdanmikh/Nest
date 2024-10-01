@@ -15,11 +15,12 @@ void NestCraftLevel::onAttach() {
 
     auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
     chunksRenderer->setFbViewId(m_viewport.getViewId());
-//    chunksRenderer->setFbViewId(0);
+    //    chunksRenderer->setFbViewId(0);
     addEntity(chunksRenderer);
 
     auto managerEffects = NEW(Foundation::getAllocator(), ManagerEffects);
     managerEffects->setFBTexture(m_viewport.getTextureHandle());
+    managerEffects->setViewId(m_viewport.getViewId());
     addEntity(managerEffects);
 }
 
@@ -53,8 +54,8 @@ static void drawCross() {
         "##crosshair",
         nullptr,
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
-        ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
+            ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
+            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
     );
     //      ImGui::Begin("##crosshair");
 

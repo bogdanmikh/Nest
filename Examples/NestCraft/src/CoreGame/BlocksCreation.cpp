@@ -55,8 +55,10 @@ void BlocksCreation::update(double deltaTime) {
     updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::LEFT) && Nest::Events::isCursorLocked();
-    rightPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::RIGHT) && Nest::Events::isCursorLocked();
+    leftPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::LEFT) &&
+                  Nest::Events::isCursorLocked();
+    rightPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::RIGHT) &&
+                   Nest::Events::isCursorLocked();
     if (!leftPressed && !rightPressed) {
         return;
     }

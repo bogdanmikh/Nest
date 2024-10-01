@@ -4,11 +4,12 @@
 
 #include "PostprocessingEffect.hpp"
 
+PostprocessingEffect::PostprocessingEffect() : m_viewId(0) {}
+
 void PostprocessingEffect::onAttach() {
     using namespace Bird;
 
-    Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram(m_vertexPath, m_fragmentPath);
+    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(m_vertexPath, m_fragmentPath);
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     // clang-format off
@@ -50,7 +51,7 @@ void PostprocessingEffect::onUpdate(double deltaTime) {
     Bird::setShader(m_shader);
     Bird::setIndexBuffer(m_indexBuffer, 0, 6);
     Bird::setVertexBuffer(m_vertexBuffer);
-    Bird::submit(0);
+    Bird::submit(m_viewId);
 }
 
 void PostprocessingEffect::onImGuiRender() {}
@@ -61,11 +62,17 @@ void PostprocessingEffect::onDetach() {
     deleteProgram(m_shader);
 }
 
-void PostprocessingEffect::setPathToShaders(const std::string &vertexPath, const std::string &fragmentPath) {
+void PostprocessingEffect::setPathToShaders(
+    const std::string &vertexPath, const std::string &fragmentPath
+) {
     m_vertexPath = vertexPath;
     m_fragmentPath = fragmentPath;
 }
 
 void PostprocessingEffect::setFBTexture(Bird::TextureHandle textureHandle) {
     m_textureHandle = textureHandle;
+}
+
+void PostprocessingEffect::setViewId(Bird::ViewId viewId) {
+    m_viewId = viewId;
 }

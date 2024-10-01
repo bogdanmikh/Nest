@@ -1,11 +1,16 @@
 #include "Nest/Renderer/Model3D.hpp"
 
 namespace Nest {
+
 TransformComponent &Model3D::getTransform() {
     return m_transformComponent;
 }
 
-void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {}
+void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
+    Assimp::Importer importer;
+    const aiScene *scene = importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+}
 
 void Model3D::draw() {
     for (int i = 0; i < m_meshes.size(); ++i) {
