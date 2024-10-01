@@ -104,7 +104,7 @@ void ChunksRenderer::draw() {
         //        LOG_INFO("Color: {}, {}, {}", color.x, color.y, color.z);
         Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);
         //        Bird::setTexture();
-        m_renderer3D.submitToFB(&transform, m_chunksStorage->chunks[i].getMesh(), 1);
+        m_renderer3D.submitToFB(&transform, m_chunksStorage->chunks[i].getMesh(), m_viewId);
     }
     m_renderer3D.end();
 }

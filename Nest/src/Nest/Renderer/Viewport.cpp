@@ -2,7 +2,8 @@
 // Created by Bogdan on 29.09.2024.
 //
 
-#include "Viewport.hpp"
+#include "Nest/Renderer/Viewport.hpp"
+#include "Nest/Application/Application.hpp"
 
 namespace Nest {
 

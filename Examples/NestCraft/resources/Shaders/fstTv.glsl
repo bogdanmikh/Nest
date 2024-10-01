@@ -20,7 +20,7 @@ void main() {
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     float dispersion = .01;
-    float distortion = .01;
+    float distortion = .04;
     float noisestrength = .2;
     float bendscale = 1.5;
 
@@ -39,7 +39,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
                   offset, noisestrength).x;
     float g = mix(texture(iChannel0, vec2(uvg.x, uvg.y) + offset.x * distortion).xyz,
                   offset, noisestrength).y;
-    float b = mix(texture(iChannel0, vec2( uvb.x, uvb.y) + offset.x * distortion).xyz,
+    float b = mix(texture(iChannel0, vec2(uvb.x, uvb.y) + offset.x * distortion).xyz,
                   offset, noisestrength).z;
 
     if (uv.x > 0.0 && uv.x < 1.0 && uv.y > 0.0 && uv.y < 1.0) {

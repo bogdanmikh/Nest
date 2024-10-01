@@ -4,9 +4,7 @@
 #include "CoreGame/Menu.hpp"
 #include "CameraMove.hpp"
 #include "CoreGame/Cross.hpp"
-#include "Effects/PostprocessingEffect.hpp"
-
-#include <filesystem>
+#include "Effects/ManagerEffects.hpp"
 
 void NestCraftLevel::onAttach() {
     m_viewport.init();
@@ -16,22 +14,36 @@ void NestCraftLevel::onAttach() {
     addEntity(cameraMove);
 
     auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
+    chunksRenderer->setFbViewId(m_viewport.getViewId());
+//    chunksRenderer->setFbViewId(0);
     addEntity(chunksRenderer);
 
-//    auto pixelEffect = NEW(Foundation::getAllocator(), PostprocessingEffect);
-//    pixelEffect->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstPixel.glsl");
-//    pixelEffect->setFBTexture(m_viewport.getTextureHandle());
-//    addEntity(pixelEffect);
+    auto managerEffects = NEW(Foundation::getAllocator(), ManagerEffects);
+    managerEffects->setFBTexture(m_viewport.getTextureHandle());
+    addEntity(managerEffects);
+}
 
-    auto waveEffect = NEW(Foundation::getAllocator(), PostprocessingEffect);
-    waveEffect->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstWave.glsl");
-    waveEffect->setFBTexture(m_viewport.getTextureHandle());
-    addEntity(waveEffect);
+static void drawCross();
 
-//    auto tv = NEW(Foundation::getAllocator(), PostprocessingEffect);
-//    tv->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstTv.glsl");
-//    tv->setFBTexture(m_viewport.getTextureHandle());
-//    addEntity(tv);
+void NestCraftLevel::onUpdate(double deltaTime) {
+    drawCross();
+    m_viewport.update();
+    for (const auto &entity : m_entities) {
+        entity->onUpdate(deltaTime);
+        entity->onImGuiRender();
+    }
+}
+
+void NestCraftLevel::onDetach() {
+    for (auto &entity : m_entities) {
+        entity->onDetach();
+        DELETE(Foundation::getAllocator(), entity);
+    }
+}
+
+void NestCraftLevel::addEntity(Nest::Entity *entity) {
+    entity->onAttach();
+    m_entities.emplace_back(entity);
 }
 
 static void drawCross() {
@@ -41,8 +53,8 @@ static void drawCross() {
         "##crosshair",
         nullptr,
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
-            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
+        ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
+        ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
     );
     //      ImGui::Begin("##crosshair");
 
@@ -64,25 +76,4 @@ static void drawCross() {
         ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color
     );
     ImGui::End();
-}
-
-void NestCraftLevel::onUpdate(double deltaTime) {
-    drawCross();
-    m_viewport.update();
-    for (const auto &entity : m_entities) {
-        entity->onUpdate(deltaTime);
-        entity->onImGuiRender();
-    }
-}
-
-void NestCraftLevel::onDetach() {
-    for (auto &entity : m_entities) {
-        entity->onDetach();
-        DELETE(Foundation::getAllocator(), entity);
-    }
-}
-
-void NestCraftLevel::addEntity(Nest::Entity *entity) {
-    entity->onAttach();
-    m_entities.emplace_back(entity);
 }

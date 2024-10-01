@@ -3,7 +3,6 @@
 #include <Nest.hpp>
 #include "CoreGame/GameObject.hpp"
 #include "CoreGame/Menu.hpp"
-#include "Viewport.hpp"
 
 class NestCraftLevel final : public Nest::Layer {
 public:
