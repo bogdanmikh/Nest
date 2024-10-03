@@ -42,6 +42,7 @@ private:
     uint32_t m_indicesCount;
 
     friend class Renderer3D;
+    friend class Model3D;
 };
 
 } // namespace Nest

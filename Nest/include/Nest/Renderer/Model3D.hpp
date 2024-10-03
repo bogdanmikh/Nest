@@ -21,14 +21,6 @@ public:
         glm::vec3 Normal;
         // texCoords
         glm::vec2 TexCoords;
-        // tangent
-        glm::vec3 Tangent;
-        // bitangent
-        glm::vec3 Bitangent;
-        // bone indexes which will influence this vertex
-        int m_BoneIDs[4];
-        // weights from each bone
-        float m_Weights[4];
     };
 
     void create(Bird::ProgramHandle shader, Path pathToModel);
@@ -36,14 +28,17 @@ public:
 
     void draw();
 
+    ~Model3D();
+
+
 private:
-    /*
+
     void loadModel(const std::string& path);
     void processNode(aiNode *node, const aiScene *scene);
-    DynamicMesh processMesh(aiMesh *mesh, const aiScene *scene);
+    DynamicMesh *processMesh(aiMesh *mesh, const aiScene *scene);
     std::vector<TextureBinding>
     loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
-    */
+
     void rendererMesh();
 
     struct TextureData {
@@ -53,11 +48,10 @@ private:
 
     std::string m_directory;
     std::string m_nameModel3D;
-    std::vector<TextureData> texturesLoaded;
     Bird::ProgramHandle m_shader;
-    std::vector<DynamicMesh> m_meshes;
-    TransformComponent m_transformComponent;
+    std::vector<DynamicMesh*> m_meshes;
 
+    TransformComponent m_transformComponent;
     glm::mat4 m_viewProj;
 };
 

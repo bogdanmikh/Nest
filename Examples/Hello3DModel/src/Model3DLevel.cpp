@@ -21,8 +21,8 @@ void Model3DLevel::onAttach() {
 void Model3DLevel::onUpdate(double deltaTime) {
     Bird::setViewClear(0, 0x3D75C9FF);
     for (auto &entity : m_entities) {
-        entity->onUpdate(deltaTime);
         entity->onImGuiRender();
+        entity->onUpdate(deltaTime);
     }
 }
 
