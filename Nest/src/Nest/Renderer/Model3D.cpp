@@ -1,4 +1,5 @@
 #include "Nest/Renderer/Model3D.hpp"
+#include "Nest/Application/Application.hpp"
 
 namespace Nest {
 
@@ -23,6 +24,7 @@ void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     }
 
     processNode(scene->mRootNode, scene);
+    m_slots.resize(m_meshes.size());
 }
 
 void Model3D::processNode(aiNode *node, const aiScene *scene) {
@@ -35,7 +37,7 @@ void Model3D::processNode(aiNode *node, const aiScene *scene) {
     }
 }
 
-DynamicMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
+StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     std::vector<ModelVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<TextureBinding> textures;
@@ -81,45 +83,67 @@ DynamicMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
 //            loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 //        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 //    }
-    Foundation::Memory verticesMemory = Foundation::Memory(vertices.data());
-    Foundation::Memory indicesMemory = Foundation::Memory(indices.data());
+    LOG_INFO("Size: {}", indices.size());
+    for (int i = 0; i < indices.size(); ++i) {
+        auto index = indices[i];
+        auto pos = vertices[index].Position;
+        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
+    }
+//    LOG_INFO("Size: {}", vertices.size());
+//    for (int i = 0; i < vertices.size(); ++i) {
+//        auto vertex = vertices[i];
+//        auto pos = vertex.Position;
+//        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
+//    }
+
+    Foundation::Memory verticesMemory = Foundation::Memory::copying(vertices.data(), sizeof(ModelVertex) * vertices.size());
+    Foundation::Memory indicesMemory = Foundation::Memory::copying(indices.data(), sizeof(uint32_t) * indices.size());
 
     Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
-    layoutData.pushVec3();
     layoutData.pushVec2();
+    layoutData.pushVec3();
 
     Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
 
     Nest::MeshData meshData(
         vertexLayout, verticesMemory, vertices.size() * sizeof(ModelVertex), indicesMemory, indices.size()
     );
-    Nest::DynamicMesh *dynamicMesh = NEW(Foundation::getAllocator(), Nest::DynamicMesh);
-    dynamicMesh->create(meshData, textures, m_shader);
-    return dynamicMesh;
+    Nest::StaticMesh *staticMesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    staticMesh->create(meshData, textures, m_shader);
+    return staticMesh;
 }
 
 void Model3D::draw() {
+    static auto camera = Nest::Application::get()->getWorldCamera();
+    m_viewProj = camera->getProjectionMatrix() * camera->getViewMatrix();
     for (int i = 0; i < m_meshes.size(); ++i) {
         auto *mesh = m_meshes[i];
         NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
         //    Bird::setShader(mesh->m_shaderHandle);
-        mesh->m_model = getTransform().getTransform();
+        mesh->m_model = m_transformComponent.getTransform();
         Bird::setUniform(
             mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
         );
         Bird::setUniform(
-            mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
+            mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4
         );
-        for (int j = 0; j < mesh->m_bindings.size(); j++) {
-            Bird::setTexture(mesh->m_bindings[j].texture, j);
-            Bird::setUniform(
-                mesh->m_shaderHandle,
-                mesh->m_bindings[j].name.c_str(),
-                &j,
-                Bird::UniformType::Sampler
-            );
-        }
+//        if (m_slots[i].size() != mesh->m_textureBinding.size()) {
+//            m_slots[i].resize(mesh->m_textureBinding.size());
+//            for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
+//                m_slots[i][j] = j;
+//            }
+//        }
+
+//        for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
+//            Bird::setTexture(mesh->m_textureBinding[j].texture, j);
+//            Bird::setUniform(
+//                mesh->m_shaderHandle,
+//                mesh->m_textureBinding[j].name.c_str(),
+//                &m_slots[i][j],
+//                Bird::UniformType::Sampler
+//            );
+//        }
 
         NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
         Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
@@ -128,4 +152,5 @@ void Model3D::draw() {
         Bird::submit(0);
     }
 }
+
 } // namespace Nest

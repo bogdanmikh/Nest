@@ -7,7 +7,7 @@ class CarRenderer;
 
 class Model3DLevel final : public Nest::Layer {
 public:
-    ~Model3DLevel() override;
+    ~Model3DLevel() override {}
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onDetach() override;

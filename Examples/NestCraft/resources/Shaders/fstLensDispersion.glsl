@@ -17,7 +17,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord );
 void main() {
     mainImage( f_ColorOut, gl_FragCoord.xy );
 }
-
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
     vec2 uv = fragCoord / iResolution.xy;
     vec2 resolution = iResolution.xy;
@@ -36,15 +35,10 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 
         if (fragCoord.x > posX && fragCoord.x < posX + rectWidth * resolution.x &&
         fragCoord.y > posY && fragCoord.y < posY + rectHeight * resolution.y) {
-            if (i % 2 == 0) {
-                color.r = texture( iChannel0, vec2(uv.x, uv.y) ).r;
-                color.g = texture( iChannel0, vec2(uv.x + intensiveEffect, uv.y) ).g;
-                color.b = texture( iChannel0, vec2(uv.x - intensiveEffect, uv.y) ).b;
-            } else {
-                color.r = texture( iChannel0, vec2(uv.x - intensiveEffect, uv.y) ).r;
-                color.g = texture( iChannel0, vec2(uv.x + intensiveEffect, uv.y) ).g;
-                color.b = texture( iChannel0, vec2(uv.x, uv.y) ).b;
-            }
+
+           // color.r = texture( iChannel0, vec2(uv.x + intensiveEffect, uv.y) ).r;
+            color.g = texture( iChannel0, vec2(uv.x, uv.y) ).g;
+            color.b = texture( iChannel0, vec2(uv.x - intensiveEffect, uv.y) ).b;
         }
     }
     fragColor = color;

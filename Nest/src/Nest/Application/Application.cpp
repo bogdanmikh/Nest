@@ -63,8 +63,9 @@ void Application::updateViewport(Size size) {
 }
 
 void Application::loop() {
-    if (m_layer != nullptr)
+    if (m_layer != nullptr) {
         m_layer->onAttach();
+    }
     while (!m_window->shouldClose()) {
         uint64_t lastTime = m_timeMillis;
         m_timeMillis = getMillis();

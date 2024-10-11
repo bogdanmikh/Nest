@@ -30,12 +30,11 @@ public:
 
     ~Model3D();
 
-
 private:
 
     void loadModel(const std::string& path);
     void processNode(aiNode *node, const aiScene *scene);
-    DynamicMesh *processMesh(aiMesh *mesh, const aiScene *scene);
+    StaticMesh *processMesh(aiMesh *mesh, const aiScene *scene);
     std::vector<TextureBinding>
     loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 
@@ -49,7 +48,9 @@ private:
     std::string m_directory;
     std::string m_nameModel3D;
     Bird::ProgramHandle m_shader;
-    std::vector<DynamicMesh*> m_meshes;
+    std::vector<StaticMesh*> m_meshes;
+
+    std::vector<std::vector<int>> m_slots;
 
     TransformComponent m_transformComponent;
     glm::mat4 m_viewProj;

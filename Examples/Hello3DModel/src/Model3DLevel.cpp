@@ -4,10 +4,6 @@
 
 #include <Nest.hpp>
 
-Model3DLevel::~Model3DLevel() {
-    onDetach();
-}
-
 void Model3DLevel::onAttach() {
     m_carRenderer = new CarRenderer;
     m_cameraMove = new CameraMove;

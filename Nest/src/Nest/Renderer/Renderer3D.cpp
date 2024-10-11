@@ -28,11 +28,12 @@ void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
-    static int slot = 0;
-    Bird::setTexture(mesh->m_textureBinding.texture, slot);
-    Bird::setUniform(
-        mesh->m_shaderHandle, mesh->m_textureBinding.name.c_str(), &slot, Bird::UniformType::Sampler
-    );
+    for (int i = 0; i < mesh->m_textureBinding.size(); i++) {
+        Bird::setTexture(mesh->m_textureBinding[i].texture, i);
+        Bird::setUniform(
+            mesh->m_shaderHandle, mesh->m_textureBinding[i].name.c_str(), &i, Bird::UniformType::Sampler
+        );
+    }
 
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
     Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
@@ -51,10 +52,12 @@ void Renderer3D::submitToFB(TransformComponent *transform, StaticMesh *mesh, Bir
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
     static int slot = 0;
-    Bird::setTexture(mesh->m_textureBinding.texture, slot);
-    Bird::setUniform(
-        mesh->m_shaderHandle, mesh->m_textureBinding.name.c_str(), &slot, Bird::UniformType::Sampler
-    );
+    for (int i = 0; i < mesh->m_textureBinding.size(); i++) {
+        Bird::setTexture(mesh->m_textureBinding[i].texture, slot);
+        Bird::setUniform(
+            mesh->m_shaderHandle, mesh->m_textureBinding[i].name.c_str(), &slot, Bird::UniformType::Sampler
+        );
+    }
 
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
     Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
@@ -72,10 +75,11 @@ void Renderer3D::submit(TransformComponent *transform, DynamicMesh *mesh) {
     Bird::setUniform(
         mesh->m_shaderHandle, "projViewMtx", (void *)&m_viewProj, Bird::UniformType::Mat4
     );
+    static int slot = 0;
     for (int i = 0; i < mesh->m_bindings.size(); i++) {
-        Bird::setTexture(mesh->m_bindings[i].texture, i);
+        Bird::setTexture(mesh->m_bindings[i].texture, slot);
         Bird::setUniform(
-            mesh->m_shaderHandle, mesh->m_bindings[i].name.c_str(), &i, Bird::UniformType::Sampler
+            mesh->m_shaderHandle, mesh->m_bindings[i].name.c_str(), &slot, Bird::UniformType::Sampler
         );
     }
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
