@@ -1,5 +1,6 @@
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Application/Application.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
 
 namespace Nest {
 
@@ -74,20 +75,14 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
         }
     }
     // обработка материала
-//    if (mesh->mMaterialIndex >= 0) {
-//        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-//        std::vector<TextureBinding> diffuseMaps =
-//            loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-//        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-//        std::vector<TextureBinding> specularMaps =
-//            loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-//        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-//    }
-    LOG_INFO("Size: {}", indices.size());
-    for (int i = 0; i < indices.size(); ++i) {
-        auto index = indices[i];
-        auto pos = vertices[index].Position;
-        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
+    if (mesh->mMaterialIndex >= 0) {
+        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+        std::vector<TextureBinding> diffuseMaps =
+            loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+        std::vector<TextureBinding> specularMaps =
+            loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 //    LOG_INFO("Size: {}", vertices.size());
 //    for (int i = 0; i < vertices.size(); ++i) {
@@ -113,6 +108,65 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     staticMesh->create(meshData, textures, m_shader);
     return staticMesh;
 }
+std::vector<TextureBinding> Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
+    std::vector<TextureBinding> textures;
+    uint32_t countTextures = mat->GetTextureCount(type);
+    textures.reserve(countTextures);
+
+    for(unsigned int i = 0; i < countTextures; i++) {
+        aiString str;
+        mat->GetTexture(type, i, &str);
+
+//        if (str.length == 0) {
+//            aiTexture *texture = mat->GetTexture(type, i, );
+//
+//            if (texture) {
+//                // Допустим, вы хотите создать текстуру из этого объекта
+//                Nest::TextureAsset textureAsset;
+//                // Создание текстуры из данных текстуры
+//                if (texture->mHeight == 0) {
+//                    // Это тип текстуры, который не имеет высоты, значит, это текстура 2D
+//                    textureAsset = Nest::AssetLoader::loadTextureFromMemory(
+//                        texture->pcData,
+//                        texture->mWidth * texture->mHeight * texture->mBytesPerPixel
+//                    );
+//                } else {
+//                    // Обработка других типов текстур
+//                    LOG_WARN("Unsupported texture format for embedded texture.");
+//                    continue;
+//                }
+//
+//                Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+//                textureCreate.m_numMips = 1; // здесь нужно установить желаемое количество мип-карт
+//                textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+//                textureCreate.m_magFiltering = Bird::NEAREST;
+//
+//                TextureBinding textureBinding;
+//                textureBinding.texture = createTexture(textureCreate);
+//                textureBinding.name = "tex"; // Можно изменить имя текстуры по желанию
+//                textures.emplace_back(textureBinding);
+//            }
+//            continue;
+//        }
+
+        std::filesystem::path texturePath = std::filesystem::current_path() / "Models" / std::string(str.C_Str());
+        if (!std::filesystem::exists(texturePath)) {
+            LOG_ERROR("Path not exists: {}", texturePath.string());
+            continue;
+        }
+        Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(texturePath);
+        LOG_INFO("Path: {}", texturePath.string());
+        Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+        textureCreate.m_numMips = 1;
+        textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+        textureCreate.m_magFiltering = Bird::NEAREST;
+        TextureBinding texture;
+        texture.texture = createTexture(textureCreate);
+        texture.name = "tex";
+        textures.emplace_back(texture);
+    }
+    return textures;
+}
 
 void Model3D::draw() {
     static auto camera = Nest::Application::get()->getWorldCamera();
@@ -120,7 +174,7 @@ void Model3D::draw() {
     for (int i = 0; i < m_meshes.size(); ++i) {
         auto *mesh = m_meshes[i];
         NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
-        //    Bird::setShader(mesh->m_shaderHandle);
+        Bird::setShader(mesh->m_shaderHandle);
         mesh->m_model = m_transformComponent.getTransform();
         Bird::setUniform(
             mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
@@ -128,22 +182,22 @@ void Model3D::draw() {
         Bird::setUniform(
             mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4
         );
-//        if (m_slots[i].size() != mesh->m_textureBinding.size()) {
-//            m_slots[i].resize(mesh->m_textureBinding.size());
-//            for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
-//                m_slots[i][j] = j;
-//            }
-//        }
+        if (m_slots[i].size() != mesh->m_textureBinding.size()) {
+            m_slots[i].resize(mesh->m_textureBinding.size());
+            for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
+                m_slots[i][j] = j;
+            }
+        }
 
-//        for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
-//            Bird::setTexture(mesh->m_textureBinding[j].texture, j);
-//            Bird::setUniform(
-//                mesh->m_shaderHandle,
-//                mesh->m_textureBinding[j].name.c_str(),
-//                &m_slots[i][j],
-//                Bird::UniformType::Sampler
-//            );
-//        }
+        for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
+            Bird::setTexture(mesh->m_textureBinding[j].texture, j);
+            Bird::setUniform(
+                mesh->m_shaderHandle,
+                mesh->m_textureBinding[j].name.c_str(),
+                &m_slots[i][j],
+                Bird::UniformType::Sampler
+            );
+        }
 
         NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");
         Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
