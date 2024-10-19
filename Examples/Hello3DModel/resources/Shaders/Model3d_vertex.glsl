@@ -11,6 +11,7 @@ uniform mat4 projViewMtx;
 
 void main() {
      gl_Position = projViewMtx * model * vec4(aPos, 1.0);
+     TexCoords = aTexCoords;
     //gl_Position = vec4(aPos, 1.0);
 //    gl_Position = vec4(aPos, 1.0);
 }

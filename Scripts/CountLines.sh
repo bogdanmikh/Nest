@@ -1,1 +1,1 @@
-cloc --exclude-dir=Vendor,.git,.idea,cmake-build-debug  .
+cloc --exclude-dir=Vendor,.git,.idea,cmake-build-debug,bin  .
