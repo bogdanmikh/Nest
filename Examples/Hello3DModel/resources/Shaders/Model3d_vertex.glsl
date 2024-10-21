@@ -5,9 +5,8 @@ layout (location = 2) in vec3 aNormal;
 
 out vec2 TexCoords;
 
-uniform mat4 model;
-
 uniform mat4 projViewMtx;
+uniform mat4 model;
 
 void main() {
      gl_Position = projViewMtx * model * vec4(aPos, 1.0);

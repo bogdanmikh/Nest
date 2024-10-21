@@ -3,7 +3,7 @@
 #include <Nest.hpp>
 
 class CameraMove;
-class CarRenderer;
+class SnowScene;
 
 class Model3DLevel final : public Nest::Layer {
 public:
@@ -16,5 +16,5 @@ public:
 private:
     std::vector<Nest::Entity *> m_entities;
     CameraMove *m_cameraMove;
-    CarRenderer *m_carRenderer;
+    SnowScene *m_carRenderer;
 };

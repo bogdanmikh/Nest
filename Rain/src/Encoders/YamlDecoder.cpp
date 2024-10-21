@@ -74,6 +74,48 @@ bool YamlDecoder::decode(const char *key, int &data) {
     return true;
 }
 
+bool YamlDecoder::decode(const char *key, uint32_t &data) {
+    if (m_isArray) {
+        const auto &member = *m_arrayIteratorStack.back();
+        data = member.as<uint32_t>();
+    } else {
+        if (!currentObject()[key]) {
+            return false;
+        }
+        const auto &member = currentObject()[key];
+        data = member.as<uint32_t>();
+    }
+    return true;
+}
+
+bool YamlDecoder::decode(const char *key, int64_t &data) {
+    if (m_isArray) {
+        const auto &member = *m_arrayIteratorStack.back();
+        data = member.as<int64_t>();
+    } else {
+        if (!currentObject()[key]) {
+            return false;
+        }
+        const auto &member = currentObject()[key];
+        data = member.as<int64_t>();
+    }
+    return true;
+}
+
+bool YamlDecoder::decode(const char *key, uint64_t &data) {
+    if (m_isArray) {
+        const auto &member = *m_arrayIteratorStack.back();
+        data = member.as<uint64_t>();
+    } else {
+        if (!currentObject()[key]) {
+            return false;
+        }
+        const auto &member = currentObject()[key];
+        data = member.as<uint64_t>();
+    }
+    return true;
+}
+
 bool YamlDecoder::decode(const char *key, float &data) {
     if (m_isArray) {
         const auto &member = *m_arrayIteratorStack.back();
@@ -84,6 +126,20 @@ bool YamlDecoder::decode(const char *key, float &data) {
         }
         const auto &member = currentObject()[key];
         data = member.as<float>();
+    }
+    return true;
+}
+
+bool YamlDecoder::decode(const char *key, double &data) {
+    if (m_isArray) {
+        const auto &member = *m_arrayIteratorStack.back();
+        data = member.as<double>();
+    } else {
+        if (!currentObject()[key]) {
+            return false;
+        }
+        const auto &member = currentObject()[key];
+        data = member.as<double>();
     }
     return true;
 }

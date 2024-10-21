@@ -70,5 +70,8 @@ void CameraMove::onImGuiRender() {
         m_worldCamera->getPosition().y,
         m_worldCamera->getPosition().z
     );
+    if (ImGui::Button("Reset")) {
+        m_worldCamera->setPosition(0, 0, 0);
+    }
     ImGui::End();
 }

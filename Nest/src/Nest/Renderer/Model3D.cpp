@@ -162,7 +162,8 @@ void Model3D::draw() {
         Bird::setUniform(
             mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4
         );
-        if (m_slots[i].size() != mesh->m_textureBinding.size()) {
+        if (m_slots[i].size() != mesh->m_textureBinding.size()  && mesh->m_textureBinding.size() > 0) {
+            // int a = mesh->m_textureBinding.size(), b = m_slots[i].size();
             m_slots[i].resize(mesh->m_textureBinding.size());
             for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
                 m_slots[i][j] = j;

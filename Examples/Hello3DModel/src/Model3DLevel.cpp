@@ -1,11 +1,11 @@
 #include "Model3DLevel.hpp"
 #include "CameraMove.hpp"
-#include "CarRenderer.hpp"
+#include "SnowScene.hpp"
 
 #include <Nest.hpp>
 
 void Model3DLevel::onAttach() {
-    m_carRenderer = new CarRenderer;
+    m_carRenderer = new SnowScene;
     m_cameraMove = new CameraMove;
     addEntity(m_carRenderer);
     addEntity(m_cameraMove);
