@@ -13,7 +13,8 @@ NestEngine is a simple set of basic tools for creating a small game
 ## Applications:
 * [NestPBR](Examples/NestPBR/README.md)
 * [NestCraft](Examples/NestCraft/README.md)
-* [ContentBrowser](Examples/ContentBrowser/README.md)
+* [Snow Scene](Examples/Hello3DModel/README.md)
+* [Content Browser](Examples/ContentBrowser/README.md)
 * [Profiler (in developing)](Examples/Profiler/README.md)
 
 

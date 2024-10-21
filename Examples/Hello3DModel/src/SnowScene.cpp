@@ -17,24 +17,74 @@ void SnowScene::onAttach() {
         "Shaders/Model3d_vertex.glsl", "Shaders/Model3d_fragment.glsl"
     );
     Bird::ProgramHandle m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
-    m_objects.resize(2);
-    m_objectsSettings.resize(2);
+    int countModel = 9, index = 0;
+    m_objects.resize(countModel);
+    m_objectsSettings.resize(countModel);
 
     // snowCar
-    m_objectsSettings[0].name = "Car";
-    m_objects[0].create(
+    m_objectsSettings[index].name = "Snow Car 1";
+    m_objects[index].create(
         m_shaderHandle, "Models/snow_car/scene.gltf"
     );
+    index++;
+    m_objectsSettings[index].name = "Snow Car 2";
+    m_objects[index].create(
+        m_shaderHandle, "Models/snow_car2/scene.gltf"
+    );
+    index++;
 
     // house
-    m_objectsSettings[1].name = "House";
-    m_objects[1].create(
+    m_objectsSettings[index].name = "House";
+    m_objects[index].create(
         m_shaderHandle, "Models/winter_house/scene.gltf"
     );
+    index++;
+
+    // fence 1
+    m_objectsSettings[index].name = "Fence 1";
+    m_objects[index].create(
+        m_shaderHandle, "Models/fence/scene.gltf"
+    );
+    index++;
+
+    // fence 2
+    m_objectsSettings[index].name = "Fence 2";
+    m_objects[index].create(
+        m_shaderHandle, "Models/fence/scene.gltf"
+    );
+    index++;
+
+    // place 1
+    m_objectsSettings[index].name = "Place";
+    m_objects[index].create(
+        m_shaderHandle, "Models/place/scene.gltf"
+    );
+    index++;
+
+    // Firewood
+    m_objectsSettings[index].name = "Firewood";
+    m_objects[index].create(
+        m_shaderHandle, "Models/firewood/scene.gltf"
+    );
+    index++;
+
+    // Place 2
+    m_objectsSettings[index].name = "Place 2";
+    m_objects[index].create(
+        m_shaderHandle, "Models/place2/scene.gltf"
+    );
+    index++;
+
+    // Place 2
+    m_objectsSettings[index].name = "Snowman";
+    m_objects[index].create(
+        m_shaderHandle, "Models/snowman/scene.gltf"
+    );
+    index++;
 
     // Load general settings
     {
-        std::ifstream file("scene.yaml");
+        std::ifstream file("Scenes/scene.yaml");
         if (file.is_open()) {
             Rain::Decoder *decoder = new Rain::YamlDecoder;
             decoder->decode(file, m_objectsSettings);
@@ -135,6 +185,7 @@ static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float 
 }
 
 void SnowScene::onImGuiRender() {
+#if false
     for (int i = 0; i < m_objects.size(); i++) {
         auto &obj = m_objects[i];
         auto &settings = m_objectsSettings[i];
@@ -142,10 +193,11 @@ void SnowScene::onImGuiRender() {
         drawVec3Control(settings.name + " Scale: ", m_objectsSettings[i].scale, 1);
         drawVec3Control(settings.name + " Deg: ", m_objectsSettings[i].degrees, 0);
     }
+#endif
 }
 
 void SnowScene::onDetach() {
-    std::ofstream file("scene.yaml");
+    std::ofstream file("Scenes/scene.yaml");
     if (file.is_open()) {
         Rain::Encoder *encoder = new Rain::YamlEncoder();
         encoder->encode(file, m_objectsSettings);

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Withe Fence
+* source:	https://sketchfab.com/3d-models/withe-fence-4ce8036662944c239cd9be02d0b93f2d
+* author:	adam127 (https://sketchfab.com/adam127)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Withe Fence" (https://sketchfab.com/3d-models/withe-fence-4ce8036662944c239cd9be02d0b93f2d) by adam127 (https://sketchfab.com/adam127) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

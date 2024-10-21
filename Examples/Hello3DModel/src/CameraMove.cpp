@@ -15,7 +15,7 @@ void CameraMove::onUpdate(double deltaTime) {
     if (Events::isKeyPressed(Key::LEFT_SHIFT)) {
         cameraSpeed = 30.f;
     } else {
-        cameraSpeed = 20.f;
+        cameraSpeed = 15.f;
     }
     if (deltaTime >= 1) {
         LOG_ERROR("Delta: {}", deltaTime);
