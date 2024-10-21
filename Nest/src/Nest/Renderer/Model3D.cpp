@@ -18,7 +18,7 @@ TransformComponent &Model3D::getTransform() {
 void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     m_pathToModel3D = pathToModel;
     m_shader = shader;
-    Assimp::Importer importer;
+    static Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -29,9 +29,9 @@ void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
 }
 
 void Model3D::processNode(aiNode *node, const aiScene *scene) {
-    for(unsigned int i = 0; i < node->mNumMeshes; i++) {
+    for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        m_meshes.push_back(processMesh(mesh, scene));
+        m_meshes.emplace_back(processMesh(mesh, scene));
     }
     for(unsigned int i = 0; i < node->mNumChildren; i++) {
         processNode(node->mChildren[i], scene);
@@ -137,7 +137,7 @@ std::vector<TextureBinding> Model3D::loadMaterialTextures(aiMaterial *mat, aiTex
 
         Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(texturePath);
         Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-        textureCreate.m_numMips = 1;
+        textureCreate.m_numMips = 4;
         textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
         textureCreate.m_magFiltering = Bird::NEAREST;
         TextureBinding texture;

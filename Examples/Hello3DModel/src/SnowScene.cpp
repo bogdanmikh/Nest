@@ -17,21 +17,21 @@ void SnowScene::onAttach() {
         "Shaders/Model3d_vertex.glsl", "Shaders/Model3d_fragment.glsl"
     );
     Bird::ProgramHandle m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
-    // house
-//    m_objects.emplace_back();
-//    m_objectsSettings.emplace_back();
-//    m_objectsSettings.back().name = "House";
-//    m_objects.back().create(
-//        m_shaderHandle, "Models/winter_house/scene.gltf"
-//    );
+    m_objects.resize(2);
+    m_objectsSettings.resize(2);
 
     // snowCar
-    m_objects.emplace_back();
-    m_objectsSettings.emplace_back();
-    m_objectsSettings.back().name = "Car";
-    m_objects.back().create(
+    m_objectsSettings[0].name = "Car";
+    m_objects[0].create(
         m_shaderHandle, "Models/snow_car/scene.gltf"
     );
+
+    // house
+    m_objectsSettings[1].name = "House";
+    m_objects[1].create(
+        m_shaderHandle, "Models/winter_house/scene.gltf"
+    );
+
     // Load general settings
     {
         std::ifstream file("scene.yaml");
@@ -43,10 +43,16 @@ void SnowScene::onAttach() {
             LOG_INFO("LOAD");
         }
     }
+    for (int i = 0; i < m_objects.size(); i++) {
+        auto &obj = m_objects[i];
+    }
 }
 
 void SnowScene::onUpdate(double deltaTime) {
    // house
+   for (int i = 0; i < m_objects.size(); i++) {
+       auto &obj = m_objects[i];
+   }
    for (int i = 0; i < m_objects.size(); i++) {
        auto &obj = m_objects[i];
        auto &settings = m_objectsSettings[i];

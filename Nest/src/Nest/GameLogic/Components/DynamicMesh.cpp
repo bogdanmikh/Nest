@@ -13,6 +13,12 @@ DynamicMesh::~DynamicMesh() {
     if (m_indexBufferHandle.isValid()) {
         Bird::deleteIndexBuffer(m_indexBufferHandle);
     }
+    if (m_bufferLayoutHandle.isValid()) {
+        deleteVertexLayout(m_bufferLayoutHandle);
+    }
+    for (const auto &texture : m_bindings) {
+        deleteTexture(texture.texture);
+    }
 }
 
 DynamicMesh::DynamicMesh(DynamicMesh &&source)
