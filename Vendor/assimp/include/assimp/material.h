@@ -292,6 +292,14 @@ enum aiTextureType {
     aiTextureType_DIFFUSE_ROUGHNESS = 16,
     aiTextureType_AMBIENT_OCCLUSION = 17,
 
+    /** Unknown texture
+     *
+     *  A texture reference that does not match any of the definitions
+     *  above is considered to be 'unknown'. It is still imported,
+     *  but is excluded from any further post-processing.
+    */
+    aiTextureType_UNKNOWN = 18,
+
     /** PBR Material Modifiers
     * Some modern renderers have further PBR modifiers that may be overlaid
     * on top of the 'base' PBR materials for additional realism.
@@ -318,20 +326,20 @@ enum aiTextureType {
     */
     aiTextureType_TRANSMISSION = 21,
 
-    /** Unknown texture
-     *
-     *  A texture reference that does not match any of the definitions
-     *  above is considered to be 'unknown'. It is still imported,
-     *  but is excluded from any further post-processing.
-    */
-    aiTextureType_UNKNOWN = 18,
+    /**
+     * Maya material declarations
+     */
+    aiTextureType_MAYA_BASE = 22,
+    aiTextureType_MAYA_SPECULAR = 23,
+    aiTextureType_MAYA_SPECULAR_COLOR = 24,
+    aiTextureType_MAYA_SPECULAR_ROUGHNESS = 25,
 
 #ifndef SWIG
     _aiTextureType_Force32Bit = INT_MAX
 #endif
 };
 
-#define AI_TEXTURE_TYPE_MAX aiTextureType_TRANSMISSION
+#define AI_TEXTURE_TYPE_MAX aiTextureType_MAYA_SPECULAR_ROUGHNESS
 
 // -------------------------------------------------------------------------------
 /**
@@ -693,7 +701,7 @@ struct aiMaterialProperty {
 *  Material data is stored using a key-value structure. A single key-value
 *  pair is called a 'material property'. C++ users should use the provided
 *  member functions of aiMaterial to process material properties, C users
-*  have to stick with the aiMaterialGetXXX family of unbound functions.
+*  have to stick with the aiGetMaterialXXX family of unbound functions.
 *  The library defines a set of standard keys (AI_MATKEY_XXX).
 */
 #ifdef __cplusplus

@@ -17,10 +17,10 @@ public:
     struct ModelVertex {
         // position
         glm::vec3 Position;
-        // normal
-        glm::vec3 Normal;
         // texCoords
         glm::vec2 TexCoords;
+        // normal
+        glm::vec3 Normal;
     };
 
     void create(Bird::ProgramHandle shader, Path pathToModel);
@@ -45,8 +45,7 @@ private:
         std::string path;
     };
 
-    std::string m_directory;
-    std::string m_nameModel3D;
+    Path m_pathToModel3D;
     Bird::ProgramHandle m_shader;
     std::vector<StaticMesh*> m_meshes;
 

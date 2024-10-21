@@ -16,6 +16,7 @@ TransformComponent &Model3D::getTransform() {
 }
 
 void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
+    m_pathToModel3D = pathToModel;
     m_shader = shader;
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -23,7 +24,6 @@ void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         LOG_CRITICAL("ERROR::ASSIMP::{}", importer.GetErrorString());
     }
-
     processNode(scene->mRootNode, scene);
     m_slots.resize(m_meshes.size());
 }
@@ -84,6 +84,7 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
             loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
+
 //    LOG_INFO("Size: {}", vertices.size());
 //    for (int i = 0; i < vertices.size(); ++i) {
 //        auto vertex = vertices[i];
@@ -108,54 +109,33 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     staticMesh->create(meshData, textures, m_shader);
     return staticMesh;
 }
+
 std::vector<TextureBinding> Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
     std::vector<TextureBinding> textures;
     uint32_t countTextures = mat->GetTextureCount(type);
     textures.reserve(countTextures);
 
+    Path directoryModel;
+    Path lastPath;
+    for (const auto &comp: m_pathToModel3D) {
+        directoryModel /= comp;
+        if (lastPath == "Models") {
+            break;
+        }
+        lastPath = comp;
+    }
     for(unsigned int i = 0; i < countTextures; i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
 
-//        if (str.length == 0) {
-//            aiTexture *texture = mat->GetTexture(type, i, );
-//
-//            if (texture) {
-//                // Допустим, вы хотите создать текстуру из этого объекта
-//                Nest::TextureAsset textureAsset;
-//                // Создание текстуры из данных текстуры
-//                if (texture->mHeight == 0) {
-//                    // Это тип текстуры, который не имеет высоты, значит, это текстура 2D
-//                    textureAsset = Nest::AssetLoader::loadTextureFromMemory(
-//                        texture->pcData,
-//                        texture->mWidth * texture->mHeight * texture->mBytesPerPixel
-//                    );
-//                } else {
-//                    // Обработка других типов текстур
-//                    LOG_WARN("Unsupported texture format for embedded texture.");
-//                    continue;
-//                }
-//
-//                Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-//                textureCreate.m_numMips = 1; // здесь нужно установить желаемое количество мип-карт
-//                textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
-//                textureCreate.m_magFiltering = Bird::NEAREST;
-//
-//                TextureBinding textureBinding;
-//                textureBinding.texture = createTexture(textureCreate);
-//                textureBinding.name = "tex"; // Можно изменить имя текстуры по желанию
-//                textures.emplace_back(textureBinding);
-//            }
-//            continue;
-//        }
-
-        std::filesystem::path texturePath = std::filesystem::current_path() / "Models" / std::string(str.C_Str());
-        if (!std::filesystem::exists(texturePath)) {
+        std::filesystem::path texturePath = std::filesystem::current_path() / directoryModel / std::string(str.C_Str());
+        if (!std::filesystem::exists(texturePath) || std::filesystem::exists(texturePath) == std::filesystem::is_directory(texturePath)) {
             LOG_ERROR("Path not exists: {}", texturePath.string());
             continue;
         }
+      //  LOG_INFO("Path: {}", texturePath.string());
+
         Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(texturePath);
-        LOG_INFO("Path: {}", texturePath.string());
         Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
         textureCreate.m_numMips = 1;
         textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;

@@ -359,20 +359,25 @@ void CallbackToLogRedirector(const char *msg, char *dt) {
     s->write(msg);
 }
 
+static LogStream *DefaultStream = nullptr;
+
 // ------------------------------------------------------------------------------------------------
 ASSIMP_API aiLogStream aiGetPredefinedLogStream(aiDefaultLogStream pStream, const char *file) {
     aiLogStream sout;
 
     ASSIMP_BEGIN_EXCEPTION_REGION();
-    LogStream *stream = LogStream::createDefaultStream(pStream, file);
-    if (!stream) {
+    if (DefaultStream == nullptr) {
+        DefaultStream = LogStream::createDefaultStream(pStream, file);
+    }
+    
+    if (!DefaultStream) {
         sout.callback = nullptr;
         sout.user = nullptr;
     } else {
         sout.callback = &CallbackToLogRedirector;
-        sout.user = (char *)stream;
+        sout.user = (char *)DefaultStream;
     }
-    gPredefinedStreams.push_back(stream);
+    gPredefinedStreams.push_back(DefaultStream);
     ASSIMP_END_EXCEPTION_REGION(aiLogStream);
     return sout;
 }
@@ -510,6 +515,11 @@ void aiGetMemoryRequirements(const C_STRUCT aiScene *pIn,
 
     return priv->mOrigImporter->GetMemoryRequirements(*in);
     ASSIMP_END_EXCEPTION_REGION(void);
+}
+
+// ------------------------------------------------------------------------------------------------
+ASSIMP_API const C_STRUCT aiTexture *aiGetEmbeddedTexture(const C_STRUCT aiScene *pIn, const char *filename) {
+    return pIn->GetEmbeddedTexture(filename);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1268,7 +1278,6 @@ ASSIMP_API void aiQuaternionInterpolate(
     aiQuaternion::Interpolate(*dst, *start, *end, factor);
 }
 
-
 // stb_image is a lightweight image loader. It is shared by:
 //  - M3D import
 //  - PBRT export
@@ -1279,21 +1288,21 @@ ASSIMP_API void aiQuaternionInterpolate(
 #define ASSIMP_HAS_M3D ((!ASSIMP_BUILD_NO_EXPORT && !ASSIMP_BUILD_NO_M3D_EXPORTER) || !ASSIMP_BUILD_NO_M3D_IMPORTER)
 
 #ifndef STB_USE_HUNTER
-#   if ASSIMP_HAS_PBRT_EXPORT
-#       define ASSIMP_NEEDS_STB_IMAGE 1
-#   elif ASSIMP_HAS_M3D
-#       define ASSIMP_NEEDS_STB_IMAGE 1
-#       define STBI_ONLY_PNG
-#   endif
+#if ASSIMP_HAS_PBRT_EXPORT
+#define ASSIMP_NEEDS_STB_IMAGE 1
+#elif ASSIMP_HAS_M3D
+#define ASSIMP_NEEDS_STB_IMAGE 1
+#define STBI_ONLY_PNG
+#endif
 #endif
 
 // Ensure all symbols are linked correctly
 #if ASSIMP_NEEDS_STB_IMAGE
-    // Share stb_image's PNG loader with other importers/exporters instead of bringing our own copy.
-#   define STBI_ONLY_PNG
-#   ifdef ASSIMP_USE_STB_IMAGE_STATIC
-#       define STB_IMAGE_STATIC
-#   endif
-#   define STB_IMAGE_IMPLEMENTATION
-#   include "Common/StbCommon.h"
+// Share stb_image's PNG loader with other importers/exporters instead of bringing our own copy.
+#define STBI_ONLY_PNG
+#ifdef ASSIMP_USE_STB_IMAGE_STATIC
+#define STB_IMAGE_STATIC
+#endif
+#define STB_IMAGE_IMPLEMENTATION
+#include "Common/StbCommon.h"
 #endif

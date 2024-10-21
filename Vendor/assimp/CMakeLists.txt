@@ -46,6 +46,15 @@ CMAKE_MINIMUM_REQUIRED( VERSION 3.22 )
 # auto-cloned during build; so MUST disable the feature or the PR will be rejected
 option(ASSIMP_BUILD_USD_IMPORTER "Enable USD file import" off)
 option(ASSIMP_BUILD_USD_VERBOSE_LOGS "Enable verbose USD import debug logging" off)
+option(ASSIMP_BUILD_USE_CCACHE "Use ccache to speed up compilation." on)
+
+if(ASSIMP_BUILD_USE_CCACHE)
+  find_program(CCACHE_PATH ccache)
+  if (CCACHE_PATH)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_PATH})
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE_PATH})
+  endif()
+endif()
 
 # Disabled importers: m3d for 5.1 or later
 ADD_DEFINITIONS( -DASSIMP_BUILD_NO_M3D_IMPORTER)
@@ -62,7 +71,7 @@ IF(ASSIMP_HUNTER_ENABLED)
   add_definitions(-DASSIMP_USE_HUNTER)
 ENDIF()
 
-PROJECT(Assimp VERSION 5.4.1)
+PROJECT(Assimp VERSION 5.4.3)
 
 # All supported options ###############################################
 
@@ -154,7 +163,7 @@ IF (WIN32)
 
   IF(MSVC)
     OPTION( ASSIMP_INSTALL_PDB
-      "Install MSVC debug files."
+      "Create MSVC debug symbol files and add to Install target."
       ON )
     IF(NOT (MSVC_VERSION LESS 1900))
       # Multibyte character set has been deprecated since at least MSVC2015 (possibly earlier)
@@ -299,8 +308,15 @@ ELSEIF(MSVC)
   # supress warning for double to float conversion if Double precision is activated
   ADD_COMPILE_OPTIONS(/wd4244)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_DEBUG /Zi /Od")
-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-  SET(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /PDBALTPATH:%_PDB% /OPT:REF /OPT:ICF")
+  # Allow user to disable PDBs
+  if(ASSIMP_INSTALL_PDB)
+    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+    SET(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /PDBALTPATH:%_PDB% /OPT:REF /OPT:ICF")
+  elseif((GENERATOR_IS_MULTI_CONFIG) OR (CMAKE_BUILD_TYPE MATCHES Release))
+    message("-- MSVC PDB generation disabled. Release binary will not be debuggable.")
+  endif()
+  # Source code is encoded in UTF-8
+  ADD_COMPILE_OPTIONS(/source-charset:utf-8)
 ELSEIF (CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
   IF(NOT ASSIMP_HUNTER_ENABLED)
     SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -643,7 +659,7 @@ ELSE()
   IF ( ASSIMP_BUILD_DRACO )
     # Primarily for glTF v2
     # Enable Draco glTF feature set
-    set(DRACO_GLTF ON CACHE BOOL "" FORCE)
+    set(DRACO_GLTF_BITSTREAM ON CACHE BOOL "" FORCE)
     # Disable unnecessary or omitted components
     set(DRACO_JS_GLUE OFF CACHE BOOL "" FORCE)
     set(DRACO_WASM OFF CACHE BOOL "" FORCE)
