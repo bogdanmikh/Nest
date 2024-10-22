@@ -18,7 +18,7 @@ TransformComponent &Model3D::getTransform() {
 void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     m_pathToModel3D = pathToModel;
     m_shader = shader;
-    static Assimp::Importer importer;
+    Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {

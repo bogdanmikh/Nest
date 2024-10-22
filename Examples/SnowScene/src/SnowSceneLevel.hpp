@@ -5,9 +5,9 @@
 class CameraMove;
 class SnowScene;
 
-class Model3DLevel final : public Nest::Layer {
+class SnowSceneLevel final : public Nest::Layer {
 public:
-    ~Model3DLevel() override {}
+    ~SnowSceneLevel() override {}
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onDetach() override;

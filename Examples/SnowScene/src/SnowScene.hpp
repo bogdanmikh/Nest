@@ -13,6 +13,14 @@ public:
     void onDetach() override;
     Nest::TransformComponent &getTransform();
 private:
+    struct InfoObjects {
+        std::string name;
+        std::string pathToModel;
+        InfoObjects(const std::string &name, const std::string &pathToModel)
+            : name(name)
+            , pathToModel(pathToModel) {}
+    };
     std::vector<Nest::Model3D> m_objects;
+    std::vector<InfoObjects> m_infoObjects;
     std::vector<ObjectSettings> m_objectsSettings;
 };

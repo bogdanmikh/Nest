@@ -1,10 +1,10 @@
-#include "Model3DLevel.hpp"
+#include "SnowSceneLevel.hpp"
 #include "CameraMove.hpp"
 #include "SnowScene.hpp"
 
 #include <Nest.hpp>
 
-void Model3DLevel::onAttach() {
+void SnowSceneLevel::onAttach() {
     m_carRenderer = new SnowScene;
     m_cameraMove = new CameraMove;
     addEntity(m_carRenderer);
@@ -14,7 +14,7 @@ void Model3DLevel::onAttach() {
     }
 }
 
-void Model3DLevel::onUpdate(double deltaTime) {
+void SnowSceneLevel::onUpdate(double deltaTime) {
     Bird::setViewClear(0, 0x3D75C9FF);
     for (auto &entity : m_entities) {
         entity->onImGuiRender();
@@ -22,13 +22,13 @@ void Model3DLevel::onUpdate(double deltaTime) {
     }
 }
 
-void Model3DLevel::onDetach() {
+void SnowSceneLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
         delete entity;
     }
 }
 
-void Model3DLevel::addEntity(Nest::Entity *entity) {
+void SnowSceneLevel::addEntity(Nest::Entity *entity) {
     m_entities.emplace_back(entity);
 }

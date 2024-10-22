@@ -1,4 +1,4 @@
-#include "Model3DLevel.hpp"
+#include "SnowSceneLevel.hpp"
 
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
@@ -7,7 +7,7 @@ int startApp(int argc, char **argv) {
     settings.windowSize = {900, 600};
     settings.isFullScreen = false;
     auto application = new Nest::Application(settings);
-    application->setLayer(new Model3DLevel);
+    application->setLayer(new SnowSceneLevel);
     application->loop();
     delete application;
     return 0;

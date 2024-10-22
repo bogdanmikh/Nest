@@ -13,7 +13,7 @@ Build with CMake:
 git clone https://github.com/bogdanmikh/Nest.git
 mkdir build && cd build
 cmake -G "Visual Studio 16 2019" ..
-start Hello3DModel.sln
+start SnowScene.sln
 ```
 
 ### Linux or MacOS
@@ -22,5 +22,5 @@ Build with CMake:
 git clone https://github.com/bogdanmikh/Nest.git
 mkdir build && cd build
 cmake ..
-make Hello3DModel
+make SnowScene
 ```

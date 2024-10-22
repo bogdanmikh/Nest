@@ -10,6 +10,8 @@
 
 #include <fstream>
 
+#define EDITOR_MODE 0
+
 SnowScene::SnowScene() {}
 
 void SnowScene::onAttach() {
@@ -17,70 +19,23 @@ void SnowScene::onAttach() {
         "Shaders/Model3d_vertex.glsl", "Shaders/Model3d_fragment.glsl"
     );
     Bird::ProgramHandle m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
-    int countModel = 9, index = 0;
-    m_objects.resize(countModel);
-    m_objectsSettings.resize(countModel);
+    m_infoObjects.emplace_back("Snow Car 1", "Models/snow_car/scene.gltf");
+    m_infoObjects.emplace_back("Snow Car 2", "Models/snow_car2/scene.gltf");
+    m_infoObjects.emplace_back("House", "Models/winter_house/scene.gltf");
+    m_infoObjects.emplace_back("Fence 1", "Models/fence/scene.gltf");
+    m_infoObjects.emplace_back("Fence 2", "Models/fence/scene.gltf");
+    m_infoObjects.emplace_back("Place", "Models/place/scene.gltf");
+    m_infoObjects.emplace_back("Firewood", "Models/firewood/scene.gltf");
+    m_infoObjects.emplace_back("Place 2", "Models/place2/scene.gltf");
+    m_infoObjects.emplace_back("Snowman", "Models/snowman/scene.gltf");
 
-    // snowCar
-    m_objectsSettings[index].name = "Snow Car 1";
-    m_objects[index].create(
-        m_shaderHandle, "Models/snow_car/scene.gltf"
-    );
-    index++;
-    m_objectsSettings[index].name = "Snow Car 2";
-    m_objects[index].create(
-        m_shaderHandle, "Models/snow_car2/scene.gltf"
-    );
-    index++;
-
-    // house
-    m_objectsSettings[index].name = "House";
-    m_objects[index].create(
-        m_shaderHandle, "Models/winter_house/scene.gltf"
-    );
-    index++;
-
-    // fence 1
-    m_objectsSettings[index].name = "Fence 1";
-    m_objects[index].create(
-        m_shaderHandle, "Models/fence/scene.gltf"
-    );
-    index++;
-
-    // fence 2
-    m_objectsSettings[index].name = "Fence 2";
-    m_objects[index].create(
-        m_shaderHandle, "Models/fence/scene.gltf"
-    );
-    index++;
-
-    // place 1
-    m_objectsSettings[index].name = "Place";
-    m_objects[index].create(
-        m_shaderHandle, "Models/place/scene.gltf"
-    );
-    index++;
-
-    // Firewood
-    m_objectsSettings[index].name = "Firewood";
-    m_objects[index].create(
-        m_shaderHandle, "Models/firewood/scene.gltf"
-    );
-    index++;
-
-    // Place 2
-    m_objectsSettings[index].name = "Place 2";
-    m_objects[index].create(
-        m_shaderHandle, "Models/place2/scene.gltf"
-    );
-    index++;
-
-    // Place 2
-    m_objectsSettings[index].name = "Snowman";
-    m_objects[index].create(
-        m_shaderHandle, "Models/snowman/scene.gltf"
-    );
-    index++;
+    m_objects.resize(m_infoObjects.size());
+    m_objectsSettings.resize(m_infoObjects.size());
+    for (int i = 0; i < m_infoObjects.size(); i++) {
+        auto info = m_infoObjects[i];
+        m_objectsSettings[i].name = info.name;
+        m_objects[i].create(m_shaderHandle, info.pathToModel);
+    }
 
     // Load general settings
     {
@@ -115,6 +70,33 @@ void SnowScene::onUpdate(double deltaTime) {
    }
 }
 
+static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float resetValue);
+
+void SnowScene::onImGuiRender() {
+#if EDITOR_MODE
+    for (int i = 0; i < m_objects.size(); i++) {
+        auto &obj = m_objects[i];
+        auto &settings = m_objectsSettings[i];
+        drawVec3Control(settings.name + " Pos: ", m_objectsSettings[i].position, 0);
+        drawVec3Control(settings.name + " Scale: ", m_objectsSettings[i].scale, 1);
+        drawVec3Control(settings.name + " Deg: ", m_objectsSettings[i].degrees, 0);
+    }
+#endif
+}
+
+void SnowScene::onDetach() {
+#if EDITOR_MODE
+    std::ofstream file("Scenes/scene.yaml");
+    if (file.is_open()) {
+        Rain::Encoder *encoder = new Rain::YamlEncoder();
+        encoder->encode(file, m_objectsSettings);
+        delete encoder;
+        file.close();
+        LOG_INFO("SAVE");
+    }
+#endif
+}
+
 static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float resetValue) {
     ImGuiIO &io = ImGui::GetIO();
     auto boldFont = io.Fonts->Fonts[0];
@@ -122,7 +104,7 @@ static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float 
 
     ImGui::PushID(label.c_str());
     ImGui::Columns(2, nullptr, false);
- //   ImGui::SetColumnWidth(0, firstColumnWidth);
+    //   ImGui::SetColumnWidth(0, firstColumnWidth);
     ImGui::Text("%s", label.c_str());
     ImGui::NextColumn();
     ImGui::Spacing();
@@ -182,27 +164,4 @@ static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float 
     ImGui::Columns(1);
     ImGui::PopID();
     return edited;
-}
-
-void SnowScene::onImGuiRender() {
-#if false
-    for (int i = 0; i < m_objects.size(); i++) {
-        auto &obj = m_objects[i];
-        auto &settings = m_objectsSettings[i];
-        drawVec3Control(settings.name + " Pos: ", m_objectsSettings[i].position, 0);
-        drawVec3Control(settings.name + " Scale: ", m_objectsSettings[i].scale, 1);
-        drawVec3Control(settings.name + " Deg: ", m_objectsSettings[i].degrees, 0);
-    }
-#endif
-}
-
-void SnowScene::onDetach() {
-    std::ofstream file("Scenes/scene.yaml");
-    if (file.is_open()) {
-        Rain::Encoder *encoder = new Rain::YamlEncoder();
-        encoder->encode(file, m_objectsSettings);
-        delete encoder;
-        file.close();
-        LOG_INFO("SAVE");
-    }
 }
