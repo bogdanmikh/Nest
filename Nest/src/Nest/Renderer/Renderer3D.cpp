@@ -31,7 +31,10 @@ void Renderer3D::submit(TransformComponent *transform, StaticMesh *mesh) {
     for (int i = 0; i < mesh->m_textureBinding.size(); i++) {
         Bird::setTexture(mesh->m_textureBinding[i].texture, i);
         Bird::setUniform(
-            mesh->m_shaderHandle, mesh->m_textureBinding[i].name.c_str(), &i, Bird::UniformType::Sampler
+            mesh->m_shaderHandle,
+            mesh->m_textureBinding[i].name.c_str(),
+            &i,
+            Bird::UniformType::Sampler
         );
     }
 
@@ -55,7 +58,10 @@ void Renderer3D::submitToFB(TransformComponent *transform, StaticMesh *mesh, Bir
     for (int i = 0; i < mesh->m_textureBinding.size(); i++) {
         Bird::setTexture(mesh->m_textureBinding[i].texture, slot);
         Bird::setUniform(
-            mesh->m_shaderHandle, mesh->m_textureBinding[i].name.c_str(), &slot, Bird::UniformType::Sampler
+            mesh->m_shaderHandle,
+            mesh->m_textureBinding[i].name.c_str(),
+            &slot,
+            Bird::UniformType::Sampler
         );
     }
 
@@ -79,7 +85,10 @@ void Renderer3D::submit(TransformComponent *transform, DynamicMesh *mesh) {
     for (int i = 0; i < mesh->m_bindings.size(); i++) {
         Bird::setTexture(mesh->m_bindings[i].texture, slot);
         Bird::setUniform(
-            mesh->m_shaderHandle, mesh->m_bindings[i].name.c_str(), &slot, Bird::UniformType::Sampler
+            mesh->m_shaderHandle,
+            mesh->m_bindings[i].name.c_str(),
+            &slot,
+            Bird::UniformType::Sampler
         );
     }
     NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid vertex buffer for mesh");

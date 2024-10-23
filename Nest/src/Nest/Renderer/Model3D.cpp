@@ -19,9 +19,10 @@ void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     m_pathToModel3D = pathToModel;
     m_shader = shader;
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene =
+        importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
 
-    if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         LOG_CRITICAL("ERROR::ASSIMP::{}", importer.GetErrorString());
     }
     processNode(scene->mRootNode, scene);
@@ -33,7 +34,7 @@ void Model3D::processNode(aiNode *node, const aiScene *scene) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
         m_meshes.emplace_back(processMesh(mesh, scene));
     }
-    for(unsigned int i = 0; i < node->mNumChildren; i++) {
+    for (unsigned int i = 0; i < node->mNumChildren; i++) {
         processNode(node->mChildren[i], scene);
     }
 }
@@ -68,9 +69,9 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
         vertices.push_back(vertex);
     }
     // орбаботка индексов
-    for(unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         aiFace face = mesh->mFaces[i];
-        for(unsigned int j = 0; j < face.mNumIndices; j++) {
+        for (unsigned int j = 0; j < face.mNumIndices; j++) {
             indices.push_back(face.mIndices[j]);
         }
     }
@@ -85,15 +86,17 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
-//    LOG_INFO("Size: {}", vertices.size());
-//    for (int i = 0; i < vertices.size(); ++i) {
-//        auto vertex = vertices[i];
-//        auto pos = vertex.Position;
-//        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
-//    }
+    //    LOG_INFO("Size: {}", vertices.size());
+    //    for (int i = 0; i < vertices.size(); ++i) {
+    //        auto vertex = vertices[i];
+    //        auto pos = vertex.Position;
+    //        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
+    //    }
 
-    Foundation::Memory verticesMemory = Foundation::Memory::copying(vertices.data(), sizeof(ModelVertex) * vertices.size());
-    Foundation::Memory indicesMemory = Foundation::Memory::copying(indices.data(), sizeof(uint32_t) * indices.size());
+    Foundation::Memory verticesMemory =
+        Foundation::Memory::copying(vertices.data(), sizeof(ModelVertex) * vertices.size());
+    Foundation::Memory indicesMemory =
+        Foundation::Memory::copying(indices.data(), sizeof(uint32_t) * indices.size());
 
     Bird::VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
@@ -103,37 +106,44 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
 
     Nest::MeshData meshData(
-        vertexLayout, verticesMemory, vertices.size() * sizeof(ModelVertex), indicesMemory, indices.size()
+        vertexLayout,
+        verticesMemory,
+        vertices.size() * sizeof(ModelVertex),
+        indicesMemory,
+        indices.size()
     );
     Nest::StaticMesh *staticMesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
     staticMesh->create(meshData, textures, m_shader);
     return staticMesh;
 }
 
-std::vector<TextureBinding> Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
+std::vector<TextureBinding>
+Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
     std::vector<TextureBinding> textures;
     uint32_t countTextures = mat->GetTextureCount(type);
     textures.reserve(countTextures);
 
     Path directoryModel;
     Path lastPath;
-    for (const auto &comp: m_pathToModel3D) {
+    for (const auto &comp : m_pathToModel3D) {
         directoryModel /= comp;
         if (lastPath == "Models") {
             break;
         }
         lastPath = comp;
     }
-    for(unsigned int i = 0; i < countTextures; i++) {
+    for (unsigned int i = 0; i < countTextures; i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
 
-        std::filesystem::path texturePath = std::filesystem::current_path() / directoryModel / std::string(str.C_Str());
-        if (!std::filesystem::exists(texturePath) || std::filesystem::exists(texturePath) == std::filesystem::is_directory(texturePath)) {
+        std::filesystem::path texturePath =
+            std::filesystem::current_path() / directoryModel / std::string(str.C_Str());
+        if (!std::filesystem::exists(texturePath) ||
+            std::filesystem::exists(texturePath) == std::filesystem::is_directory(texturePath)) {
             LOG_ERROR("Path not exists: {}", texturePath.string());
             continue;
         }
-      //  LOG_INFO("Path: {}", texturePath.string());
+        //  LOG_INFO("Path: {}", texturePath.string());
 
         Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture(texturePath);
         Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
@@ -159,10 +169,9 @@ void Model3D::draw() {
         Bird::setUniform(
             mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
         );
-        Bird::setUniform(
-            mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4
-        );
-        if (m_slots[i].size() != mesh->m_textureBinding.size()  && mesh->m_textureBinding.size() > 0) {
+        Bird::setUniform(mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4);
+        if (m_slots[i].size() != mesh->m_textureBinding.size() &&
+            mesh->m_textureBinding.size() > 0) {
             // int a = mesh->m_textureBinding.size(), b = m_slots[i].size();
             m_slots[i].resize(mesh->m_textureBinding.size());
             for (int j = 0; j < mesh->m_textureBinding.size(); j++) {

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Dirty Lada (lowpoly from scan)
+* source:	https://sketchfab.com/3d-models/dirty-lada-lowpoly-from-scan-946ec7c06c5e408280d6e6415a7200ea
+* author:	Renafox (https://sketchfab.com/kryik1023)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Dirty Lada (lowpoly from scan)" (https://sketchfab.com/3d-models/dirty-lada-lowpoly-from-scan-946ec7c06c5e408280d6e6415a7200ea) by Renafox (https://sketchfab.com/kryik1023) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)

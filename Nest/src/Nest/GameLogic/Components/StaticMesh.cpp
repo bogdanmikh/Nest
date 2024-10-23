@@ -37,7 +37,11 @@ void StaticMesh::create(
     );
 }
 
-void StaticMesh::create(const Nest::MeshData &data, std::vector<TextureBinding> textureBinding, Bird::ProgramHandle shader) {
+void StaticMesh::create(
+    const Nest::MeshData &data,
+    std::vector<TextureBinding> textureBinding,
+    Bird::ProgramHandle shader
+) {
     m_shaderHandle = shader;
     m_textureBinding = std::move(textureBinding);
     m_indicesCount = data.indicesCount;

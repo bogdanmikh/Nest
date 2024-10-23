@@ -65,36 +65,36 @@ void ManagerEffects::onUpdate(double deltaTime) {
 }
 
 void ManagerEffects::onImGuiRender() {
-//    bool leftShift = Nest::Events::isKeyPressed(Nest::Key::LEFT_SHIFT);
-//    if (!leftShift) {
-//        return;
-//    }
-//    int key = -1;
-//    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_1)) {
-//        key = 0;
-//    }
-//    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_2)) {
-//        key = 1;
-//    }
-//    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_3)) {
-//        key = 2;
-//    }
-//    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_4)) {
-//        key = 3;
-//    }
-//    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_5)) {
-//        key = 4;
-//    }
-//    if (key == -1) {
-//        return;
-//    }
-//    for (int i = 0; i < countEffects; ++i) {
-//        if (i == key) {
-//            m_activeEffects[i] = true;
-//            continue;
-//        }
-//        m_activeEffects[i] = false;
-//    }
+    //    bool leftShift = Nest::Events::isKeyPressed(Nest::Key::LEFT_SHIFT);
+    //    if (!leftShift) {
+    //        return;
+    //    }
+    //    int key = -1;
+    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_1)) {
+    //        key = 0;
+    //    }
+    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_2)) {
+    //        key = 1;
+    //    }
+    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_3)) {
+    //        key = 2;
+    //    }
+    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_4)) {
+    //        key = 3;
+    //    }
+    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_5)) {
+    //        key = 4;
+    //    }
+    //    if (key == -1) {
+    //        return;
+    //    }
+    //    for (int i = 0; i < countEffects; ++i) {
+    //        if (i == key) {
+    //            m_activeEffects[i] = true;
+    //            continue;
+    //        }
+    //        m_activeEffects[i] = false;
+    //    }
     ImGuiIO io = ImGui::GetIO();
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 100, 0));
     ImGui::Begin("Effects");

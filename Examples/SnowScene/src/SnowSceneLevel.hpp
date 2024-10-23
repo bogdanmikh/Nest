@@ -2,9 +2,6 @@
 
 #include <Nest.hpp>
 
-class CameraMove;
-class SnowScene;
-
 class SnowSceneLevel final : public Nest::Layer {
 public:
     ~SnowSceneLevel() override {}
@@ -15,6 +12,4 @@ public:
 
 private:
     std::vector<Nest::Entity *> m_entities;
-    CameraMove *m_cameraMove;
-    SnowScene *m_carRenderer;
 };

@@ -25,7 +25,9 @@ public:
     ~StaticMesh();
 
     void create(const MeshData &data, TextureBinding textureBinding, Bird::ProgramHandle shader);
-    void create(const MeshData &data, std::vector<TextureBinding> textureBinding, Bird::ProgramHandle shader);
+    void create(
+        const MeshData &data, std::vector<TextureBinding> textureBinding, Bird::ProgramHandle shader
+    );
 
     Bird::ProgramHandle getShaderHandle() {
         return m_shaderHandle;

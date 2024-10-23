@@ -12,6 +12,7 @@ public:
     void onImGuiRender() override;
     void onDetach() override;
     Nest::TransformComponent &getTransform();
+
 private:
     struct InfoObjects {
         std::string name;

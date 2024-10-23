@@ -5,10 +5,8 @@
 #include <Nest.hpp>
 
 void SnowSceneLevel::onAttach() {
-    m_carRenderer = new SnowScene;
-    m_cameraMove = new CameraMove;
-    addEntity(m_carRenderer);
-    addEntity(m_cameraMove);
+    addEntity(new SnowScene);
+    addEntity(new CameraMove);
     for (auto &entity : m_entities) {
         entity->onAttach();
     }

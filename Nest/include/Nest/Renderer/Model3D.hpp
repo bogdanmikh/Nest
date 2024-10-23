@@ -31,8 +31,7 @@ public:
     ~Model3D();
 
 private:
-
-    void loadModel(const std::string& path);
+    void loadModel(const std::string &path);
     void processNode(aiNode *node, const aiScene *scene);
     StaticMesh *processMesh(aiMesh *mesh, const aiScene *scene);
     std::vector<TextureBinding>
@@ -47,7 +46,7 @@ private:
 
     Path m_pathToModel3D;
     Bird::ProgramHandle m_shader;
-    std::vector<StaticMesh*> m_meshes;
+    std::vector<StaticMesh *> m_meshes;
 
     std::vector<std::vector<int>> m_slots;
 

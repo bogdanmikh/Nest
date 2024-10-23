@@ -18,7 +18,7 @@ void SnowScene::onAttach() {
     Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
         "Shaders/Model3d_vertex.glsl", "Shaders/Model3d_fragment.glsl"
     );
-    Bird::ProgramHandle m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
+    Bird::ProgramHandle shaderHandle = createProgram(programAsset.getBirdProgramCreate());
     m_infoObjects.emplace_back("Snow Car 1", "Models/snow_car/scene.gltf");
     m_infoObjects.emplace_back("Snow Car 2", "Models/snow_car2/scene.gltf");
     m_infoObjects.emplace_back("House", "Models/winter_house/scene.gltf");
@@ -34,7 +34,7 @@ void SnowScene::onAttach() {
     for (int i = 0; i < m_infoObjects.size(); i++) {
         auto info = m_infoObjects[i];
         m_objectsSettings[i].name = info.name;
-        m_objects[i].create(m_shaderHandle, info.pathToModel);
+        m_objects[i].create(shaderHandle, info.pathToModel);
     }
 
     // Load general settings
@@ -54,20 +54,20 @@ void SnowScene::onAttach() {
 }
 
 void SnowScene::onUpdate(double deltaTime) {
-   // house
-   for (int i = 0; i < m_objects.size(); i++) {
-       auto &obj = m_objects[i];
-   }
-   for (int i = 0; i < m_objects.size(); i++) {
-       auto &obj = m_objects[i];
-       auto &settings = m_objectsSettings[i];
-       auto &transform = obj.getTransform();
+    // house
+    for (int i = 0; i < m_objects.size(); i++) {
+        auto &obj = m_objects[i];
+    }
+    for (int i = 0; i < m_objects.size(); i++) {
+        auto &obj = m_objects[i];
+        auto &settings = m_objectsSettings[i];
+        auto &transform = obj.getTransform();
 
-       transform.setRotationEuler(settings.degrees);
-       transform.setPosition(settings.position);
-       transform.setScale(settings.scale);
-       obj.draw();
-   }
+        transform.setRotationEuler(settings.degrees);
+        transform.setPosition(settings.position);
+        transform.setScale(settings.scale);
+        obj.draw();
+    }
 }
 
 static bool drawVec3Control(const std::string &label, Nest::Vec3 &values, float resetValue);

@@ -4,7 +4,8 @@
 
 #include "PostprocessingEffect.hpp"
 
-PostprocessingEffect::PostprocessingEffect() : m_viewId(0) {}
+PostprocessingEffect::PostprocessingEffect()
+    : m_viewId(0) {}
 
 void PostprocessingEffect::onAttach() {
     using namespace Bird;
