@@ -13,7 +13,11 @@ public:
     Nest::TransformComponent &getTransform();
 
 private:
+    struct Light {
+        glm::vec3 lightPos;
+        glm::vec3 lightColor;
+    };
+    Light m_light;
     Bird::ProgramHandle m_shaderHandle;
-    glm::vec4 lightDir;
     Nest::Model3D m_model;
 };

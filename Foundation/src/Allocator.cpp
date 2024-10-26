@@ -16,11 +16,9 @@ void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
 
 namespace Foundation {
 
-// FreeListAllocator *FreeListAllocator::s_instance = new FreeListAllocator(MemorySize::MEGABYTE);
-
 AllocatorI *getAllocator() {
-    static DefaultAllocator allocator;
-    // static FreeListAllocator allocator(MemorySize::MEGABYTE * 1000);
+        static DefaultAllocator allocator;
+//    static FreeListAllocator allocator(MemorySize::MEGABYTE * 10);
     return &allocator;
 }
 
@@ -56,12 +54,8 @@ void *FreeListAllocator::realloc(void *ptr, size_t size) {
         size_t offset = freeBlockIt->offset;
         auto &freeBlock = (Block &)*freeBlockIt;
         ptr = static_cast<char *>(m_memory) + freeBlock.offset;
-        LOG_INFO(
-            "Allocated from address: {}, size: {}, offset {}",
-            static_cast<char *>(m_memory) + freeBlock.offset,
-            size,
-            freeBlock.offset
-        );
+        //        LOG_INFO("Allocated from address: {}, size: {}, offset {}", ptr, size,
+        //        freeBlock.offset);
         freeBlock.blockSize -= size;
         freeBlock.offset += size;
         m_used += size;
@@ -118,7 +112,8 @@ void FreeListAllocator::combine(std::set<Block>::iterator newFreeBlockIt) {
     auto &lastFreeBlock = (Block &)*lastFreeBlockIt;
     bool deletedNewBlock = false;
     bool newBlockIsEnd = newFreeBlockIt == m_freeBlocks.end();
-    if (newFreeBlockIt != m_freeBlocks.begin()) {
+    bool newBlockIsBegin = newFreeBlockIt != m_freeBlocks.begin();
+    if (!newBlockIsBegin) {
         if (lastFreeBlockIt->offset + lastFreeBlockIt->blockSize == newFreeBlockIt->offset) {
             lastFreeBlock.blockSize = lastFreeBlock.blockSize + newFreeBlockIt->blockSize;
             m_freeBlocks.erase(newFreeBlockIt);

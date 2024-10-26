@@ -10,7 +10,7 @@
 
 #include <fstream>
 
-#define EDITOR_MODE 0
+#define EDITOR_MODE 1
 
 SnowScene::SnowScene() {}
 
@@ -86,14 +86,14 @@ void SnowScene::onImGuiRender() {
 
 void SnowScene::onDetach() {
 #if EDITOR_MODE
-    std::ofstream file("Scenes/scene.yaml");
-    if (file.is_open()) {
-        Rain::Encoder *encoder = new Rain::YamlEncoder();
-        encoder->encode(file, m_objectsSettings);
-        delete encoder;
-        file.close();
-        LOG_INFO("SAVE");
-    }
+//    std::ofstream file("Scenes/scene.yaml");
+//    if (file.is_open()) {
+//        Rain::Encoder *encoder = new Rain::YamlEncoder();
+//        encoder->encode(file, m_objectsSettings);
+//        delete encoder;
+//        file.close();
+//        LOG_INFO("SAVE");
+//    }
 #endif
 }
 
