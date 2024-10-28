@@ -44,7 +44,7 @@ target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 target_link_libraries(Nest glfw)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfw/include)
 
-# Dependencies - GLFM, only for Desktop :)
+# Dependencies - GLFM, only for Phone :)
 target_link_libraries(Nest glfm)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfm/include)
 

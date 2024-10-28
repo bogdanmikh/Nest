@@ -4,6 +4,8 @@
 
 #include "PostprocessingEffect.hpp"
 
+#define Events Nest::Application::get()->getEvents()
+
 PostprocessingEffect::PostprocessingEffect()
     : m_viewId(0) {}
 
@@ -37,7 +39,7 @@ void PostprocessingEffect::onAttach() {
 
 void PostprocessingEffect::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
-    mousePos = Nest::GlfwEvents::getCursorPos();
+    mousePos = Events->getCursorPos();
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     Bird::setShader(m_shader);

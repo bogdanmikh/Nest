@@ -1,13 +1,19 @@
-#include <chrono>
+#include "Nest/Application/Application.hpp"
 
 #include "Nest/ImGui/ImGui.hpp"
-#include "Nest/Application/Application.hpp"
-#include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
-#include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
+#include "Nest/Platform/PlatformDetection.hpp"
+#ifdef PLATFORM_DESKTOP
+#    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
+#    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
+#else
+
+#endif
 
 #include <Bird/Bird.hpp>
 #include <Foundation/Logger.hpp>
 #include <Foundation/Allocator.hpp>
+
+#include <chrono>
 
 namespace Nest {
 
@@ -27,15 +33,22 @@ Application::Application(ApplicationStartupSettings &settings) {
 
     m_layer = nullptr;
     Foundation::Logger::init();
-    if (settings.platform == ApplicationStartupSettings::Platform::DESKTOP) {
-        m_window = NEW(Foundation::getAllocator(), GlfwWindow);
-        m_window->init(
-            settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
-        );
-        GlfwEvents::init(m_window->getNativeHandle());
-    } else {
 
-    }
+#ifdef PLATFORM_DESKTOP
+    m_window = NEW(Foundation::getAllocator(), GlfwWindow);
+    m_window->init(
+        settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
+    );
+
+    m_events = NEW(Foundation::getAllocator(), GlfwEvents);
+    m_events->init(m_window->getNativeHandle());
+#else
+    m_window = NEW(Foundation::getAllocator(), GlfmWindow);
+    m_window->init(
+        settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
+    );
+#endif
+
     Bird::initialize();
 
     ImGui_Init(m_window->getNativeHandle());
@@ -97,11 +110,11 @@ void Application::loop() {
         }
         m_deltaTimeMillis = 0;
 
-        if (GlfwEvents::isJustKeyPressed(Key::ESCAPE)) {
+        if (m_events->isJustKeyPressed(Key::ESCAPE)) {
             close();
         }
-        if (GlfwEvents::isJustKeyPressed(Key::TAB)) {
-            GlfwEvents::toggleCursorLock();
+        if (m_events->isJustKeyPressed(Key::TAB)) {
+            m_events->toggleCursorLock();
         }
 
         if (m_lastViewportSize != m_window->getSize()) {
@@ -113,12 +126,12 @@ void Application::loop() {
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
         }
-        GlfwEvents::resetDropPaths();
+        m_events->resetDropPaths();
         Bird::renderFrame();
         ImGui_EndFrame();
         Bird::frame();
         Bird::flip();
-        GlfwEvents::pollGlfwEvents();
+        m_events->pollEvents();
     }
 }
 

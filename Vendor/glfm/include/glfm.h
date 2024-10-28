@@ -2,6 +2,7 @@
 //
 // GLFM is a C API for mobile app development with OpenGL ES. It is largely inspired by GLFW.
 // https://github.com/brackeen/glfm
+#pragma once
 
 #ifndef GLFM_H
 #define GLFM_H
@@ -10,8 +11,12 @@
 #  error Unsupported platform
 #endif
 
+#ifndef __has_extension
+#define __has_extension(x) 0
+#endif
+//#include ""
 #if defined(__APPLE__)
-#  include <TargetConditionals.h>
+#   include "TargetConditionals.h"
 #  if !(TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX)
 #    error Unsupported Apple platform
 #  endif

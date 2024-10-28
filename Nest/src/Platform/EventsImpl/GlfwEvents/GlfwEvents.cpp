@@ -34,7 +34,6 @@ void GlfwEvents::mouseCallback(GLFWwindow *window, int button, int action, int m
 }
 
 void GlfwEvents::dropCallback(GLFWwindow *window, int count, const char **paths) {
-    resetDropPaths();
     m_dropPaths.assign(count, {});
     for (int i = 0; i < count; ++i) {
         m_dropPaths[i] = paths[i];
@@ -94,7 +93,7 @@ bool GlfwEvents::isJustMouseButtonPressed(MouseButton mouseButton) {
     return keys[int(mouseButton)] && framesMouseButtons[int(mouseButton)] == frame;
 }
 
-void GlfwEvents::pollGlfwEvents() {
+void GlfwEvents::pollEvents() {
     frame++;
     glfwPollEvents();
 }

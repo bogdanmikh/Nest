@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.18.0)
+cmake_minimum_required(VERSION 3.16)
 
-project(GLFM C)
+project(GLFM)
+
+set(CMAKE_CXX_STANDARD 20)
 
 option(GLFM_BUILD_EXAMPLES "Build the GLFM examples" OFF)
 option(GLFM_USE_CLANG_TIDY "Use Clang Tidy when building (Android and Emscripten only)" OFF)
@@ -15,7 +17,8 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(GLFM_SRC src/glfm_internal.h src/glfm_android.c)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     if (${CMAKE_OSX_SYSROOT} MATCHES "(MacOS)+")
-        set(CMAKE_OSX_SYSROOT "iphoneos")
+#        set(CMAKE_OSX_SYSROOT "iphoneos")
+    set(CMAKE_OSX_SYSROOT /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)
     endif()
 
     set(GLFM_SRC src/glfm_internal.h src/glfm_apple.m)

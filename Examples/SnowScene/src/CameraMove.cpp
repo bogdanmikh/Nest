@@ -1,7 +1,8 @@
 #include "CameraMove.hpp"
-#include "../../../Nest/src/Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
 
 #include <Nest.hpp>
+
+#define Events Nest::Application::get()->getEvents()
 
 void CameraMove::onAttach() {
     m_window = Nest::Application::get()->getWindow();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nest/Window/Window.hpp"
+#include "Nest/Window/Events.hpp"
 #include "Nest/GameLogic/Components/WorldCamera.hpp"
 #include "Nest/Application/Layer.hpp"
 #include "ApplicationStartupSettings.hpp"
@@ -18,6 +19,10 @@ public:
 
     inline Window *getWindow() const {
         return m_window;
+    }
+
+    inline Events *getEvents() {
+        return m_events;
     }
 
     inline WorldCamera *getWorldCamera() const {
@@ -45,6 +50,7 @@ private:
 
     Window *m_window;
     Layer *m_layer;
+    Events *m_events;
     WorldCamera *m_worldCamera;
 
     Vec2 m_lastViewportSize;
