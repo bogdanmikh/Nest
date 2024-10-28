@@ -17,8 +17,8 @@ void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
 namespace Foundation {
 
 AllocatorI *getAllocator() {
-        static DefaultAllocator allocator;
-//    static FreeListAllocator allocator(MemorySize::MEGABYTE * 10);
+    static DefaultAllocator allocator;
+    //    static FreeListAllocator allocator(MemorySize::MEGABYTE * 10);
     return &allocator;
 }
 

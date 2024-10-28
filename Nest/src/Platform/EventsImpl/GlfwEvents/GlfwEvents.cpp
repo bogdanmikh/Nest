@@ -1,19 +1,19 @@
-#include "Nest/Window/Events.hpp"
+#include "GlfwEvents.hpp"
 
 #include <cstring>
 
 namespace Nest {
 
-bool Events::keys[];
-bool Events::mouseButtons[];
-uint32_t Events::framesKeys[];
-uint32_t Events::framesMouseButtons[];
-uint32_t Events::frame = 0;
-bool Events::cursorLocked = false;
-std::vector<std::string> Events::m_dropPaths = std::vector<std::string>();
-void *Events::m_handle = nullptr;
+bool GlfwEvents::keys[];
+bool GlfwEvents::mouseButtons[];
+uint32_t GlfwEvents::framesKeys[];
+uint32_t GlfwEvents::framesMouseButtons[];
+uint32_t GlfwEvents::frame = 0;
+bool GlfwEvents::cursorLocked = false;
+std::vector<std::string> GlfwEvents::m_dropPaths = std::vector<std::string>();
+void *GlfwEvents::m_handle = nullptr;
 
-void Events::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+void GlfwEvents::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
     if (action == GLFW_PRESS) {
         keys[key] = true;
         framesKeys[key] = frame;
@@ -22,7 +22,8 @@ void Events::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
         framesKeys[key] = frame;
     }
 }
-void Events::mouseCallback(GLFWwindow *window, int button, int action, int mode) {
+
+void GlfwEvents::mouseCallback(GLFWwindow *window, int button, int action, int mode) {
     if (action == GLFW_PRESS) {
         keys[button] = true;
         framesMouseButtons[button] = frame;
@@ -32,7 +33,7 @@ void Events::mouseCallback(GLFWwindow *window, int button, int action, int mode)
     }
 }
 
-void Events::dropCallback(GLFWwindow *window, int count, const char **paths) {
+void GlfwEvents::dropCallback(GLFWwindow *window, int count, const char **paths) {
     resetDropPaths();
     m_dropPaths.assign(count, {});
     for (int i = 0; i < count; ++i) {
@@ -40,7 +41,7 @@ void Events::dropCallback(GLFWwindow *window, int count, const char **paths) {
     }
 }
 
-void Events::init(void *handle) {
+void GlfwEvents::init(void *handle) {
     frame = 0;
     cursorLocked = false;
     m_handle = handle;
@@ -55,50 +56,50 @@ void Events::init(void *handle) {
     glfwSetDropCallback((GLFWwindow *)m_handle, dropCallback);
 }
 
-glm::vec2 Events::getCursorPos() {
+glm::vec2 GlfwEvents::getCursorPos() {
     double x, y;
     glfwGetCursorPos((GLFWwindow *)m_handle, &x, &y);
     return {x, y};
 }
 
-double Events::getTime() {
+double GlfwEvents::getTime() {
     return glfwGetTime();
 }
 
-bool Events::isKeyPressed(Key key) {
+bool GlfwEvents::isKeyPressed(Key key) {
     if (int(key) < 0 || int(key) >= 1024) {
         return false;
     }
     return keys[uint32_t(key)];
 }
 
-bool Events::isJustKeyPressed(Key key) {
+bool GlfwEvents::isJustKeyPressed(Key key) {
     if (int(key) < 0 || int(key) >= 1024) {
         return false;
     }
     return keys[uint32_t(key)] && framesKeys[int(key)] == frame;
 }
 
-bool Events::isMouseButtonPressed(MouseButton mouseButton) {
+bool GlfwEvents::isMouseButtonPressed(MouseButton mouseButton) {
     if (int(mouseButton) < 0 || int(mouseButton) >= 8) {
         return false;
     }
     return keys[int(mouseButton)];
 }
 
-bool Events::isJustMouseButtonPressed(MouseButton mouseButton) {
+bool GlfwEvents::isJustMouseButtonPressed(MouseButton mouseButton) {
     if (int(mouseButton) < 0 || int(mouseButton) >= 8) {
         return false;
     }
     return keys[int(mouseButton)] && framesMouseButtons[int(mouseButton)] == frame;
 }
 
-void Events::pollEvents() {
+void GlfwEvents::pollGlfwEvents() {
     frame++;
     glfwPollEvents();
 }
 
-void Events::toggleCursorLock() {
+void GlfwEvents::toggleCursorLock() {
     cursorLocked = !cursorLocked;
     glm::vec2 cursorPos = getCursorPos();
 
@@ -109,15 +110,15 @@ void Events::toggleCursorLock() {
         cursorLocked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL
     );
 }
-bool Events::isCursorLocked() {
+bool GlfwEvents::isCursorLocked() {
     return cursorLocked;
 }
 
-std::vector<std::string> Events::getDropPaths() {
+std::vector<std::string> GlfwEvents::getDropPaths() {
     return m_dropPaths;
 }
 
-void Events::resetDropPaths() {
+void GlfwEvents::resetDropPaths() {
     m_dropPaths.clear();
 }
 

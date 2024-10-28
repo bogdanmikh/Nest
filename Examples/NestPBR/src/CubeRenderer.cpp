@@ -65,7 +65,7 @@ void CubeRenderer::onAttach() {
 
 void CubeRenderer::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
-    mousePos = Nest::Events::getCursorPos();
+    mousePos = Nest::GlfwEvents::getCursorPos();
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     projViewMtx = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();

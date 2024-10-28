@@ -1,15 +1,16 @@
-#include "Nest/Window/Window.hpp"
-#include "Nest/Window/Events.hpp"
+#include "GlfwWindow.hpp"
+// #include "Nest/GlfwWindow/GlfwEvents.hpp"
 
-#include <GLFW/glfw3.h>
-
+#include "Nest/Base/Base.hpp"
 #include <Foundation/Logger.hpp>
 #include <Bird/PlatformData.hpp>
 #include <glad/glad.h>
 
 namespace Nest {
 
-void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, bool fullScreen) {
+void GlfwWindow::init(
+    const char *name, uint32_t resolutionX, uint32_t resolutionY, bool fullScreen
+) {
     if (glfwInit() != GLFW_TRUE) {
         LOG_ERROR("GLFW initialization failed\n");
         return;
@@ -35,7 +36,6 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
         LOG_ERROR("Failed to initialize OpenGL context");
     }
     this->handle = window;
-    Events::init(handle);
     glfwShowWindow((GLFWwindow *)handle);
     glfwFocusWindow((GLFWwindow *)handle);
 
@@ -56,19 +56,19 @@ void Window::init(const char *name, uint32_t resolutionX, uint32_t resolutionY, 
     LOG_INFO(message);
 }
 
-void Window::init(const char *name, bool fullScreen) {
+void GlfwWindow::init(const char *name, bool fullScreen) {
     init(name, 1, 1, fullScreen);
 }
 
-Window::~Window() {
+GlfwWindow::~GlfwWindow() {
     glfwTerminate();
 }
 
-bool Window::shouldClose() {
+bool GlfwWindow::shouldClose() {
     return glfwWindowShouldClose((GLFWwindow *)handle);
 }
 
-Vec2 Window::getSize() {
+Vec2 GlfwWindow::getSize() {
     int x, y;
     float xscale, yscale;
     glfwGetWindowContentScale((GLFWwindow *)handle, &xscale, &yscale);
@@ -76,19 +76,19 @@ Vec2 Window::getSize() {
     return {x * xscale, y * yscale};
 }
 
-double Window::getTime() {
+double GlfwWindow::getTime() {
     return glfwGetTime();
 }
 
-void Window::swapBuffers() {
+void GlfwWindow::swapBuffers() {
     glfwSwapBuffers((GLFWwindow *)handle);
 }
 
-void Window::setShouldClose() {
+void GlfwWindow::setShouldClose() {
     glfwSetWindowShouldClose((GLFWwindow *)handle, true);
 }
 
-void *Window::getNativeHandle() {
+void *GlfwWindow::getNativeHandle() {
     return handle;
 }
 

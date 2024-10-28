@@ -1,7 +1,7 @@
 
 #include "ContentBrowser.hpp"
 #include "Nest/ImGui/FontAwesome.h"
-#include "Nest/Window/Events.hpp"
+#include "Nest/Window/GlfwEvents.hpp"
 
 #include <imgui.h>
 
@@ -62,9 +62,9 @@ void ContentBrowser::onImGuiRender() {
     float ContentBrowserWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(ContentBrowserWidth / cellSize);
     columnCount = std::max(columnCount, 1);
-    //    if (!Nest::Events::getDropPaths().empty()) {
+    //    if (!Nest::GlfwEvents::getDropPaths().empty()) {
     //        if (isMouseInsideWindow(ImGui::GetWindowPos(), ImGui::GetWindowSize())) {
-    //            const auto &dropPaths = Nest::Events::getDropPaths();
+    //            const auto &dropPaths = Nest::GlfwEvents::getDropPaths();
     //            for (const auto &dropPath : dropPaths) {
     //                if (std::filesystem::is_directory(dropPath)) {
     //                    SystemTools::copyFolder(dropPath, m_currentDirectory.string());

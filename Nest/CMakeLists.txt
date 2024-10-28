@@ -16,6 +16,7 @@ file(GLOB_RECURSE INCLUDE src/*.hpp include/*.hpp)
 add_library(Nest STATIC "${SOURCES}" "${INCLUDE}")
 
 target_include_directories(Nest PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform)
 target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Dependencies - Foundation

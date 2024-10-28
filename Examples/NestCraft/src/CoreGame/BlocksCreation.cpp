@@ -55,10 +55,10 @@ void BlocksCreation::update(double deltaTime) {
     updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::LEFT) &&
-                  Nest::Events::isCursorLocked();
-    rightPressed = Nest::Events::isMouseButtonPressed(Nest::MouseButton::RIGHT) &&
-                   Nest::Events::isCursorLocked();
+    leftPressed = Nest::GlfwEvents::isMouseButtonPressed(Nest::MouseButton::LEFT) &&
+                  Nest::GlfwEvents::isCursorLocked();
+    rightPressed = Nest::GlfwEvents::isMouseButtonPressed(Nest::MouseButton::RIGHT) &&
+                   Nest::GlfwEvents::isCursorLocked();
     if (!leftPressed && !rightPressed) {
         return;
     }
@@ -98,19 +98,19 @@ void BlocksCreation::onImGuiRender() {
 }
 
 void BlocksCreation::updateVoxelHand() {
-    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_1)) {
+    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_1)) {
         m_selectedBlock = VoxelType(1);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_2)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_2)) {
         m_selectedBlock = VoxelType(7);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_3)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_3)) {
         m_selectedBlock = VoxelType(8);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_4)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_4)) {
         m_selectedBlock = VoxelType(9);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_5)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_5)) {
         m_selectedBlock = VoxelType(10);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_6)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_6)) {
         m_selectedBlock = VoxelType(11);
-    } else if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_7)) {
+    } else if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_7)) {
         m_selectedBlock = VoxelType(12);
     }
 }

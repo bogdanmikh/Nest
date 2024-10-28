@@ -37,7 +37,7 @@ void PostprocessingEffect::onAttach() {
 
 void PostprocessingEffect::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
-    mousePos = Nest::Events::getCursorPos();
+    mousePos = Nest::GlfwEvents::getCursorPos();
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     Bird::setShader(m_shader);

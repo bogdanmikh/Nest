@@ -5,9 +5,10 @@
 #include "Nest/Application/Layer.hpp"
 #include "Nest/Platform/PlatformDetection.hpp"
 #include "Nest/Application/ApplicationStartupSettings.hpp"
-#include "Nest/Window/Events.hpp"
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Renderer/Texture.hpp"
+#include "WindowImpl/GlfwWindow/GlfwWindow.hpp"
+#include "EventsImpl/GlfwEvents/GlfwEvents.hpp"
 
 // SystemTools
 #include "Nest/SystemTools/SystemTools.hpp"

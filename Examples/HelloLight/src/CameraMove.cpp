@@ -12,7 +12,7 @@ void CameraMove::onAttach() {
 
 void CameraMove::onUpdate(double deltaTime) {
     using namespace Nest;
-    if (Events::isKeyPressed(Key::LEFT_SHIFT)) {
+    if (GlfwEvents::isKeyPressed(Key::LEFT_SHIFT)) {
         cameraSpeed = 30.f;
     } else {
         cameraSpeed = 15.f;
@@ -20,22 +20,22 @@ void CameraMove::onUpdate(double deltaTime) {
     if (deltaTime >= 1) {
         LOG_ERROR("Delta: {}", deltaTime);
     }
-    if (Events::isKeyPressed(Key::W)) {
+    if (GlfwEvents::isKeyPressed(Key::W)) {
         m_worldCamera->translateLocal(0., 0., cameraSpeed * deltaTime);
     }
-    if (Events::isKeyPressed(Key::S)) {
+    if (GlfwEvents::isKeyPressed(Key::S)) {
         m_worldCamera->translateLocal(0., 0., -cameraSpeed * deltaTime);
     }
-    if (Events::isKeyPressed(Key::A)) {
+    if (GlfwEvents::isKeyPressed(Key::A)) {
         m_worldCamera->translateLocal(-cameraSpeed * deltaTime, 0., 0.);
     }
-    if (Events::isKeyPressed(Key::D)) {
+    if (GlfwEvents::isKeyPressed(Key::D)) {
         m_worldCamera->translateLocal(cameraSpeed * deltaTime, 0., 0.);
     }
-    if (Events::isKeyPressed(Key::SPACE)) {
+    if (GlfwEvents::isKeyPressed(Key::SPACE)) {
         m_worldCamera->translateLocal(0., cameraSpeed * deltaTime, 0.);
     }
-    if (Events::isKeyPressed(Key::LEFT_CONTROL)) {
+    if (GlfwEvents::isKeyPressed(Key::LEFT_CONTROL)) {
         m_worldCamera->translateLocal(0., -cameraSpeed * deltaTime, 0.);
     }
 
@@ -45,15 +45,15 @@ void CameraMove::onUpdate(double deltaTime) {
     viewportSize.size = resolution;
     Bird::setViewport(0, viewportSize);
     bool resetMouse = false;
-    if (Events::isCursorLocked() != cursorLock) {
-        cursorLock = Events::isCursorLocked();
+    if (GlfwEvents::isCursorLocked() != cursorLock) {
+        cursorLock = GlfwEvents::isCursorLocked();
         resetMouse = true;
     }
 
-    if (!Events::isCursorLocked())
+    if (!GlfwEvents::isCursorLocked())
         return;
 
-    glm::vec2 cursorPos = Events::getCursorPos();
+    glm::vec2 cursorPos = GlfwEvents::getCursorPos();
     glm::vec2 diff = lastPos - cursorPos;
     if (resetMouse)
         diff = glm::vec2(0);

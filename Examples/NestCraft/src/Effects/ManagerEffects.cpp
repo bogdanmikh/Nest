@@ -65,24 +65,24 @@ void ManagerEffects::onUpdate(double deltaTime) {
 }
 
 void ManagerEffects::onImGuiRender() {
-    //    bool leftShift = Nest::Events::isKeyPressed(Nest::Key::LEFT_SHIFT);
+    //    bool leftShift = Nest::GlfwEvents::isKeyPressed(Nest::Key::LEFT_SHIFT);
     //    if (!leftShift) {
     //        return;
     //    }
     //    int key = -1;
-    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_1)) {
+    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_1)) {
     //        key = 0;
     //    }
-    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_2)) {
+    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_2)) {
     //        key = 1;
     //    }
-    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_3)) {
+    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_3)) {
     //        key = 2;
     //    }
-    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_4)) {
+    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_4)) {
     //        key = 3;
     //    }
-    //    if (Nest::Events::isJustKeyPressed(Nest::Key::KEY_5)) {
+    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_5)) {
     //        key = 4;
     //    }
     //    if (key == -1) {

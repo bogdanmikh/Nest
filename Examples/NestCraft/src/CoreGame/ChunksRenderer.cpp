@@ -43,7 +43,7 @@ void ChunksRenderer::onAttach() {
 }
 
 void ChunksRenderer::onUpdate(double deltaTime) {
-    /*if (Nest::Events::isJustKeyPressed(Key::Q)) {
+    /*if (Nest::GlfwEvents::isJustKeyPressed(Key::Q)) {
         auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
     Chunk::SIZE_XYZ); m_chunksStorage->saveWorld(data); if (!NestFiles::writeBinaryFile(
                 "world.bin", (const char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
@@ -52,7 +52,7 @@ void ChunksRenderer::onUpdate(double deltaTime) {
         }
         delete[] data;
     }
-    if (Nest::Events::isJustKeyPressed(Key::E)) {
+    if (Nest::GlfwEvents::isJustKeyPressed(Key::E)) {
         auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
     Chunk::SIZE_XYZ); if (!NestFiles::readBinaryFile( "world.bin", (char *)data,
     ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
@@ -79,8 +79,8 @@ void ChunksRenderer::draw() {
 
         static auto time = Nest::Application::get()->getWindow()->getTime();
         time = Nest::Application::get()->getWindow()->getTime();
-        static auto mousePos = Nest::Events::getCursorPos();
-        mousePos = Nest::Events::getCursorPos();
+        static auto mousePos = Nest::GlfwEvents::getCursorPos();
+        mousePos = Nest::GlfwEvents::getCursorPos();
         static auto resolution = Nest::Application::get()->getWindow()->getSize();
         resolution = Nest::Application::get()->getWindow()->getSize();
 

@@ -9,18 +9,24 @@ namespace Nest {
 
 struct ApplicationStartupSettings {
 public:
+    enum Platform {
+        DESKTOP,
+        PHONE
+    };
     const char *name;
     const char *windowTitle;
     Size windowSize;
     bool isFullScreen;
     bool isMaximized;
+    Platform platform;
 
     ApplicationStartupSettings()
         : name("Nest Sandbox App")
         , windowTitle("Nest")
         , windowSize(Size(600, 400))
         , isFullScreen(false)
-        , isMaximized(false) {}
+        , isMaximized(false)
+        , platform(Platform::DESKTOP) {}
 
     ApplicationStartupSettings(
         const char *name,

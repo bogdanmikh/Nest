@@ -10,7 +10,7 @@
 
 namespace Nest {
 
-class Events final {
+class GlfwEvents final {
 public:
     static void init(void *handle);
     static glm::vec2 getCursorPos();
@@ -21,7 +21,7 @@ public:
     static bool isJustMouseButtonPressed(MouseButton mouseButton);
     static void toggleCursorLock();
     static bool isCursorLocked();
-    static void pollEvents();
+    static void pollGlfwEvents();
     static std::vector<std::string> getDropPaths();
     static void resetDropPaths();
 

@@ -51,7 +51,7 @@ void Player::onUpdate(double deltaTime) {
     static double time;
     time = Nest::Application::get()->getWindow()->getTime();
     static glm::vec2 mousePos;
-    mousePos = Nest::Events::getCursorPos();
+    mousePos = Nest::GlfwEvents::getCursorPos();
     static glm::vec2 resolution;
     resolution = Nest::Application::get()->getWindow()->getSize();
 
@@ -99,19 +99,19 @@ void Player::setColor(glm::vec3 color) {
 void Player::onMove(double deltaTime) {
     using namespace Nest;
 
-    if (Events::isKeyPressed(Key::W)) {
+    if (GlfwEvents::isKeyPressed(Key::W)) {
         m_transformComponent.translate({0., speed * deltaTime, 0.});
     }
 
-    if (Events::isKeyPressed(Key::S)) {
+    if (GlfwEvents::isKeyPressed(Key::S)) {
         m_transformComponent.translate({0., -speed * deltaTime, 0.});
     }
 
-    if (Events::isKeyPressed(Key::A)) {
+    if (GlfwEvents::isKeyPressed(Key::A)) {
         m_transformComponent.translate({-speed * deltaTime, 0., 0.});
     }
 
-    if (Events::isKeyPressed(Key::D)) {
+    if (GlfwEvents::isKeyPressed(Key::D)) {
         m_transformComponent.translate({speed * deltaTime, 0., 0.});
     }
 
