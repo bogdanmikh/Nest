@@ -34,6 +34,7 @@ add_subdirectory(Vendor/dylib)
 add_subdirectory(Vendor/nfd)
 add_subdirectory(Vendor/assimp)
 add_subdirectory(Vendor/enet)
+add_subdirectory(Vendor/glfm)
 add_subdirectory(Rain)
 
 add_subdirectory(Foundation)

@@ -9,10 +9,7 @@ namespace Nest {
 
 struct ApplicationStartupSettings {
 public:
-    enum Platform {
-        DESKTOP,
-        PHONE
-    };
+    enum Platform { DESKTOP, PHONE };
     const char *name;
     const char *windowTitle;
     Size windowSize;

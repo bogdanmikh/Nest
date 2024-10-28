@@ -44,6 +44,10 @@ target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 target_link_libraries(Nest glfw)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfw/include)
 
+# Dependencies - GLFM, only for Desktop :)
+target_link_libraries(Nest glfm)
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfm/include)
+
 # Dependencies - Dear ImGui
 target_link_libraries(Nest imgui)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
