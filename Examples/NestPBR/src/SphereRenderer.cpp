@@ -1,5 +1,7 @@
 #include "SphereRenderer.hpp"
 
+#define Events Nest::Application::get()->getEvents()
+
 void SphereRenderer::onAttach() {
     m_camera = Nest::Application::get()->getWorldCamera();
 
@@ -79,7 +81,7 @@ void SphereRenderer::onAttach() {
 
 void SphereRenderer::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
-    mousePos = Nest::GlfwEvents::getCursorPos();
+    mousePos = Events->getCursorPos();
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     projViewMtx = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();

@@ -4,6 +4,8 @@
 
 #include "Player.hpp"
 
+#define Events Nest::Application::get()->getEvents()
+
 void Player::onAttach() {
     using namespace Bird;
 
@@ -51,7 +53,7 @@ void Player::onUpdate(double deltaTime) {
     static double time;
     time = Nest::Application::get()->getWindow()->getTime();
     static glm::vec2 mousePos;
-    mousePos = Nest::GlfwEvents::getCursorPos();
+    mousePos = Events->getCursorPos();
     static glm::vec2 resolution;
     resolution = Nest::Application::get()->getWindow()->getSize();
 
@@ -99,19 +101,19 @@ void Player::setColor(glm::vec3 color) {
 void Player::onMove(double deltaTime) {
     using namespace Nest;
 
-    if (GlfwEvents::isKeyPressed(Key::W)) {
+    if (Events->isKeyPressed(Key::W)) {
         m_transformComponent.translate({0., speed * deltaTime, 0.});
     }
 
-    if (GlfwEvents::isKeyPressed(Key::S)) {
+    if (Events->isKeyPressed(Key::S)) {
         m_transformComponent.translate({0., -speed * deltaTime, 0.});
     }
 
-    if (GlfwEvents::isKeyPressed(Key::A)) {
+    if (Events->isKeyPressed(Key::A)) {
         m_transformComponent.translate({-speed * deltaTime, 0., 0.});
     }
 
-    if (GlfwEvents::isKeyPressed(Key::D)) {
+    if (Events->isKeyPressed(Key::D)) {
         m_transformComponent.translate({speed * deltaTime, 0., 0.});
     }
 

@@ -1,7 +1,6 @@
 
 #include "ContentBrowser.hpp"
 #include "Nest/ImGui/FontAwesome.h"
-#include "Nest/Window/GlfwEvents.hpp"
 
 #include <imgui.h>
 
