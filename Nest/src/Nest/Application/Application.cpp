@@ -6,7 +6,8 @@
 #    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
 #    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
 #else
-
+#    include "Platform/WindowImpl/GlfmWindow/GlfmWindow.hpp"
+#    include "Platform/EventsImpl/GlfmEvents/GlfmEvents.hpp"
 #endif
 
 #include <Bird/Bird.hpp>
@@ -47,6 +48,8 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_window->init(
         settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
     );
+    m_events = NEW(Foundation::getAllocator(), GlfmEvents);
+    m_events->init(m_window->getNativeHandle());
 #endif
 
     Bird::initialize();

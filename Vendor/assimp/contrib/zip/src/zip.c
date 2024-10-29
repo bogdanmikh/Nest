@@ -471,7 +471,7 @@ static ssize_t zip_entry_mark(struct zip_t *zip,
       entry_mark[i].type = MZ_KEEP;
     }
 
-    if (!mz_zip_reader_file_stat(&zip->archive, i, &file_stat)) {
+    if (!mz_zip_reader_file_stat(&zip->archive, (unsigned int)i, &file_stat)) {
       return ZIP_ENOENT;
     }
 
@@ -528,7 +528,7 @@ static ssize_t zip_entry_markbyindex(struct zip_t *zip,
       entry_mark[i].type = MZ_KEEP;
     }
 
-    if (!mz_zip_reader_file_stat(&zip->archive, i, &file_stat)) {
+    if (!mz_zip_reader_file_stat(&zip->archive, (unsigned int)i, &file_stat)) {
       return ZIP_ENOENT;
     }
 

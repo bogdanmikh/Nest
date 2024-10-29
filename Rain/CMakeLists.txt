@@ -4,7 +4,7 @@ project(Rain)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
-set(BUILD_EXAMPLES ON)
+set(BUILD_EXAMPLES OFF)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE INCLUDE src/*.hpp include/Rain/*.hpp)

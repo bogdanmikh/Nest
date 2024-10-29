@@ -7,8 +7,6 @@
 #include "Nest/Application/ApplicationStartupSettings.hpp"
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Renderer/Texture.hpp"
-#include "WindowImpl/GlfwWindow/GlfwWindow.hpp"
-#include "EventsImpl/GlfwEvents/GlfwEvents.hpp"
 
 // SystemTools
 #include "Nest/SystemTools/SystemTools.hpp"

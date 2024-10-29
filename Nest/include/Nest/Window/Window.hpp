@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include "Nest/Base/Base.hpp"
-#include <GLFW/glfw3.h>
 
 namespace Nest {
 
