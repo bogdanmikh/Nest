@@ -6,14 +6,22 @@
 
 #include "Nest/Window/Window.hpp"
 
-#include <Foundation/Foundation.hpp>
-#include <glfm.h>
+#include <jni.h>
+#include <android/native_activity.h>
+#include <android/native_window.h>
+#include <GLES3/gl3.h>
+#include <EGL/egl.h>
+#include <android/log.h>
+
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "AndroidWindow", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, "AndroidWindow", __VA_ARGS__))
 
 namespace Nest {
 
-class GlfmWindow : public Window {
+class AndroidWindow : public Window {
 public:
-    ~GlfmWindow() override;
+    AndroidWindow();
+    ~AndroidWindow() override;
     void init(
         const char *name, uint32_t resolutionX = 1, uint32_t resolutionY = 1, bool fullScreen = true
     ) override;
@@ -27,6 +35,10 @@ public:
 
 private:
     void *handle;
+    EGLDisplay eglDisplay;
+    EGLSurface eglSurface;
+    EGLContext eglContext;
+    bool closeRequested;
 };
 
 } // namespace Nest

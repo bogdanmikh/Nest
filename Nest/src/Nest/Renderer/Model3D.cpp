@@ -2,6 +2,8 @@
 #include "Nest/Application/Application.hpp"
 #include "Nest/Assets/AssetLoader.hpp"
 
+#if USE_ASSIMP
+
 namespace Nest {
 
 Model3D::~Model3D() {
@@ -198,3 +200,5 @@ void Model3D::draw() {
 }
 
 } // namespace Nest
+
+#endif

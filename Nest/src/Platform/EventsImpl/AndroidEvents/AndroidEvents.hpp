@@ -9,9 +9,9 @@
 
 namespace Nest {
 
-class GlfmEvents final : public Events {
+class AndroidEvents final : public Events {
 public:
-    void init(void *handle) override;
+    void init(void *handle) override {}
     glm::vec2 getCursorPos() override;
     double getTime() override;
     bool isKeyPressed(Key key) override;

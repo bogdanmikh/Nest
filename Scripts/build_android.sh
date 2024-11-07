@@ -25,7 +25,6 @@ for abi in "armeabi-v7a" "armeabi-v7a with NEON" "arm64-v8a" "x86" "x86_64"; do
     echo ">>> Android: Building ABI $abi"
     rm -rf "build/android_$abi"
     cmake -S .. -B "build/android_$abi" \
-        -D GLFM_USE_CLANG_TIDY=ON \
         -D CMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME"/build/cmake/android.toolchain.cmake \
         -D CMAKE_C_FLAGS=-Werror \
         -D CMAKE_VERBOSE_MAKEFILE=ON \

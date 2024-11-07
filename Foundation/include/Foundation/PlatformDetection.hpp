@@ -27,7 +27,7 @@
  * it has __linux__ defined */
 #elif defined(__ANDROID__)
 #    define PLATFORM_ANDROID
-#    error "Android is not supported!"
+// #    error "Android is not supported!"
 #elif defined(__linux__)
 #    define PLATFORM_LINUX
 #else

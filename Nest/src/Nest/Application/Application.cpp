@@ -5,9 +5,9 @@
 #ifdef PLATFORM_DESKTOP
 #    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
 #    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
-#else
-#    include "Platform/WindowImpl/GlfmWindow/GlfmWindow.hpp"
-#    include "Platform/EventsImpl/GlfmEvents/GlfmEvents.hpp"
+#elif defined(PLATFORM_ANDROID)
+ #    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
+ #    include "Platform/EventsImpl/AndroidEvents/AndroidEvents.hpp"
 #endif
 
 #include <Bird/Bird.hpp>
@@ -43,12 +43,12 @@ Application::Application(ApplicationStartupSettings &settings) {
 
     m_events = NEW(Foundation::getAllocator(), GlfwEvents);
     m_events->init(m_window->getNativeHandle());
-#else
-    m_window = NEW(Foundation::getAllocator(), GlfmWindow);
+#elif defined(PLATFORM_ANDROID)
+    m_window = NEW(Foundation::getAllocator(), AndroidWindow);
     m_window->init(
         settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
     );
-    m_events = NEW(Foundation::getAllocator(), GlfmEvents);
+    m_events = NEW(Foundation::getAllocator(), AndroidEvents);
     m_events->init(m_window->getNativeHandle());
 #endif
 

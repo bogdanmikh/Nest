@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Platform/RendererImpl/OpenGL/OpenGLFrameBuffer.hpp"
+#include <cstdint>
 
 namespace Bird {
 class GraphicsContext {

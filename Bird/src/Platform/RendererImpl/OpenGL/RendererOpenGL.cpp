@@ -13,6 +13,8 @@
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
 #    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
+#elif defined(PLATFORM_ANDROID)
+#    include "Platform/RendererImpl/Context/AndroidContext.hpp"
 #endif
 
 namespace Bird {
@@ -57,6 +59,8 @@ RendererOpenGL::RendererOpenGL() {
     context = NEW(Foundation::getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
     context = NEW(Foundation::getAllocator(), OpenGLContext);
+#elif defined(PLATFORM_ANDROID)
+    context = NEW(Foundation::getAllocator(), AndroidContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
@@ -82,6 +86,8 @@ RendererOpenGL::~RendererOpenGL() {
 
 RendererType RendererOpenGL::getRendererType() const {
 #ifdef PLATFORM_IOS
+    return RendererType::OpenGLES;
+#elif defined(PLATFORM_ANDROID)
     return RendererType::OpenGLES;
 #elif defined(PLATFORM_DESKTOP)
     return RendererType::OpenGL;

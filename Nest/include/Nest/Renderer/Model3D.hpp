@@ -1,14 +1,18 @@
 #pragma once
 
+#define USE_ASSIMP 1
+
 #include <Bird/Bird.hpp>
 #include "Nest/Base/Base.hpp"
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/Renderer/Renderer3D.hpp"
 
+#if USE_ASSIMP
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
 
 namespace Nest {
 
@@ -55,3 +59,26 @@ private:
 };
 
 } // namespace Nest
+#else
+namespace Nest {
+
+class Model3D {
+public:
+    struct ModelVertex {
+        // position
+        glm::vec3 Position;
+        // texCoords
+        glm::vec2 TexCoords;
+        // normal
+        glm::vec3 Normal;
+    };
+
+    void create(Bird::ProgramHandle shader, Path pathToModel);
+    TransformComponent &getTransform();
+
+    void draw();
+
+    ~Model3D();
+};
+}
+#endif
