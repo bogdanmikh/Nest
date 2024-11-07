@@ -1,7 +1,8 @@
 #pragma once
 
 #include <Nest/GameLogic/Entity.hpp>
-#include <Nest/Renderer/Model3D.hpp>
+#include <Nest/Renderer/NaniteModel3D.hpp>
+//#include <Nest/Renderer/Model3D.hpp>
 
 class HelloLight final : public Nest::Entity {
 public:
@@ -19,5 +20,5 @@ private:
     };
     Light m_light;
     Bird::ProgramHandle m_shaderHandle;
-    Nest::Model3D m_model;
+    Nest::NaniteModel3D m_model;
 };

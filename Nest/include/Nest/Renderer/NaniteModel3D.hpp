@@ -1,20 +1,22 @@
+//
+// Created by Bogdan on 07.11.2024.
+//
+
 #pragma once
+
 #include <Bird/Bird.hpp>
 #include "Nest/Base/Base.hpp"
-#include "Nest/GameLogic/Components/StaticMesh.hpp"
+#include "Nest/GameLogic/Components/DynamicMesh.hpp"
 #include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/Renderer/Renderer3D.hpp"
 
-#define USE_ASSIMP 1
-
-#if USE_ASSIMP
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
 namespace Nest {
 
-class Model3D {
+class NaniteModel3D {
 public:
     struct ModelVertex {
         // position
@@ -30,7 +32,7 @@ public:
 
     void draw();
 
-    ~Model3D();
+    ~NaniteModel3D();
 
 private:
     void loadModel(const std::string &path);
@@ -54,29 +56,10 @@ private:
 
     TransformComponent m_transformComponent;
     glm::mat4 m_viewProj;
+
+    std::vector<ModelVertex> m_vertices;
+    std::vector<unsigned int> m_indices;
+    std::vector<TextureBinding> m_textures;
 };
 
 } // namespace Nest
-#else
-namespace Nest {
-
-class Model3D {
-public:
-    struct ModelVertex {
-        // position
-        glm::vec3 Position;
-        // texCoords
-        glm::vec2 TexCoords;
-        // normal
-        glm::vec3 Normal;
-    };
-
-    void create(Bird::ProgramHandle shader, Path pathToModel);
-    TransformComponent &getTransform();
-
-    void draw();
-
-    ~Model3D();
-};
-}
-#endif

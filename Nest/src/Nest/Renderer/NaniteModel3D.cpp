@@ -1,23 +1,82 @@
-#include "Nest/Renderer/Model3D.hpp"
+//
+// Created by Bogdan on 07.11.2024.
+//
+
+#include "Nest/Renderer/NaniteModel3D.hpp"
 #include "Nest/Application/Application.hpp"
 #include "Nest/Assets/AssetLoader.hpp"
 
-#if USE_ASSIMP
-
 namespace Nest {
 
-Model3D::~Model3D() {
+// Структура для представления кластера
+struct Cluster {
+    std::vector<NaniteModel3D::ModelVertex> vertices;
+    std::vector<unsigned int> indices;
+};
+
+// Глобальные параметры для настройки Nanite
+float maxDistance = 100.0f; // Максимальное расстояние для применения LOD
+float minDistance = 10.0f;  // Минимальное расстояние для полной детализации
+
+// Функция для генерации LOD на основе расстояния
+std::pair<std::vector<NaniteModel3D::ModelVertex>, std::vector<unsigned int>> generateLOD(const std::vector<NaniteModel3D::ModelVertex>& vertices,
+                                                                           const std::vector<unsigned int>& indices,
+                                                                           float distance) {
+    std::vector<NaniteModel3D::ModelVertex> lodVertices;
+    std::vector<unsigned int> lodIndices;
+
+    // Применение LOD на основе расстояния
+    if (distance > maxDistance) {
+        // Упрощение модели (например, уменьшаем количество вершин)
+        // Здесь можно использовать алгоритмы упрощения, например, Quadric Error Metrics
+        // Для примера просто возвращаем пустой вектор
+        return { lodVertices, lodIndices };
+    } else if (distance < minDistance) {
+        // Полная детализация
+        lodVertices = vertices;
+        lodIndices = indices;
+    } else {
+        // Промежуточный уровень детализации
+        float factor = (maxDistance - distance) / (maxDistance - minDistance);
+        size_t targetVertexCount = static_cast<size_t>(vertices.size() * factor);
+
+        // Упрощение модели до targetVertexCount вершин
+        for (size_t i = 0; i < targetVertexCount; ++i) {
+            lodVertices.push_back(vertices[i]); // Простой пример, нужно улучшить
+        }
+
+        // Индексы остаются теми же, можно оптимизировать
+        lodIndices = indices; // В реальной реализации нужно будет уменьшать индексы
+    }
+
+    return { lodVertices, lodIndices };
+}
+
+// Основная функция runNanite
+std::pair<std::vector<NaniteModel3D::ModelVertex>, std::vector<unsigned int>> runNanite(std::vector<NaniteModel3D::ModelVertex> vertices,
+                                                                         std::vector<unsigned int> indices,
+                                                                         float distance) {
+    // Кластеризация может быть реализована здесь
+    // Для простоты мы просто генерируем LOD
+    return generateLOD(vertices, indices, distance);
+}
+
+
+
+
+
+NaniteModel3D::~NaniteModel3D() {
     for (uint32_t i = 0; i < m_meshes.size(); i++) {
         DELETE(Foundation::getAllocator(), m_meshes[i]);
     }
     m_meshes.clear();
 }
 
-TransformComponent &Model3D::getTransform() {
+TransformComponent &NaniteModel3D::getTransform() {
     return m_transformComponent;
 }
 
-void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
+void NaniteModel3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     m_pathToModel3D = pathToModel;
     m_shader = shader;
     Assimp::Importer importer;
@@ -31,7 +90,7 @@ void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
     m_slots.resize(m_meshes.size());
 }
 
-void Model3D::processNode(aiNode *node, const aiScene *scene) {
+void NaniteModel3D::processNode(aiNode *node, const aiScene *scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
         m_meshes.emplace_back(processMesh(mesh, scene));
@@ -41,7 +100,7 @@ void Model3D::processNode(aiNode *node, const aiScene *scene) {
     }
 }
 
-StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
+StaticMesh *NaniteModel3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     std::vector<ModelVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<TextureBinding> textures;
@@ -84,7 +143,7 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
             loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         std::vector<TextureBinding> specularMaps =
-            loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
+            loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
@@ -94,6 +153,12 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     //        auto pos = vertex.Position;
     //        LOG_INFO("X: {}, Y: {}, Z: {}", pos.x, pos.y, pos.z);
     //    }
+
+    auto p = runNanite(vertices, indices, 110.);
+    vertices = p.first;
+    indices = p.second;
+    LOG_INFO("CNT: {}, {}", vertices.size(), indices.size());
+
 
     Foundation::Memory verticesMemory =
         Foundation::Memory::copying(vertices.data(), sizeof(ModelVertex) * vertices.size());
@@ -120,7 +185,7 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
 }
 
 std::vector<TextureBinding>
-Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
+NaniteModel3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName) {
     std::vector<TextureBinding> textures;
     uint32_t countTextures = mat->GetTextureCount(type);
     textures.reserve(countTextures);
@@ -160,7 +225,7 @@ Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string t
     return textures;
 }
 
-void Model3D::draw() {
+void NaniteModel3D::draw() {
     static auto camera = Nest::Application::get()->getWorldCamera();
     m_viewProj = camera->getProjectionMatrix() * camera->getViewMatrix();
     for (int i = 0; i < m_meshes.size(); ++i) {
@@ -200,5 +265,3 @@ void Model3D::draw() {
 }
 
 } // namespace Nest
-
-#endif
