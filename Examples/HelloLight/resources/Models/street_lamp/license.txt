@@ -1,0 +1,11 @@
+Model Information:
+* title:	Street lamp (low poly)
+* source:	https://sketchfab.com/3d-models/street-lamp-low-poly-17e2bc2ec7de42d08d98e3a6c886a8b2
+* author:	pinokio21 (https://sketchfab.com/pinokio21)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Street lamp (low poly)" (https://sketchfab.com/3d-models/street-lamp-low-poly-17e2bc2ec7de42d08d98e3a6c886a8b2) by pinokio21 (https://sketchfab.com/pinokio21) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

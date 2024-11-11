@@ -1,14 +1,19 @@
 #include "HelloLightLevel.hpp"
 #include "CameraMove.hpp"
-#include "HelloLight.hpp"
+#include "Objects/CarObject.hpp"
+#include "Objects/StreetLamp.hpp"
+#include "Objects/Asphalt.hpp"
+#include "Objects/Garage.hpp"
 #include "NightSky.hpp"
 
 #include <Nest.hpp>
 
 void HelloLightLevel::onAttach() {
-    //  m_carRenderer = new SnowScene;
     addEntity(new NightSky);
-    addEntity(new HelloLight);
+    addEntity(new CarObject);
+    addEntity(new StreetLamp);
+    addEntity(new Asphalt);
+    addEntity(new Garage);
     addEntity(new CameraMove);
     for (auto &entity : m_entities) {
         entity->onAttach();

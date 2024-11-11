@@ -1,0 +1,8 @@
+Model Information:
+* title:	TEST-MODEL: A garage.
+* source:	https://sketchfab.com/3d-models/test-model-a-garage-4c16c9cff6d84c25be500b5ff9158cb9
+* author:	Valger (https://sketchfab.com/Valger)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

@@ -1,0 +1,11 @@
+Model Information:
+* title:	cracked-asphalt
+* source:	https://sketchfab.com/3d-models/cracked-asphalt-84a41582c2914b66801250e880946af5
+* author:	slls666 (https://sketchfab.com/slls666)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "cracked-asphalt" (https://sketchfab.com/3d-models/cracked-asphalt-84a41582c2914b66801250e880946af5) by slls666 (https://sketchfab.com/slls666) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)

@@ -12,5 +12,4 @@ public:
 
 private:
     std::vector<Nest::Entity *> m_entities;
-    Nest::SkyComponent *m_skyComponent;
 };

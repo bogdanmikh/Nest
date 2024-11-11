@@ -151,7 +151,7 @@ Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string t
         Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
         textureCreate.m_numMips = 4;
         textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
-        textureCreate.m_magFiltering = Bird::NEAREST;
+        textureCreate.m_magFiltering = Bird::LINEAR;
         TextureBinding texture;
         texture.texture = createTexture(textureCreate);
         texture.name = typeName;
