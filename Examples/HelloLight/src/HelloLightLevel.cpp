@@ -11,9 +11,9 @@
 void HelloLightLevel::onAttach() {
     addEntity(new NightSky);
     addEntity(new CarObject);
-    //    addEntity(new StreetLamp);
-    //    addEntity(new Asphalt);
-    //    addEntity(new Garage);
+    addEntity(new StreetLamp);
+    addEntity(new Asphalt);
+    addEntity(new Garage);
     addEntity(new CameraMove);
     for (auto &entity : m_entities) {
         entity->onAttach();

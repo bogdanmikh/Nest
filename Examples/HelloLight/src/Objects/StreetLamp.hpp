@@ -4,6 +4,8 @@
 // #include <Nest/Renderer/NaniteModel3D.hpp>
 #include <Nest/Renderer/Model3D.hpp>
 
+#include "SimpleLight.hpp"
+
 class StreetLamp final : public Nest::Entity {
 public:
     StreetLamp();
@@ -14,11 +16,7 @@ public:
     Nest::TransformComponent &getTransform();
 
 private:
-    struct Light {
-        glm::vec3 lightPos;
-        glm::vec3 lightColor;
-    };
-    Light m_light;
+    SimpleLight m_light;
     Bird::ProgramHandle m_shaderHandle;
     Nest::Model3D m_model;
 };
