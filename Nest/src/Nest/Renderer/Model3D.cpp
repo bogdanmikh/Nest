@@ -17,9 +17,12 @@ TransformComponent &Model3D::getTransform() {
     return m_transformComponent;
 }
 
-void Model3D::create(Bird::ProgramHandle shader, Path pathToModel) {
+void Model3D::create(
+    Bird::ProgramHandle shader, Path pathToModel, const CreateInfoModel3D &createInfoModel3D
+) {
     m_pathToModel3D = pathToModel;
     m_shader = shader;
+    m_createInfo = createInfoModel3D;
     Assimp::Importer importer;
     const aiScene *scene =
         importer.ReadFile(pathToModel, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -81,10 +84,10 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
         std::vector<TextureBinding> diffuseMaps =
-            loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+            loadMaterialTextures(material, aiTextureType_DIFFUSE, m_createInfo.nameDiffuse);
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         std::vector<TextureBinding> specularMaps =
-            loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
+            loadMaterialTextures(material, aiTextureType_SPECULAR, m_createInfo.nameSpecular);
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 

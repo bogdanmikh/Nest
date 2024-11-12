@@ -14,6 +14,11 @@
 
 namespace Nest {
 
+struct CreateInfoModel3D {
+    std::string nameDiffuse = "texture_diffuse";
+    std::string nameSpecular = "specular";
+};
+
 class Model3D {
 public:
     struct ModelVertex {
@@ -25,7 +30,11 @@ public:
         glm::vec3 Normal;
     };
 
-    void create(Bird::ProgramHandle shader, Path pathToModel);
+    void create(
+        Bird::ProgramHandle shader,
+        Path pathToModel,
+        const CreateInfoModel3D &createInfoModel3D = {}
+    );
     TransformComponent &getTransform();
 
     void draw();
@@ -49,6 +58,8 @@ private:
     Path m_pathToModel3D;
     Bird::ProgramHandle m_shader;
     std::vector<StaticMesh *> m_meshes;
+
+    CreateInfoModel3D m_createInfo;
 
     std::vector<std::vector<int>> m_slots;
 
