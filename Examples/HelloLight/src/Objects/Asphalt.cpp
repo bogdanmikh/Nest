@@ -13,9 +13,8 @@ void Asphalt::onAttach() {
     float lightColor = 0.2;
     m_light.lightColor = glm::vec3(lightColor, lightColor, lightColor);
     m_light.lightPos = glm::vec3(5, 5, 5);
-    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
-        "Shaders/vstAsphalt.glsl", "Shaders/fstAsphalt.glsl"
-    );
+    Nest::ProgramAsset programAsset =
+        Nest::AssetLoader::loadProgram("Shaders/vstModel3D.glsl", "Shaders/fstModel3D.glsl");
     m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
     m_model.create(m_shaderHandle, "Models/asphalt/scene.gltf");
 }
@@ -26,7 +25,7 @@ void Asphalt::onUpdate(double deltaTime) {
     transform.setRotationEuler({-90, 90, 0});
     float coeffScale = 25.;
     transform.setScale({coeffScale, coeffScale, coeffScale});
-//    transform.setScale({0.05, 0.05, 0.05});
+    //    transform.setScale({0.05, 0.05, 0.05});
 
     Bird::setUniform(m_shaderHandle, "vec4LightPos", &m_light.lightPos, Bird::UniformType::Vec4);
     Bird::setUniform(

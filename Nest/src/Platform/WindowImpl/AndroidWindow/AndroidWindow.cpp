@@ -4,15 +4,16 @@
 
 #include "AndroidWindow.hpp"
 
-#define nativeWindow (ANativeWindow*)handle
+#define nativeWindow (ANativeWindow *)handle
 
 namespace Nest {
 
-
 AndroidWindow::AndroidWindow(ANativeActivity *activity)
-        : handle(nullptr), eglDisplay(EGL_NO_DISPLAY),
-        eglSurface(EGL_NO_SURFACE), eglContext(EGL_NO_CONTEXT),
-        closeRequested(false) {}
+    : handle(nullptr)
+    , eglDisplay(EGL_NO_DISPLAY)
+    , eglSurface(EGL_NO_SURFACE)
+    , eglContext(EGL_NO_CONTEXT)
+    , closeRequested(false) {}
 
 AndroidWindow::~AndroidWindow() {
     if (eglDisplay != EGL_NO_DISPLAY) {
@@ -40,9 +41,7 @@ void AndroidWindow::init(
     EGLConfig config;
     EGLint numConfigs;
     EGLint attribs[] = {
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-        EGL_NONE
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT, EGL_SURFACE_TYPE, EGL_WINDOW_BIT, EGL_NONE
     };
 
     eglChooseConfig(eglDisplay, attribs, &config, 1, &numConfigs);
@@ -51,10 +50,7 @@ void AndroidWindow::init(
     eglSurface = eglCreateWindowSurface(eglDisplay, config, nativeWindow, nullptr);
 
     // Create OpenGL ES 3 context
-    EGLint contextAttribs[] = {
-        EGL_CONTEXT_CLIENT_VERSION, 3,
-        EGL_NONE
-    };
+    EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
     eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, contextAttribs);
 
     // Make the context current
@@ -69,9 +65,7 @@ bool AndroidWindow::shouldClose() {
     return closeRequested;
 }
 
-Vec2 AndroidWindow::getSize() {
-
-}
+Vec2 AndroidWindow::getSize() {}
 
 double AndroidWindow::getTime() {
     return static_cast<double>(time(nullptr));

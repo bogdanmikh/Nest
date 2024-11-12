@@ -13,9 +13,8 @@ void CarObject::onAttach() {
     float lightColor = 0.2;
     m_light.lightColor = glm::vec3(lightColor, lightColor, lightColor);
     m_light.lightPos = glm::vec3(5, 5, 5);
-    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
-        "Shaders/vstCar.glsl", "Shaders/fstCar.glsl"
-    );
+    Nest::ProgramAsset programAsset =
+        Nest::AssetLoader::loadProgram("Shaders/vstModel3D.glsl", "Shaders/fstModel3D.glsl");
     m_shaderHandle = createProgram(programAsset.getBirdProgramCreate());
     m_model.create(m_shaderHandle, "Models/car/scene.gltf");
 }

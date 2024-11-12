@@ -8,9 +8,9 @@
 #define USE_ASSIMP 1
 
 #if USE_ASSIMP
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#    include <assimp/Importer.hpp>
+#    include <assimp/scene.h>
+#    include <assimp/postprocess.h>
 
 namespace Nest {
 
@@ -78,5 +78,5 @@ public:
 
     ~Model3D();
 };
-}
+} // namespace Nest
 #endif

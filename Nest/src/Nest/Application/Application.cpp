@@ -6,8 +6,8 @@
 #    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
 #    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
 #elif defined(PLATFORM_ANDROID)
- #    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
- #    include "Platform/EventsImpl/AndroidEvents/AndroidEvents.hpp"
+#    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
+#    include "Platform/EventsImpl/AndroidEvents/AndroidEvents.hpp"
 #endif
 
 #include <Bird/Bird.hpp>

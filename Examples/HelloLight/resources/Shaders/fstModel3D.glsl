@@ -21,6 +21,6 @@ void main() {
 
     vec3 objectColor = texture(texture_diffuse, TexCoords).rgb;
     vec3 result = (ambientStrength + diffuse) * objectColor;
-    fragColor = vec4(result * ambientStrength * lightColor.r, 1.0);
+    fragColor = vec4(result * ambientStrength, 1.0);
    // fragColor = vec4(vec3(0.7, 0.7, 0.7), 1.0);
 }

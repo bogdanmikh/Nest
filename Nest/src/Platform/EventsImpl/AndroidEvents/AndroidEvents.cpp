@@ -4,9 +4,7 @@
 
 namespace Nest {
 
-void AndroidEvents::init(void *handle) {
-
-}
+void AndroidEvents::init(void *handle) {}
 
 glm::vec2 AndroidEvents::getCursorPos() {
     return {0, 0};
@@ -33,13 +31,9 @@ bool AndroidEvents::isJustMouseButtonPressed(MouseButton mouseButton) {
     return false;
 }
 
-void AndroidEvents::pollEvents() {
+void AndroidEvents::pollEvents() {}
 
-}
-
-void AndroidEvents::toggleCursorLock() {
-
-}
+void AndroidEvents::toggleCursorLock() {}
 bool AndroidEvents::isCursorLocked() {
     return false;
 }
@@ -48,8 +42,6 @@ std::vector<std::string> AndroidEvents::getDropPaths() {
     return {};
 }
 
-void AndroidEvents::resetDropPaths() {
-
-}
+void AndroidEvents::resetDropPaths() {}
 
 } // namespace Nest
