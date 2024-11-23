@@ -1,4 +1,5 @@
 #include "Nest/Assets/AssetLoader.hpp"
+#include "Nest/Assets/ShaderEnvelope.hpp"
 
 #include <Foundation/Foundation.hpp>
 #include <stb_image.h>
@@ -105,6 +106,30 @@ AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragm
             false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
         );
     }
+    Foundation::Memory vertexData =
+        Foundation::Memory::copying((void *)vertexCode.c_str(), vertexCode.size() + 1);
+    Foundation::Memory fragmentData =
+        Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
+    return {vertexData, fragmentData};
+}
+
+ProgramAsset AssetLoader::loadProgramXml(const std::string &pathXml) {
+    auto shadersCode = ShaderEnvelope::openEnvelope(pathXml);
+
+    std::string vertexCode, fragmentCode;
+    auto shaders = shadersCode.shadersData;
+    if (shaders[ShaderEnvelope::VERTEX].code.has_value()) {
+        vertexCode = shaders[ShaderEnvelope::VERTEX].code.value();
+    } else {
+        LOG_ERROR("VERTEX SHADER CODE NOT FOUND");
+    }
+
+    if (shaders[ShaderEnvelope::FRAGMENT].code.has_value()) {
+        fragmentCode = shaders[ShaderEnvelope::FRAGMENT].code.value();
+    } else {
+        LOG_ERROR("VERTEX SHADER CODE NOT FOUND");
+    }
+
     Foundation::Memory vertexData =
         Foundation::Memory::copying((void *)vertexCode.c_str(), vertexCode.size() + 1);
     Foundation::Memory fragmentData =

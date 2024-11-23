@@ -10,7 +10,7 @@ void CubeRenderer::onAttach() {
     using namespace Bird;
 
     Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram("Shaders/vstCube.glsl", "Shaders/fstCube.glsl");
+        Nest::AssetLoader::loadProgramXml("Shaders/CubeShader.xml");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil5.png");
