@@ -9,16 +9,29 @@
 #include "GameObject.hpp"
 #include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
+#include "Menu.hpp"
 
-class ChunksRenderer final : public GameObject {
+class ChunksRenderer final : public Nest::Entity {
 public:
-    ChunksRenderer();
+    ChunksRenderer() {}
+    void setFbViewId(Bird::ViewId viewId) {
+        m_viewId = viewId;
+    }
     ~ChunksRenderer() override;
-    void init();
-    void draw() override;
-    void update(double deltaTime) override;
+    void onAttach() override;
+    void onUpdate(double deltaTime) override;
+    void onImGuiRender() override {
+        m_menu.update();
+    }
+    void onDetach() override;
+    void draw();
 
 private:
-    BlocksCreation *blocksCreation;
-    ChunksStorage *chunksStorage;
+    Menu m_menu;
+    Nest::Renderer3D m_renderer3D;
+    Bird::ProgramHandle m_shader;
+    Bird::TextureHandle m_texture;
+    Bird::ViewId m_viewId;
+    BlocksCreation *m_blocksCreation;
+    ChunksStorage *m_chunksStorage;
 };

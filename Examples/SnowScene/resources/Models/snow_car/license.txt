@@ -1,0 +1,8 @@
+Model Information:
+* title:	Abandoned Snow Car[RAW]
+* source:	https://sketchfab.com/3d-models/abandoned-snow-carraw-ac643ae6e6854b6bb3210bc1028fbe82
+* author:	Alexander Komendant (SashaRX) (https://sketchfab.com/Sasharx)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

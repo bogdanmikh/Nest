@@ -770,7 +770,7 @@ void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32
         // If we are drawing a one-pixel-wide line without a texture, or a textured line of any width, we only need 2 or 3 vertices per point
         if (use_texture || !thick_line)
         {
-            // [PATH 1] Texture-based lines (thick or non-thick)
+            // [PATH 1] OpenGLTexture-based lines (thick or non-thick)
             // [PATH 2] Non texture-based lines (non-thick)
 
             // The width of the geometry we need to draw - this is essentially <thickness> pixels for the line itself, plus "one pixel" for AA.

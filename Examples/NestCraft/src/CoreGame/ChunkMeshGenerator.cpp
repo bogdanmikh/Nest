@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+namespace ChunkMeshGenerator {
+
 glm::vec2 getUV(uint8_t tileIndex) {
     float uvSize = 1.0f / 16.f;
     float u = tileIndex % 16 * uvSize;
@@ -11,7 +13,9 @@ glm::vec2 getUV(uint8_t tileIndex) {
     return {u, v};
 }
 
-Mesh *ChunkMeshGenerator::generateMesh(
+Nest::StaticMesh *generateMesh(
+    Bird::TextureHandle textureHandle,
+    Bird::ProgramHandle programHandle,
     ChunksStorage *chunksStorage,
     int chunkIndexX,
     int chunkIndexY,
@@ -21,8 +25,17 @@ Mesh *ChunkMeshGenerator::generateMesh(
     Chunk &chunk = chunksStorage->chunks
                        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
-    auto *vertices = new Vertex[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24];
-    auto *indices = new uint32_t[Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36];
+    Vertex *vertices = (Vertex *)ALLOC(
+        Foundation::getAllocator(),
+        sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24
+    );
+    for (int i = 0; i < Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24; ++i) {
+        vertices[i] = Vertex();
+    }
+    uint32_t *indices = (uint32_t *)ALLOC(
+        Foundation::getAllocator(),
+        sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36
+    );
     uint32_t verticesCount = 0;
     uint32_t indicesCount = 0;
     for (int voxelIndexX = 0; voxelIndexX < Chunk::SIZE_X; voxelIndexX++) {
@@ -431,13 +444,26 @@ Mesh *ChunkMeshGenerator::generateMesh(
             }
         }
     }
-    Mesh *mesh = new Mesh(vertices, verticesCount, indices, indicesCount);
-    delete[] vertices;
-    delete[] indices;
+
+    Foundation::Memory verticesMemory = Foundation::Memory(vertices);
+    Foundation::Memory indicesMemory = Foundation::Memory(indices);
+
+    Bird::VertexBufferLayoutData layoutData;
+    layoutData.pushVec3();
+    layoutData.pushVec2();
+    layoutData.pushFloat(1);
+
+    Bird::VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
+
+    Nest::MeshData meshData(
+        vertexLayout, verticesMemory, verticesCount * sizeof(Vertex), indicesMemory, indicesCount
+    );
+    auto *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    mesh->create(meshData, {"texture1", textureHandle}, programHandle);
     return mesh;
 }
 
-bool ChunkMeshGenerator::isAir(int localX, int localY, int localZ, ChunksStorage *chunksStorage) {
+bool isAir(int localX, int localY, int localZ, ChunksStorage *chunksStorage) {
     Voxel *voxel = chunksStorage->getVoxel(localX, localY, localZ);
     if (voxel == nullptr) {
         return true;
@@ -445,9 +471,7 @@ bool ChunkMeshGenerator::isAir(int localX, int localY, int localZ, ChunksStorage
     return voxel->isAir();
 }
 
-void ChunkMeshGenerator::addFaceIndices(
-    uint32_t offset, uint32_t &indicesCount, uint32_t *indices
-) {
+void addFaceIndices(uint32_t offset, uint32_t &indicesCount, uint32_t *indices) {
     indices[indicesCount++] = offset;
     indices[indicesCount++] = offset + 1;
     indices[indicesCount++] = offset + 2;
@@ -455,3 +479,5 @@ void ChunkMeshGenerator::addFaceIndices(
     indices[indicesCount++] = offset + 3;
     indices[indicesCount++] = offset;
 }
+
+} // namespace ChunkMeshGenerator

@@ -54,8 +54,8 @@
 //  introduced in 1.87 to ImGuiMod_XXX (old names still supported). 2022-09-01: Inputs: Honor
 //  GLFW_CURSOR_DISABLED by not setting mouse position *EDIT* Reverted 2023-07-18. 2022-04-30:
 //  Inputs: Fixed ImGui_ImplGlfw_TranslateUntranslatedKey() for lower case letters on OSX.
-//  2022-03-23: Inputs: Fixed a regression in 1.87 which resulted in keyboard modifiers events being
-//  reported incorrectly on Linux/X11. 2022-02-07: Added
+//  2022-03-23: Inputs: Fixed a regression in 1.87 which resulted in keyboard modifiers GlfwEvents
+//  being reported incorrectly on Linux/X11. 2022-02-07: Added
 //  ImGui_ImplGlfw_InstallCallbacks()/ImGui_ImplGlfw_RestoreCallbacks() helpers to facilitate user
 //  installing callbacks after initializing backend. 2022-01-26: Inputs: replaced short-lived
 //  io.AddKeyModsEvent() (added two weeks ago) with io.AddKeyEvent() using ImGuiKey_ModXXX flags.
@@ -226,8 +226,8 @@ struct ImGui_ImplGlfw_Data {
 // contexts It is STRONGLY preferred that you use docking branch with multi-viewports (== single
 // Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
 // FIXME: multi-context support is not well tested and probably dysfunctional in this backend.
-// - Because glfwPollEvents() process all windows and some events may be called outside of it, you
-// will need to register your own callbacks
+// - Because glfwPollGlfwEvents() process all windows and some GlfwEvents may be called outside of
+// it, you will need to register your own callbacks
 //   (passing install_callbacks=false in ImGui_ImplGlfw_InitXXX functions), set the current dear
 //   imgui context and then call our callbacks.
 // - Otherwise we may need to store a GLFWWindow* -> ImGuiContext* map and handle this in the
@@ -544,7 +544,7 @@ void ImGui_ImplGlfw_ScrollCallback(GLFWwindow *window, double xoffset, double yo
         bd->PrevUserCallbackScroll(window, xoffset, yoffset);
 
 #    ifdef __EMSCRIPTEN__
-    // Ignore GLFW events: will be processed in ImGui_ImplEmscripten_WheelCallback().
+    // Ignore GLFW GlfwEvents: will be processed in ImGui_ImplEmscripten_WheelCallback().
     return;
 #    endif
 
@@ -653,8 +653,9 @@ void ImGui_ImplGlfw_CursorPosCallback(GLFWwindow *window, double x, double y) {
     bd->LastValidMousePos = ImVec2((float)x, (float)y);
 }
 
-// Workaround: X11 seems to send spurious Leave/Enter events which would make us lose our position,
-// so we back it up and restore on Leave/Enter (see https://github.com/ocornut/imgui/issues/4984)
+// Workaround: X11 seems to send spurious Leave/Enter GlfwEvents which would make us lose our
+// position, so we back it up and restore on Leave/Enter (see
+// https://github.com/ocornut/imgui/issues/4984)
 void ImGui_ImplGlfw_CursorEnterCallback(GLFWwindow *window, int entered) {
     ImGui_ImplGlfw_Data *bd = ImGui_ImplGlfw_GetBackendData();
     if (bd->PrevUserCallbackCursorEnter != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
@@ -1270,10 +1271,11 @@ static void ImGui_ImplGlfw_WindowCloseCallback(GLFWwindow *window) {
         viewport->PlatformRequestClose = true;
 }
 
-// GLFW may dispatch window pos/size events after calling glfwSetWindowPos()/glfwSetWindowSize().
-// However: depending on the platform the callback may be invoked at different time:
+// GLFW may dispatch window pos/size GlfwEvents after calling
+// glfwSetWindowPos()/glfwSetWindowSize(). However: depending on the platform the callback may be
+// invoked at different time:
 // - on Windows it appears to be called within the glfwSetWindowPos()/glfwSetWindowSize() call
-// - on Linux it is queued and invoked during glfwPollEvents()
+// - on Linux it is queued and invoked during glfwPollGlfwEvents()
 // Because the event doesn't always fire on glfwSetWindowXXX() we use a frame counter tag to only
 // ignore recent glfwSetWindowXXX() calls.
 static void ImGui_ImplGlfw_WindowPosCallback(GLFWwindow *window, int, int) {
@@ -1361,7 +1363,7 @@ static void ImGui_ImplGlfw_DestroyWindow(ImGuiViewport *viewport) {
 #    endif
 
             // Release any keys that were pressed in the window being destroyed and are still held
-            // down, because we will not receive any release events after window is destroyed.
+            // down, because we will not receive any release GlfwEvents after window is destroyed.
             for (int i = 0; i < IM_ARRAYSIZE(bd->KeyOwnerWindows); i++)
                 if (bd->KeyOwnerWindows[i] == vd->Window)
                     ImGui_ImplGlfw_KeyCallback(

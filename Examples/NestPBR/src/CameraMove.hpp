@@ -2,16 +2,18 @@
 
 #include <Nest.hpp>
 
-class CameraMove {
+class CameraMove : public Nest::Entity {
 public:
-    void init();
-    void update(double deltaTime);
+    void onAttach() override;
+    void onDetach() override {}
+    void onUpdate(double deltaTime) override;
+    void onImGuiRender() override;
 
 private:
     bool cursorLock;
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;
 
-    Window *window;
-    Camera *camera;
+    Nest::Window *m_window;
+    Nest::WorldCamera *m_worldCamera;
 };

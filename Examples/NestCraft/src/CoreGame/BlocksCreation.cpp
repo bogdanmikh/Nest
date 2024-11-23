@@ -4,13 +4,17 @@
 
 #include <imgui.h>
 
-void BlocksCreation::init() {
+#define Events Nest::Application::get()->getEvents()
+
+void BlocksCreation::init(Bird::ProgramHandle shaderHandle, Bird::TextureHandle textureHandle) {
+    m_shader = shaderHandle;
     m_selectedBlock = VoxelType(11);
+    m_textureHandle = textureHandle;
 }
 
 void BlocksCreation::updateChunk(int chunkIndexX, int chunkIndexY, int chunkIndexZ) {
-    Mesh *data = ChunkMeshGenerator::generateMesh(
-        m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
+    Nest::StaticMesh *data = ChunkMeshGenerator::generateMesh(
+        m_textureHandle, m_shader, m_chunksStorage, chunkIndexX, chunkIndexY, chunkIndexZ, true
     );
     m_chunksStorage
         ->chunks
@@ -53,8 +57,9 @@ void BlocksCreation::update(double deltaTime) {
     updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Events::isMouseButtonPressed(MouseButton::LEFT);
-    rightPressed = Events::isMouseButtonPressed(MouseButton::RIGHT);
+    leftPressed = Events->isMouseButtonPressed(Nest::MouseButton::LEFT) && Events->isCursorLocked();
+    rightPressed =
+        Events->isMouseButtonPressed(Nest::MouseButton::RIGHT) && Events->isCursorLocked();
     if (!leftPressed && !rightPressed) {
         return;
     }
@@ -94,19 +99,19 @@ void BlocksCreation::onImGuiRender() {
 }
 
 void BlocksCreation::updateVoxelHand() {
-    if (Events::isJustKeyPressed(Key::KEY_1)) {
+    if (Events->isJustKeyPressed(Nest::Key::KEY_1)) {
         m_selectedBlock = VoxelType(1);
-    } else if (Events::isJustKeyPressed(Key::KEY_2)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_2)) {
         m_selectedBlock = VoxelType(7);
-    } else if (Events::isJustKeyPressed(Key::KEY_3)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_3)) {
         m_selectedBlock = VoxelType(8);
-    } else if (Events::isJustKeyPressed(Key::KEY_4)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_4)) {
         m_selectedBlock = VoxelType(9);
-    } else if (Events::isJustKeyPressed(Key::KEY_5)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_5)) {
         m_selectedBlock = VoxelType(10);
-    } else if (Events::isJustKeyPressed(Key::KEY_6)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_6)) {
         m_selectedBlock = VoxelType(11);
-    } else if (Events::isJustKeyPressed(Key::KEY_7)) {
+    } else if (Events->isJustKeyPressed(Nest::Key::KEY_7)) {
         m_selectedBlock = VoxelType(12);
     }
 }
@@ -115,6 +120,6 @@ void BlocksCreation::setChunksStorage(ChunksStorage *storage) {
     m_chunksStorage = storage;
 }
 
-void BlocksCreation::setCamera(Camera *camera) {
+void BlocksCreation::setCamera(Nest::WorldCamera *camera) {
     m_camera = camera;
 }

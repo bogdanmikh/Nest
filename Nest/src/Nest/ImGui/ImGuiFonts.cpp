@@ -1,5 +1,7 @@
 #include "Nest/ImGui/ImGuiFonts.hpp"
-#include "Nest/Logger/Logger.hpp"
+#include <Foundation/Logger.hpp>
+
+namespace Nest {
 
 void Fonts::add(const FontConfiguration &config, bool isDefault) {
     ImFontConfig imguiFontConfig;
@@ -7,7 +9,7 @@ void Fonts::add(const FontConfiguration &config, bool isDefault) {
     imguiFontConfig.OversampleH = 4;
     imguiFontConfig.OversampleV = 4;
     auto &io = ImGui::GetIO();
-    std::string fontPath = "Fonts/" + config.fileName;
+    std::string fontPath = "default-fonts/" + config.fileName;
     ImFont *font = io.Fonts->AddFontFromFileTTF(
         fontPath.c_str(),
         config.size,
@@ -47,3 +49,5 @@ std::unordered_map<std::string, ImFont *> &Fonts::getFonts() {
     static std::unordered_map<std::string, ImFont *> fonts;
     return fonts;
 }
+
+} // namespace Nest

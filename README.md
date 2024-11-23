@@ -1,10 +1,10 @@
-# NestEngine
+# Nest
 
 [//]: # (![Alt text]&#40;Logo.png "Logo"&#41;)
 <img src="Logo.png" width="500" alt="Reduced image">
 
-## About NestEngine
-NestEngine is a simple set of basic tools for creating a small game
+## About Nest
+Nest is a simple set of basic tools for creating a small game
 
 ## Graphic API:
 * OpenGL
@@ -13,7 +13,8 @@ NestEngine is a simple set of basic tools for creating a small game
 ## Applications:
 * [NestPBR](Examples/NestPBR/README.md)
 * [NestCraft](Examples/NestCraft/README.md)
-* [ContentBrowser](Examples/ContentBrowser/README.md)
+* [Snow Scene](Examples/SnowScene/README.md)
+* [Content Browser](Examples/ContentBrowser/README.md)
 * [Profiler (in developing)](Examples/Profiler/README.md)
 
 
@@ -22,6 +23,6 @@ NestEngine is a simple set of basic tools for creating a small game
 - glfw
 - glm
 - imgui
-- Rain
 - spdlog
+- assimp
 - stb_image

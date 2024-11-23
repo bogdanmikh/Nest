@@ -1,0 +1,119 @@
+---
+- name: Snow Car 1
+  degrees:
+    x: -5
+    y: 132.5
+    z: 0
+  position:
+    x: -2.5
+    y: -3.20000005
+    z: 6.5
+  scale:
+    x: 2
+    y: 2
+    z: 2
+- name: Snow Car 2
+  degrees:
+    x: 162.699997
+    y: 26.2000008
+    z: 13.3999996
+  position:
+    x: 48
+    y: 16.5
+    z: 94.0999985
+  scale:
+    x: 2.5
+    y: 2.5
+    z: 2.5
+- name: House
+  degrees:
+    x: -90
+    y: 0
+    z: 0
+  position:
+    x: 0
+    y: -6
+    z: 0
+  scale:
+    x: 1
+    y: 1
+    z: 1
+- name: Fence 1
+  degrees:
+    x: 0
+    y: 0
+    z: 0
+  position:
+    x: -10.1999998
+    y: -3.0999999
+    z: 3.20000005
+  scale:
+    x: 0.100000001
+    y: 1.5
+    z: 0.100000001
+- name: Fence 2
+  degrees:
+    x: 0
+    y: 90
+    z: 0
+  position:
+    x: -6.19999981
+    y: -3.0999999
+    z: 7.0999999
+  scale:
+    x: 0.100000001
+    y: 1.5
+    z: 0.100000001
+- name: Place
+  degrees:
+    x: -1
+    y: 0
+    z: 0
+  position:
+    x: -1
+    y: -6.30000019
+    z: 19.6000004
+  scale:
+    x: 70
+    y: 100
+    z: 60
+- name: Firewood
+  degrees:
+    x: -94.4000015
+    y: -85.3000031
+    z: 4.80000019
+  position:
+    x: 5.80000019
+    y: -6.0999999
+    z: 27.8999996
+  scale:
+    x: 2
+    y: 2.70000005
+    z: 2
+- name: Place 2
+  degrees:
+    x: -91
+    y: 0
+    z: 0
+  position:
+    x: 26.3999996
+    y: -10
+    z: 54.7999992
+  scale:
+    x: 20
+    y: 29
+    z: 20
+- name: Snowman
+  degrees:
+    x: 33
+    y: -136.699997
+    z: -9
+  position:
+    x: 39.5999985
+    y: 1.39999998
+    z: 49.2999992
+  scale:
+    x: 1
+    y: 1
+    z: 1
+...

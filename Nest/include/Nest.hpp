@@ -1,29 +1,34 @@
 #pragma once
 
-// NestRendering
-#include "Nest/Renderer/OpenGL/Renderer.hpp"
-#include "Nest/Renderer/OpenGL/Shader.hpp"
-#include "Nest/Renderer/OpenGL/VertexBuffer.hpp"
-#include "Nest/Renderer/OpenGL/IndexBuffer.hpp"
-#include "Nest/Renderer/OpenGL/VertexArray.hpp"
-#include "Nest/Renderer/OpenGL/VertexBufferLayout.hpp"
-#include "Nest/Renderer/OpenGL/Texture.hpp"
-#include "Nest/Renderer/OpenGL/CubeMap.hpp"
-#include "Nest/Renderer/OpenGL/Mesh.hpp"
-
-// Window
-#include "Nest/Window/Window.hpp"
-#include "Nest/Window/Events.hpp"
-
-// NestObjects
-#include "Nest/NestObjects/Layer.hpp"
-
-// Application
+// Base
 #include "Nest/Application/Application.hpp"
-
-// Files
-#include "Nest/Files/Files.hpp"
-
+#include "Nest/Application/Layer.hpp"
 #include "Nest/Platform/PlatformDetection.hpp"
-#include "Nest/Logger/Logger.hpp"
-#include "Nest/ImGui/FontAwesome.h"
+#include "Nest/Application/ApplicationStartupSettings.hpp"
+#include "Nest/Renderer/Model3D.hpp"
+#include "Nest/Renderer/Texture.hpp"
+
+// SystemTools
+#include "Nest/SystemTools/SystemTools.hpp"
+
+// Assets
+#include "Nest/Assets/AssetLoader.hpp"
+
+// Game logic
+#include "Nest/GameLogic/Components/StaticMesh.hpp"
+#include "Nest/GameLogic/Components/DynamicMesh.hpp"
+#include "Nest/GameLogic/Components/TransformComponent.hpp"
+#include "Nest/GameLogic/Components/SkyComponent.hpp"
+#include "Nest/GameLogic/Entity.hpp"
+
+// Third party
+#include <glm/ext.hpp>
+
+// Foundation
+#include <Foundation/Foundation.hpp>
+#include <Foundation/Logger.hpp>
+#include <Foundation/Allocator.hpp>
+#include <Foundation/Vector.hpp>
+
+// Renderer
+#include "Nest/Renderer/Viewport.hpp"

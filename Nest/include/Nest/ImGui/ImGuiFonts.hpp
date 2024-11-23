@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <string>
 
+namespace Nest {
+
 struct FontConfiguration {
     std::string fontName;
     std::string fileName;
@@ -19,6 +21,6 @@ public:
     static void popFont();
     static ImFont *get(const std::string &fontName);
     static std::unordered_map<std::string, ImFont *> &getFonts();
-
-private:
 };
+
+} // namespace Nest

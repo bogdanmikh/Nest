@@ -1,5 +1,9 @@
 #pragma once
 
+static inline std::string getString(const char8_t *ptr) {
+    return (const char *)ptr;
+}
+
 #define ICON_MIN 0xf000
 #define ICON_MAX 0xf307
 #define ICON_GLASS u8"\uf000"

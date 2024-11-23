@@ -1,72 +1,119 @@
-#include <thread>
 #include "BlocksCreation.hpp"
 #include "ChunksRenderer.hpp"
 
-ChunksRenderer::ChunksRenderer() {
-    chunksStorage = new ChunksStorage();
+#define Events Nest::Application::get()->getEvents()
+
+ChunksRenderer::~ChunksRenderer() {}
+
+void ChunksRenderer::onAttach() {
+    Nest::ProgramAsset programAsset =
+        Nest::AssetLoader::loadProgram("Shaders/vst.glsl", "Shaders/fst.glsl");
+    m_shader = createProgram(programAsset.getBirdProgramCreate());
+
+    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/BlocksTile.png");
+
+    Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
+    textureCreate.m_numMips = 4;
+    textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
+    textureCreate.m_magFiltering = Bird::NEAREST;
+    m_texture = createTexture(textureCreate);
+
+    m_chunksStorage = NEW(Foundation::getAllocator(), ChunksStorage);
     LOG_INFO("WORLD GENERATED");
-    blocksCreation = new BlocksCreation();
-    blocksCreation->init();
-    blocksCreation->setCamera(Application::getInstance()->getCamera());
-    blocksCreation->setChunksStorage(chunksStorage);
-}
+    m_blocksCreation = NEW(Foundation::getAllocator(), BlocksCreation);
+    m_blocksCreation->init(m_shader, m_texture);
+    m_blocksCreation->setCamera(Nest::Application::get()->getWorldCamera());
+    m_blocksCreation->setChunksStorage(m_chunksStorage);
 
-ChunksRenderer::~ChunksRenderer() {
-    delete blocksCreation;
-    delete chunksStorage;
-}
-
-void ChunksRenderer::init() {
     for (int indexX = 0; indexX < ChunksStorage::SIZE_X; indexX++) {
         for (int indexY = 0; indexY < ChunksStorage::SIZE_Y; indexY++) {
             for (int indexZ = 0; indexZ < ChunksStorage::SIZE_Z; indexZ++) {
-                Mesh *mesh =
-                    ChunkMeshGenerator::generateMesh(chunksStorage, indexX, indexY, indexZ, true);
-                chunksStorage
+
+                Nest::StaticMesh *mesh;
+                mesh = ChunkMeshGenerator::generateMesh(
+                    m_texture, m_shader, m_chunksStorage, indexX, indexY, indexZ, true
+                );
+                m_chunksStorage
                     ->chunks
                         [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                          indexX * ChunksStorage::SIZE_X + indexZ]
                     .setMesh(mesh);
-                chunksStorage
-                    ->chunks
-                        [indexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
-                         indexX * ChunksStorage::SIZE_X + indexZ]
-                    .getMesh()
-                    ->addTexture("Textures/BlocksTile.png");
             }
         }
     }
     LOG_INFO("MESHES GENERATED");
 }
 
-void ChunksRenderer::update(double deltaTime) {
-    if (Events::isJustKeyPressed(Key::Q)) {
-        auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
-        chunksStorage->saveWorld(data);
-        if (!NestFiles::writeBinaryFile(
+void ChunksRenderer::onUpdate(double deltaTime) {
+    /*if (Events->isJustKeyPressed(Key::Q)) {
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
+    Chunk::SIZE_XYZ); m_chunksStorage->saveWorld(data); if (!NestFiles::writeBinaryFile(
                 "world.bin", (const char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_SAVED");
         }
         delete[] data;
     }
-    if (Events::isJustKeyPressed(Key::E)) {
-        auto *data = new unsigned char[ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ];
-        if (!NestFiles::readBinaryFile(
-                "world.bin", (char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
+    if (Events->isJustKeyPressed(Key::E)) {
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
+    Chunk::SIZE_XYZ); if (!NestFiles::readBinaryFile( "world.bin", (char *)data,
+    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_LOAD");
         }
-        chunksStorage->loadWorld(data);
+        m_chunksStorage->loadWorld(data);
         delete[] data;
         init();
     }
-    blocksCreation->update(deltaTime);
+     */
+    m_blocksCreation->update(deltaTime);
     draw();
 }
 
 void ChunksRenderer::draw() {
+    static auto camera = Nest::Application::get()->getWorldCamera();
+    m_renderer3D.setViewProj(camera->getProjectionMatrix() * camera->getViewMatrix());
+    m_renderer3D.begin();
+    static Nest::TransformComponent transform;
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
-        chunksStorage->chunks[i].getMesh()->draw();
+        //        Bird::setShader(m_shader);
+        Bird::setShader(m_chunksStorage->chunks[i].getMesh()->getShaderHandle());
+
+        static auto time = Nest::Application::get()->getWindow()->getTime();
+        time = Nest::Application::get()->getWindow()->getTime();
+        static auto mousePos = Events->getCursorPos();
+        mousePos = Events->getCursorPos();
+        static auto resolution = Nest::Application::get()->getWindow()->getSize();
+        resolution = Nest::Application::get()->getWindow()->getSize();
+
+        static auto projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+        projViewMtx = camera->getProjectionMatrix() * camera->getViewMatrix();
+
+        static auto cameraPos = camera->getPosition();
+        cameraPos = camera->getPosition();
+
+        static auto model = transform.getTransform();
+        model = transform.getTransform();
+
+        Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4); /// float
+        Bird::setUniform(
+            m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4
+        );                                                                            /// vec2
+        Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4); /// vec2
+        Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);
+        static glm::vec3 color;
+        color = m_menu.getColor();
+        //        LOG_INFO("Color: {}, {}, {}", color.x, color.y, color.z);
+        Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);
+        //        Bird::setTexture();
+        m_renderer3D.submitToFB(&transform, m_chunksStorage->chunks[i].getMesh(), m_viewId);
     }
+    m_renderer3D.end();
+}
+void ChunksRenderer::onDetach() {
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        m_chunksStorage->chunks[i].getMesh()->deleteTextures();
+    }
+    DELETE(Foundation::getAllocator(), m_blocksCreation);
+    DELETE(Foundation::getAllocator(), m_chunksStorage);
 }

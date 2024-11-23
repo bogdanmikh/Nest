@@ -9,7 +9,8 @@ public:
         delete m_shader;
     }
     void init() {
-//        m_shader = new Shader("Nest/res/Shaders/crossvst.glsl", "Nest/res/Shaders/crossfst.glsl");
+//        m_shader = new OpenGLShader("Nest/res/Shaders/crossvst.glsl",
+"Nest/res/Shaders/crossfst.glsl");
 //        m_shader->use();
         Vertex vertex[4];
         vertex[0].Position = glm::vec3(-0.1, -0.1, 0);
@@ -27,5 +28,5 @@ public:
     void draw() {}
 private:
     Mesh* m_mesh;
-    Shader* m_shader;
+    OpenGLShader* m_shader;
 };*/

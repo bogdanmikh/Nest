@@ -1,38 +1,29 @@
+//
+// Created by Bogdan on 28.10.2024.
+//
+
 #pragma once
 
-#include <cstdint>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <vector>
-#include <string>
+#include <glm/vec2.hpp>
+#include "Key.hpp"
 
-#include "Nest/Window/Key.hpp"
+namespace Nest {
 
-class Events final {
+class Events {
 public:
-    static void init(void *handle);
-    static glm::vec2 getCursorPos();
-    static double getTime();
-    static bool isKeyPressed(Key key);
-    static bool isJustKeyPressed(Key key);
-    static bool isMouseButtonPressed(MouseButton mouseButton);
-    static bool isJustMouseButtonPressed(MouseButton mouseButton);
-    static void toggleCursorLock();
-    static bool isCursorLocked();
-    static void pollEvents();
-    static std::vector<std::string> getDropPaths();
-    static void resetDropPaths();
-
-private:
-    static void *m_handle;
-    static bool cursorLocked;
-    static bool keys[1024];
-    static uint32_t framesKeys[1024];
-    static bool mouseButtons[8];
-    static uint32_t framesMouseButtons[8];
-    static std::vector<std::string> m_dropPaths;
-    static uint32_t frame;
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
-    static void mouseCallback(GLFWwindow *window, int button, int action, int mode);
-    static void dropCallback(GLFWwindow *window, int count, const char **paths);
+    virtual ~Events() = default;
+    virtual void init(void *handle) = 0;
+    virtual glm::vec2 getCursorPos() = 0;
+    virtual double getTime() = 0;
+    virtual bool isKeyPressed(Key key) = 0;
+    virtual bool isJustKeyPressed(Key key) = 0;
+    virtual bool isMouseButtonPressed(MouseButton mouseButton) = 0;
+    virtual bool isJustMouseButtonPressed(MouseButton mouseButton) = 0;
+    virtual void toggleCursorLock() = 0;
+    virtual bool isCursorLocked() = 0;
+    virtual void pollEvents() = 0;
+    virtual std::vector<std::string> getDropPaths() = 0;
+    virtual void resetDropPaths() = 0;
 };
+
+} // namespace Nest

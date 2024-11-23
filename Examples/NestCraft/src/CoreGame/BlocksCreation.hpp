@@ -1,5 +1,5 @@
 //
-// Created by Admin on 12.02.2022.
+// Created by Bogdan
 //
 
 #pragma once
@@ -13,12 +13,12 @@ class BlocksCreation final : public GameObject {
 public:
     const int MAXIMUM_DISTANCE = 100;
 
-    void init();
+    void init(Bird::ProgramHandle shaderHandle, Bird::TextureHandle textureHandle);
     void update(double deltaTime) override;
     void draw() override {}
     void onImGuiRender();
     void setChunksStorage(ChunksStorage *storage);
-    void setCamera(Camera *camera);
+    void setCamera(Nest::WorldCamera *camera);
 
 private:
     void setVoxel(int x, int y, int z, VoxelType type);
@@ -26,6 +26,8 @@ private:
 
     void updateVoxelHand();
     ChunksStorage *m_chunksStorage;
-    Camera *m_camera;
+    Nest::WorldCamera *m_camera;
+    Bird::ProgramHandle m_shader;
+    Bird::TextureHandle m_textureHandle;
     VoxelType m_selectedBlock;
 };

@@ -1,26 +1,36 @@
 #pragma once
 
 #include "Nest/Window/Window.hpp"
-#include "Nest/NestObjects/Layer.hpp"
-#include "Nest/NestObjects/Camera.hpp"
+#include "Nest/Window/Events.hpp"
+#include "Nest/GameLogic/Components/WorldCamera.hpp"
+#include "Nest/Application/Layer.hpp"
+#include "ApplicationStartupSettings.hpp"
+
+namespace Nest {
 
 class Application final {
 public:
+    Application(ApplicationStartupSettings &settings);
     ~Application();
-    inline static Application *getInstance() {
+
+    inline static Application *get() {
         return s_instance;
     }
 
     inline Window *getWindow() const {
-        return window;
+        return m_window;
     }
 
-    inline Camera *getCamera() const {
-        return camera;
+    inline Events *getEvents() {
+        return m_events;
+    }
+
+    inline WorldCamera *getWorldCamera() const {
+        return m_worldCamera;
     }
 
     inline int getMaxFps() const {
-        return maximumFps;
+        return m_maximumFps;
     }
 
     inline int getFps() const {
@@ -31,28 +41,29 @@ public:
     void close();
 
     inline void setLayer(Layer *layer) {
-        if (currentLayer) {
-            currentLayer->detach();
-        }
-        currentLayer = layer;
-        currentLayer->start();
+        m_layer = layer;
     }
 
 private:
-    Application();
-    void drawProperties() const;
-    void updateViewport();
+    void updateViewport(Size size);
     static Application *s_instance;
 
-    Window *window;
-    Layer *currentLayer;
-    Camera *camera;
-    glm::vec2 m_lastViewportSize;
+    Window *m_window;
+    Layer *m_layer;
+    Events *m_events;
+    WorldCamera *m_worldCamera;
+
+    Vec2 m_lastViewportSize;
 
     int fps;
-    int maximumFps = 60;
-    uint64_t deltaTimeMillis = 0;
-    int thisSecondFramesCount = 0;
-    uint64_t timeMillis = 0;
-    uint64_t oneSecondTimeCount = 0;
+    uint64_t m_timeMillis;
+    // Таймер до 1 секундны для подсчета FPS (в миллисекундах)
+    uint64_t m_oneSecondTimeCount;
+    // Время после отрисовки предыдущего кадра
+    uint64_t m_deltaTimeMillis;
+    int m_thisSecondFramesCount;
+    // Ограничение по FPS
+    int m_maximumFps;
 };
+
+} // namespace Nest

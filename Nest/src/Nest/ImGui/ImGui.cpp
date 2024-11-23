@@ -1,12 +1,20 @@
 #include "ImGui.hpp"
 
-#include "imgui_impl/imgui_impl_glfw.h"
-#include "imgui_impl/imgui_impl_opengl3.h"
+#include <Bird/Bird.hpp>
+
+#ifdef RENDERER_OPENGL
+#    include "imgui_impl/imgui_impl_glfw.h"
+#    include "imgui_impl/imgui_impl_opengl3.h"
+#elif defined(RENDERER_VULKAN)
+#    include "imgui_impl/imgui_impl_vulkan.h"
+#endif
 
 #include "imgui.h"
 
 #include "Nest/ImGui/ImGuiFonts.hpp"
 #include "Nest/ImGui/FontAwesome.h"
+
+namespace Nest {
 
 void setDarkThemeColors();
 
@@ -60,6 +68,12 @@ void ImGui_Init(void *glfwWindowHandle) {
     fontExtraSmall.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
     fontExtraSmall.size = 10.0f;
     Fonts::add(fontExtraSmall);
+
+    FontConfiguration fontExtraBig;
+    fontExtraBig.fontName = "ExtraBig";
+    fontExtraBig.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
+    fontExtraBig.size = 30.0f;
+    Fonts::add(fontExtraBig);
 
     ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(glfwWindowHandle), true);
     ImGui_ImplOpenGL3_Init();
@@ -133,3 +147,5 @@ void setDarkThemeColors() {
     colors[ImGuiCol_SliderGrab] = ImVec4(0.51f, 0.51f, 0.51f, 0.7f);
     colors[ImGuiCol_SliderGrabActive] = ImVec4(0.66f, 0.66f, 0.66f, 1.0f);
 }
+
+} // namespace Nest

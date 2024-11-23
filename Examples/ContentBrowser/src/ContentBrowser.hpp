@@ -1,14 +1,24 @@
 #pragma once
 
-#include <Nest.hpp>
-#include "Panel.hpp"
+#include "Nest/Renderer/Texture.hpp"
+#include "Nest/SystemTools/SystemTools.hpp"
+#include "Nest/Base/Base.hpp"
 
-class ContentBrowser final : public Layer {
+#include <filesystem>
+#include <map>
+
+using namespace Nest;
+
+class ContentBrowser {
 public:
     ContentBrowser();
-    ~ContentBrowser();
-    void start() override;
-    void update(double deltaTime) override;
-    void detach() override;
-    Panel panel;
+    void onImGuiRender();
+    void setBaseDirectory(const Path &path);
+
+private:
+    Path m_baseDirectory;
+    Path m_currentDirectory;
+    Texture m_directoryIcon;
+    Texture m_defaultFileIcon;
+    std::unordered_map<std::string, Texture> m_fileIcons;
 };
