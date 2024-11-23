@@ -111,6 +111,9 @@ void ChunksRenderer::draw() {
     m_renderer3D.end();
 }
 void ChunksRenderer::onDetach() {
+    for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
+        m_chunksStorage->chunks[i].getMesh()->deleteTextures();
+    }
     DELETE(Foundation::getAllocator(), m_blocksCreation);
     DELETE(Foundation::getAllocator(), m_chunksStorage);
 }

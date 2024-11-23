@@ -1,10 +1,10 @@
-# Nest Engine
+# Nest
 
 [//]: # (![Alt text]&#40;Logo.png "Logo"&#41;)
 <img src="Logo.png" width="500" alt="Reduced image">
 
-## About NestEngine
-NestEngine is a simple set of basic tools for creating a small game
+## About Nest
+Nest is a simple set of basic tools for creating a small game
 
 ## Graphic API:
 * OpenGL

@@ -8,6 +8,7 @@ namespace Nest {
 
 Model3D::~Model3D() {
     for (uint32_t i = 0; i < m_meshes.size(); i++) {
+        m_meshes[i]->deleteTextures();
         DELETE(Foundation::getAllocator(), m_meshes[i]);
     }
     m_meshes.clear();

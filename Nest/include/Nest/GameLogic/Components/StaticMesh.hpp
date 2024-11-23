@@ -33,6 +33,8 @@ public:
         return m_shaderHandle;
     }
 
+    void deleteTextures();
+
 private:
     std::vector<TextureBinding> m_textureBinding;
     Bird::ProgramHandle m_shaderHandle;
