@@ -90,6 +90,9 @@ endif ()
 target_link_libraries(Nest enet_static)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)
 
+# Dependencies - miniaudio
+target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/miniaudio)
+
 # Dependencies - pugixml
 target_link_libraries(Nest pugixml)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/pugixml/src)

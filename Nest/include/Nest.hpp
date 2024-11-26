@@ -8,6 +8,9 @@
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Renderer/Texture.hpp"
 
+// Audio
+#include "Nest/Audio/AudioBase.hpp"
+
 // SystemTools
 #include "Nest/SystemTools/SystemTools.hpp"
 
