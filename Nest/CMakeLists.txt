@@ -91,7 +91,7 @@ target_link_libraries(Nest enet_static)
 target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)
 
 # Dependencies - miniaudio
-target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/miniaudio)
+target_link_libraries(Nest miniaudio)
 
 # Dependencies - pugixml
 target_link_libraries(Nest pugixml)

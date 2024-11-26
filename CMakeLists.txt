@@ -51,6 +51,7 @@ add_subdirectory(Vendor/spdlog)
 add_subdirectory(Vendor/stb_image)
 #add_subdirectory(Vendor/dylib)
 add_subdirectory(Vendor/enet)
+add_subdirectory(Vendor/miniaudio)
 add_subdirectory(Vendor/pugixml)
 add_subdirectory(Rain)
 

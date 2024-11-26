@@ -8,12 +8,12 @@
 #include <optional>
 #include <array>
 
-
 struct ShaderEnvelope {
 private:
     struct ShaderData {
         std::optional<std::string> code;
     };
+
 public:
     enum ShaderTypes { VERTEX = 0, GEOMETRY, FRAGMENT, NONE = 3 };
 

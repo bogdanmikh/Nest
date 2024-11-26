@@ -20,7 +20,7 @@ ShaderEnvelope::ShadersData ShaderEnvelope::openEnvelope(const std::filesystem::
     pugi::xml_node vertexNode = doc.child("root").child("shaders").child("vertex");
 
     if (vertexNode) {
-        const char* vertexCode = vertexNode.child_value();
+        const char *vertexCode = vertexNode.child_value();
         auto &val = result.shadersData[ShaderTypes::VERTEX].code;
         val.emplace();
         val.value() = vertexCode;
@@ -29,7 +29,7 @@ ShaderEnvelope::ShadersData ShaderEnvelope::openEnvelope(const std::filesystem::
     pugi::xml_node geometryNode = doc.child("root").child("shaders").child("geometry");
 
     if (geometryNode) {
-        const char* geometryCode = geometryNode.child_value();
+        const char *geometryCode = geometryNode.child_value();
         auto &val = result.shadersData[ShaderTypes::GEOMETRY].code;
         val.emplace();
         val.value() = geometryCode;
@@ -38,7 +38,7 @@ ShaderEnvelope::ShadersData ShaderEnvelope::openEnvelope(const std::filesystem::
     pugi::xml_node fragmentNode = doc.child("root").child("shaders").child("fragment");
 
     if (fragmentNode) {
-        const char* fragmentCode = fragmentNode.child_value();
+        const char *fragmentCode = fragmentNode.child_value();
         auto &val = result.shadersData[ShaderTypes::FRAGMENT].code;
         val.emplace();
         val.value() = fragmentCode;

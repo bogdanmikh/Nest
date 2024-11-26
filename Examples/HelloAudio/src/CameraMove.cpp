@@ -10,8 +10,9 @@ void CameraMove::onAttach() {
     m_worldCamera->setPosition(0.0, 0.0, 10.0);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
     cursorLock = false;
-    m_audio.load("Audio/GTA4.wav");
-    m_audio.play();
+    m_audio.load("Audio/Rig.mp3");
+    m_audio.setEcho(1.0, 0.5);
+//    m_audio.play();
 }
 
 void CameraMove::onUpdate(double deltaTime) {
@@ -21,6 +22,12 @@ void CameraMove::onUpdate(double deltaTime) {
     } else {
         cameraSpeed = 20.f;
     }
+
+    if (Events->isKeyPressed(Key::KEY_1)) {
+        m_audio.play(0);
+        m_audio.setPlaybackSpeed(0.7);
+    }
+
     if (deltaTime >= 1) {
         LOG_ERROR("Delta: {}", deltaTime);
     }

@@ -6,7 +6,6 @@
 
 #include "Nest/Base/Base.hpp"
 #include "Nest/Base/UUID.hpp"
-#include <string>
 
 #define AUDIO_INVALID_UUID -1
 
@@ -20,14 +19,18 @@ public:
     virtual void init() = 0;
     static void *get();
 
-private:
-    static AudioEngine *s_instance;
 protected:
     virtual UUID addAudio(const Path &filePath) = 0;
-    virtual void playAudio(const UUID &uuid) = 0;
+    virtual void playAudio(const UUID &uuid, float second) = 0;
+    virtual void stopAudio(const UUID &uuid) = 0;
     virtual void eraseAudio(const UUID &uuid) = 0;
-
+    virtual void setVolume(const UUID &uuid, float volume) = 0;
+    virtual bool isPlaying(const UUID &uuid) = 0;
+    virtual void setEcho(const UUID &uuid, float delay, float decay) = 0;
+    virtual void setPlaybackSpeed(const UUID &uuid, float speed) = 0;
     friend class Audio;
+private:
+    static AudioEngine *s_instance;
 };
 
 class Audio {
@@ -41,16 +44,10 @@ public:
     void load(const Path &filePath);
 
     // Воспроизводит музыку
-    void play();
+    void play(float sec = 0.);
 
     // Останавливает музыку
     void stop();
-
-    // Приостанавливает музыку
-    void pause();
-
-    // Возобновляет воспроизведение музыки
-    void resume();
 
     // Проверяет, воспроизводится ли музыка
     bool isPlaying() const;
@@ -79,4 +76,4 @@ private:
     AudioEngine *m_audioEngine;
 };
 
-}
+} // namespace Nest
