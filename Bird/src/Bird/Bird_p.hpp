@@ -236,9 +236,10 @@ struct Context {
             return true;
         }
         rendererExecuteCommands(m_preCommandQueue);
-        if (m_render.getDrawCallsCount() != 0) {
-            m_renderer->submit(&m_render, m_views);
-        }
+//        if (m_render.getDrawCallsCount() != 0) {
+//            m_renderer->submit(&m_render, m_views);
+//        }
+        m_renderer->submit(&m_render, m_views);
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
         m_postCommandQueue.reset();

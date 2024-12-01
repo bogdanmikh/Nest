@@ -9,8 +9,7 @@ void SphereRenderer::onAttach() {
 
     Bird::setViewClear(0, 0x3D75C9FF);
 
-    Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgram("Shaders/vstSphere.glsl", "Shaders/fstSphere.glsl");
+    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgramXml("Shaders/CubeShader.xml");
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil6.png");

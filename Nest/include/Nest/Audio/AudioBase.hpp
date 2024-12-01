@@ -29,6 +29,7 @@ protected:
     virtual void setEcho(const UUID &uuid, float delay, float decay) = 0;
     virtual void setPlaybackSpeed(const UUID &uuid, float speed) = 0;
     friend class Audio;
+
 private:
     static AudioEngine *s_instance;
 };

@@ -11,8 +11,8 @@ void CameraMove::onAttach() {
     m_worldCamera->setFieldOfView(glm::radians(60.f));
     cursorLock = false;
     m_audio.load("Audio/Rig.mp3");
-    m_audio.setEcho(1.0, 0.5);
-//    m_audio.play();
+    m_audio.setEcho(3.0, 0.3);
+    //    m_audio.play();
 }
 
 void CameraMove::onUpdate(double deltaTime) {
@@ -25,7 +25,7 @@ void CameraMove::onUpdate(double deltaTime) {
 
     if (Events->isKeyPressed(Key::KEY_1)) {
         m_audio.play(0);
-        m_audio.setPlaybackSpeed(0.7);
+//        m_audio.setPlaybackSpeed(0.7);
     }
 
     if (deltaTime >= 1) {

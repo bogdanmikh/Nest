@@ -98,7 +98,6 @@ void Audio::setPlaybackSpeed(float speed) {
         return;
     }
     m_audioEngine->setPlaybackSpeed(m_id, speed);
-
 }
 
 void Audio::clearEffects() {

@@ -184,7 +184,6 @@ void MiniAudioEngine::setEcho(const UUID &uuid, float delay, float decay) {
     ma_node_attach_output_bus(&sound, 0, m_delayNode, 0);
 }
 
-
 void MiniAudioEngine::setPlaybackSpeed(const UUID &uuid, float speed) {
     if (!m_engineInit) {
         LOG_ERROR("Audio engine not init!");
