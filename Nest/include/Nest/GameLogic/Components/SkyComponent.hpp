@@ -18,12 +18,20 @@ struct SkyVertex {
 
 struct SkyCreateInfo {
     std::array<Path, 6> pathsSkyTextures;
+    std::optional<Path> pathHdrTexture;
     Path pathToVertexShader;
     Path pathToFragmentShader;
     SkyCreateInfo(
         std::array<Path, 6> pathSkyTextures, Path pathToVertexShader, Path pathToFragmentShader
     )
         : pathsSkyTextures(pathSkyTextures)
+        , pathToVertexShader(pathToVertexShader)
+        , pathToFragmentShader(pathToFragmentShader) {}
+
+    SkyCreateInfo(
+        Path pathToHdrTexture, Path pathToVertexShader, Path pathToFragmentShader
+    )
+        : pathHdrTexture(pathToHdrTexture)
         , pathToVertexShader(pathToVertexShader)
         , pathToFragmentShader(pathToFragmentShader) {}
 };
@@ -90,20 +98,27 @@ public:
             Bird::createVertexBuffer(verticesMemory, 24 * sizeof(SkyVertex), layoutHandle);
         m_indexBuffer =
             Bird::createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, 36);
-
-        Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture(
-            {skyCreateInfo.pathsSkyTextures[0].string(),
-             skyCreateInfo.pathsSkyTextures[1].string(),
-             skyCreateInfo.pathsSkyTextures[2].string(),
-             skyCreateInfo.pathsSkyTextures[3].string(),
-             skyCreateInfo.pathsSkyTextures[4].string(),
-             skyCreateInfo.pathsSkyTextures[5].string()}
-        );
-        Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
-        m_skyTextureConfig.m_minFiltering = NEAREST;
-        m_skyTextureConfig.m_magFiltering = LINEAR;
-        m_skyTexture = Bird::createTexture(m_skyTextureConfig);
-
+        if (!skyCreateInfo.pathHdrTexture.has_value()) {
+            Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture(
+                {skyCreateInfo.pathsSkyTextures[0].string(),
+                 skyCreateInfo.pathsSkyTextures[1].string(),
+                 skyCreateInfo.pathsSkyTextures[2].string(),
+                 skyCreateInfo.pathsSkyTextures[3].string(),
+                 skyCreateInfo.pathsSkyTextures[4].string(),
+                 skyCreateInfo.pathsSkyTextures[5].string()}
+            );
+            Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
+            m_skyTextureConfig.m_minFiltering = NEAREST;
+            m_skyTextureConfig.m_magFiltering = LINEAR;
+            m_skyTexture = Bird::createTexture(m_skyTextureConfig);
+        } else {
+            auto path = skyCreateInfo.pathHdrTexture.value();
+            Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadTexture(path);
+            Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
+            m_skyTextureConfig.m_minFiltering = NEAREST;
+            m_skyTextureConfig.m_magFiltering = LINEAR;
+            m_skyTexture = Bird::createTexture(m_skyTextureConfig);
+        }
         ProgramAsset programAsset = AssetLoader::loadProgram(
             skyCreateInfo.pathToVertexShader.string(), skyCreateInfo.pathToFragmentShader.string()
         );

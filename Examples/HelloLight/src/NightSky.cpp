@@ -5,18 +5,18 @@
 #include "NightSky.hpp"
 
 void NightSky::onAttach() {
-    std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
-        "Textures/NightSky/px.png",
-        "Textures/NightSky/nx.png",
-        "Textures/NightSky/py.png",
-        "Textures/NightSky/ny.png",
-        "Textures/NightSky/pz.png",
-        "Textures/NightSky/nz.png"
-    };
+//    std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
+//        "Textures/NightSky/px.png",
+//        "Textures/NightSky/nx.png",
+//        "Textures/NightSky/py.png",
+//        "Textures/NightSky/ny.png",
+//        "Textures/NightSky/pz.png",
+//        "Textures/NightSky/nz.png"
+//    };
     Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
     Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
     m_nightSky = NEW(Foundation::getAllocator(), Nest::SkyComponent)(
-        {skyTextureAssetNotBlur, skyPathToVertexShader, skyPathToFragmentShader}
+        {"Textures/Hdr/field.jpeg", skyPathToVertexShader, skyPathToFragmentShader}
     );
 }
 
