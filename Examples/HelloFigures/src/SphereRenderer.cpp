@@ -1,7 +1,5 @@
 #include "SphereRenderer.hpp"
 
-#define Events Nest::Application::get()->getEvents()
-
 void SphereRenderer::onAttach() {
     m_camera = Nest::Application::get()->getWorldCamera();
     using namespace Bird;

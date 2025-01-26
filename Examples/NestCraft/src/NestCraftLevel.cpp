@@ -48,7 +48,6 @@ void NestCraftLevel::addEntity(Nest::Entity *entity) {
 }
 
 static void drawCross() {
-#ifndef PLATFORM_ANDROID
     ImGuiIO &io = ImGui::GetIO();
     ImGui::SetNextWindowSize(io.DisplaySize);
     ImGui::Begin(
@@ -78,5 +77,4 @@ static void drawCross() {
         ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color
     );
     ImGui::End();
-#endif
 }

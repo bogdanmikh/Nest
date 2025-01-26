@@ -10,8 +10,18 @@
 #    include <android/asset_manager.h>
 #    include <android/asset_manager_jni.h>
 #    include <Bird/PlatformData.hpp>
+#endif
 
-static std::optional<std::pair<Foundation::Memory, int>> getDataFromAsset(const std::string &path) {
+namespace Nest {
+
+std::string AssetLoader::resourcesPath;
+
+void releaseImage(void *data, void *userInfo) {
+    stbi_image_free(data);
+}
+
+std::optional<std::pair<Foundation::Memory, int>> AssetLoader::readFile(const std::string &path) {
+#ifdef PLATFORM_ANDROID
     AAsset *asset = AAssetManager_open(
         (AAssetManager *)Bird::PlatformData::get()->assetManager, path.c_str(), AASSET_MODE_RANDOM
     );
@@ -34,15 +44,8 @@ static std::optional<std::pair<Foundation::Memory, int>> getDataFromAsset(const 
         return res;
     }
     return {};
-}
 #endif
-
-namespace Nest {
-
-std::string AssetLoader::resourcesPath;
-
-void releaseImage(void *data, void *userInfo) {
-    stbi_image_free(data);
+    return {};
 }
 
 TextureAsset AssetLoader::loadTexture(const std::string &path) {
@@ -52,7 +55,7 @@ TextureAsset AssetLoader::loadTexture(const std::string &path) {
 #ifdef PLATFORM_DESKTOP
     image = stbi_load(texturePath.c_str(), &width, &height, &channels, 0);
 #elif defined(PLATFORM_ANDROID)
-    auto textureData = getDataFromAsset(texturePath);
+    auto textureData = readFile(texturePath);
 
     if (!textureData.has_value()) {
         LOG_ERROR("Failed to load a texture file!");
@@ -163,13 +166,13 @@ AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragm
         Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
     return {vertexData, fragmentData};
 #elif defined(PLATFORM_ANDROID)
-    auto vertexMemory = getDataFromAsset(vertexPath);
+    auto vertexMemory = readFile(vertexPath);
     if (!vertexMemory.has_value()) {
         NEST_ASSERT_F(
             false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
         );
     }
-    auto fragmentMemory = getDataFromAsset(fragmentPath);
+    auto fragmentMemory = readFile(fragmentPath);
     if (!fragmentMemory.has_value()) {
         NEST_ASSERT_F(
             false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath

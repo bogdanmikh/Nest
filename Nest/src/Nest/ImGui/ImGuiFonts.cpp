@@ -1,5 +1,7 @@
 #include "Nest/ImGui/ImGuiFonts.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
 #include "Foundation/Assert.hpp"
+#include "Foundation/PlatformDetection.hpp"
 #include <filesystem>
 
 namespace Nest {
@@ -17,14 +19,28 @@ void Fonts::add(const FontConfiguration &config, bool isDefault) {
     imguiFontConfig.OversampleH = 4;
     imguiFontConfig.OversampleV = 4;
     auto &io = ImGui::GetIO();
+    ImFont *font;
     std::filesystem::path fontPath = "default-fonts/" + config.fileName;
-    ImFont *font = io.Fonts->AddFontFromFileTTF(
+#ifdef PLATFORM_DESKTOP
+    font = io.Fonts->AddFontFromFileTTF(
         fontPath.string().c_str(),
         config.size,
         &imguiFontConfig,
         config.glyphRanges == nullptr ? io.Fonts->GetGlyphRangesDefault() : config.glyphRanges
     );
     NEST_ASSERT(font != nullptr, "Failed to load font file!");
+#elif defined(PLATFORM_ANDROID)
+    auto fontData = AssetLoader::readFile(fontPath);
+    NEST_ASSERT(fontData.has_value(), "Failed to load file!");
+    font = io.Fonts->AddFontFromMemoryTTF(
+        fontData.value().first.data,
+        fontData.value().second,
+        config.size,
+        &imguiFontConfig,
+        config.glyphRanges == nullptr ? io.Fonts->GetGlyphRangesDefault() : config.glyphRanges
+    );
+    NEST_ASSERT(font != nullptr, "Failed to load font file!");
+#endif
     s_fonts[config.fontName] = font;
     if (isDefault) {
         io.FontDefault = font;

@@ -1,7 +1,5 @@
 #include "CubeRenderer.hpp"
 
-#define Events Nest::Application::get()->getEvents()
-
 CubeRenderer::CubeRenderer() {}
 
 void CubeRenderer::onAttach() {

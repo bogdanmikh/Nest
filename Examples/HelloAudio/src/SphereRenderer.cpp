@@ -1,7 +1,5 @@
 #include "SphereRenderer.hpp"
 
-#define Events Nest::Application::get()->getEvents()
-
 void SphereRenderer::onAttach() {
     m_camera = Nest::Application::get()->getWorldCamera();
     using namespace Bird;
@@ -92,7 +90,7 @@ void SphereRenderer::onAttach() {
 
 void SphereRenderer::onUpdate(double deltaTime) {
     time = Nest::Application::get()->getWindow()->getTime();
-    mousePos = Events->getCursorPos();
+    mousePos = {Nest::Input::getMousePositionX(), Nest::Input::getMousePositionY()};
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     projViewMtx = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();

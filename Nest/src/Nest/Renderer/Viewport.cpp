@@ -17,7 +17,8 @@ Viewport::~Viewport() {
 
 void Viewport::init() {
     auto windowSize = Nest::Application::get()->getWindow()->getSize();
-    m_windowSize = {windowSize.x, windowSize.y};
+    auto windowDpi = Nest::Application::get()->getWindow()->getDpi();
+    m_windowSize = {windowSize.x * windowDpi.x, windowSize.y * windowDpi.y};
 
     Bird::TextureCreate create;
     create.m_data = Foundation::Memory(nullptr);
@@ -31,16 +32,18 @@ void Viewport::init() {
     m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);
     m_frameBuffer = Bird::createFrameBuffer(m_fbSpecification);
     Bird::setViewport(m_viewId, Bird::Rect(0, 0, m_windowSize.width, m_windowSize.height));
-    Bird::setViewport(0, Bird::Rect(0, 0, m_windowSize.width, m_windowSize.height));
     Bird::setViewClear(m_viewId, 0x12212bff);
     Bird::setViewFrameBuffer(m_viewId, m_frameBuffer);
 }
 
 void Viewport::update() {
     auto currentSize = Nest::Application::get()->getWindow()->getSize();
+    auto currentDpi = Nest::Application::get()->getWindow()->getDpi();
+    currentSize.x *= currentDpi.x;
+    currentSize.y *= currentDpi.y;
     if (m_windowSize != currentSize) {
         m_windowSize = currentSize;
-        updateViewportSize(currentSize);
+        updateViewportSize(m_windowSize);
     }
 }
 

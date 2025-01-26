@@ -1,8 +1,6 @@
 #include "ChunksRenderer.hpp"
 #include "BlocksCreation.hpp"
 
-#define Events Nest::Application::get()->getEvents()
-
 ChunksRenderer::~ChunksRenderer() {}
 
 void ChunksRenderer::onAttach() {
@@ -82,8 +80,8 @@ void ChunksRenderer::draw() {
 
         static auto time = Nest::Application::get()->getWindow()->getTime();
         time = Nest::Application::get()->getWindow()->getTime();
-        static auto mousePos = Events->getCursorPos();
-        mousePos = Events->getCursorPos();
+        static auto mousePos = {Nest::Input::getMousePositionX(), Nest::Input::getMousePositionY()};
+        mousePos = {Nest::Input::getMousePositionX(), Nest::Input::getMousePositionY()};
         static auto resolution = Nest::Application::get()->getWindow()->getSize();
         resolution = Nest::Application::get()->getWindow()->getSize();
 

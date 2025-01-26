@@ -103,6 +103,9 @@ void Application::loop() {
         if (Input::isKeyJustPressed(Key::ESCAPE)) {
             close();
         }
+        if (Input::isKeyJustPressed(Key::TAB)) {
+            m_window->toggleCursorLock();
+        }
 
         if (m_window->shouldClose()) {
             close();

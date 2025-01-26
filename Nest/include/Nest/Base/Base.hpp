@@ -44,6 +44,15 @@ struct Vec2 : public Rain::Codable {
         return !(*this == l);
     }
 
+    void operator*=(const Vec2 &l) {
+        x *= l.x;
+        y *= l.y;
+    }
+
+    Vec2 operator*(const Vec2 &l) {
+        return {x * l.x, y * l.y};
+    }
+
     operator ImVec2() {
         return {x, y};
     }
