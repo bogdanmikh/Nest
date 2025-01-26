@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Nest/Assets/AssetLoader.hpp"
 #include "Nest/Application/Application.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
 
-#include <glm/glm.hpp>
 #include <Bird/Bird.hpp>
 #include <filesystem>
+#include <glm/glm.hpp>
 
 namespace Nest {
 
@@ -17,7 +17,7 @@ struct SkyVertex {
 };
 
 struct SkyCreateInfo {
-    std::array<Path, 6> pathsSkyTextures;
+    std::optional<std::array<Path, 6>> pathsSkyTextures;
     std::optional<Path> pathHdrTexture;
     Path pathToVertexShader;
     Path pathToFragmentShader;
@@ -28,9 +28,7 @@ struct SkyCreateInfo {
         , pathToVertexShader(pathToVertexShader)
         , pathToFragmentShader(pathToFragmentShader) {}
 
-    SkyCreateInfo(
-        Path pathToHdrTexture, Path pathToVertexShader, Path pathToFragmentShader
-    )
+    SkyCreateInfo(Path pathToHdrTexture, Path pathToVertexShader, Path pathToFragmentShader)
         : pathHdrTexture(pathToHdrTexture)
         , pathToVertexShader(pathToVertexShader)
         , pathToFragmentShader(pathToFragmentShader) {}
@@ -100,12 +98,12 @@ public:
             Bird::createIndexBuffer(indicesMemory, Bird::BufferElementType::UnsignedInt, 36);
         if (!skyCreateInfo.pathHdrTexture.has_value()) {
             Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadCubeMapTexture(
-                {skyCreateInfo.pathsSkyTextures[0].string(),
-                 skyCreateInfo.pathsSkyTextures[1].string(),
-                 skyCreateInfo.pathsSkyTextures[2].string(),
-                 skyCreateInfo.pathsSkyTextures[3].string(),
-                 skyCreateInfo.pathsSkyTextures[4].string(),
-                 skyCreateInfo.pathsSkyTextures[5].string()}
+                {skyCreateInfo.pathsSkyTextures.value()[0].string(),
+                 skyCreateInfo.pathsSkyTextures.value()[1].string(),
+                 skyCreateInfo.pathsSkyTextures.value()[2].string(),
+                 skyCreateInfo.pathsSkyTextures.value()[3].string(),
+                 skyCreateInfo.pathsSkyTextures.value()[4].string(),
+                 skyCreateInfo.pathsSkyTextures.value()[5].string()}
             );
             Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
             m_skyTextureConfig.m_minFiltering = NEAREST;

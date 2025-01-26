@@ -9,13 +9,31 @@ if (POLICY CMP0025)
     cmake_policy(SET CMP0025 NEW)
 endif ()
 
-file(GLOB_RECURSE SOURCES src/Nest/*.cpp src/Platform/EntryPoint/*.cpp)
+file(GLOB_RECURSE ALL_SOURCES src/Nest/*.cpp)
 file(GLOB_RECURSE INCLUDE src/Nest/*.hpp include/*.hpp)
 
-if (DESKTOP)
+set(SOURCES "")
+
+foreach(SOURCE ${ALL_SOURCES})
+    if(PLATFORM_DESKTOP
+            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_android.h"
+            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_android.cpp")
+        list(APPEND SOURCES ${SOURCE})
+    elseif(PLATFORM_ANDROID
+            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_glfw.h"
+            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_glfw.cpp")
+#            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_opengl3.h"
+#            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_opengl3.cpp"
+        list(APPEND SOURCES ${SOURCE})
+    endif()
+endforeach()
+
+if (PLATFORM_DESKTOP)
     list(APPEND SOURCES "src/Platform/EntryPoint/Desktop/main.cpp")
 elseif (PLATFORM_IOS)
     list(APPEND SOURCES "src/Platform/EntryPoint/iOS/main.mm")
+elseif (PLATFORM_ANDROID)
+    list(APPEND SOURCES "src/Platform/EntryPoint/Android/main.cpp")
 else ()
     message(FATAL_ERROR "Unknown platform")
 endif ()
@@ -35,7 +53,7 @@ endif()
 # Nest target
 add_library(Nest STATIC "${SOURCES}" "${INCLUDE}")
 
-target_include_directories(Nest PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 if(PLATFORM_DESKTOP)
@@ -45,9 +63,6 @@ if(PLATFORM_DESKTOP)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/WindowImpl/GlfwWindow)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/EventsImpl/GlfwEvents)
 elseif (PLATFORM_ANDROID)
-    target_link_libraries(Nest glfm)
-    target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glfm/include)
-
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/WindowImpl/AndroidWindow)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/EventsImpl/AndroidEvents)
 endif ()
@@ -73,22 +88,16 @@ target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/stb_image)
 target_link_libraries(Nest imgui)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 
-# Dependencies - Dear ImGui
-target_link_libraries(Nest imgui)
-target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
-
-# Dependencies - GLAD
-target_link_libraries(Nest glad)
-target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/glad/include)
-
-if (PLATFORM_MACOS)
+if (PLATFORM_DESKTOP)
     # Dependencies - nfd
     target_link_libraries(Nest nfd)
 endif ()
 
-# Dependencies - enet
-target_link_libraries(Nest enet_static)
-target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)
+if (PLATFORM_DESKTOP)
+    # Dependencies - enet
+    target_link_libraries(Nest enet_static)
+    target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)
+endif ()
 
 # Dependencies - miniaudio
 target_link_libraries(Nest miniaudio)

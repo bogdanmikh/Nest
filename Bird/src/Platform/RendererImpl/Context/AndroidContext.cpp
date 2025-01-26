@@ -4,86 +4,66 @@
 
 #include "AndroidContext.hpp"
 
+#include "AndroidContext.hpp"
+#include "Bird/Bird.hpp"
+#include "Bird/PlatformData.hpp"
+#include <cassert>
+
 namespace Bird {
 
-AndroidContext(ANativeWindow *window)
-    : nativeWindow(window)
-    , display(EGL_NO_DISPLAY)
-    , surface(EGL_NO_SURFACE)
-    , context(EGL_NO_CONTEXT) {}
-
-~AndroidContext() {
-    if (context != EGL_NO_CONTEXT) {
-        eglDestroyContext(display, context);
-    }
-    if (surface != EGL_NO_SURFACE) {
-        eglDestroySurface(display, surface);
-    }
-    if (display != EGL_NO_DISPLAY) {
-        eglTerminate(display);
-    }
+AndroidContext::~AndroidContext() {
+    eglDestroyContext(m_display, m_context);
+    eglDestroySurface(m_display, m_surface);
+    eglTerminate(m_display);
 }
-void create() {
-    // Initialize EGL
-    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    if (display == EGL_NO_DISPLAY) {
-        // Обработка ошибки
-        return;
-    }
 
-    if (eglInitialize(display, nullptr, nullptr) == EGL_FALSE) {
-        // Обработка ошибки
-        return;
-    }
+void AndroidContext::create() {
+    m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    assert(m_display);
 
-    // Set the configuration attributes
-    EGLint configAttributes[] = {
-        EGL_RENDERABLE_TYPE,
-        EGL_OPENGL_ES2_BIT,
-        EGL_SURFACE_TYPE,
-        EGL_WINDOW_BIT,
-        EGL_RGBA_SIZE,
-        8,
-        EGL_DEPTH_SIZE,
-        16,
-        EGL_NONE
+    auto res = eglInitialize(m_display, nullptr, nullptr);
+    assert(res == EGL_TRUE);
+
+    // clang-format off
+    constexpr EGLint attribs[] = {
+            EGL_RENDERABLE_TYPE,
+            EGL_OPENGL_ES3_BIT,
+            EGL_SURFACE_TYPE,
+            EGL_WINDOW_BIT,
+            EGL_RED_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_NONE
     };
-
-    EGLConfig config;
+    // clang-format on
     EGLint numConfigs;
-    if (eglChooseConfig(display, configAttributes, &config, 1, &numConfigs) == EGL_FALSE ||
-        numConfigs == 0) {
-        // Обработка ошибки
-        return;
-    }
+    eglChooseConfig(m_display, attribs, &m_config, 1, &numConfigs);
+    assert(numConfigs == 1);
 
-    // Create an EGL window surface
-    surface = eglCreateWindowSurface(display, config, nativeWindow, nullptr);
-    if (surface == EGL_NO_SURFACE) {
-        // Обработка ошибки
-        return;
-    }
+    m_surface = eglCreateWindowSurface(
+        m_display,
+        m_config,
+        (EGLNativeWindowType)Bird::PlatformData::get()->nativeWindowHandle,
+        nullptr
+    );
+    assert(m_surface != EGL_NO_SURFACE);
 
-    // Create an EGL context
-    EGLint contextAttributes[] = {EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE};
-    context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttributes);
-    if (context == EGL_NO_CONTEXT) {
-        // Обработка ошибки
-        return;
-    }
+    // Create a GLES 3 context
+    EGLint contextAttribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
 
-    // Make the context current
-    if (eglMakeCurrent(display, surface, surface, context) == EGL_FALSE) {
-        // Обработка ошибки
-        return;
-    }
+    m_context = eglCreateContext(m_display, m_config, nullptr, contextAttribs);
+
+    assert(m_context != EGL_NO_CONTEXT);
+
+    res = eglMakeCurrent(m_display, m_surface, m_surface, m_context);
 }
 
-void flip() {
-    eglSwapBuffers(display, surface);
+void AndroidContext::flip() {
+    auto res = eglSwapBuffers(m_display, m_surface);
+    assert(res);
 }
 
-uint32_t getDefaultFrameBufferId() {
+uint32_t AndroidContext::getDefaultFrameBufferId() {
     return 0; // or implement your framebuffer handling.
 }
 

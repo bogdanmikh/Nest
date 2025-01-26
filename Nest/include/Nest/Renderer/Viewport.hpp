@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Bird/Bird.hpp>
 #include "Nest/Base/Base.hpp"
+#include <Bird/Bird.hpp>
 
 namespace Nest {
 

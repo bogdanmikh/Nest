@@ -4,8 +4,8 @@
 
 #include "StartMenu.hpp"
 #include "Nest/ImGui/ImGuiFonts.hpp"
-#include <imgui.h>
 #include <Nest/Application/Application.hpp>
+#include <imgui.h>
 
 void StartMenu::showStartMenu() {
     m_isServer = false;
@@ -21,7 +21,8 @@ void StartMenu::showStartMenu() {
             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
             ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
     );
-    //    ImGui::Begin("##startmenu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+    //    ImGui::Begin("##startmenu", nullptr, ImGuiWindowFlags_NoResize |
+    //    ImGuiWindowFlags_NoMove);
 
     ImVec2 buttonSize(100, 30);
 

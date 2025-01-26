@@ -2,8 +2,8 @@
 // #include "Nest/GlfwWindow/GlfwEvents.hpp"
 
 #include "Nest/Base/Base.hpp"
-#include <Foundation/Logger.hpp>
 #include <Bird/PlatformData.hpp>
+#include <Foundation/Logger.hpp>
 #include <glad/glad.h>
 
 namespace Nest {

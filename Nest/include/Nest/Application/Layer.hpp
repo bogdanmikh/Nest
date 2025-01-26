@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-#include "Nest/GameLogic/Entity.hpp"
 #include "Foundation/Allocator.hpp"
+#include "Nest/GameLogic/Entity.hpp"
+#include <string>
 
 namespace Nest {
 

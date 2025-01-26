@@ -1,12 +1,19 @@
 #include "ChunksStorage.hpp"
-#include "PerlinNoise.hpp"
 #include "ChunkMeshGenerator.hpp"
+#include "PerlinNoise.hpp"
 
 ChunksStorage::~ChunksStorage() {
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         chunks[i].detach();
     }
     DELETE(Foundation::getAllocator(), chunks);
+}
+
+static uint64_t getMillis() {
+    auto now = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()
+    );
+    return now.count();
 }
 
 ChunksStorage::ChunksStorage() {
@@ -16,17 +23,19 @@ ChunksStorage::ChunksStorage() {
         chunks[i].init();
     }
     float terrain[WORLD_SIZE_X * WORLD_SIZE_Z];
-    PerlinNoise::generate2DGlm(2, 10, 1.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
+    auto seed = getMillis() % 10000ULL;
+    PerlinNoise::generate2DGlm(seed, getMillis() % 20, 10.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
 
     for (int x = 0; x < WORLD_SIZE_X; x++) {
         for (int y = 0; y < WORLD_SIZE_Y; y++) {
             for (int z = 0; z < WORLD_SIZE_Z; z++) {
                 VoxelType voxelType;
-                int height = (int)(terrain[x * WORLD_SIZE_X + z] * WORLD_SIZE_Y);
+                int height =
+                    (int)(terrain[x * WORLD_SIZE_X + z] * (WORLD_SIZE_Y + getMillis() % 10));
                 if (y < height) {
-                    voxelType = y <= 2 ? VoxelType::SAND : VoxelType::GROUND;
+                    voxelType = y <= 2 ? VoxelType::SAND : VoxelType::STONE;
                 } else if (y == height) {
-                    voxelType = VoxelType(12);
+                    voxelType = VoxelType(VoxelType::GRASS);
                 } else {
                     voxelType = VoxelType::NOTHING;
                 }

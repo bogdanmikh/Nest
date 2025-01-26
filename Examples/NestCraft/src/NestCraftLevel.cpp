@@ -1,14 +1,13 @@
-#include <iostream>
 #include "NestCraftLevel.hpp"
-#include "CoreGame/ChunksRenderer.hpp"
-#include "CoreGame/Menu.hpp"
 #include "CameraMove.hpp"
+#include "CoreGame/ChunksRenderer.hpp"
 #include "CoreGame/Cross.hpp"
+#include "CoreGame/Menu.hpp"
 #include "Effects/ManagerEffects.hpp"
+#include <iostream>
 
 void NestCraftLevel::onAttach() {
     m_viewport.init();
-    Bird::setViewClear(0, 0x3D75C9FF);
 
     auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
@@ -27,6 +26,7 @@ void NestCraftLevel::onAttach() {
 static void drawCross();
 
 void NestCraftLevel::onUpdate(double deltaTime) {
+    Bird::setViewClear(0, 0x3D75C9FF);
     drawCross();
     m_viewport.update();
     for (const auto &entity : m_entities) {
@@ -48,6 +48,7 @@ void NestCraftLevel::addEntity(Nest::Entity *entity) {
 }
 
 static void drawCross() {
+#ifndef PLATFORM_ANDROID
     ImGuiIO &io = ImGui::GetIO();
     ImGui::SetNextWindowSize(io.DisplaySize);
     ImGui::Begin(
@@ -77,4 +78,5 @@ static void drawCross() {
         ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color
     );
     ImGui::End();
+#endif
 }

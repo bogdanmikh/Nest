@@ -2,8 +2,40 @@
 #include "Nest/Assets/ShaderEnvelope.hpp"
 
 #include <Foundation/Foundation.hpp>
-#include <stb_image.h>
 #include <fstream>
+#include <stb_image.h>
+#include <Foundation/PlatformDetection.hpp>
+
+#ifdef PLATFORM_ANDROID
+#    include <android/asset_manager.h>
+#    include <android/asset_manager_jni.h>
+#    include <Bird/PlatformData.hpp>
+
+static std::optional<std::pair<Foundation::Memory, int>> getDataFromAsset(const std::string &path) {
+    AAsset *asset = AAssetManager_open(
+        (AAssetManager *)Bird::PlatformData::get()->assetManager, path.c_str(), AASSET_MODE_RANDOM
+    );
+    std::pair<Foundation::Memory, int> res;
+    bool assetLoaded = false;
+    if (asset) {
+        off_t fileLength = AAsset_getLength(asset);
+
+        void *buffer = malloc(fileLength);
+        AAsset_read(asset, buffer, fileLength);
+
+        res.first = Foundation::Memory::copying(buffer, fileLength);
+        res.second = fileLength;
+        assetLoaded = true;
+
+        free(buffer);
+        AAsset_close(asset);
+    }
+    if (assetLoaded) {
+        return res;
+    }
+    return {};
+}
+#endif
 
 namespace Nest {
 
@@ -14,10 +46,28 @@ void releaseImage(void *data, void *userInfo) {
 }
 
 TextureAsset AssetLoader::loadTexture(const std::string &path) {
-    // stbi_set_flip_vertically_on_load(true);
     int width, height, channels;
     std::string texturePath = AssetLoader::getResourcesPath() + path;
-    void *image = stbi_load(texturePath.c_str(), &width, &height, &channels, 0);
+    void *image = nullptr;
+#ifdef PLATFORM_DESKTOP
+    image = stbi_load(texturePath.c_str(), &width, &height, &channels, 0);
+#elif defined(PLATFORM_ANDROID)
+    auto textureData = getDataFromAsset(texturePath);
+
+    if (!textureData.has_value()) {
+        LOG_ERROR("Failed to load a texture file!");
+        return {};
+    }
+    image = stbi_load_from_memory(
+        (unsigned char *)textureData.value().first.data,
+        textureData.value().second,
+        &width,
+        &height,
+        &channels,
+        0
+    );
+#endif
+    // stbi_set_flip_vertically_on_load(true);
 
     if (image == nullptr) {
         LOG_ERROR("Failed to load a texture file! {}", stbi_failure_reason());
@@ -82,6 +132,7 @@ TextureAsset AssetLoader::loadCubeMapTexture(std::array<std::string, 6> paths) {
 
 ProgramAsset
 AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragmentPath) {
+#ifdef PLATFORM_DESKTOP
     std::string vertexCode, fragmentCode;
     std::ifstream vShaderFile, fShaderFile;
     // ensure ifstream objects can throw exceptions:
@@ -111,6 +162,32 @@ AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragm
     Foundation::Memory fragmentData =
         Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
     return {vertexData, fragmentData};
+#elif defined(PLATFORM_ANDROID)
+    auto vertexMemory = getDataFromAsset(vertexPath);
+    if (!vertexMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
+    auto fragmentMemory = getDataFromAsset(fragmentPath);
+    if (!fragmentMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
+    std::stringstream vShaderStream, fShaderStream;
+    vShaderStream << (const char *)vertexMemory.value().first.data;
+    fShaderStream << (const char *)fragmentMemory.value().first.data;
+
+    auto vertexCode = vShaderStream.str();
+    auto fragmentCode = fShaderStream.str();
+
+    Foundation::Memory vertexData =
+        Foundation::Memory::copying((void *)vertexCode.c_str(), vertexCode.size() + 1);
+    Foundation::Memory fragmentData =
+        Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
+    return {vertexData, fragmentData};
+#endif
 }
 
 ProgramAsset AssetLoader::loadProgramXml(const std::string &pathXml) {

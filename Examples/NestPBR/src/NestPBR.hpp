@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SphereRenderer.hpp"
-#include "CubeRenderer.hpp"
 #include "CameraMove.hpp"
+#include "CubeRenderer.hpp"
+#include "SphereRenderer.hpp"
 
 #include <Nest.hpp>
 

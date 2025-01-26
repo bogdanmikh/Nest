@@ -1,9 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <glm/glm.hpp>
 
 #ifdef _WIN32
 #    include <winsock2.h>

@@ -12,15 +12,22 @@ file(GLOB_RECURSE INCLUDE
         include/*.hpp
 )
 
-file(GLOB RESOURCE_FOLDERS res/*)
-
 file(GLOB RESOURCE_FOLDERS
-        resources/*
+        resources/common/*
         ${NEST_DIRECTORY}/resources/common/*
 )
 
-file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
-list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
+if (PLATFORM_DESKTOP)
+    file(GLOB NEST_DESKTOP_RESOURCES ${PANDA_DIRECTORY}/resources/desktop/*)
+    list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
+    file(GLOB DESKTOP_RESOURCES resources/desktop/*)
+    list(APPEND RESOURCE_FOLDERS "${DESKTOP_RESOURCES}")
+elseif (PLATFORM_ANDROID)
+    file(GLOB NEST_ANDROID_RESOURCES ${PANDA_DIRECTORY}/resources/android/*)
+    list(APPEND RESOURCE_FOLDERS "${NEST_ANDROID_RESOURCES}")
+    file(GLOB ANDROID_RESOURCES resources/android/*)
+    list(APPEND RESOURCE_FOLDERS "${ANDROID_RESOURCES}")
+endif ()
 
 add_app(NestCraft "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 

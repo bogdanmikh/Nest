@@ -26,9 +26,9 @@ namespace std {
 template<>
 struct hash<UUID> {
     std::size_t operator()(const UUID &uuid) const {
-        // uuid is already a randomly generated number, and is suitable as a hash key as-is.
-        // this may change in the future, in which case return hash<uint64_t>{}(uuid); might be more
-        // appropriate
+        // uuid is already a randomly generated number, and is suitable as a hash
+        // key as-is. this may change in the future, in which case return
+        // hash<uint64_t>{}(uuid); might be more appropriate
         return uuid;
     }
 };

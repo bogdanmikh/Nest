@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Foundation/Memory.hpp>
-#include <Foundation/Assert.hpp>
 #include "Config.hpp"
 #include "VertexBufferLayoutData.hpp"
+#include <Foundation/Assert.hpp>
+#include <Foundation/Memory.hpp>
 #include <glm/glm.hpp>
 
 #define BIRD_INVALID_HANDLE UINT16_MAX

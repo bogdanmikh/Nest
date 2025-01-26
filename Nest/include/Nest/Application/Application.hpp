@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Nest/Window/Window.hpp"
-#include "Nest/Window/Events.hpp"
-#include "Nest/GameLogic/Components/WorldCamera.hpp"
-#include "Nest/Application/Layer.hpp"
 #include "ApplicationStartupSettings.hpp"
+#include "Nest/Application/Layer.hpp"
+#include "Nest/GameLogic/Components/WorldCamera.hpp"
+#include "Nest/Window/Events.hpp"
+#include "Nest/Window/Window.hpp"
 
 namespace Nest {
 

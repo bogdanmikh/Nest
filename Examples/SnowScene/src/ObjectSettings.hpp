@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <Rain/Rain.hpp>
-#include <Rain/Codable.hpp>
-#include <glm/glm.hpp>
 #include "Nest/Base/Base.hpp"
+#include <Rain/Codable.hpp>
+#include <Rain/Rain.hpp>
+#include <glm/glm.hpp>
 
 struct ObjectSettings : public Rain::Codable {
     std::string name;

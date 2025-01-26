@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Nest.hpp>
 #include "CoreGame/GameObject.hpp"
 #include "CoreGame/Menu.hpp"
+#include <Nest.hpp>
 
 class NestCraftLevel final : public Nest::Layer {
 public:

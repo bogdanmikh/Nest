@@ -1,9 +1,9 @@
 #include "Chunk.hpp"
 #include "ChunksStorage.hpp"
 
-#include <random>
 #include "glm/gtc/noise.hpp"
 #include <cmath>
+#include <random>
 
 void Chunk::init() {
     m_mesh = nullptr;

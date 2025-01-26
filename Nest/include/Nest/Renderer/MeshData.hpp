@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp>
 #include <Bird/Bird.hpp>
+#include <glm/glm.hpp>
 
 namespace Nest {
 

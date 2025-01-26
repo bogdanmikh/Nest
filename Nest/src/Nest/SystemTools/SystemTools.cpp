@@ -3,11 +3,14 @@
 #include <Foundation/Logger.hpp>
 #include <Foundation/PlatformDetection.hpp>
 
-#include <nfd.hpp>
+#ifdef PLATFORM_DESKTOP
+#    include <nfd.hpp>
+#endif
 
 namespace Nest {
 
 std::optional<Path> SystemTools::openFolderDialog(const char *initialFolder) {
+#ifdef PLATFORM_DESKTOP
     NFD::Init();
     nfdu8char_t *outPath;
     nfdresult_t result = NFD::PickFolder(outPath);
@@ -22,6 +25,8 @@ std::optional<Path> SystemTools::openFolderDialog(const char *initialFolder) {
     }
     NFD::Quit();
     return res;
+#endif
+    return {};
 }
 
 std::optional<Path> SystemTools::openFileDialog(const char *filter) {
@@ -30,6 +35,7 @@ std::optional<Path> SystemTools::openFileDialog(const char *filter) {
 
 std::optional<Path>
 SystemTools::saveFileDialog(const char *filter, const char *defaultPath, const char *defaultName) {
+#ifdef PLATFORM_DESKTOP
     NFD::Init();
     nfdu8char_t *outPath;
     nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, defaultPath, defaultName);
@@ -44,6 +50,7 @@ SystemTools::saveFileDialog(const char *filter, const char *defaultPath, const c
     }
     NFD::Quit();
     return res;
+#endif
 }
 
 void SystemTools::copyFolder(const Path &sourcePath, const Path &newPath) {

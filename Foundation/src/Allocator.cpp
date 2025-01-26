@@ -54,8 +54,8 @@ void *FreeListAllocator::realloc(void *ptr, size_t size) {
         size_t offset = freeBlockIt->offset;
         auto &freeBlock = (Block &)*freeBlockIt;
         ptr = static_cast<char *>(m_memory) + freeBlock.offset;
-        //        LOG_INFO("Allocated from address: {}, size: {}, offset {}", ptr, size,
-        //        freeBlock.offset);
+        //        LOG_INFO("Allocated from address: {}, size: {}, offset {}", ptr,
+        //        size, freeBlock.offset);
         freeBlock.blockSize -= size;
         freeBlock.offset += size;
         m_used += size;

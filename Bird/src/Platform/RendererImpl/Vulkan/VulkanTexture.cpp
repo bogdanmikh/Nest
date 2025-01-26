@@ -2,8 +2,8 @@
 // Created by Bogdan
 //
 
-#include "Bird/PlatformData.hpp"
 #include "VulkanTexture.hpp"
+#include "Bird/PlatformData.hpp"
 #include "Texture/TextureFormat.hpp"
 
 #include "VulkanBase.hpp"

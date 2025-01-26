@@ -13,7 +13,6 @@ file(GLOB_RECURSE INCLUDE
         include/*.hpp
 )
 
-file(GLOB RESOURCE_FOLDERS res/*)
 
 file(GLOB RESOURCE_FOLDERS
         resources/*

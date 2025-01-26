@@ -30,6 +30,12 @@ function(add_app APP_NAME SOURCE INCLUDE RESOURCE_FOLDERS)
             # Copy assets to target folder
             file(COPY ${RESOURCE_FOLDER} DESTINATION "${BIN_DIRECTORY}/${APP_NAME}.app")
         endforeach ()
+    elseif (PLATFORM_ANDROID)
+        file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/assets/)
+        foreach (RESOURCE_FOLDER IN ITEMS ${RESOURCE_FOLDERS})
+            # Copy assets to target folder
+            file(COPY ${RESOURCE_FOLDER} DESTINATION "${CMAKE_SOURCE_DIR}/../assets")
+        endforeach ()
     endif ()
 
 endfunction()

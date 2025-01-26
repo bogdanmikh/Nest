@@ -5,8 +5,8 @@
 #include "RendererVulkan.hpp"
 #include "VulkanBase.hpp"
 
-#include <Foundation/Assert.hpp>
 #include <Foundation/Allocator.hpp>
+#include <Foundation/Assert.hpp>
 #include <Foundation/Logger.hpp>
 
 #ifdef PLATFORM_IOS
@@ -63,8 +63,8 @@ RendererVulkan::RendererVulkan() {
     GL_CALL(glDisable(GL_STENCIL_TEST));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     // glBlendEquation(GL_FUNC_ADD);
-    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
+    // GL_ONE_MINUS_SRC_ALPHA); glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     BIRD_LOG("Vulkan VERSION {}", glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     glEnable(GL_DEBUG_OUTPUT);

@@ -5,14 +5,15 @@
 #pragma once
 
 #include "Bird/Base.hpp"
+#include "Bird/Encoder/RenderDraw.hpp"
 #include "Bird/HandleAllocator.hpp"
 #include "Bird/VertexBufferLayoutData.hpp"
-#include "Bird/Encoder/RenderDraw.hpp"
 
 namespace Bird {
 
 /// Класс используемый для хранения данных о кадре.
-/// Тут хранятся буферы, которые существуют только один кадр и данные о графических вызовах
+/// Тут хранятся буферы, которые существуют только один кадр и данные о
+/// графических вызовах
 class Frame {
 public:
     Frame();

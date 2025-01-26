@@ -5,10 +5,10 @@
 
 #include <Nest.hpp>
 
-#include "ChunksStorage.hpp"
-#include "GameObject.hpp"
 #include "BlocksCreation.hpp"
 #include "ChunkMeshGenerator.hpp"
+#include "ChunksStorage.hpp"
+#include "GameObject.hpp"
 #include "Menu.hpp"
 
 class ChunksRenderer final : public Nest::Entity {

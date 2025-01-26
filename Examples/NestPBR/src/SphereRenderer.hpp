@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Nest.hpp>
 #include "Figure.hpp"
+#include <Nest.hpp>
 
 class SphereRenderer final : public Figure {
 public:

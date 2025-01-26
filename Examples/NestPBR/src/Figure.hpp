@@ -1,8 +1,14 @@
 #pragma once
 
-#include <filesystem>
 #include <array>
+#include <Bird/Base.hpp>
+#include <filesystem>
 #include <glm/glm.hpp>
+#include "Bird/Bird.hpp"
+#include "Nest/Base/Base.hpp"
+#include "Nest/Assets/AssetLoader.hpp"
+#include "Nest/GameLogic/Entity.hpp"
+#include "Nest/GameLogic/Components/TransformComponent.hpp"
 
 struct CreateInfo {
     bool useTexture;
@@ -63,7 +69,7 @@ public:
         Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
             m_createInfo.pathToVertexShader.string(), m_createInfo.pathToFragmentShader.string()
         );
-        m_shader = createProgram(programAsset.getBirdProgramCreate());
+        m_shader = Bird::createProgram(programAsset.getBirdProgramCreate());
 
         /// create texture
         if (m_createInfo.useTexture) {
@@ -74,7 +80,7 @@ public:
             textureCreate.m_numMips = 4;
             textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
             textureCreate.m_magFiltering = Bird::NEAREST;
-            m_texture = createTexture(textureCreate);
+            m_texture = Bird::createTexture(textureCreate);
         }
 
         onAttach();

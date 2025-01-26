@@ -8,11 +8,19 @@ void CubeRenderer::onAttach() {
     m_camera = Nest::Application::get()->getWorldCamera();
 
     using namespace Bird;
-
-    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgramXml("Shaders/CubeShader.xml");
+    Nest::Path vertexShaderPath, fragmentShaderPath;
+#ifdef PLATFORM_DESKTOP
+    vertexShaderPath = "Shaders/vstSphere.glsl";
+    fragmentShaderPath = "Shaders/fstSphere.glsl";
+#elif defined(PLATFORM_ANDROID)
+    vertexShaderPath = "Shaders/vstSphere.glsl";
+    fragmentShaderPath = "Shaders/fstSphere.glsl";
+#endif
+    Nest::ProgramAsset programAsset =
+        Nest::AssetLoader::loadProgram(vertexShaderPath, fragmentShaderPath);
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
-    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Dubil5.png");
+    Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/Rust.jpg");
 
     TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
     textureCreate.m_numMips = 4;
@@ -92,12 +100,17 @@ void CubeRenderer::onUpdate(double deltaTime) {
     model = m_transformComponent.getTransform();
 
     Bird::setShader(m_shader);
-    Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
-    Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
-    Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4);        /// vec2
-    Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);   /// vec4
-    Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
-    Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
+    Bird::setUniform(m_shader, "iTimeVec4", &time,
+                     Bird::UniformType::Vec4); /// float
+    Bird::setUniform(m_shader, "iResolutionVec4", &resolution,
+                     Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(m_shader, "iMouseVec4", &mousePos,
+                     Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos,
+                     Bird::UniformType::Vec4);                            /// vec4
+    Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4); /// mat4
+    Bird::setUniform(m_shader, "projViewMtx", &projViewMtx,
+                     Bird::UniformType::Mat4); /// mat4
     static int slot = 0;
     Bird::setTexture(m_texture, slot);
     Bird::setUniform(m_shader, "iTexture", &slot, Bird::UniformType::Sampler);

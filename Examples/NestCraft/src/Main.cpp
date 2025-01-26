@@ -1,5 +1,11 @@
 #include "NestCraftLevel.hpp"
 
+#include <Foundation/PlatformDetection.hpp>
+#ifdef PLATFORM_ANDROID
+#    include <game-activity/GameActivity.cpp>
+#    include <game-text-input/gametextinput.cpp>
+#endif
+
 int startApp(int argc, char **argv) {
     Nest::ApplicationStartupSettings settings;
     settings.name = "NestCraft";

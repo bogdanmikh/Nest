@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Bird/Base.hpp"
-#include "Bird/Encoder/View.hpp"
 #include "Bird/Encoder/Frame.hpp"
 #include "Bird/Encoder/Uniform.hpp"
+#include "Bird/Encoder/View.hpp"
 #include "Bird/VertexBufferLayoutData.hpp"
 
 namespace Bird {

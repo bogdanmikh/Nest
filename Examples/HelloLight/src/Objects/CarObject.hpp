@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Nest/GameLogic/Entity.hpp>
 #include <Nest/Application/Application.hpp>
+#include <Nest/GameLogic/Entity.hpp>
 #include <Nest/Renderer/Model3D.hpp>
 
 #include "SimpleLight.hpp"

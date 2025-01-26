@@ -81,14 +81,21 @@ void CubeRenderer::onUpdate(double deltaTime) {
     static float metallic = 0.5;
 
     Bird::setShader(m_shader);
-    Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
-    Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
-    Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4);        /// vec2
-    Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);   /// vec4
-    Bird::setUniform(m_shader, "iColorVec4", &color, Bird::UniformType::Vec4);           /// vec3
-    Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4);                /// mat4
-    Bird::setUniform(m_shader, "projViewMtx", &projViewMtx, Bird::UniformType::Mat4);    /// mat4
-    Bird::setUniform(m_shader, "iMetallicVec4", &metallic, Bird::UniformType::Vec4);     /// float
+    Bird::setUniform(m_shader, "iTimeVec4", &time,
+                     Bird::UniformType::Vec4); /// float
+    Bird::setUniform(m_shader, "iResolutionVec4", &resolution,
+                     Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(m_shader, "iMouseVec4", &mousePos,
+                     Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos,
+                     Bird::UniformType::Vec4); /// vec4
+    Bird::setUniform(m_shader, "iColorVec4", &color,
+                     Bird::UniformType::Vec4);                            /// vec3
+    Bird::setUniform(m_shader, "model", &model, Bird::UniformType::Mat4); /// mat4
+    Bird::setUniform(m_shader, "projViewMtx", &projViewMtx,
+                     Bird::UniformType::Mat4); /// mat4
+    Bird::setUniform(m_shader, "iMetallicVec4", &metallic,
+                     Bird::UniformType::Vec4); /// float
 
     /// texture using
     if (m_createInfo.useTexture) {

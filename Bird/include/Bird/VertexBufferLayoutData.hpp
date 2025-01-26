@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <Foundation/Logger.hpp>
 #include <Foundation/Assert.hpp>
+#include <Foundation/Logger.hpp>
 
 #define MAX_VERTEX_LAYOUT_ELEMENTS 20
 namespace Bird {

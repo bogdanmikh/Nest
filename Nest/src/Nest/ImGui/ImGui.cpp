@@ -1,28 +1,35 @@
 #include "ImGui.hpp"
 
 #include <Bird/Bird.hpp>
+#include <Foundation/PlatformDetection.hpp>
+
+#ifdef PLATFORM_DESKTOP
+#    include "imgui_impl/imgui_impl_glfw.h"
+#elif defined(PLATFORM_ANDROID)
+#    include "imgui_impl/imgui_impl_android.cpp"
+#endif
 
 #ifdef RENDERER_OPENGL
-#    include "imgui_impl/imgui_impl_glfw.h"
 #    include "imgui_impl/imgui_impl_opengl3.h"
 #elif defined(RENDERER_VULKAN)
 #    include "imgui_impl/imgui_impl_vulkan.h"
 #endif
 
+#include "Nest/ImGui/ImGuiFonts.hpp"
 #include "imgui.h"
 
-#include "Nest/ImGui/ImGuiFonts.hpp"
 #include "Nest/ImGui/FontAwesome.h"
 
 namespace Nest {
 
 void setDarkThemeColors();
 
-void ImGui_Init(void *glfwWindowHandle) {
+void ImGui_Init(void *windowHandle) {
     ImGui::CreateContext();
 
     ImGuiIO &io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+#ifdef PLATFORM_DESKTOP
 
     FontConfiguration fontBold;
     fontBold.fontName = "Bold";
@@ -74,15 +81,21 @@ void ImGui_Init(void *glfwWindowHandle) {
     fontExtraBig.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
     fontExtraBig.size = 30.0f;
     Fonts::add(fontExtraBig);
-
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(glfwWindowHandle), true);
+    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(windowHandle), true);
+#elif defined(PLATFORM_ANDROID)
+    ImGui_ImplAndroid_Init((ANativeWindow *)windowHandle);
+#endif
     ImGui_ImplOpenGL3_Init();
 
     setDarkThemeColors();
 }
 
 void ImGui_NewFrame() {
+#ifdef PLATFORM_DESKTOP
     ImGui_ImplGlfw_NewFrame();
+#elif defined(PLATFORM_ANDROID)
+    ImGui_ImplAndroid_NewFrame();
+#endif
     ImGui_ImplOpenGL3_NewFrame();
     ImGui::NewFrame();
 }
@@ -93,7 +106,11 @@ void ImGui_EndFrame() {
 }
 
 void ImGui_Shutdown() {
+#ifdef PLATFORM_DESKTOP
     ImGui_ImplGlfw_Shutdown();
+#elif defined(PLATFORM_ANDROID)
+    ImGui_ImplAndroid_Shutdown();
+#endif
     ImGui_ImplOpenGL3_Shutdown();
     ImGui::DestroyContext();
 }

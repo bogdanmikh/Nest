@@ -1,7 +1,7 @@
 #pragma once
 
-#include "StartMenu.hpp"
 #include "Player.hpp"
+#include "StartMenu.hpp"
 
 #include <Nest.hpp>
 

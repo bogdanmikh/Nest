@@ -1,5 +1,5 @@
-#include "BlocksCreation.hpp"
 #include "ChunksRenderer.hpp"
+#include "BlocksCreation.hpp"
 
 #define Events Nest::Application::get()->getEvents()
 
@@ -46,18 +46,19 @@ void ChunksRenderer::onAttach() {
 
 void ChunksRenderer::onUpdate(double deltaTime) {
     /*if (Events->isJustKeyPressed(Key::Q)) {
-        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
-    Chunk::SIZE_XYZ); m_chunksStorage->saveWorld(data); if (!NestFiles::writeBinaryFile(
-                "world.bin", (const char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char,
+    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ); m_chunksStorage->saveWorld(data);
+    if (!NestFiles::writeBinaryFile( "world.bin", (const char *)data,
+    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_SAVED");
         }
         delete[] data;
     }
     if (Events->isJustKeyPressed(Key::E)) {
-        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char, ChunksStorage::SIZE_XYZ *
-    Chunk::SIZE_XYZ); if (!NestFiles::readBinaryFile( "world.bin", (char *)data,
-    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
+        auto *data = NEW_ARRAY(Foundation::getAllocator(), unsigned char,
+    ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ); if (!NestFiles::readBinaryFile(
+    "world.bin", (char *)data, ChunksStorage::SIZE_XYZ * Chunk::SIZE_XYZ
             )) {
             LOG_ERROR("WORLD::NOT_LOAD");
         }
@@ -95,11 +96,16 @@ void ChunksRenderer::draw() {
         static auto model = transform.getTransform();
         model = transform.getTransform();
 
-        Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4); /// float
+        Bird::setUniform(m_shader, "iTimeVec4", &time,
+                         Bird::UniformType::Vec4); /// float
         Bird::setUniform(
-            m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4
-        );                                                                            /// vec2
-        Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4); /// vec2
+            m_shader,
+            "iResolutionVec4",
+            &resolution,
+            Bird::UniformType::Vec4
+        ); /// vec2
+        Bird::setUniform(m_shader, "iMouseVec4", &mousePos,
+                         Bird::UniformType::Vec4); /// vec2
         Bird::setUniform(m_shader, "iCameraPosVec4", &cameraPos, Bird::UniformType::Vec4);
         static glm::vec3 color;
         color = m_menu.getColor();

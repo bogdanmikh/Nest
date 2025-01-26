@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Bird/VertexBufferLayoutData.hpp"
 #include "Bird/Base.hpp"
+#include "Bird/VertexBufferLayoutData.hpp"
 
 #include <string>
 #include <unordered_map>

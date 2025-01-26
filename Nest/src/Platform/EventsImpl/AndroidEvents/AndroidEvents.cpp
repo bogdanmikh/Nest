@@ -15,7 +15,6 @@ double AndroidEvents::getTime() {
 }
 
 bool AndroidEvents::isKeyPressed(Key key) {
-
     return false;
 }
 

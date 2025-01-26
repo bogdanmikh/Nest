@@ -2,7 +2,7 @@
 
 namespace Nest {
 
-void ImGui_Init(void *glfwWindowHandle);
+void ImGui_Init(void *windowHandle);
 
 void ImGui_NewFrame();
 

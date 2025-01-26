@@ -65,8 +65,8 @@ void submit(ViewId id);
 // MARK: - Main functions
 /// Process all requests to gpu (from rendering thread)
 bool renderFrame();
-/// Frame processing finished (from app thread). Wait for renderer to finish rendering frame.
-/// Returns frame number
+/// Frame processing finished (from app thread). Wait for renderer to finish
+/// rendering frame. Returns frame number
 uint32_t frame();
 void flip();
 

@@ -2,8 +2,8 @@
 // Created by Bogdan
 //
 
-#include "Bird/PlatformData.hpp"
 #include "OpenGLTexture.hpp"
+#include "Bird/PlatformData.hpp"
 #include "Texture/TextureFormat.hpp"
 
 #include "OpenGLBase.hpp"

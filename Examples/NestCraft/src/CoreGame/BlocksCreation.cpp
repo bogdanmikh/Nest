@@ -57,7 +57,8 @@ void BlocksCreation::update(double deltaTime) {
     updateVoxelHand();
     bool leftPressed;
     bool rightPressed;
-    leftPressed = Events->isJustMouseButtonPressed(Nest::MouseButton::LEFT) && Events->isCursorLocked();
+    leftPressed =
+        Events->isJustMouseButtonPressed(Nest::MouseButton::LEFT) && Events->isCursorLocked();
     rightPressed =
         Events->isJustMouseButtonPressed(Nest::MouseButton::RIGHT) && Events->isCursorLocked();
     if (!leftPressed && !rightPressed) {
@@ -84,6 +85,7 @@ void BlocksCreation::update(double deltaTime) {
 }
 
 void BlocksCreation::onImGuiRender() {
+#ifndef PLATFORM_ANDROID
     ImGui::SetNextWindowPos(ImVec2(500.0f, 500.0f));
     ImGui::Begin("Block");
     if (ImGui::Button("TREE")) {
@@ -96,6 +98,7 @@ void BlocksCreation::onImGuiRender() {
         m_selectedBlock = VoxelType::BOARDS;
     }
     ImGui::End();
+#endif
 }
 
 void BlocksCreation::updateVoxelHand() {

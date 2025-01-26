@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <glm/vec2.hpp>
 #include "Key.hpp"
+#include <glm/vec2.hpp>
 
 namespace Nest {
 

@@ -1,17 +1,17 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "Chunk.hpp"
 #include "VoxelRaycastData.hpp"
 
 class ChunksStorage {
 public:
-    static const int SIZE_X = 15;
+    static const int SIZE_X = 5;
     static const int SIZE_Y = 1;
-    static const int SIZE_Z = 15;
+    static const int SIZE_Z = 5;
     static const int SIZE_XYZ =
         ChunksStorage::SIZE_X * ChunksStorage::SIZE_Y * ChunksStorage::SIZE_Z;
 

@@ -6,8 +6,8 @@
 #include "Bird/PlatformData.hpp"
 
 #include <Foundation/Logger.hpp>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Bird {
 

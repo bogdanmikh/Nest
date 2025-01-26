@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Nest.hpp>
 #include "ContentBrowser.hpp"
+#include <Nest.hpp>
 
 class ContentBrowserLevel final : public Nest::Layer {
 public:

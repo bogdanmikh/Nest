@@ -8,8 +8,8 @@
 
 #include "OpenGLBase.hpp"
 
-#include <sstream>
 #include <fstream>
+#include <sstream>
 
 namespace Bird {
 
@@ -40,7 +40,8 @@ void OpenGLShader::create(ProgramCreate create) {
     GL_CALL(glAttachShader(m_id, fragment));
     GL_CALL(glLinkProgram(m_id));
     checkCompileErrors(m_id, "PROGRAM");
-    // delete the shaders as they're linked into our program now and no longer necessery
+    // delete the shaders as they're linked into our program now and no longer
+    // necessery
     GL_CALL(glDeleteShader(vertex));
     GL_CALL(glDeleteShader(fragment));
 

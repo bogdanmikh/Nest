@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Allocator.hpp"
-#include "Logger.hpp"
 #include "Assert.hpp"
+#include "Logger.hpp"
 
 #include <cstdlib>
 
@@ -148,8 +148,9 @@ public:
         m_capacity = new_capacity;
     }
 
-    // NB: It is illegal to call push_back/push_front/insert with a reference pointing inside the
-    // ImVector data itself! e.g. v.push_back(v[10]) is forbidden.
+    // NB: It is illegal to call push_back/push_front/insert with a reference
+    // pointing inside the ImVector data itself! e.g. v.push_back(v[10]) is
+    // forbidden.
     inline void push_back(const T &v) {
         if (m_size == m_capacity)
             reserve(growCapacity(m_size + 1));

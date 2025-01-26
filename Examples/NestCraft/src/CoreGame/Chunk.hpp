@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Nest.hpp>
 #include "Voxel.hpp"
+#include <Nest.hpp>
 
 class Chunk {
 public:

@@ -43,9 +43,12 @@ void PostprocessingEffect::onUpdate(double deltaTime) {
     resolution = Nest::Application::get()->getWindow()->getSize();
 
     Bird::setShader(m_shader);
-    Bird::setUniform(m_shader, "iTimeVec4", &time, Bird::UniformType::Vec4);             /// float
-    Bird::setUniform(m_shader, "iResolutionVec4", &resolution, Bird::UniformType::Vec4); /// vec2
-    Bird::setUniform(m_shader, "iMouseVec4", &mousePos, Bird::UniformType::Vec4);        /// vec2
+    Bird::setUniform(m_shader, "iTimeVec4", &time,
+                     Bird::UniformType::Vec4); /// float
+    Bird::setUniform(m_shader, "iResolutionVec4", &resolution,
+                     Bird::UniformType::Vec4); /// vec2
+    Bird::setUniform(m_shader, "iMouseVec4", &mousePos,
+                     Bird::UniformType::Vec4); /// vec2
     if (m_textureHandle.isValid()) {
         Bird::setTexture(m_textureHandle, slot);
         Bird::setUniform(m_shader, "iChannel0", &slot, Bird::UniformType::Sampler);

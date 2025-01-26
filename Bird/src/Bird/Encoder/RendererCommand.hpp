@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Bird/VertexBufferLayoutData.hpp"
 #include "Bird/RendererI.hpp"
+#include "Bird/VertexBufferLayoutData.hpp"
 
 #include <Foundation/CommandBuffer.hpp>
 

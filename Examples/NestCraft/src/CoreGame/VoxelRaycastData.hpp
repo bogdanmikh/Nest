@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include "Voxel.hpp"
+#include "glm/glm.hpp"
 
 struct VoxelRaycastData {
     Voxel *voxel;

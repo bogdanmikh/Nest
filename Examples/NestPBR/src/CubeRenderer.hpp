@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Nest.hpp>
 #include "Figure.hpp"
+#include <Nest.hpp>
 
 class CubeRenderer final : public Figure {
 public:

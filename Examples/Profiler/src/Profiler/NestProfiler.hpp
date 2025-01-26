@@ -2,11 +2,11 @@
 
 #include "AppInfo.hpp"
 
-#include <string>
-#include <chrono>
-#include <thread>
-#include <Rain/Rain.hpp>
 #include <Rain/Codable.hpp>
+#include <Rain/Rain.hpp>
+#include <chrono>
+#include <string>
+#include <thread>
 
 #define CURRENT_FILE __FILE__
 #define CURRENT_FUNCTION __func__

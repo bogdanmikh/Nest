@@ -20,7 +20,10 @@ void ManagerEffects::onAttach() {
     if (!m_textureHandle.isValid()) {
         LOG_CRITICAL("Texture Handle is NOT VALID");
     }
-    m_activeEffects[0] = true;
+    m_activeEffects[1] = false;
+    m_activeEffects[2] = false;
+    m_activeEffects[3] = false;
+    m_activeEffects[4] = false;
 
     // default
     m_effects[0] = NEW(Foundation::getAllocator(), PostprocessingEffect);
@@ -95,6 +98,7 @@ void ManagerEffects::onImGuiRender() {
     //        }
     //        m_activeEffects[i] = false;
     //    }
+#ifndef PLATFORM_ANDROID
     ImGuiIO io = ImGui::GetIO();
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 100, 0));
     ImGui::Begin("Effects");
@@ -103,6 +107,7 @@ void ManagerEffects::onImGuiRender() {
     ImGui::Checkbox("Tv", &m_activeEffects[3]);
     ImGui::Checkbox("Lens", &m_activeEffects[4]);
     ImGui::End();
+#endif
 }
 
 void ManagerEffects::onDetach() {

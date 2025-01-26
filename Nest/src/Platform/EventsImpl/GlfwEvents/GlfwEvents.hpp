@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cstdint>
 #include <GLFW/glfw3.h>
+#include <cstdint>
 #include <glm/glm.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "Nest/Window/Events.hpp"
 

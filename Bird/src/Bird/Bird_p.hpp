@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Encoder/RendererCommand.hpp"
-#include "Encoder/Frame.hpp"
-#include "Encoder/View.hpp"
-#include "Encoder/RenderDraw.hpp"
 #include "Bird/Bird.hpp"
-#include "HandleAllocator.hpp"
 #include "Bird/BirdStates.hpp"
 #include "Bird/Config.hpp"
+#include "Encoder/Frame.hpp"
+#include "Encoder/RenderDraw.hpp"
+#include "Encoder/RendererCommand.hpp"
+#include "Encoder/View.hpp"
+#include "HandleAllocator.hpp"
 #ifdef RENDERER_OPENGL
 #    include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
 #elif defined(RENDERER_VULKAN)
@@ -15,8 +15,8 @@
 #endif
 #include "RendererI.hpp"
 
-#include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Logger.hpp>
+#include <Foundation/PlatformDetection.hpp>
 
 namespace Bird {
 
@@ -236,10 +236,9 @@ struct Context {
             return true;
         }
         rendererExecuteCommands(m_preCommandQueue);
-//        if (m_render.getDrawCallsCount() != 0) {
-//            m_renderer->submit(&m_render, m_views);
-//        }
-        m_renderer->submit(&m_render, m_views);
+        if (m_render.getDrawCallsCount() != 0) {
+            m_renderer->submit(&m_render, m_views);
+        }
         rendererExecuteCommands(m_postCommandQueue);
         m_preCommandQueue.reset();
         m_postCommandQueue.reset();

@@ -1,16 +1,16 @@
 #pragma once
-#include <Bird/Bird.hpp>
 #include "Nest/Base/Base.hpp"
 #include "Nest/GameLogic/Components/StaticMesh.hpp"
 #include "Nest/GameLogic/Components/TransformComponent.hpp"
 #include "Nest/Renderer/Renderer3D.hpp"
+#include <Bird/Bird.hpp>
 
-#define USE_ASSIMP 1
+#define USE_ASSIMP 0
 
 #if USE_ASSIMP
 #    include <assimp/Importer.hpp>
-#    include <assimp/scene.h>
 #    include <assimp/postprocess.h>
+#    include <assimp/scene.h>
 
 namespace Nest {
 
@@ -71,6 +71,11 @@ private:
 #else
 namespace Nest {
 
+struct CreateInfoModel3D {
+    std::string nameDiffuse = "texture_diffuse";
+    std::string nameSpecular = "specular";
+};
+
 class Model3D {
 public:
     struct ModelVertex {
@@ -82,12 +87,22 @@ public:
         glm::vec3 Normal;
     };
 
-    void create(Bird::ProgramHandle shader, Path pathToModel);
-    TransformComponent &getTransform();
+    void create(
+        Bird::ProgramHandle shader,
+        Path pathToModel,
+        const CreateInfoModel3D &createInfoModel3D = {}
+    ) {}
 
-    void draw();
+    TransformComponent &getTransform() {
+        return m_transformComponent;
+    }
 
-    ~Model3D();
+    void draw() {}
+
+    ~Model3D() {}
+
+private:
+    TransformComponent m_transformComponent;
 };
 } // namespace Nest
 #endif

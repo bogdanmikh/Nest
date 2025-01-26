@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "Bird/RendererI.hpp"
 #include "Bird/GraphicsContext.hpp"
+#include "Bird/RendererI.hpp"
 #include "OpenGLFrameBuffer.hpp"
+#include "OpenGLIndexBuffer.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLTexture.hpp"
-#include "OpenGLIndexBuffer.hpp"
 #include "OpenGLVertexBuffer.hpp"
 
 namespace Bird {

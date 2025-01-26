@@ -65,12 +65,12 @@ void CameraMove::onUpdate(double deltaTime) {
 }
 
 void CameraMove::onImGuiRender() {
-    ImGui::Begin("Camera stats");
-    ImGui::Text(
-        "Pos x: %f, y: %f, z: %f",
-        m_worldCamera->getPosition().x,
-        m_worldCamera->getPosition().y,
-        m_worldCamera->getPosition().z
-    );
-    ImGui::End();
+    //    ImGui::Begin("Camera stats");
+    //    ImGui::Text(
+    //        "Pos x: %f, y: %f, z: %f",
+    //        m_worldCamera->getPosition().x,
+    //        m_worldCamera->getPosition().y,
+    //        m_worldCamera->getPosition().z
+    //    );
+    //    ImGui::End();
 }

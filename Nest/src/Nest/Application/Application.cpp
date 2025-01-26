@@ -2,17 +2,19 @@
 
 #include "Nest/ImGui/ImGui.hpp"
 #include "Nest/Platform/PlatformDetection.hpp"
+#include <Foundation/PlatformDetection.hpp>
+
 #ifdef PLATFORM_DESKTOP
-#    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
 #    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
+#    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
 #elif defined(PLATFORM_ANDROID)
-#    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
 #    include "Platform/EventsImpl/AndroidEvents/AndroidEvents.hpp"
+#    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
 #endif
 
 #include <Bird/Bird.hpp>
-#include <Foundation/Logger.hpp>
 #include <Foundation/Allocator.hpp>
+#include <Foundation/Logger.hpp>
 
 #include <chrono>
 

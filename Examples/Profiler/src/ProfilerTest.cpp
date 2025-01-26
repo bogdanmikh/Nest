@@ -2,12 +2,12 @@
 #include "Profiler/NestProfiler.hpp"
 #include "Rain/Coders/JsonEncoder.hpp"
 
+#include <filesystem>
+#include <fstream>
 #include <imgui.h>
 #include <iostream>
-#include <filesystem>
 #include <sstream>
 #include <string>
-#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -35,9 +35,7 @@ void func2() {
     NEST_FRAME("Func2");
     //    NEST_FUNC();
     for (int i = 0; i < 100000; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-
-        }
+        for (int j = 0; j < 1000; ++j) {}
     }
 }
 

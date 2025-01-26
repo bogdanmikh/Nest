@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Rain/Rain.hpp>
 #include <Rain/Codable.hpp>
+#include <Rain/Rain.hpp>
 
 struct FuncInfo : public Rain::Codable {
     std::string nameFile;

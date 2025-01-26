@@ -2,8 +2,8 @@
 
 #include <cstdint>
 #include <glm/glm.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "Nest/Window/Events.hpp"
 
@@ -11,7 +11,7 @@ namespace Nest {
 
 class AndroidEvents final : public Events {
 public:
-    void init(void *handle) override {}
+    void init(void *handle) override;
     glm::vec2 getCursorPos() override;
     double getTime() override;
     bool isKeyPressed(Key key) override;
