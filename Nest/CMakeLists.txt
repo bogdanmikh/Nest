@@ -9,24 +9,8 @@ if (POLICY CMP0025)
     cmake_policy(SET CMP0025 NEW)
 endif ()
 
-file(GLOB_RECURSE ALL_SOURCES src/Nest/*.cpp)
+file(GLOB_RECURSE SOURCES src/Nest/*.cpp)
 file(GLOB_RECURSE INCLUDE src/Nest/*.hpp include/*.hpp)
-
-set(SOURCES "")
-
-foreach(SOURCE ${ALL_SOURCES})
-    if(PLATFORM_DESKTOP
-            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_android.h"
-            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_android.cpp")
-        list(APPEND SOURCES ${SOURCE})
-    elseif(PLATFORM_ANDROID
-            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_glfw.h"
-            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_glfw.cpp")
-#            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_opengl3.h"
-#            AND NOT SOURCE MATCHES "src/Nest/ImGui/imgui_impl/imgui_impl_opengl3.cpp"
-        list(APPEND SOURCES ${SOURCE})
-    endif()
-endforeach()
 
 if (PLATFORM_DESKTOP)
     list(APPEND SOURCES "src/Platform/EntryPoint/Desktop/main.cpp")
@@ -39,13 +23,13 @@ else ()
 endif ()
 
 if(PLATFORM_DESKTOP)
-    file(GLOB_RECURSE PLATFORM_INCLUDE src/Platform/WindowImpl/GlfwWindow/*.hpp src/Platform/EventsImpl/GlfwEvents/*.hpp)
-    file(GLOB_RECURSE PLATFORM_SOURCES src/Platform/WindowImpl/GlfwWindow/*.cpp src/Platform/EventsImpl/GlfwEvents/*.cpp)
+    file(GLOB_RECURSE PLATFORM_INCLUDE src/Platform/WindowImpl/GlfwWindow/*.hpp)
+    file(GLOB_RECURSE PLATFORM_SOURCES src/Platform/WindowImpl/GlfwWindow/*.cpp)
     list(APPEND INCLUDE ${PLATFORM_INCLUDE})
     list(APPEND SOURCES ${PLATFORM_SOURCES})
 elseif(PLATFORM_ANDROID)
-    file(GLOB_RECURSE PLATFORM_INCLUDE src/Platform/WindowImpl/AndroidWindow/*.hpp src/Platform/EventsImpl/AndroidEvents/*.hpp)
-    file(GLOB_RECURSE PLATFORM_SOURCES src/Platform/WindowImpl/AndroidWindow/*.cpp src/Platform/EventsImpl/AndroidEvents/*.cpp)
+    file(GLOB_RECURSE PLATFORM_INCLUDE src/Platform/WindowImpl/AndroidWindow/*.hpp)
+    file(GLOB_RECURSE PLATFORM_SOURCES src/Platform/WindowImpl/AndroidWindow/*.cpp)
     list(APPEND INCLUDE ${PLATFORM_INCLUDE})
     list(APPEND SOURCES ${PLATFORM_SOURCES})
 endif()

@@ -1,16 +1,11 @@
 #include "Nest/Application/Application.hpp"
 
-#include "Nest/ImGui/ImGui.hpp"
 #include "Nest/Platform/PlatformDetection.hpp"
+#include "Nest/Application/Initialization/PlatformInit.hpp"
+#include "Nest/GameLogic/Input.hpp"
+#include "Nest/Events/WindowEvents.hpp"
 #include <Foundation/PlatformDetection.hpp>
-
-#ifdef PLATFORM_DESKTOP
-#    include "Platform/EventsImpl/GlfwEvents/GlfwEvents.hpp"
-#    include "Platform/WindowImpl/GlfwWindow/GlfwWindow.hpp"
-#elif defined(PLATFORM_ANDROID)
-#    include "Platform/EventsImpl/AndroidEvents/AndroidEvents.hpp"
-#    include "Platform/WindowImpl/AndroidWindow/AndroidWindow.hpp"
-#endif
+#include "Bird/PlatformData.hpp"
 
 #include <Bird/Bird.hpp>
 #include <Foundation/Allocator.hpp>
@@ -29,34 +24,23 @@ uint64_t getMillis() {
     return now.count();
 }
 
-Application::Application(ApplicationStartupSettings &settings) {
+Application::Application(ApplicationStartupSettings &settings)
+    : m_isApplicationShouldClose(false) {
     std::srand(static_cast<unsigned int>(std::time(0)));
 
     s_instance = this;
 
     m_layer = nullptr;
+
     Foundation::Logger::init();
 
-#ifdef PLATFORM_DESKTOP
-    m_window = NEW(Foundation::getAllocator(), GlfwWindow);
-    m_window->init(
-        settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
-    );
-
-    m_events = NEW(Foundation::getAllocator(), GlfwEvents);
-    m_events->init(m_window->getNativeHandle());
-#elif defined(PLATFORM_ANDROID)
-    m_window = NEW(Foundation::getAllocator(), AndroidWindow);
-    m_window->init(
-        settings.name, settings.windowSize.x, settings.windowSize.y, settings.isFullScreen
-    );
-    m_events = NEW(Foundation::getAllocator(), AndroidEvents);
-    m_events->init(m_window->getNativeHandle());
-#endif
+    m_window = createWindow(settings);
+    m_window->setEventQueue(&m_eventQueue);
 
     Bird::initialize();
 
-    ImGui_Init(m_window->getNativeHandle());
+    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
+    m_ImGuiLayer->onAttach();
 
     m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
     m_worldCamera->setPosition(0, 0, 0);
@@ -68,21 +52,22 @@ Application::Application(ApplicationStartupSettings &settings) {
     m_deltaTimeMillis = 0;
     m_thisSecondFramesCount = 0;
     m_timeMillis = getMillis();
-    m_lastViewportSize = m_window->getSize();
 }
 
 Application::~Application() {
-    ImGui_Shutdown();
+    m_ImGuiLayer->onDetach();
     if (m_layer) {
         m_layer->onDetach();
     }
+    DELETE(Foundation::getAllocator(), m_ImGuiLayer);
     DELETE(Foundation::getAllocator(), m_worldCamera);
     DELETE(Foundation::getAllocator(), m_window);
     delete m_layer;
 }
 
-void Application::updateViewport(Size size) {
-    Bird::Rect viewport = Bird::Rect(0, 0, size.width, size.height);
+void Application::windowSizeChanged(Size size) {
+    Bird::Rect viewport =
+        Bird::Rect(0, 0, size.width * m_window->getDpi().x, size.height * m_window->getDpi().y);
     Bird::setViewport(0, viewport);
 }
 
@@ -90,7 +75,7 @@ void Application::loop() {
     if (m_layer != nullptr) {
         m_layer->onAttach();
     }
-    while (!m_window->shouldClose()) {
+    while (!m_isApplicationShouldClose) {
         uint64_t lastTime = m_timeMillis;
         m_timeMillis = getMillis();
         m_deltaTimeMillis += m_timeMillis - lastTime;
@@ -115,33 +100,53 @@ void Application::loop() {
         }
         m_deltaTimeMillis = 0;
 
-        if (m_events->isJustKeyPressed(Key::ESCAPE)) {
+        if (Input::isKeyJustPressed(Key::ESCAPE)) {
             close();
         }
-        if (m_events->isJustKeyPressed(Key::TAB)) {
-            m_events->toggleCursorLock();
-        }
 
-        if (m_lastViewportSize != m_window->getSize()) {
-            updateViewport(m_window->getSize());
+        if (m_window->shouldClose()) {
+            close();
         }
 
         m_worldCamera->update();
-        ImGui_NewFrame();
+        m_ImGuiLayer->onUpdate(deltaTime);
+        m_ImGuiLayer->begin(deltaTime);
         if (m_layer) {
             m_layer->onUpdate(deltaTime);
+            m_layer->onImGuiRender();
         }
-        m_events->resetDropPaths();
+        m_ImGuiLayer->end();
+        m_window->pollEvents();
+        Input::nextFrame();
+        processEvents();
         Bird::renderFrame();
-        ImGui_EndFrame();
         Bird::frame();
         Bird::flip();
-        m_events->pollEvents();
     }
 }
 
-void Application::close() {
-    m_window->setShouldClose();
+void Application::processEvents() {
+    m_eventQueue.finishWriting();
+    Event *event;
+    while ((event = m_eventQueue.poll()) != nullptr) {
+        if (event->type == EventType::WindowResize) {
+            const WindowResizeEvent *ev = static_cast<const WindowResizeEvent *>(event);
+            windowSizeChanged(Size(ev->getWidth(), ev->getHeight()));
+        }
+        if (!event->isHandled) {
+            m_ImGuiLayer->onEvent(event);
+            m_layer->onEvent(event);
+        }
+
+        if (!event->isHandled) {
+            Input::onEvent(event);
+        }
+    }
+    m_eventQueue.reset();
+}
+
+EventQueue *Application::getEventQueue() {
+    return &m_eventQueue;
 }
 
 } // namespace Nest

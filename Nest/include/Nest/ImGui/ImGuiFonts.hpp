@@ -2,7 +2,6 @@
 
 #include <imgui.h>
 #include <string>
-#include <unordered_map>
 
 namespace Nest {
 
@@ -20,7 +19,6 @@ public:
     static void pushFont(const std::string &fontName);
     static void popFont();
     static ImFont *get(const std::string &fontName);
-    static std::unordered_map<std::string, ImFont *> &getFonts();
 };
 
 } // namespace Nest

@@ -20,7 +20,10 @@ const char *getGLErrorStr(GLenum err);
     {                                                                                              \
         call;                                                                                      \
         const GLenum err = glGetError();                                                           \
-        assert(GL_NO_ERROR == err, #call "; OPENGL ERROR {}", getGLErrorStr(err));                 \
+        if (err != GL_NO_ERROR) {                                                                  \
+            LOG_ERROR("OPENGL ERROR: {}", getGLErrorStr(err));                                     \
+            assert(GL_NO_ERROR == err, #call "; OPENGL ERROR {}", getGLErrorStr(err));             \
+        }                                                                                          \
     }
 
 #define GL_CALL(call) GL_CALL_INTERNAL(call, NEST_ASSERT_F)

@@ -1,35 +1,29 @@
-#include "ImGui.hpp"
+#include "Nest/ImGui/ImGuiLayer.hpp"
 
-#include <Bird/Bird.hpp>
-#include <Foundation/PlatformDetection.hpp>
+#include <imgui.h>
 
-#ifdef PLATFORM_DESKTOP
-#    include "imgui_impl/imgui_impl_glfw.h"
-#elif defined(PLATFORM_ANDROID)
-#    include "imgui_impl/imgui_impl_android.cpp"
-#endif
-
-#ifdef RENDERER_OPENGL
-#    include "imgui_impl/imgui_impl_opengl3.h"
-#elif defined(RENDERER_VULKAN)
-#    include "imgui_impl/imgui_impl_vulkan.h"
-#endif
-
-#include "Nest/ImGui/ImGuiFonts.hpp"
-#include "imgui.h"
+#include "Nest/Application/Application.hpp"
 
 #include "Nest/ImGui/FontAwesome.h"
+#include "Nest/ImGui/Colors.hpp"
+#include "Nest/ImGui/ImGuiFonts.hpp"
+// ImGui platform impl
+#include "imgui_impl_nest.hpp"
+// ImGui renderer impl
+#include "imgui_impl_bird.hpp"
 
 namespace Nest {
 
-void setDarkThemeColors();
+ImGuiLayer::ImGuiLayer()
+    : Layer("ImGuiLayer") {}
 
-void ImGui_Init(void *windowHandle) {
+void ImGuiLayer::onAttach() {
     ImGui::CreateContext();
-
     ImGuiIO &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-#ifdef PLATFORM_DESKTOP
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 
     FontConfiguration fontBold;
     fontBold.fontName = "Bold";
@@ -58,12 +52,6 @@ void ImGui_Init(void *windowHandle) {
     fontAwesome.mergeWithLast = true;
     Fonts::add(fontAwesome);
 
-    FontConfiguration fontMono;
-    fontMono.fontName = "Mono";
-    fontMono.fileName = "SFMono/SFMono-Regular.otf";
-    fontMono.size = 17.0f;
-    Fonts::add(fontMono);
-
     FontConfiguration fontSmall;
     fontSmall.fontName = "Small";
     fontSmall.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
@@ -76,46 +64,41 @@ void ImGui_Init(void *windowHandle) {
     fontExtraSmall.size = 10.0f;
     Fonts::add(fontExtraSmall);
 
-    FontConfiguration fontExtraBig;
-    fontExtraBig.fontName = "ExtraBig";
-    fontExtraBig.fileName = "SF-Compact/SF-Compact-Display-Medium.otf";
-    fontExtraBig.size = 30.0f;
-    Fonts::add(fontExtraBig);
-    ImGui_ImplGlfw_InitForOpenGL(static_cast<GLFWwindow *>(windowHandle), true);
-#elif defined(PLATFORM_ANDROID)
-    ImGui_ImplAndroid_Init((ANativeWindow *)windowHandle);
-#endif
-    ImGui_ImplOpenGL3_Init();
-
+    // ImGui::StyleColorsDark();
+    // ImGui::StyleColorsClassic();
     setDarkThemeColors();
+
+    // Setup Platform/Renderer bindings
+    ImGui_ImplNest_Init();
+    ImGui_ImplBird_Init();
 }
 
-void ImGui_NewFrame() {
-#ifdef PLATFORM_DESKTOP
-    ImGui_ImplGlfw_NewFrame();
-#elif defined(PLATFORM_ANDROID)
-    ImGui_ImplAndroid_NewFrame();
-#endif
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui::NewFrame();
-}
-
-void ImGui_EndFrame() {
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-void ImGui_Shutdown() {
-#ifdef PLATFORM_DESKTOP
-    ImGui_ImplGlfw_Shutdown();
-#elif defined(PLATFORM_ANDROID)
-    ImGui_ImplAndroid_Shutdown();
-#endif
-    ImGui_ImplOpenGL3_Shutdown();
+void ImGuiLayer::onDetach() {
+    ImGui_ImplBird_Shutdown();
+    ImGui_ImplNest_Shutdown();
     ImGui::DestroyContext();
 }
 
-void setDarkThemeColors() {
+void ImGuiLayer::onEvent(Event *event) {
+    ImGui_ImplNest_HandleEvent(event);
+    if (!m_blockEvents) {
+        event->isHandled = false;
+    }
+}
+
+void ImGuiLayer::begin(double deltaTime) {
+    ImGui_ImplNest_NewFrame(deltaTime);
+    ImGui_ImplBird_NewFrame();
+    ImGui::NewFrame();
+}
+
+void ImGuiLayer::end() {
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplBird_RenderDrawData(ImGui::GetDrawData());
+}
+
+void ImGuiLayer::setDarkThemeColors() {
     auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.105f, 0.11f, 1.0f);
 

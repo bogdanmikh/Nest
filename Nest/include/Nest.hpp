@@ -7,6 +7,7 @@
 #include "Nest/Platform/PlatformDetection.hpp"
 #include "Nest/Renderer/Model3D.hpp"
 #include "Nest/Renderer/Texture.hpp"
+#include "Nest/GameLogic/Input.hpp"
 
 // Audio
 #include "Nest/Audio/AudioBase.hpp"

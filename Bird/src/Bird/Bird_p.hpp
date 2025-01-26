@@ -35,6 +35,7 @@ struct Context {
         , m_postCommandQueue(300000) {
 
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererInit);
+
         m_preCommandQueue.write(cmd);
         m_render.m_transientVb = createTransientVertexBuffer(TRANSIENT_VERTEX_BUFFER_SIZE);
         m_render.m_transientIb = createTransientIndexBuffer(TRANSIENT_INDEX_BUFFER_SIZE);
