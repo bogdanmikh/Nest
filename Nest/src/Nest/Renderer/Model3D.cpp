@@ -9,7 +9,7 @@ namespace Nest {
 Model3D::~Model3D() {
     for (uint32_t i = 0; i < m_meshes.size(); i++) {
         m_meshes[i]->deleteTextures();
-        DELETE(Foundation::getAllocator(), m_meshes[i]);
+        F_DELETE(Foundation::getAllocator(), m_meshes[i]);
     }
     m_meshes.clear();
 }
@@ -118,7 +118,7 @@ StaticMesh *Model3D::processMesh(aiMesh *mesh, const aiScene *scene) {
         indicesMemory,
         indices.size()
     );
-    Nest::StaticMesh *staticMesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    Nest::StaticMesh *staticMesh = F_NEW(Foundation::getAllocator(), Nest::StaticMesh);
     staticMesh->create(meshData, textures, m_shader);
     return staticMesh;
 }

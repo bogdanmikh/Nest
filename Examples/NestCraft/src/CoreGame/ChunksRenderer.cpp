@@ -16,9 +16,9 @@ void ChunksRenderer::onAttach() {
     textureCreate.m_magFiltering = Bird::NEAREST;
     m_texture = createTexture(textureCreate);
 
-    m_chunksStorage = NEW(Foundation::getAllocator(), ChunksStorage);
+    m_chunksStorage = F_NEW(Foundation::getAllocator(), ChunksStorage);
     LOG_INFO("WORLD GENERATED");
-    m_blocksCreation = NEW(Foundation::getAllocator(), BlocksCreation);
+    m_blocksCreation = F_NEW(Foundation::getAllocator(), BlocksCreation);
     m_blocksCreation->init(m_shader, m_texture);
     m_blocksCreation->setCamera(Nest::Application::get()->getWorldCamera());
     m_blocksCreation->setChunksStorage(m_chunksStorage);
@@ -118,6 +118,6 @@ void ChunksRenderer::onDetach() {
     for (int i = 0; i < ChunksStorage::SIZE_XYZ; ++i) {
         m_chunksStorage->chunks[i].getMesh()->deleteTextures();
     }
-    DELETE(Foundation::getAllocator(), m_blocksCreation);
-    DELETE(Foundation::getAllocator(), m_chunksStorage);
+    F_DELETE(Foundation::getAllocator(), m_blocksCreation);
+    F_DELETE(Foundation::getAllocator(), m_chunksStorage);
 }

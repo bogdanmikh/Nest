@@ -6,8 +6,6 @@
 
 #ifdef PLATFORM_IOS
 #    include <OpenGLES/ES3/gl.h>
-#elif defined(PLATFORM_ANDROID)
-#    include <GLES3/gl3.h>
 #elif defined(PLATFORM_DESKTOP)
 #    include <glad/glad.h>
 #endif
@@ -20,10 +18,7 @@ const char *getGLErrorStr(GLenum err);
     {                                                                                              \
         call;                                                                                      \
         const GLenum err = glGetError();                                                           \
-        if (err != GL_NO_ERROR) {                                                                  \
-            LOG_ERROR("OPENGL ERROR: {}", getGLErrorStr(err));                                     \
-            assert(GL_NO_ERROR == err, #call "; OPENGL ERROR {}", getGLErrorStr(err));             \
-        }                                                                                          \
+        assert(GL_NO_ERROR == err, #call "; OPENGL ERROR {}", getGLErrorStr(err));                 \
     }
 
 #define GL_CALL(call) GL_CALL_INTERNAL(call, NEST_ASSERT_F)

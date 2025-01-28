@@ -7,15 +7,15 @@
 
 void Chunk::init() {
     m_mesh = nullptr;
-    data = (Voxel *)ALLOC(Foundation::getAllocator(), sizeof(Voxel) * SIZE_X * SIZE_Y * SIZE_Z);
+    data = (Voxel *)F_ALLOC(Foundation::getAllocator(), sizeof(Voxel) * SIZE_X * SIZE_Y * SIZE_Z);
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         data[i] = Voxel();
     }
 }
 
 void Chunk::detach() {
-    DELETE(Foundation::getAllocator(), m_mesh);
-    DELETE(Foundation::getAllocator(), data);
+    F_DELETE(Foundation::getAllocator(), m_mesh);
+    F_DELETE(Foundation::getAllocator(), data);
 }
 
 void Chunk::set(int x, int y, int z, VoxelType type) {
@@ -40,7 +40,7 @@ uint8_t Chunk::getType(int indexX, int indexY, int indexZ) {
 }
 
 void Chunk::setMesh(Nest::StaticMesh *mesh) {
-    DELETE(Foundation::getAllocator(), m_mesh);
+    F_DELETE(Foundation::getAllocator(), m_mesh);
     m_mesh = mesh;
 }
 

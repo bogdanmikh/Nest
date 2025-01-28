@@ -1,19 +1,20 @@
 //
-// Created by Bogdan
+// Created by Admin on 14.03.2022.
 //
 
 #pragma once
 
 #include "Bird/Base.hpp"
-#include "Bird/Encoder/RenderDraw.hpp"
 #include "Bird/HandleAllocator.hpp"
 #include "Bird/VertexBufferLayoutData.hpp"
+#include "Bird/Encoder/RenderDraw.hpp"
+
+#include <Foundation/CommandBuffer.hpp>
 
 namespace Bird {
 
 /// Класс используемый для хранения данных о кадре.
-/// Тут хранятся буферы, которые существуют только один кадр и данные о
-/// графических вызовах
+/// Тут хранятся буферы, которые существуют только один кадр и данные о графических вызовах
 class Frame {
 public:
     Frame();
@@ -23,8 +24,6 @@ public:
     void setVertexBuffer(VertexBufferHandle handle, intptr_t offset);
     void setShader(ProgramHandle handle);
     void setVertexLayout(VertexLayoutHandle handle);
-    void setIsIndexed(bool value);
-    void setNumberOfElements(uint32_t count);
     void setScissorRect(Rect rect);
     void
     setUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count);
@@ -45,6 +44,8 @@ public:
     uint32_t getDrawCallsCount();
     RenderDraw *getDrawCalls();
     void reset();
+    Foundation::CommandBuffer &getPreCommandQueue();
+    Foundation::CommandBuffer &getPostCommandQueue();
 
     TransientIndexBuffer m_transientIb;
     TransientVertexBuffer m_transientVb;
@@ -60,6 +61,8 @@ private:
     FreeHandleQueue<VertexLayoutHandle, MAX_BUFFER_LAYOUTS> m_vertexLayoutsFreeHandle;
     FreeHandleQueue<VertexBufferHandle, MAX_VERTEX_BUFFERS> m_vertexBuffersFreeHandle;
     FreeHandleQueue<IndexBufferHandle, MAX_INDEX_BUFFERS> m_indexBuffersFreeHandle;
+    Foundation::CommandBuffer m_preCommandQueue;
+    Foundation::CommandBuffer m_postCommandQueue;
 };
 
 } // namespace Bird

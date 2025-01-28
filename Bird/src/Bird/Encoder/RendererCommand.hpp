@@ -1,11 +1,11 @@
 //
-// Created by Bogdan
+// Created by Admin on 05.03.2022.
 //
 
 #pragma once
 
-#include "Bird/RendererI.hpp"
 #include "Bird/VertexBufferLayoutData.hpp"
+#include "Bird/RendererI.hpp"
 
 #include <Foundation/CommandBuffer.hpp>
 
@@ -30,7 +30,9 @@ enum RendererCommandType {
     UpdateDynamicVertexBuffer,
     DestroyVertexBuffer,
     CreateVertexLayout,
-    DestroyVertexLayout
+    DestroyVertexLayout,
+    ReadTexture,
+    ReadFrameBuffer
 };
 
 struct CreateFrameBufferCommand : Foundation::CommandBuffer::Command {
@@ -235,6 +237,35 @@ struct DeleteVertexLayoutCommand : Foundation::CommandBuffer::Command {
     DeleteVertexLayoutCommand(VertexLayoutHandle handle)
         : Command(RendererCommandType::DestroyVertexLayout)
         , handle(handle) {}
+};
+
+struct ReadTextureCommand : Foundation::CommandBuffer::Command {
+    TextureHandle handle;
+    void *data;
+
+    ReadTextureCommand(TextureHandle handle, void *data)
+        : Command(RendererCommandType::ReadTexture)
+        , handle(handle)
+        , data(data) {}
+};
+
+struct ReadFrameBufferCommand : Foundation::CommandBuffer::Command {
+    FrameBufferHandle handle;
+    int attachIndex;
+    int x, y, width, height;
+    void *data;
+
+    ReadFrameBufferCommand(
+        FrameBufferHandle handle, int attachIndex, int x, int y, int width, int height, void *data
+    )
+        : Command(RendererCommandType::ReadFrameBuffer)
+        , handle(handle)
+        , attachIndex(attachIndex)
+        , x(x)
+        , y(y)
+        , width(width)
+        , height(height)
+        , data(data) {}
 };
 
 } // namespace Bird

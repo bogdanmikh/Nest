@@ -23,13 +23,6 @@ struct Uniform {
         , type(type)
         , alignment(0)
         , size(0) {}
-
-    Uniform()
-        : handle(0)
-        , name(nullptr)
-        , data(nullptr)
-        , type(UniformType::Sampler)
-        , size(0) {}
 };
 
 } // namespace Bird

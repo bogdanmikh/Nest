@@ -1,15 +1,16 @@
 //
-// Created by Bogdan
+// Created by Admin on 14.03.2022.
 //
 
 #pragma once
 
-#include "Bird/GraphicsContext.hpp"
 #include "Bird/RendererI.hpp"
+#include "Bird/GraphicsContext.hpp"
+#include "Platform/RendererImpl/OpenGL/Extensions/OpenGLExtensions.hpp"
 #include "OpenGLFrameBuffer.hpp"
-#include "OpenGLIndexBuffer.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLTexture.hpp"
+#include "OpenGLIndexBuffer.hpp"
 #include "OpenGLVertexBuffer.hpp"
 
 namespace Bird {
@@ -20,9 +21,17 @@ public:
     ~RendererOpenGL() override;
     RendererType getRendererType() const override;
     void flip() override;
-    void clear() override;
     void
     createFrameBuffer(FrameBufferHandle handle, FrameBufferSpecification specification) override;
+    void readFrameBuffer(
+        Bird::FrameBufferHandle handle,
+        int attachIndex,
+        int x,
+        int y,
+        int width,
+        int height,
+        void *data
+    ) override;
     void deleteFrameBuffer(FrameBufferHandle handle) override;
     void createProgram(ProgramHandle handle, ProgramCreate create) override;
     void deleteShader(ProgramHandle handle) override;
@@ -63,10 +72,10 @@ public:
     void deleteVertexBuffer(VertexBufferHandle handle) override;
     void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) override;
     void deleteVertexLayout(VertexLayoutHandle handle) override;
+    void readTexture(Bird::TextureHandle handle, void *data) override;
     void setUniform(const Uniform &uniform) override;
     void setTexture(TextureHandle handle, uint32_t slot) override;
     void submit(Frame *frame, View *views) override;
-    int getNativeTextureHandle(TextureHandle textureHandle) override;
 
     static RendererOpenGL *s_instance;
     OpenGLTexture &getTexture(TextureHandle handle) {

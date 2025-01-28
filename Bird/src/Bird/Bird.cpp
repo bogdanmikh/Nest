@@ -1,5 +1,5 @@
 //
-// Created by Bogdan
+// Created by Admin on 10.03.2022.
 //
 
 #include "Bird/Bird_p.hpp"
@@ -9,20 +9,21 @@ namespace Bird {
 // MARK: - PUBLIC METHODS IMPL
 
 static Context *s_context = nullptr;
-// static const int CONTEXT_ALIGNMENT = 64;
+static const int CONTEXT_ALIGNMENT = 64;
 
 void initialize() {
     BIRD_LOG("BIRD INIT BEGIN");
     BIRD_LOG("ALLOCATING BIRD CONTEXT, {} BYTES", sizeof(Context));
     BIRD_LOG("FRAME DATA SIZE: {} BYTES", sizeof(Frame));
-    s_context = NEW(Foundation::getAllocator(), Context);
-    // Вызвано из главного потока: можно стартовать поток отрисовки.
+    s_context = F_ALIGNED_NEW(Foundation::getAllocator(), Context, CONTEXT_ALIGNMENT);
+    s_context->init();
     BIRD_LOG("BIRD INIT END");
 }
 
 void terminate() {
     BIRD_LOG("BIRD SHUTDOWN BEGIN");
-    DELETE(Foundation::getAllocator(), s_context);
+    s_context->shutdown();
+    F_ALIGNED_DELETE(Foundation::getAllocator(), s_context, CONTEXT_ALIGNMENT);
     s_context = nullptr;
     BIRD_LOG("BIRD SHUTDOWN END");
 }
@@ -30,6 +31,13 @@ void terminate() {
 FrameBufferHandle createFrameBuffer(FrameBufferSpecification specification) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     return s_context->createFrameBuffer(specification);
+}
+
+uint32_t readFrameBuffer(
+    FrameBufferHandle handle, int attachIndex, int x, int y, int width, int height, void *data
+) {
+    NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
+    return s_context->readFrameBuffer(handle, attachIndex, x, y, width, height, data);
 }
 
 void deleteFrameBuffer(FrameBufferHandle handle) {
@@ -123,6 +131,11 @@ void deleteVertexLayout(VertexLayoutHandle handle) {
     s_context->deleteVertexLayout(handle);
 }
 
+uint32_t readTexture(TextureHandle handle, void *data) {
+    NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
+    return s_context->readTexture(handle, data);
+}
+
 void allocTransientVertexBuffer(TransientVertexBuffer *buffer, uint32_t size) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     s_context->allocTransientVertexBuffer(buffer, size);
@@ -148,6 +161,11 @@ uint32_t frame() {
 void setViewClear(ViewId id, uint32_t color) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     s_context->setViewClear(id, color);
+}
+
+void setViewClearAttachments(ViewId id, std::vector<Clear> clear) {
+    NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
+    s_context->setViewClearAttachments(id, clear);
 }
 
 void setViewport(ViewId id, Rect rect) {
@@ -195,11 +213,6 @@ void setTexture(TextureHandle textureHandle, uint32_t slot) {
     s_context->setTexture(textureHandle, slot);
 }
 
-int getNativeTextureHandle(TextureHandle textureHandle) {
-    NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
-    return s_context->getNativeTextureHandle(textureHandle);
-}
-
 void setVertexLayout(VertexLayoutHandle handle) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     s_context->setVertexLayout(handle);
@@ -208,10 +221,6 @@ void setVertexLayout(VertexLayoutHandle handle) {
 void submit(ViewId id) {
     NEST_ASSERT(s_context != nullptr, "BIRD NOT INITIALIZED");
     s_context->submit(id);
-}
-
-void flip() {
-    s_context->flip();
 }
 
 } // namespace Bird

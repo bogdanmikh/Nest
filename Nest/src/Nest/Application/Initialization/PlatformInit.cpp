@@ -17,7 +17,7 @@ namespace Nest {
 
 Window *createWindow(ApplicationStartupSettings &settings) {
 #ifdef PLATFORM_DESKTOP
-    return NEW(Foundation::getAllocator(), GlfwWindow)(
+    return F_NEW(Foundation::getAllocator(), GlfwWindow)(
         settings.windowTitle, settings.windowSize, settings.isFullScreen, settings.isMaximized
     );
 #elif defined(PLATFORM_IOS)

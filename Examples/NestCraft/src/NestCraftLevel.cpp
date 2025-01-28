@@ -9,15 +9,15 @@
 void NestCraftLevel::onAttach() {
     m_viewport.init();
 
-    auto cameraMove = NEW(Foundation::getAllocator(), CameraMove);
+    auto cameraMove = F_NEW(Foundation::getAllocator(), CameraMove);
     addEntity(cameraMove);
 
-    auto chunksRenderer = NEW(Foundation::getAllocator(), ChunksRenderer);
+    auto chunksRenderer = F_NEW(Foundation::getAllocator(), ChunksRenderer);
     chunksRenderer->setFbViewId(m_viewport.getViewId());
     //    chunksRenderer->setFbViewId(0);
     addEntity(chunksRenderer);
 
-    auto managerEffects = NEW(Foundation::getAllocator(), ManagerEffects);
+    auto managerEffects = F_NEW(Foundation::getAllocator(), ManagerEffects);
     managerEffects->setFBTexture(m_viewport.getTextureHandle());
     managerEffects->setViewId(m_viewport.getViewId());
     addEntity(managerEffects);
@@ -38,7 +38,7 @@ void NestCraftLevel::onUpdate(double deltaTime) {
 void NestCraftLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
-        DELETE(Foundation::getAllocator(), entity);
+        F_DELETE(Foundation::getAllocator(), entity);
     }
 }
 

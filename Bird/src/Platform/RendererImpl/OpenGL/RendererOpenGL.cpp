@@ -1,20 +1,18 @@
 //
-// Created by Bogdan
+// Created by Admin on 14.03.2022.
 //
 
 #include "RendererOpenGL.hpp"
 #include "OpenGLBase.hpp"
 
-#include <Foundation/Allocator.hpp>
 #include <Foundation/Assert.hpp>
+#include <Foundation/Allocator.hpp>
 #include <Foundation/Logger.hpp>
 
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
 #    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
-#elif defined(PLATFORM_ANDROID)
-#    include "Platform/RendererImpl/Context/AndroidContext.hpp"
 #endif
 
 namespace Bird {
@@ -31,7 +29,7 @@ void gpuErrorCallback(
     const void *userParam
 ) {
     LOG_INFO(message);
-    // LOG_CRITICAL("OPENGL ERROR");
+    LOG_CRITICAL("OPENGL ERROR");
 }
 
 const char *getGLErrorStr(GLenum err) {
@@ -56,38 +54,37 @@ const char *getGLErrorStr(GLenum err) {
 RendererOpenGL::RendererOpenGL() {
     s_instance = this;
 #ifdef PLATFORM_IOS
-    context = NEW(Foundation::getAllocator(), GlesContext);
+    context = F_NEW(Foundation::getAllocator(), GlesContext);
 #elif defined(PLATFORM_DESKTOP)
-    context = NEW(Foundation::getAllocator(), OpenGLContext);
-#elif defined(PLATFORM_ANDROID)
-    context = NEW(Foundation::getAllocator(), AndroidContext);
+    context = F_NEW(Foundation::getAllocator(), OpenGLContext);
 #endif
     context->create();
     GL_CALL(glEnable(GL_BLEND));
     GL_CALL(glDisable(GL_STENCIL_TEST));
+    // GL_CALL(glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
     GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     // glBlendEquation(GL_FUNC_ADD);
-    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE,
-    // GL_ONE_MINUS_SRC_ALPHA); glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    BIRD_LOG("OPENGL VERSION {}", glGetString(GL_VERSION));
+    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    BIRD_LOG("OPENGL VERSION {}", (const char *)glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(gpuErrorCallback, nullptr);
+    // glEnable(GL_DEBUG_OUTPUT);
+    // glDebugMessageCallback(gpuErrorCallback, nullptr);
 #endif
     GL_CALL(glGenVertexArrays(1, &m_uselessVao));
     GL_CALL(glBindVertexArray(m_uselessVao));
+
+    OpenGLExtensions::initialize();
 }
 
 RendererOpenGL::~RendererOpenGL() {
     GL_CALL(glDeleteVertexArrays(1, &m_uselessVao));
-    DELETE(Foundation::getAllocator(), context);
+    F_DELETE(Foundation::getAllocator(), context);
     s_instance = nullptr;
 }
 
 RendererType RendererOpenGL::getRendererType() const {
 #ifdef PLATFORM_IOS
-    return RendererType::OpenGLES;
-#elif defined(PLATFORM_ANDROID)
     return RendererType::OpenGLES;
 #elif defined(PLATFORM_DESKTOP)
     return RendererType::OpenGL;
@@ -98,15 +95,16 @@ void RendererOpenGL::flip() {
     context->flip();
 }
 
-void RendererOpenGL::clear() {
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
-    GL_CALL(glClearColor(0, 0, 0, 1));
-}
-
 void RendererOpenGL::createFrameBuffer(
     FrameBufferHandle handle, FrameBufferSpecification specification
 ) {
     frameBuffers[handle.id].create(specification);
+}
+
+void RendererOpenGL::readFrameBuffer(
+    FrameBufferHandle handle, int attachIndex, int x, int y, int width, int height, void *data
+) {
+    frameBuffers[handle.id].readPixels(attachIndex, x, y, width, height, data);
 }
 
 void RendererOpenGL::deleteFrameBuffer(FrameBufferHandle handle) {
@@ -203,6 +201,10 @@ void RendererOpenGL::createVertexLayout(VertexLayoutHandle handle, VertexBufferL
 
 void RendererOpenGL::deleteVertexLayout(VertexLayoutHandle handle) {}
 
+void RendererOpenGL::readTexture(Bird::TextureHandle handle, void *data) {
+    textures[handle.id].readPixels(data);
+}
+
 void RendererOpenGL::setUniform(const Uniform &uniform) {
     shaders[uniform.handle.id].bind();
     switch (uniform.type) {
@@ -230,16 +232,10 @@ void RendererOpenGL::setUniform(const Uniform &uniform) {
             return;
     }
     LOG_ERROR("UNIFORM TYPE IS UNDEFINED");
-
-    LOG_ERROR("UNIFORM TYPE IS UNDEFINED");
 }
 
 void RendererOpenGL::setTexture(TextureHandle handle, uint32_t slot) {
     textures[handle.id].bind(slot);
-}
-
-int RendererOpenGL::getNativeTextureHandle(TextureHandle textureHandle) {
-    return textures[textureHandle.id].getId();
 }
 
 void RendererOpenGL::submit(Frame *frame, View *views) {
@@ -255,7 +251,8 @@ void RendererOpenGL::submit(Frame *frame, View *views) {
         );
     }
     if (!frame->getDrawCallsCount()) {
-        clear();
+        GL_CALL(glClearColor(0, 0, 0, 1));
+        GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
         return;
     }
     ViewId viewId = -1;
@@ -292,16 +289,22 @@ void RendererOpenGL::viewChanged(View &view) {
     uint8_t b = rgba >> 8;
     uint8_t a = rgba >> 0;
     GL_CALL(glClearColor((r) / 255.f, (g) / 255.f, (b) / 255.f, (a) / 255.f));
-    //    GL_CALL(glClearColor(1., 0., 0., 1.));
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    if (!view.m_frameBuffer.isValid()) {
+        return;
+    }
+    for (auto clear : view.m_clearAttachments) {
+        frameBuffers[view.m_frameBuffer.id].clearIntAttachment(clear.attachmentIndex, clear.value);
+    }
 }
 
 void RendererOpenGL::submit(RenderDraw *draw) {
     // TODO: Capture time
     shaders[draw->m_shader.id].bind();
-    for (size_t u = 0; u < draw->m_uniformsCount; u++) {
-        Uniform &uniform = draw->m_uniformBuffer[u];
-        setUniform(uniform);
+    draw->m_uniformBuffer.finishWriting();
+    Uniform *uniform;
+    while ((uniform = draw->m_uniformBuffer.readUniform()) != nullptr) {
+        setUniform(*uniform);
     }
     for (size_t t = 0; t < draw->m_textureBindingsCount; t++) {
         TextureBinding &textureBinding = draw->m_textureBindings[t];

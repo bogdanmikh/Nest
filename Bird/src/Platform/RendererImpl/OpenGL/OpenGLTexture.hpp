@@ -1,5 +1,5 @@
 //
-// Created by Bogdan
+// Created by Admin on 11.02.2022.
 //
 
 #pragma once
@@ -11,7 +11,7 @@ namespace Bird {
 class OpenGLTexture {
 public:
     OpenGLTexture();
-    void create(const TextureCreate &create);
+    void create(TextureCreate &create);
     void resize(uint32_t width, uint32_t height);
     uint16_t getWidth() {
         return m_create.m_width;
@@ -30,10 +30,14 @@ public:
         return m_create.m_format;
     }
 
+    void readPixels(void *data);
+
 private:
     TextureCreate m_create;
     uint32_t m_id;
     uint32_t m_target;
+    uint32_t m_format;
+    uint32_t m_type;
 };
 
 } // namespace Bird

@@ -1,5 +1,5 @@
-#include "Foundation/Foundation.hpp"
 #include "Foundation/PlatformDetection.hpp"
+#include "Foundation/Foundation.hpp"
 
 #include "Foundation/Thread.hpp"
 
@@ -8,9 +8,9 @@
 #elif defined(PLATFORM_LINUX)
 #    include <sys/prctl.h>
 #elif defined(PLATFORM_WINDOWS)
-#    include <errno.h>
-#    include <limits.h>
 #    include <windows.h>
+#    include <limits.h>
+#    include <errno.h>
 #endif
 
 namespace Foundation {
@@ -155,14 +155,13 @@ void Thread::setThreadName(const char *_name) {
 #elif defined(PLATFORM_LINUX)
     pthread_setname_np(ti->m_handle, _name);
 #elif defined(PLATFORM_WINDOWS)
-    // Try to use the new thread naming API from Win10 Creators update onwards if
-    // we have it
+    // Try to use the new thread naming API from Win10 Creators update onwards if we have it
     typedef HRESULT(WINAPI * SetThreadDescriptionProc)(HANDLE, PCWSTR);
     SetThreadDescriptionProc SetThreadDescription = (SetThreadDescriptionProc
     )::GetProcAddress((HMODULE)GetModuleHandleA("Kernel32.dll"), "SetThreadDescription");
     // SetThreadDescriptionProc SetThreadDescription =
-    //     dlsym<SetThreadDescriptionProc>((void
-    //     *)GetModuleHandleA("Kernel32.dll"), "SetThreadDescription");
+    //     dlsym<SetThreadDescriptionProc>((void *)GetModuleHandleA("Kernel32.dll"),
+    //     "SetThreadDescription");
 
     if (NULL != SetThreadDescription) {
         uint32_t length = (uint32_t)strlen(_name) + 1;

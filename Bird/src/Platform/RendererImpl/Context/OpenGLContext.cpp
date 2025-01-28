@@ -1,13 +1,13 @@
 //
-// Created by Bogdan
+// Created by Admin on 11.02.2022.
 //
 
 #include "OpenGLContext.hpp"
 #include "Bird/PlatformData.hpp"
 
 #include <Foundation/Logger.hpp>
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Bird {
 

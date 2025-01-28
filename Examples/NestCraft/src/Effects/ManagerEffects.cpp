@@ -26,31 +26,31 @@ void ManagerEffects::onAttach() {
     m_activeEffects[4] = false;
 
     // default
-    m_effects[0] = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[0] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[0]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstDefault.glsl");
     m_effects[0]->setFBTexture(m_textureHandle);
     m_effects[0]->setViewId(0);
     m_effects[0]->onAttach();
     // pixels
-    m_effects[1] = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[1] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[1]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstPixel.glsl");
     m_effects[1]->setFBTexture(m_textureHandle);
     m_effects[1]->setViewId(m_viewId);
     m_effects[1]->onAttach();
     // wave
-    m_effects[2] = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[2] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[2]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstWave.glsl");
     m_effects[2]->setFBTexture(m_textureHandle);
     m_effects[2]->setViewId(m_viewId);
     m_effects[2]->onAttach();
     // tv
-    m_effects[3] = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[3] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[3]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstTv.glsl");
     m_effects[3]->setFBTexture(m_textureHandle);
     m_effects[3]->setViewId(m_viewId);
     m_effects[3]->onAttach();
     // Lens Dispersion
-    m_effects[4] = NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[4] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[4]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstLensDispersion.glsl");
     m_effects[4]->setFBTexture(m_textureHandle);
     m_effects[4]->setViewId(m_viewId);
@@ -113,6 +113,6 @@ void ManagerEffects::onImGuiRender() {
 void ManagerEffects::onDetach() {
     for (int i = 0; i < m_effects.size(); ++i) {
         m_effects[i]->onDetach();
-        DELETE(Foundation::getAllocator(), m_effects[i]);
+        F_DELETE(Foundation::getAllocator(), m_effects[i]);
     }
 }

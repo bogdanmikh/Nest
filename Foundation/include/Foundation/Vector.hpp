@@ -2,7 +2,6 @@
 
 #include "Allocator.hpp"
 #include "Assert.hpp"
-#include "Logger.hpp"
 
 #include <cstdlib>
 
@@ -71,12 +70,12 @@ public:
     }
 
     inline T &operator[](int i) {
-        NEST_ASSERT(i >= 0 && i < m_size, "index out of bounds");
+        PND_ASSERT(i >= 0 && i < m_size, "index out of bounds");
         return m_data[i];
     }
 
     inline const T &operator[](int i) const {
-        NEST_ASSERT(i >= 0 && i < m_size, "index out of bounds");
+        PND_ASSERT(i >= 0 && i < m_size, "index out of bounds");
         return m_data[i];
     }
 
@@ -97,22 +96,22 @@ public:
     }
 
     inline T &front() {
-        NEST_ASSERT(m_size > 0, "vector is empty");
+        PND_ASSERT(m_size > 0, "vector is empty");
         return m_data[0];
     }
 
     inline const T &front() const {
-        NEST_ASSERT(m_size > 0, "vector is empty");
+        PND_ASSERT(m_size > 0, "vector is empty");
         return m_data[0];
     }
 
     inline T &back() {
-        NEST_ASSERT(m_size > 0, "vector is empty");
+        PND_ASSERT(m_size > 0, "vector is empty");
         return m_data[m_size - 1];
     }
 
     inline const T &back() const {
-        NEST_ASSERT(m_size > 0, "vector is empty");
+        PND_ASSERT(m_size > 0, "vector is empty");
         return m_data[m_size - 1];
     }
 
@@ -130,7 +129,7 @@ public:
     inline void reserve(int new_capacity) {
         if (new_capacity <= m_capacity)
             return;
-        T *new_data = (T *)ALLOC(getAllocator(), (size_t)new_capacity * sizeof(T));
+        T *new_data = (T *)F_ALLOC(getAllocator(), (size_t)new_capacity * sizeof(T));
         if (m_data) {
             memcpy(new_data, m_data, (size_t)m_size * sizeof(T));
             FREE(getAllocator(), m_data);
@@ -144,13 +143,12 @@ public:
             return;
         if (m_data)
             FREE(getAllocator(), m_data);
-        m_data = (T *)ALLOC(getAllocator(), (size_t)new_capacity * sizeof(T));
+        m_data = (T *)F_ALLOC(getAllocator(), (size_t)new_capacity * sizeof(T));
         m_capacity = new_capacity;
     }
 
-    // NB: It is illegal to call push_back/push_front/insert with a reference
-    // pointing inside the ImVector data itself! e.g. v.push_back(v[10]) is
-    // forbidden.
+    // NB: It is illegal to call push_back/push_front/insert with a reference pointing inside the
+    // ImVector data itself! e.g. v.push_back(v[10]) is forbidden.
     inline void push_back(const T &v) {
         if (m_size == m_capacity)
             reserve(growCapacity(m_size + 1));
@@ -159,7 +157,7 @@ public:
     }
 
     inline void pop_back() {
-        NEST_ASSERT(m_size > 0, "vector is empty");
+        PND_ASSERT(m_size > 0, "vector is empty");
         m_size--;
     }
 
@@ -171,7 +169,7 @@ public:
     }
 
     inline T *erase(const T *it) {
-        NEST_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
+        PND_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
         const ptrdiff_t off = it - m_data;
         memmove(m_data + off, m_data + off + 1, ((size_t)m_size - (size_t)off - 1) * sizeof(T));
         m_size--;
@@ -179,7 +177,7 @@ public:
     }
 
     inline T *erase(const T *it, const T *it_last) {
-        NEST_ASSERT(
+        PND_ASSERT(
             it >= m_data && it < m_data + m_size && it_last >= it && it_last <= m_data + m_size,
             "element not found"
         );
@@ -195,7 +193,7 @@ public:
     }
 
     inline T *erase_unsorted(const T *it) {
-        NEST_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
+        PND_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
         const ptrdiff_t off = it - m_data;
         if (it < m_data + m_size - 1)
             memcpy(m_data + off, m_data + m_size - 1, sizeof(T));
@@ -204,7 +202,7 @@ public:
     }
 
     inline T *insert(const T *it, const T &v) {
-        NEST_ASSERT(it >= m_data && it <= m_data + m_size, "element not found");
+        PND_ASSERT(it >= m_data && it <= m_data + m_size, "element not found");
         const ptrdiff_t off = it - m_data;
         if (m_size == m_capacity)
             reserve(growCapacity(m_size + 1));
@@ -265,7 +263,7 @@ public:
     }
 
     inline int index_from_ptr(const T *it) const {
-        NEST_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
+        PND_ASSERT(it >= m_data && it < m_data + m_size, "element not found");
         const ptrdiff_t off = it - m_data;
         return (int)off;
     }

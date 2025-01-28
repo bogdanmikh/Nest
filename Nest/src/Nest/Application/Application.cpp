@@ -39,10 +39,10 @@ Application::Application(ApplicationStartupSettings &settings)
 
     Bird::initialize();
 
-    m_ImGuiLayer = NEW(Foundation::getAllocator(), ImGuiLayer);
+    m_ImGuiLayer = F_NEW(Foundation::getAllocator(), ImGuiLayer);
     m_ImGuiLayer->onAttach();
 
-    m_worldCamera = NEW(Foundation::getAllocator(), WorldCamera);
+    m_worldCamera = F_NEW(Foundation::getAllocator(), WorldCamera);
     m_worldCamera->setPosition(0, 0, 0);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
     m_worldCamera->updateAspectRatio(m_window->getSize().x / m_window->getSize().y);
@@ -59,9 +59,9 @@ Application::~Application() {
     if (m_layer) {
         m_layer->onDetach();
     }
-    DELETE(Foundation::getAllocator(), m_ImGuiLayer);
-    DELETE(Foundation::getAllocator(), m_worldCamera);
-    DELETE(Foundation::getAllocator(), m_window);
+    F_DELETE(Foundation::getAllocator(), m_ImGuiLayer);
+    F_DELETE(Foundation::getAllocator(), m_worldCamera);
+    F_DELETE(Foundation::getAllocator(), m_window);
     delete m_layer;
 }
 
@@ -122,9 +122,7 @@ void Application::loop() {
         m_window->pollEvents();
         Input::nextFrame();
         processEvents();
-        Bird::renderFrame();
         Bird::frame();
-        Bird::flip();
     }
 }
 

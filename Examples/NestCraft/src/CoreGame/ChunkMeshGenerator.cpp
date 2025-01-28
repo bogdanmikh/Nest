@@ -25,14 +25,14 @@ Nest::StaticMesh *generateMesh(
     Chunk &chunk = chunksStorage->chunks
                        [chunkIndexY * ChunksStorage::SIZE_X * ChunksStorage::SIZE_Z +
                         chunkIndexX * ChunksStorage::SIZE_X + chunkIndexZ];
-    Vertex *vertices = (Vertex *)ALLOC(
+    Vertex *vertices = (Vertex *)F_ALLOC(
         Foundation::getAllocator(),
         sizeof(Vertex) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24
     );
     for (int i = 0; i < Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 24; ++i) {
         vertices[i] = Vertex();
     }
-    uint32_t *indices = (uint32_t *)ALLOC(
+    uint32_t *indices = (uint32_t *)F_ALLOC(
         Foundation::getAllocator(),
         sizeof(uint32_t) * Chunk::SIZE_X * Chunk::SIZE_Y * Chunk::SIZE_Z * 36
     );
@@ -458,7 +458,7 @@ Nest::StaticMesh *generateMesh(
     Nest::MeshData meshData(
         vertexLayout, verticesMemory, verticesCount * sizeof(Vertex), indicesMemory, indicesCount
     );
-    auto *mesh = NEW(Foundation::getAllocator(), Nest::StaticMesh);
+    auto *mesh = F_NEW(Foundation::getAllocator(), Nest::StaticMesh);
     mesh->create(meshData, {"texture1", textureHandle}, programHandle);
     return mesh;
 }

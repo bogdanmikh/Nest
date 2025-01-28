@@ -15,7 +15,7 @@ void NightSky::onAttach() {
     //    };
     Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
     Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
-    m_nightSky = NEW(Foundation::getAllocator(), Nest::SkyComponent)(
+    m_nightSky = F_NEW(Foundation::getAllocator(), Nest::SkyComponent)(
         {"Textures/Hdr/field.jpeg", skyPathToVertexShader, skyPathToFragmentShader}
     );
 }
@@ -29,7 +29,7 @@ void NightSky::onUpdate(double deltaTime) {
 void NightSky::onImGuiRender() {}
 
 void NightSky::onDetach() {
-    DELETE(Foundation::getAllocator(), m_nightSky);
+    F_DELETE(Foundation::getAllocator(), m_nightSky);
 }
 
 Nest::TransformComponent &NightSky::getTransform() {}

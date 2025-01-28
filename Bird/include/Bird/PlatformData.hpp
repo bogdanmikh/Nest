@@ -1,5 +1,5 @@
 //
-// Created by Bogdan
+// Created by Admin on 18.02.2022.
 //
 
 #pragma once
@@ -15,8 +15,6 @@ public:
     void *layer;
     void *nativeWindowHandle;
     void *renderingContext;
-
-    void *assetManager; // for android
 };
 
 } // namespace Bird

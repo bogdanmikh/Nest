@@ -1,5 +1,5 @@
 //
-// Created by Bogdan
+// Created by Admin on 10.03.2022.
 //
 
 #pragma once
@@ -14,6 +14,9 @@ void initialize();
 void terminate();
 // MARK: - Command buffer
 FrameBufferHandle createFrameBuffer(FrameBufferSpecification specification);
+uint32_t readFrameBuffer(
+    FrameBufferHandle handle, int attachIndex, int x, int y, int width, int height, void *data
+);
 void deleteFrameBuffer(FrameBufferHandle handle);
 ProgramHandle createProgram(ProgramCreate create);
 void deleteProgram(ProgramHandle handle);
@@ -41,8 +44,10 @@ VertexBufferHandle createDynamicVertexBuffer(
 void updateDynamicVertexBuffer(VertexBufferHandle handle, Foundation::Memory data, uint32_t size);
 void deleteVertexBuffer(VertexBufferHandle handle);
 void deleteVertexLayout(VertexLayoutHandle handle);
+uint32_t readTexture(TextureHandle handle, void *data);
 // MARK: - Encoder setup
 void setViewClear(ViewId id, uint32_t color);
+void setViewClearAttachments(ViewId id, std::vector<Clear> clear);
 void setViewport(ViewId id, Rect rect);
 void setViewFrameBuffer(ViewId id, FrameBufferHandle frameBuffer);
 void setState(uint32_t state);
@@ -59,15 +64,13 @@ void setIndexBuffer(IndexBufferHandle handle, intptr_t offset, size_t count);
 void setVertexLayout(VertexLayoutHandle handle);
 void setShader(ProgramHandle handle);
 void setTexture(TextureHandle textureHandle, uint32_t slot);
-int getNativeTextureHandle(TextureHandle textureHandle);
 /// Submit draw call
 void submit(ViewId id);
 // MARK: - Main functions
 /// Process all requests to gpu (from rendering thread)
 bool renderFrame();
-/// Frame processing finished (from app thread). Wait for renderer to finish
-/// rendering frame. Returns frame number
+/// Frame processing finished (from app thread). Wait for renderer to finish rendering frame.
+/// Returns frame number
 uint32_t frame();
-void flip();
 
 } // namespace Bird

@@ -1,9 +1,9 @@
 //
-// Created by Bogdan
+// Created by Admin on 11.02.2022.
 //
 
-#include "OpenGLTexture.hpp"
 #include "Bird/PlatformData.hpp"
+#include "OpenGLTexture.hpp"
 #include "Texture/TextureFormat.hpp"
 
 #include "OpenGLBase.hpp"
@@ -12,9 +12,11 @@ namespace Bird {
 
 OpenGLTexture::OpenGLTexture()
     : m_id(-1)
-    , m_create() {}
+    , m_create()
+    , m_format(0)
+    , m_type(0) {}
 
-void OpenGLTexture::create(const TextureCreate &create) {
+void OpenGLTexture::create(TextureCreate &create) {
     NEST_ASSERT(m_id == -1, "TEXTURE ALREADY CREATED");
     m_create = create;
     BIRD_LOG("CREATE TEXTURE, w: {}, h: {}", create.m_width, create.m_height);
@@ -24,9 +26,9 @@ void OpenGLTexture::create(const TextureCreate &create) {
     m_target = target;
     GL_CALL(glBindTexture(target, m_id));
 
-    GLenum format = s_textureFormat[create.m_format].m_fmt;
+    m_format = s_textureFormat[create.m_format].m_fmt;
     GLenum internalFormat = s_textureFormat[create.m_format].m_internalFmt;
-    GLenum type = s_textureFormat[create.m_format].m_type;
+    m_type = s_textureFormat[create.m_format].m_type;
 
     GLenum imageTarget = m_create.m_isCubeMap ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D;
     const uint16_t numSides = create.m_isCubeMap ? 6 : 1;
@@ -34,7 +36,15 @@ void OpenGLTexture::create(const TextureCreate &create) {
     uint8_t *data = (uint8_t *)create.m_data.data;
     for (uint16_t side = 0; side < numSides; ++side) {
         GL_CALL(glTexImage2D(
-            imageTarget, 0, format, create.m_width, create.m_height, 0, internalFormat, type, data
+            imageTarget,
+            0,
+            m_format,
+            create.m_width,
+            create.m_height,
+            0,
+            internalFormat,
+            m_type,
+            data
         ));
         imageTarget++;
         data += imageSize;
@@ -84,6 +94,11 @@ void OpenGLTexture::bind(unsigned int slot) {
 
 void OpenGLTexture::unbind() {
     GL_CALL(glBindTexture(m_target, 0));
+}
+
+void OpenGLTexture::readPixels(void *data) {
+    GL_CALL(glBindTexture(m_target, m_id));
+    GL_CALL(glGetTexImage(m_target, 0, m_format, m_type, data));
 }
 
 } // namespace Bird

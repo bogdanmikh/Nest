@@ -1,6 +1,6 @@
 project(Foundation)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE INCLUDE src/*.hpp include/Foundation/*.hpp)
@@ -9,7 +9,7 @@ file(GLOB_RECURSE INCLUDE src/*.hpp include/Foundation/*.hpp)
 
 add_library(Foundation STATIC "${SOURCES}" "${INCLUDE}")
 
-target_include_directories(Foundation PUBLIC ${PROJECT_SOURCE_DIR}/src)
+target_include_directories(Foundation PRIVATE ${PROJECT_SOURCE_DIR}/src)
 target_include_directories(Foundation PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Dependencies - spdlog

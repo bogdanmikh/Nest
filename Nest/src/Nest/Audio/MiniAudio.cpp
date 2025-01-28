@@ -16,17 +16,17 @@ MiniAudioEngine::MiniAudioEngine()
 MiniAudioEngine::~MiniAudioEngine() {
     eraseAllAudio();
     ma_engine_uninit(m_engine);
-    DELETE(Foundation::getAllocator(), m_engine);
+    F_DELETE(Foundation::getAllocator(), m_engine);
 }
 
 void MiniAudioEngine::init() {
     ma_result result;
-    m_engine = NEW(Foundation::getAllocator(), ma_engine);
+    m_engine = F_NEW(Foundation::getAllocator(), ma_engine);
 
     result = ma_engine_init(nullptr, m_engine);
     if (result != MA_SUCCESS) {
         LOG_ERROR("Failed to initialize audio engine.");
-        DELETE(Foundation::getAllocator(), m_engine);
+        F_DELETE(Foundation::getAllocator(), m_engine);
         return;
     }
     m_engineInit = true;
@@ -109,7 +109,7 @@ void MiniAudioEngine::eraseAudio(const UUID &uuid) {
     auto &sound = m_listAudio[index].second;
     ma_sound_uninit(&sound);
     if (m_echo) {
-        DELETE(Foundation::getAllocator(), m_delayNode);
+        F_DELETE(Foundation::getAllocator(), m_delayNode);
         ma_delay_node_uninit(m_delayNode, NULL);
         m_echo = false;
     }
@@ -159,7 +159,7 @@ void MiniAudioEngine::setEcho(const UUID &uuid, float delay, float decay) {
     }
     m_echo = true;
 
-    m_delayNode = NEW(Foundation::getAllocator(), ma_delay_node);
+    m_delayNode = F_NEW(Foundation::getAllocator(), ma_delay_node);
 
     ma_delay_node_config delayNodeConfig;
     ma_uint32 channels;

@@ -2,13 +2,11 @@
 
 #include "Config.hpp"
 #include "VertexBufferLayoutData.hpp"
-#include <Foundation/Assert.hpp>
-#include <Foundation/Memory.hpp>
-#include <glm/glm.hpp>
 
-#define BIRD_INVALID_HANDLE UINT16_MAX
+#include <Foundation/Foundation.hpp>
+#include <cstdlib>
 
-#if BIRDLOG_ENABLED == 1
+#if BIRD_LOG_ENABLED == 1
 #    define BIRD_LOG(...) LOG_INFO(__VA_ARGS__)
 #else
 #    define BIRD_LOG(...)
@@ -20,37 +18,31 @@
 #    define CMDBUF_LOG(...)
 #endif
 
+#define BIRD_INVALID_HANDLE UINT16_MAX
+
 namespace Bird {
 
-#define BIRD_HANDLE(name)                                                                          \
+#define BIRD_HANDLE(name)                                                                         \
     struct name {                                                                                  \
         name(uint16_t id)                                                                          \
             : id(id) {}                                                                            \
         name()                                                                                     \
-            : id(BIRD_INVALID_HANDLE) {}                                                           \
+            : id(BIRD_INVALID_HANDLE) {}                                                          \
         uint16_t id;                                                                               \
         bool isValid() {                                                                           \
-            return id != BIRD_INVALID_HANDLE;                                                      \
+            return id != BIRD_INVALID_HANDLE;                                                     \
         }                                                                                          \
     };
 
 using ViewId = uint16_t;
-BIRD_HANDLE(IndexBufferHandle)
-BIRD_HANDLE(VertexBufferHandle)
 BIRD_HANDLE(ProgramHandle)
 BIRD_HANDLE(TextureHandle)
+BIRD_HANDLE(IndexBufferHandle)
 BIRD_HANDLE(FrameBufferHandle)
+BIRD_HANDLE(VertexBufferHandle)
 BIRD_HANDLE(VertexLayoutHandle)
 
-using size = uint32_t;
-
-struct ProgramCreate {
-    Foundation::Memory m_vertex;
-    Foundation::Memory m_fragment;
-};
-
 enum TextureFormat {
-    None = 0,
     // Color
     RGB8,
     RGBA8,
@@ -68,6 +60,47 @@ enum TextureFiltering {
     NEAREST_MIPMAP_LINEAR,
     LINEAR_MIPMAP_NEAREST,
     LINEAR_MIPMAP_LINEAR
+};
+
+struct ProgramCreate {
+    Foundation::Memory m_vertex;
+    Foundation::Memory m_fragment;
+};
+
+struct TextureCreate {
+    TextureFormat m_format;
+    TextureFiltering m_minFiltering;
+    TextureFiltering m_magFiltering;
+    TextureWrapMode m_wrap;
+    uint16_t m_width;
+    uint16_t m_height;
+    uint8_t m_numMips;
+    bool m_isCubeMap;
+    Foundation::Memory m_data;
+
+    TextureCreate()
+        : m_format(TextureFormat::RGBA8)
+        , m_minFiltering(TextureFiltering::NEAREST)
+        , m_magFiltering(TextureFiltering::NEAREST)
+        , m_wrap(TextureWrapMode::REPEAT)
+        , m_width(1)
+        , m_height(1)
+        , m_numMips(0)
+        , m_isCubeMap(false)
+        , m_data(nullptr) {}
+
+    size_t bytesPerTexel() const {
+        switch (m_format) {
+            case RGB8:
+                return 3;
+            case RGBA8:
+                return 4;
+            case RED_INTEGER:
+                return 4;
+            case DEPTH24STENCIL8:
+                return 4;
+        }
+    }
 };
 
 enum UniformType { Sampler, Vec4, Mat3, Mat4, Count };
@@ -126,44 +159,6 @@ struct TransientVertexBuffer {
     VertexBufferHandle handle;
 };
 
-struct TextureCreate {
-    TextureFormat m_format;
-    TextureFiltering m_minFiltering;
-    TextureFiltering m_magFiltering;
-    TextureWrapMode m_wrap;
-    uint16_t m_width;
-    uint16_t m_height;
-    uint8_t m_numMips;
-    bool m_isCubeMap;
-    Foundation::Memory m_data;
-
-    TextureCreate()
-        : m_format(TextureFormat::None)
-        , m_minFiltering(TextureFiltering::NEAREST)
-        , m_magFiltering(TextureFiltering::NEAREST)
-        , m_wrap(TextureWrapMode::REPEAT)
-        , m_width(1)
-        , m_height(1)
-        , m_numMips(0)
-        , m_isCubeMap(false)
-        , m_data(nullptr) {}
-
-    size_t bytesPerTexel() const {
-        switch (m_format) {
-            case None:
-                return 0;
-            case RGB8:
-                return 3;
-            case RGBA8:
-                return 4;
-            case RED_INTEGER:
-                return 1;
-            case DEPTH24STENCIL8:
-                return 4;
-        }
-    }
-};
-
 struct Size {
     int width;
     int height;
@@ -175,10 +170,6 @@ struct Size {
     Size(int width, int height)
         : width(width)
         , height(height) {}
-
-    Size(glm::vec2 size)
-        : width(size.x)
-        , height(size.y) {}
 
     inline bool isZero() {
         return width == 0 && height == 0;
@@ -221,6 +212,15 @@ struct Rect {
     inline bool isZero() {
         return origin.isZero() && size.isZero();
     }
+};
+
+struct Clear {
+    int attachmentIndex;
+    int value;
+
+    Clear(int attachmentIndex, int value)
+        : attachmentIndex(attachmentIndex)
+        , value(value) {}
 };
 
 } // namespace Bird

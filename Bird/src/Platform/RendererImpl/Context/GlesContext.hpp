@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Miren/GraphicsContext.hpp"
+#include "Bird/GraphicsContext.hpp"
 
 namespace Bird {
 

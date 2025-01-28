@@ -6,7 +6,7 @@ ChunksStorage::~ChunksStorage() {
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         chunks[i].detach();
     }
-    DELETE(Foundation::getAllocator(), chunks);
+    F_DELETE(Foundation::getAllocator(), chunks);
 }
 
 static uint64_t getMillis() {
@@ -18,7 +18,7 @@ static uint64_t getMillis() {
 
 ChunksStorage::ChunksStorage() {
     int count = SIZE_X * SIZE_Y * SIZE_Z;
-    chunks = (Chunk *)ALLOC(Foundation::getAllocator(), sizeof(Chunk) * count);
+    chunks = (Chunk *)F_ALLOC(Foundation::getAllocator(), sizeof(Chunk) * count);
     for (int i = 0; i < SIZE_X * SIZE_Y * SIZE_Z; ++i) {
         chunks[i].init();
     }

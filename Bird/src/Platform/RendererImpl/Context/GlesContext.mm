@@ -3,7 +3,7 @@
 //
 
 #include "GlesContext.hpp"
-#include "Miren/PlatformData.hpp"
+#include "Bird/PlatformData.hpp"
 
 #import <UIKit/UIKit.h>
 #import <OpenGLES/ES3/gl.h>

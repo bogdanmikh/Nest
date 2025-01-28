@@ -1,8 +1,8 @@
 #include "Foundation/Allocator.hpp"
-#include "Foundation/Assert.hpp"
-#include "Foundation/Logger.hpp"
 
-#include <memory>
+#include <cstdlib>
+#include <string>
+#include <cstring>
 
 #ifndef CONFIG_ALLOCATOR_NATURAL_ALIGNMENT
 #    define CONFIG_ALLOCATOR_NATURAL_ALIGNMENT 8
@@ -16,139 +16,148 @@ void operator delete(void *, Foundation::PlacementNewTag, void *) throw() {}
 
 namespace Foundation {
 
+template<typename Ty>
+inline constexpr Ty max(const Ty &_a, const Ty &_b) {
+    return _a > _b ? _a : _b;
+}
+
+template<typename Ty>
+inline Ty alignUp(Ty _a, int32_t _align) {
+    const Ty mask = Ty(_align - 1);
+    return Ty((_a + mask) & ~mask);
+}
+
+void memMove(void *_dst, const void *_src, size_t _numBytes) {
+    ::memmove(_dst, _src, _numBytes);
+}
+
+inline void *alignPtr(void *_ptr, size_t _extra, size_t _align) {
+    union {
+        void *ptr;
+        uintptr_t addr;
+    } un;
+    un.ptr = _ptr;
+    uintptr_t unaligned = un.addr + _extra; // space for header
+    uintptr_t aligned = alignUp(unaligned, int32_t(_align));
+    un.addr = aligned;
+    return un.ptr;
+}
+
 AllocatorI *getAllocator() {
     static DefaultAllocator allocator;
-    //    static FreeListAllocator allocator(MemorySize::MEGABYTE * 10);
     return &allocator;
 }
 
-void *alloc(AllocatorI *allocator, size_t size) {
-    return allocator->realloc(nullptr, size);
+void *alloc(AllocatorI *allocator, size_t size, size_t align, const char *file, uint32_t line) {
+    return allocator->realloc(nullptr, size, align, file, line);
 }
 
-void free(AllocatorI *allocator, void *ptr) {
-    allocator->realloc(ptr, 0);
+void free(AllocatorI *allocator, void *ptr, size_t align, const char *file, uint32_t line) {
+    allocator->realloc(ptr, 0, align, file, line);
 }
 
-void *realloc(AllocatorI *allocator, void *ptr, size_t size) {
-    return allocator->realloc(ptr, size);
+void *realloc(
+    AllocatorI *allocator, void *ptr, size_t size, size_t align, const char *file, uint32_t line
+) {
+    return allocator->realloc(ptr, size, align, file, line);
 }
 
-FreeListAllocator::FreeListAllocator(size_t totalSize)
-    : m_totalSize(totalSize) {
-    //    LOG_INFO("Allocator createdLOG_INFO");
-    m_memory = std::malloc(m_totalSize);
-    reset();
+inline void *alignedAlloc(
+    AllocatorI *_allocator, size_t _size, size_t _align, const char *_file, uint32_t _line
+) {
+    const size_t align = max(_align, sizeof(uint32_t));
+    const size_t total = _size + align;
+    uint8_t *ptr = (uint8_t *)alloc(_allocator, total, 0, _file, _line);
+    uint8_t *aligned = (uint8_t *)alignPtr(ptr, sizeof(uint32_t), align);
+    uint32_t *header = (uint32_t *)aligned - 1;
+    *header = uint32_t(aligned - ptr);
+    return aligned;
 }
 
-void *FreeListAllocator::realloc(void *ptr, size_t size) {
-    if (ptr == nullptr) {
-        NEST_ASSERT(size < m_totalSize - m_used, "Allocation size must be bigger");
-        auto freeBlockIt =
-            std::find_if(m_freeBlocks.begin(), m_freeBlocks.end(), [size](const Block &b) {
-                return size <= b.blockSize;
-            });
-        if (freeBlockIt == m_freeBlocks.end()) {
-            throw std::bad_alloc();
+inline void
+alignedFree(AllocatorI *_allocator, void *_ptr, size_t _align, const char *_file, uint32_t _line) {
+    uint8_t *aligned = (uint8_t *)_ptr;
+    uint32_t *header = (uint32_t *)aligned - 1;
+    uint8_t *ptr = aligned - *header;
+    free(_allocator, ptr, 0, _file, _line);
+}
+
+inline void *alignedRealloc(
+    AllocatorI *_allocator,
+    void *_ptr,
+    size_t _size,
+    size_t _align,
+    const char *_file,
+    uint32_t _line
+) {
+    if (nullptr == _ptr) {
+        return alignedAlloc(_allocator, _size, _align, _file, _line);
+    }
+
+    uint8_t *aligned = (uint8_t *)_ptr;
+    uint32_t offset = *((uint32_t *)aligned - 1);
+    uint8_t *ptr = aligned - offset;
+
+    const size_t align = max(_align, sizeof(uint32_t));
+    ;
+    const size_t total = _size + align;
+    ptr = (uint8_t *)realloc(_allocator, ptr, total, 0, _file, _line);
+    uint8_t *newAligned = (uint8_t *)alignPtr(ptr, sizeof(uint32_t), align);
+
+    if (newAligned == aligned) {
+        return aligned;
+    }
+
+    aligned = ptr + offset;
+    memMove(newAligned, aligned, _size);
+    uint32_t *header = (uint32_t *)newAligned - 1;
+    *header = uint32_t(newAligned - ptr);
+    return newAligned;
+}
+
+DefaultAllocator::DefaultAllocator() {}
+
+DefaultAllocator::~DefaultAllocator() {}
+
+void *DefaultAllocator::realloc(
+    void *_ptr, size_t _size, size_t _align, const char *_file, uint32_t _line
+) {
+    if (_size == 0) {
+        if (_ptr != nullptr) {
+            if (_align <= CONFIG_ALLOCATOR_NATURAL_ALIGNMENT) {
+                ::free(_ptr);
+                return nullptr;
+            }
+
+#if COMPILER_MSVC
+            _aligned_free(_ptr);
+#else
+            alignedFree(this, _ptr, _align, _file, _line);
+#endif
         }
-        size_t offset = freeBlockIt->offset;
-        auto &freeBlock = (Block &)*freeBlockIt;
-        ptr = static_cast<char *>(m_memory) + freeBlock.offset;
-        //        LOG_INFO("Allocated from address: {}, size: {}, offset {}", ptr,
-        //        size, freeBlock.offset);
-        freeBlock.blockSize -= size;
-        freeBlock.offset += size;
-        m_used += size;
-        auto occupiedFrontBlockIt = m_occupiedBlocks.lower_bound(offset);
-        Block newOccupiedBlock(size);
-        newOccupiedBlock.offset = offset;
-        if (occupiedFrontBlockIt != m_occupiedBlocks.end()) {
-            auto &occupiedFrontBlock = (Block &)*occupiedFrontBlockIt;
-            newOccupiedBlock.next = reinterpret_cast<Block *>(&occupiedFrontBlock);
-        }
-        if (occupiedFrontBlockIt != m_occupiedBlocks.begin()) {
-            auto &occupiedPrevBlock = (Block &)*std::prev(occupiedFrontBlockIt);
-            occupiedPrevBlock.next = reinterpret_cast<Block *>(&newOccupiedBlock);
-        }
-        m_occupiedBlocks.insert(newOccupiedBlock);
-        return ptr;
-    } else if (size == 0) {
-        // get offset at pointer
-        size_t offset = static_cast<char *>(ptr) - static_cast<char *>(m_memory);
-        NEST_ASSERT(offset >= 0 && offset <= m_totalSize, "Pointer exit for borders");
-        auto occupiedBlockIt = std::find_if(
-            m_occupiedBlocks.begin(),
-            m_occupiedBlocks.end(),
-            [offset](const Block &b) { return offset == b.offset; }
-        );
-        Block newFreeBlock(occupiedBlockIt->blockSize, occupiedBlockIt->next, offset);
-        m_used -= newFreeBlock.blockSize;
-        m_occupiedBlocks.erase(occupiedBlockIt);
-        auto newFreeBlockIt = m_freeBlocks.insert(newFreeBlock).first;
-        combine(newFreeBlockIt);
+
         return nullptr;
-    }
-    ptr = realloc(ptr, 0);
-    ptr = realloc(ptr, size);
-    return ptr;
-}
-
-void FreeListAllocator::getInfo() {
-    LOG_INFO("--------------------------------------");
-    LOG_INFO("Used: {}, Free: {}", m_used, m_totalSize - m_used);
-    printAllBlocks();
-    LOG_INFO("--------------------------------------");
-}
-
-FreeListAllocator::~FreeListAllocator() noexcept {
-    getInfo();
-    std::free(m_memory);
-}
-
-void FreeListAllocator::combine(std::set<Block>::iterator newFreeBlockIt) {
-    auto &newFreeBlock = (Block &)*newFreeBlockIt;
-    auto lastFreeBlockIt = std::prev(newFreeBlockIt);
-    auto nextFreeBlockIt = std::next(newFreeBlockIt);
-    auto &lastFreeBlock = (Block &)*lastFreeBlockIt;
-    bool deletedNewBlock = false;
-    bool newBlockIsEnd = newFreeBlockIt == m_freeBlocks.end();
-    bool newBlockIsBegin = newFreeBlockIt != m_freeBlocks.begin();
-    if (!newBlockIsBegin) {
-        if (lastFreeBlockIt->offset + lastFreeBlockIt->blockSize == newFreeBlockIt->offset) {
-            lastFreeBlock.blockSize = lastFreeBlock.blockSize + newFreeBlockIt->blockSize;
-            m_freeBlocks.erase(newFreeBlockIt);
-            deletedNewBlock = true;
-        } else {
-            lastFreeBlock.next = &newFreeBlock;
+    } else if (_ptr == nullptr) {
+        if (_align <= CONFIG_ALLOCATOR_NATURAL_ALIGNMENT) {
+            return ::malloc(_size);
         }
+
+#if COMPILER_MSVC
+        return _aligned_malloc(_size, _align);
+#else
+        return alignedAlloc(this, _size, _align, _file, _line);
+#endif
     }
-    if (!newBlockIsEnd) {
-        auto &nextFreeBlock = (Block &)*nextFreeBlockIt;
-        if (deletedNewBlock &&
-            lastFreeBlock.offset + lastFreeBlock.blockSize == nextFreeBlock.offset) {
-            lastFreeBlock.blockSize += nextFreeBlock.blockSize;
-            m_freeBlocks.erase(nextFreeBlockIt);
-        } else if (newFreeBlock.offset + newFreeBlock.blockSize == nextFreeBlock.offset) {
-            newFreeBlock.blockSize += nextFreeBlock.blockSize;
-            m_freeBlocks.erase(nextFreeBlockIt);
-        } else {
-            newFreeBlock.next = &nextFreeBlock;
-        }
+
+    if (_align <= CONFIG_ALLOCATOR_NATURAL_ALIGNMENT) {
+        return ::realloc(_ptr, _size);
     }
+
+#if COMPILER_MSVC
+    return _aligned_realloc(_ptr, _size, _align);
+#else
+    return alignedRealloc(this, _ptr, _size, _align, _file, _line);
+#endif
 }
 
-void FreeListAllocator::reset() {
-    m_used = 0;
-    const Block firstBlockFree(m_totalSize, nullptr, 0);
-    m_freeBlocks.insert(firstBlockFree);
-}
-
-void FreeListAllocator::printAllBlocks() {
-    for (const auto &item : m_occupiedBlocks) {
-        LOG_INFO("Occupied Block size: {}, offset: {}", item.blockSize, item.offset);
-    }
-    for (const auto &item : m_freeBlocks) {
-        LOG_INFO("Free Block size: {}, offset: {}", item.blockSize, item.offset);
-    }
-}
 } // namespace Foundation

@@ -1,13 +1,13 @@
 //
-// Created by Bogdan
+// Created by Admin on 08.03.2022.
 //
 
 #pragma once
 
 #include "Bird/Base.hpp"
+#include "Bird/Encoder/View.hpp"
 #include "Bird/Encoder/Frame.hpp"
 #include "Bird/Encoder/Uniform.hpp"
-#include "Bird/Encoder/View.hpp"
 #include "Bird/VertexBufferLayoutData.hpp"
 
 namespace Bird {
@@ -18,7 +18,7 @@ enum class RendererType {
     // Metal,        //!< Metal
     OpenGLES, //!< OpenGL ES 2.0+
     OpenGL,   //!< OpenGL 2.1+
-    Vulkan,   //!< Vulkan
+    // Vulkan,       //!< Vulkan
 };
 
 class RendererI {
@@ -26,9 +26,11 @@ public:
     virtual ~RendererI() = default;
     virtual RendererType getRendererType() const = 0;
     virtual void flip() = 0;
-    virtual void clear() = 0;
     virtual void
     createFrameBuffer(FrameBufferHandle handle, FrameBufferSpecification specification) = 0;
+    virtual void readFrameBuffer(
+        FrameBufferHandle handle, int attachIndex, int x, int y, int width, int height, void *data
+    ) = 0;
     virtual void deleteFrameBuffer(FrameBufferHandle handle) = 0;
     virtual void createProgram(ProgramHandle handle, ProgramCreate) = 0;
     virtual void deleteShader(ProgramHandle handle) = 0;
@@ -69,9 +71,9 @@ public:
     virtual void deleteVertexBuffer(VertexBufferHandle handle) = 0;
     virtual void createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) = 0;
     virtual void deleteVertexLayout(VertexLayoutHandle handle) = 0;
+    virtual void readTexture(TextureHandle handle, void *data) = 0;
     virtual void setUniform(const Uniform &uniform) = 0;
     virtual void setTexture(TextureHandle handle, uint32_t slot) = 0;
-    virtual int getNativeTextureHandle(TextureHandle textureHandle) = 0;
     virtual void submit(Frame *frame, View *views) = 0;
 };
 

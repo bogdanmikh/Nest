@@ -1,5 +1,5 @@
 //
-// Created by Bogdan
+// Created by Admin on 11.02.2022.
 //
 
 #include "OpenGLShader.hpp"
@@ -8,8 +8,8 @@
 
 #include "OpenGLBase.hpp"
 
-#include <fstream>
 #include <sstream>
+#include <fstream>
 
 namespace Bird {
 
@@ -40,8 +40,7 @@ void OpenGLShader::create(ProgramCreate create) {
     GL_CALL(glAttachShader(m_id, fragment));
     GL_CALL(glLinkProgram(m_id));
     checkCompileErrors(m_id, "PROGRAM");
-    // delete the shaders as they're linked into our program now and no longer
-    // necessery
+    // delete the shaders as they're linked into our program now and no longer necessery
     GL_CALL(glDeleteShader(vertex));
     GL_CALL(glDeleteShader(fragment));
 
@@ -77,7 +76,7 @@ int OpenGLShader::getUniformLocation(const std::string &name) {
         return m_uniformLocationCache[name];
     }
     int location = glGetUniformLocation(m_id, name.c_str());
-    // NEST_ASSERT_F(location != -1, "SHADER UNIFORM {} not found", name);
+//    NEST_ASSERT_F(location != -1, "SHADER UNIFORM {} not found", name);
     m_uniformLocationCache[name] = location;
     return location;
 }
@@ -95,6 +94,9 @@ void OpenGLShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseV
             case BufferElementType::UnsignedInt:
                 type = GL_UNSIGNED_INT;
                 break;
+            case BufferElementType::Int:
+                type = GL_INT;
+                break;
             case BufferElementType::UnsignedByte:
                 type = GL_UNSIGNED_BYTE;
                 break;
@@ -102,14 +104,24 @@ void OpenGLShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseV
                 NEST_ASSERT(false, "Buffer element type is undefined");
                 break;
         }
-        GL_CALL(glVertexAttribPointer(
-            i,
-            layout.m_elements[i].count,
-            type,
-            layout.m_elements[i].normalized ? GL_TRUE : GL_FALSE,
-            layout.m_stride,
-            (const void *)pointer
-        ));
+        if (type == GL_UNSIGNED_INT || type == GL_INT) {
+            GL_CALL(glVertexAttribIPointer(
+                i,
+                layout.m_elements[i].count,
+                type,
+                layout.m_stride,
+                reinterpret_cast<const void *>(pointer)
+            ));
+        } else {
+            GL_CALL(glVertexAttribPointer(
+                i,
+                layout.m_elements[i].count,
+                type,
+                layout.m_elements[i].normalized ? GL_TRUE : GL_FALSE,
+                layout.m_stride,
+                reinterpret_cast<const void *>(pointer)
+            ));
+        }
         pointer += layout.m_elements[i].count *
                    VertexBufferElement::getSizeOfType(layout.m_elements[i].type);
     }

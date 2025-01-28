@@ -1,27 +1,31 @@
 project(Atoms)
 
-set(CMAKE_CXX_STANDARD 20)
-
 file(GLOB_RECURSE SOURCES
-        main.cpp
         src/*.cpp
 )
 
 file(GLOB_RECURSE INCLUDE
         src/*.h
         src/*.hpp
-        include/*.hpp
 )
 
 
 file(GLOB RESOURCE_FOLDERS
-        resources/*
+        resources/common/*
         ${NEST_DIRECTORY}/resources/common/*
 )
 
-file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
-list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
-
+if (PLATFORM_DESKTOP)
+    file(GLOB NEST_DESKTOP_RESOURCES ${NEST_DIRECTORY}/resources/desktop/*)
+    list(APPEND RESOURCE_FOLDERS "${NEST_DESKTOP_RESOURCES}")
+    file(GLOB DESKTOP_RESOURCES resources/desktop/*)
+    list(APPEND RESOURCE_FOLDERS "${DESKTOP_RESOURCES}")
+elseif (PLATFORM_ANDROID)
+    file(GLOB NEST_ANDROID_RESOURCES ${NEST_DIRECTORY}/resources/android/*)
+    list(APPEND RESOURCE_FOLDERS "${NEST_ANDROID_RESOURCES}")
+    file(GLOB ANDROID_RESOURCES resources/android/*)
+    list(APPEND RESOURCE_FOLDERS "${ANDROID_RESOURCES}")
+endif ()
 
 add_app(Atoms "${SOURCES}" "${INCLUDE}" "${RESOURCE_FOLDERS}")
 

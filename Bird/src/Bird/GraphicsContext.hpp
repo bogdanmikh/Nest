@@ -1,10 +1,10 @@
 //
-// Created by Bogdan
+// Created by Admin on 18.02.2022.
 //
 
 #pragma once
 
-#include <cstdint>
+#include "Platform/RendererImpl/OpenGL/OpenGLFrameBuffer.hpp"
 
 namespace Bird {
 class GraphicsContext {

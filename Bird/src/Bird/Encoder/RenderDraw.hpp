@@ -1,12 +1,12 @@
 //
-// Created by Bogdan
+// Created by Admin on 13.03.2022.
 //
 
 #pragma once
 
 #include "Bird/Base.hpp"
 #include "Bird/BirdStates.hpp"
-#include "Uniform.hpp"
+#include "UniformBuffer.hpp"
 
 namespace Bird {
 
@@ -29,7 +29,6 @@ struct RenderDraw {
         : m_isSubmitted(false)
         , m_state(BIRD_STATE_CULL_FACE | BIRD_STATE_DEPTH_TEST)
         , m_numIndices(0)
-        , m_uniformsCount(0)
         , m_textureBindingsCount(0)
         , m_indicesOffset(0)
         , m_verticesOffset(0)
@@ -38,13 +37,13 @@ struct RenderDraw {
         , m_indexBuffer(BIRD_INVALID_HANDLE)
         , m_vertexBuffer(BIRD_INVALID_HANDLE)
         , m_vertexLayout(BIRD_INVALID_HANDLE)
-        , m_scissorRect(Rect::zero()) {}
+        , m_scissorRect(Rect::zero())
+        , m_uniformBuffer(5000) {}
 
     void reset() {
         m_isSubmitted = false;
         m_state = BIRD_STATE_CULL_FACE | BIRD_STATE_DEPTH_TEST;
         m_numIndices = 0;
-        m_uniformsCount = 0;
         m_textureBindingsCount = 0;
         m_indicesOffset = 0;
         m_verticesOffset = 0;
@@ -54,11 +53,13 @@ struct RenderDraw {
         m_vertexBuffer = BIRD_INVALID_HANDLE;
         m_vertexLayout = BIRD_INVALID_HANDLE;
         m_scissorRect = Rect::zero();
+        m_uniformBuffer.reset();
     }
 
     void
     addUniform(ProgramHandle handle, const char *name, void *value, UniformType type, int count) {
-        m_uniformBuffer[m_uniformsCount++] = Uniform(handle, name, value, type, count);
+        Uniform uniform(handle, name, value, type, count);
+        m_uniformBuffer.writeUniform(uniform);
     }
 
     void setTexture(TextureHandle textureHandle, uint32_t slot) {
@@ -73,8 +74,7 @@ struct RenderDraw {
     IndexBufferHandle m_indexBuffer;
     VertexBufferHandle m_vertexBuffer;
     VertexLayoutHandle m_vertexLayout;
-    uint32_t m_uniformsCount;
-    Uniform m_uniformBuffer[MAX_UNIFORMS];
+    UniformBuffer m_uniformBuffer;
     uint32_t m_textureBindingsCount;
     TextureBinding m_textureBindings[MAX_TEXTURE_BINDINGS];
     Rect m_scissorRect;
@@ -82,4 +82,4 @@ struct RenderDraw {
     uint32_t m_state;
 };
 
-} // namespace Bird
+} // namespace BIRD
