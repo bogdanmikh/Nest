@@ -1,4 +1,4 @@
-#version 330 core
+#version 300 es
 
 in vec2 Frag_UV;
 in vec4 Frag_Color;
