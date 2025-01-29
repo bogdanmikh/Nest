@@ -17,20 +17,30 @@ namespace Nest {
 
 class AndroidWindow : public Window {
 public:
+    AndroidWindow(const char *title, Size size, bool isFullscreen, bool isMaximized);
     ~AndroidWindow() override;
-    void init(
-        const char *name, uint32_t resolutionX = 1, uint32_t resolutionY = 1, bool fullScreen = true
-    ) override;
-    void init(const char *name, bool fullScreen = true) override;
+    bool isFullScreen() override;
+    void setFullScreen(bool isFullScreen) override;
+    void setTitle(const char *title) override;
+    bool isMaximized() override;
+    void setMaximized(bool isMaximized) override;
+    void setResizable(bool isResizable) override;
+    void setSize(Size size) override;
+    void pollEvents() override;
+    void toggleCursorLock() override;
+    bool isCursorLocked() override;
+    void setCursor(Cursor cursor) override;
+    void setEventQueue(EventQueue *eventQueue) override;
+    Size getSize() override;
+    Size getDpi() override;
+    double getTime() override;
+    const char *getClipboardText() override;
+    void setClipboardText(const char *text) override;
+
     bool shouldClose() override;
     void setShouldClose() override;
-    void swapBuffers() override;
-    Size getSize() override;
-    double getTime() override;
-    void *getNativeHandle() override;
 
 private:
-    void *handle;
 };
 
 } // namespace Nest

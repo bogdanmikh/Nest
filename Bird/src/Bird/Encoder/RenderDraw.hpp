@@ -82,4 +82,4 @@ struct RenderDraw {
     uint32_t m_state;
 };
 
-} // namespace BIRD
+} // namespace Bird

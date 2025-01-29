@@ -15,6 +15,8 @@ public:
     void *layer;
     void *nativeWindowHandle;
     void *renderingContext;
+
+    void *assetManager; // for android
 };
 
 } // namespace Bird

@@ -49,10 +49,3 @@ private:
 #define LOG_WARN(...) ::Foundation::Logger::getLogger()->warn(__VA_ARGS__)
 #define LOG_ERROR(...) ::Foundation::Logger::getLogger()->error(__VA_ARGS__)
 #define LOG_CRITICAL(...) ::Foundation::Logger::getLogger()->critical(__VA_ARGS__)
-
-#define LOG_INFO_EDITOR(...)                                                                       \
-    ::Foundation::EditorLogger::log(Foundation::EditorLogger::MessageType::INFO, __VA_ARGS__)
-#define LOG_WARN_EDITOR(...)                                                                       \
-    ::Foundation::EditorLogger::log(Foundation::EditorLogger::MessageType::WARNING, __VA_ARGS__)
-#define LOG_ERROR_EDITOR(...)                                                                      \
-    ::Foundation::EditorLogger::log(Foundation::EditorLogger::MessageType::ERROR, __VA_ARGS__)

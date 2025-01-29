@@ -8,11 +8,11 @@
 FigureLevel::~FigureLevel() {}
 
 void FigureLevel::onAttach() {
-    m_sphereRenderer = NEW(Foundation::getAllocator(), SphereRenderer);
-    m_cameraMove = NEW(Foundation::getAllocator(), CameraMove);
-    m_cubeRenderer = NEW(Foundation::getAllocator(), CubeRenderer);
+    m_sphereRenderer = F_NEW(Foundation::getAllocator(), SphereRenderer);
+    m_cameraMove = F_NEW(Foundation::getAllocator(), CameraMove);
+    m_cubeRenderer = F_NEW(Foundation::getAllocator(), CubeRenderer);
     m_sphereRenderer->getTransform().setPosition({4., 0., 0.});
-    SphereRenderer *sphereRenderer = NEW(Foundation::getAllocator(), SphereRenderer);
+    SphereRenderer *sphereRenderer = F_NEW(Foundation::getAllocator(), SphereRenderer);
     sphereRenderer->getTransform().setPosition({8., 0., 0.});
     addEntity(m_cameraMove);
     addEntity(m_sphereRenderer);
@@ -38,7 +38,7 @@ void FigureLevel::onUpdate(double deltaTime) {
 void FigureLevel::onDetach() {
     for (auto &entity : m_entities) {
         entity->onDetach();
-        DELETE(Foundation::getAllocator(), entity);
+        F_DELETE(Foundation::getAllocator(), entity);
     }
 }
 

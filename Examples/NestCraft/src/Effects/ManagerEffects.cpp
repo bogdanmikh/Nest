@@ -26,11 +26,12 @@ void ManagerEffects::onAttach() {
     m_activeEffects[4] = false;
 
     // default
-    m_effects[0] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
-    m_effects[0]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstDefault.glsl");
-    m_effects[0]->setFBTexture(m_textureHandle);
-    m_effects[0]->setViewId(0);
-    m_effects[0]->onAttach();
+//    m_effects[0] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
+//    m_effects[0]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstDefault.glsl");
+//    m_effects[0]->setFBTexture(m_textureHandle);
+//    m_effects[0]->setViewId(0);
+//    m_effects[0]->onAttach();
+#ifdef PLATFORM_DESKTOP
     // pixels
     m_effects[1] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
     m_effects[1]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstPixel.glsl");
@@ -55,6 +56,7 @@ void ManagerEffects::onAttach() {
     m_effects[4]->setFBTexture(m_textureHandle);
     m_effects[4]->setViewId(m_viewId);
     m_effects[4]->onAttach();
+#endif
 }
 
 void ManagerEffects::onUpdate(double deltaTime) {
@@ -64,40 +66,10 @@ void ManagerEffects::onUpdate(double deltaTime) {
             break;
         }
     }
-    m_effects[0]->onUpdate(deltaTime);
+//    m_effects[0]->onUpdate(deltaTime);
 }
 
 void ManagerEffects::onImGuiRender() {
-    //    bool leftShift = Nest::GlfwEvents::isKeyPressed(Nest::Key::LEFT_SHIFT);
-    //    if (!leftShift) {
-    //        return;
-    //    }
-    //    int key = -1;
-    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_1)) {
-    //        key = 0;
-    //    }
-    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_2)) {
-    //        key = 1;
-    //    }
-    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_3)) {
-    //        key = 2;
-    //    }
-    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_4)) {
-    //        key = 3;
-    //    }
-    //    if (Nest::GlfwEvents::isJustKeyPressed(Nest::Key::KEY_5)) {
-    //        key = 4;
-    //    }
-    //    if (key == -1) {
-    //        return;
-    //    }
-    //    for (int i = 0; i < countEffects; ++i) {
-    //        if (i == key) {
-    //            m_activeEffects[i] = true;
-    //            continue;
-    //        }
-    //        m_activeEffects[i] = false;
-    //    }
 #ifndef PLATFORM_ANDROID
     ImGuiIO io = ImGui::GetIO();
     ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - 100, 0));

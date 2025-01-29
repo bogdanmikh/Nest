@@ -11,6 +11,8 @@
 
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
+#elif defined(PLATFORM_ANDROID)
+#    include "Platform/RendererImpl/Context/AndroidContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
 #    include "Platform/RendererImpl/Context/OpenGLContext.hpp"
 #endif
@@ -55,7 +57,9 @@ RendererOpenGL::RendererOpenGL() {
     s_instance = this;
 #ifdef PLATFORM_IOS
     context = F_NEW(Foundation::getAllocator(), GlesContext);
-#elif defined(PLATFORM_DESKTOP)
+#elif defined(PLATFORM_ANDROID)
+    context = F_NEW(Foundation::getAllocator(), AndroidContext);
+                    #elif defined(PLATFORM_DESKTOP)
     context = F_NEW(Foundation::getAllocator(), OpenGLContext);
 #endif
     context->create();
@@ -66,6 +70,7 @@ RendererOpenGL::RendererOpenGL() {
     // glBlendEquation(GL_FUNC_ADD);
     // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    const char *version = (const char *)glGetString(GL_VERSION);
     BIRD_LOG("OPENGL VERSION {}", (const char *)glGetString(GL_VERSION));
 #if defined(PLATFORM_LINUX) || defined(PLATFORM_WINDOWS)
     // glEnable(GL_DEBUG_OUTPUT);

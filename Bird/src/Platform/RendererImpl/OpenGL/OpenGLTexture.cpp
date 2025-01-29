@@ -98,7 +98,7 @@ void OpenGLTexture::unbind() {
 
 void OpenGLTexture::readPixels(void *data) {
     GL_CALL(glBindTexture(m_target, m_id));
-    GL_CALL(glGetTexImage(m_target, 0, m_format, m_type, data));
+    //    GL_CALL(glGetTexImage(m_target, 0, m_format, m_type, data));
 }
 
 } // namespace Bird

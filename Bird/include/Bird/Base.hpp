@@ -22,15 +22,15 @@
 
 namespace Bird {
 
-#define BIRD_HANDLE(name)                                                                         \
+#define BIRD_HANDLE(name)                                                                          \
     struct name {                                                                                  \
         name(uint16_t id)                                                                          \
             : id(id) {}                                                                            \
         name()                                                                                     \
-            : id(BIRD_INVALID_HANDLE) {}                                                          \
+            : id(BIRD_INVALID_HANDLE) {}                                                           \
         uint16_t id;                                                                               \
         bool isValid() {                                                                           \
-            return id != BIRD_INVALID_HANDLE;                                                     \
+            return id != BIRD_INVALID_HANDLE;                                                      \
         }                                                                                          \
     };
 

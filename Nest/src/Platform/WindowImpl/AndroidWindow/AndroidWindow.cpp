@@ -2,25 +2,44 @@
 #include <Bird/PlatformData.hpp>
 
 #include <android/native_window.h>
+
 namespace Nest {
 
 AndroidWindow::~AndroidWindow() {}
 
-void AndroidWindow::init(
-    const char *name, uint32_t resolutionX, uint32_t resolutionY, bool fullScreen
-) {
-    handle = Bird::PlatformData::get()->nativeWindowHandle;
+AndroidWindow::AndroidWindow(const char *title, Size size, bool isFullscreen, bool isMaximized) {}
+
+bool AndroidWindow::isFullScreen() {
+    return true;
 }
 
-void AndroidWindow::init(const char *name, bool fullScreen) {
-    init(name, 1, 1, fullScreen);
+void AndroidWindow::setFullScreen(bool isFullScreen) {}
+
+void AndroidWindow::setTitle(const char *title) {}
+
+bool AndroidWindow::isMaximized() {
+    return true;
 }
 
-bool AndroidWindow::shouldClose() {
-    return false;
+void AndroidWindow::setMaximized(bool _isMaximized) {}
+
+void AndroidWindow::setResizable(bool isResizable) {}
+
+void AndroidWindow::setSize(Nest::Size size) {}
+
+void AndroidWindow::pollEvents() {}
+
+bool AndroidWindow::isCursorLocked() {
+    return true;
 }
 
-Vec2 AndroidWindow::getSize() {
+void AndroidWindow::toggleCursorLock() {}
+
+void AndroidWindow::setEventQueue(EventQueue *eventQueue) {
+    //    m_eventQueue = eventQueue;
+}
+
+Size AndroidWindow::getSize() {
     Vec2 res;
     res.width =
         ANativeWindow_getWidth((ANativeWindow *)Bird::PlatformData::get()->nativeWindowHandle);
@@ -29,16 +48,26 @@ Vec2 AndroidWindow::getSize() {
     return res;
 }
 
-double AndroidWindow::getTime() {
-    return static_cast<double>(time(nullptr));
+Size AndroidWindow::getDpi() {
+    return {1, 1};
 }
 
-void AndroidWindow::swapBuffers() {}
+double AndroidWindow::getTime() {
+    return time(NULL);
+}
+
+void AndroidWindow::setCursor(Cursor cursor) {}
+
+const char *AndroidWindow::getClipboardText() {
+    return nullptr;
+}
+
+void AndroidWindow::setClipboardText(const char *text) {}
 
 void AndroidWindow::setShouldClose() {}
 
-void *AndroidWindow::getNativeHandle() {
-    return handle;
+bool AndroidWindow::shouldClose() {
+    return false;
 }
 
 } // namespace Nest

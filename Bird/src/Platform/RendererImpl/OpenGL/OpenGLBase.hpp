@@ -6,6 +6,8 @@
 
 #ifdef PLATFORM_IOS
 #    include <OpenGLES/ES3/gl.h>
+#elif defined(PLATFORM_ANDROID)
+#    include <GLES3/gl3.h>
 #elif defined(PLATFORM_DESKTOP)
 #    include <glad/glad.h>
 #endif

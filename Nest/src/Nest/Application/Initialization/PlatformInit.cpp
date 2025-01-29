@@ -23,7 +23,9 @@ Window *createWindow(ApplicationStartupSettings &settings) {
 #elif defined(PLATFORM_IOS)
     return F_NEW(Foundation::getAllocator(), PandaWindowIOSImpl);
 #else
-#    error "Unknown platform"
+    return F_NEW(Foundation::getAllocator(), AndroidWindow)(
+        settings.windowTitle, settings.windowSize, settings.isFullScreen, settings.isMaximized
+    );
 #endif
 }
 
