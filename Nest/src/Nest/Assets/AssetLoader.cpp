@@ -29,13 +29,17 @@ std::optional<std::pair<Foundation::Memory, int>> AssetLoader::readFile(const st
     bool assetLoaded = false;
     if (asset) {
         off_t fileLength = AAsset_getLength(asset);
-        void *buffer = malloc(fileLength);
-        AAsset_read(asset, buffer, fileLength);
 
-        res.first = Foundation::Memory::copying(buffer, fileLength);
-        res.second = fileLength;
+        void *buffer = malloc(fileLength + 1);
+        int size = AAsset_read(asset, buffer, fileLength);
+
+        static_cast<char*>(buffer)[size] = '\0';
+
+        res.first = Foundation::Memory::copying(buffer, size + 1);
+        res.second = size;
         assetLoaded = true;
 
+        free(buffer);
         AAsset_close(asset);
     }
     if (assetLoaded) {
@@ -165,24 +169,28 @@ AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragm
     return {vertexData, fragmentData};
 #elif defined(PLATFORM_ANDROID)
     auto vertexMemory = readFile(vertexPath);
-    NEST_ASSERT_F(
-            vertexMemory.has_value(), "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
-    );
+    if (!vertexMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
     auto fragmentMemory = readFile(fragmentPath);
-    NEST_ASSERT_F(
-            fragmentMemory.has_value(), "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
-    );
+    if (!fragmentMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
     std::stringstream vShaderStream, fShaderStream;
     vShaderStream << (const char *)vertexMemory.value().first.data;
     fShaderStream << (const char *)fragmentMemory.value().first.data;
 
-    std::string vertexCode = vShaderStream.str();
-    std::string fragmentCode = fShaderStream.str();
+    auto vertexCode = vShaderStream.str();
+    auto fragmentCode = fShaderStream.str();
 
     Foundation::Memory vertexData =
-        Foundation::Memory::copying(vertexCode.data(), vertexCode.size());
+        Foundation::Memory::copying((void *)vertexCode.c_str(), vertexCode.size() + 1);
     Foundation::Memory fragmentData =
-        Foundation::Memory::copying(fragmentCode.data(), fragmentCode.size());
+        Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
     return {vertexData, fragmentData};
 #endif
 }
