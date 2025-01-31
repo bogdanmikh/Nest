@@ -66,8 +66,7 @@ elseif (PLATFORM_IOS)
             ${UIKIT} ${METALKIT_LIBRARY} ${FOUNDATION} ${CFNETWORK} ${SYSTEMCONFIGURATION} ${QUARTZ_CORE} ${OPENGLES}
     )
 elseif (PLATFORM_ANDROID)
-    find_package(game-activity)
-    target_link_libraries(Bird android game-activity::game-activity EGL GLESv3 jnigraphics)
+    target_link_libraries(Bird android EGL GLESv3 jnigraphics)
 endif ()
 
 # Dependencies - Foundation

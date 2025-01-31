@@ -7,13 +7,9 @@ void CubeRenderer::onAttach() {
 
     using namespace Bird;
     Nest::Path vertexShaderPath, fragmentShaderPath;
-#ifdef PLATFORM_DESKTOP
+
     vertexShaderPath = "Shaders/vstSphere.glsl";
     fragmentShaderPath = "Shaders/fstSphere.glsl";
-#elif defined(PLATFORM_ANDROID)
-    vertexShaderPath = "Shaders/vstSphere.glsl";
-    fragmentShaderPath = "Shaders/fstSphere.glsl";
-#endif
     Nest::ProgramAsset programAsset =
         Nest::AssetLoader::loadProgram(vertexShaderPath, fragmentShaderPath);
     m_shader = createProgram(programAsset.getBirdProgramCreate());

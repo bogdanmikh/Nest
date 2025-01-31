@@ -47,6 +47,14 @@ if(PLATFORM_DESKTOP)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/WindowImpl/GlfwWindow)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/EventsImpl/GlfwEvents)
 elseif (PLATFORM_ANDROID)
+    add_library(android_native_app_glue STATIC
+            ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c
+    )
+    set(CMAKE_SHARED_LINKER_FLAGS
+            "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
+    target_link_libraries(Nest android_native_app_glue)
+
+    target_include_directories(Nest PRIVATE ${ANDROID_NDK}/sources/android/native_app_glue)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/WindowImpl/AndroidWindow)
     target_include_directories(Nest PUBLIC ${PROJECT_SOURCE_DIR}/src/Platform/EventsImpl/AndroidEvents)
 endif ()
