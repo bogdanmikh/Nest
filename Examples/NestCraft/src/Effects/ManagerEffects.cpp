@@ -26,11 +26,11 @@ void ManagerEffects::onAttach() {
     m_activeEffects[4] = false;
 
     // default
-//    m_effects[0] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
-//    m_effects[0]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstDefault.glsl");
-//    m_effects[0]->setFBTexture(m_textureHandle);
-//    m_effects[0]->setViewId(0);
-//    m_effects[0]->onAttach();
+    m_effects[0] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
+    m_effects[0]->setPathToShaders("Shaders/vstEffects.glsl", "Shaders/fstDefault.glsl");
+    m_effects[0]->setFBTexture(m_textureHandle);
+    m_effects[0]->setViewId(0);
+    m_effects[0]->onAttach();
 #ifdef PLATFORM_DESKTOP
     // pixels
     m_effects[1] = F_NEW(Foundation::getAllocator(), PostprocessingEffect);
@@ -66,7 +66,7 @@ void ManagerEffects::onUpdate(double deltaTime) {
             break;
         }
     }
-//    m_effects[0]->onUpdate(deltaTime);
+    m_effects[0]->onUpdate(deltaTime);
 }
 
 void ManagerEffects::onImGuiRender() {

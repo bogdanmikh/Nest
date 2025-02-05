@@ -13,6 +13,7 @@ private:
     bool cursorLock;
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;
+    double dt;
 
     Nest::Window *m_window;
     Nest::WorldCamera *m_worldCamera;

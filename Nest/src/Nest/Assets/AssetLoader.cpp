@@ -33,7 +33,7 @@ std::optional<std::pair<Foundation::Memory, int>> AssetLoader::readFile(const st
         void *buffer = malloc(fileLength + 1);
         int size = AAsset_read(asset, buffer, fileLength);
 
-        static_cast<char*>(buffer)[size] = '\0';
+        static_cast<char *>(buffer)[size] = '\0';
 
         res.first = Foundation::Memory::copying(buffer, size + 1);
         res.second = size;
@@ -103,7 +103,25 @@ TextureAsset AssetLoader::loadCubeMapTexture(std::array<std::string, 6> paths) {
         const std::string &path = paths[side];
         int width, height, channels;
         std::string texturePath = AssetLoader::getResourcesPath() + path;
-        void *image = stbi_load(texturePath.c_str(), &width, &height, &channels, 4);
+        void *image;
+#ifdef PLATFORM_DESKTOP
+        image = stbi_load(texturePath.c_str(), &width, &height, &channels, 4);
+#elif defined(PLATFORM_ANDROID)
+        auto textureData = readFile(texturePath);
+
+        if (!textureData.has_value()) {
+            LOG_ERROR("Failed to load a texture file!");
+            return {};
+        }
+        image = stbi_load_from_memory(
+            (unsigned char *)textureData.value().first.data,
+            textureData.value().second,
+            &width,
+            &height,
+            &channels,
+            0
+        );
+#endif
         if (image == nullptr) {
             LOG_ERROR("Failed to load a texture file at path {}", path);
             continue;

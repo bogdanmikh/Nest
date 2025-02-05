@@ -96,6 +96,44 @@ void BlocksCreation::onImGuiRender() {
         m_selectedBlock = VoxelType::BOARDS;
     }
     ImGui::End();
+#else
+    float coeff = 0.5;
+    ImGui::SetNextWindowPos({600, 600});
+    ImGui::Begin("Create", nullptr);
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+    if (ImGui::Button("##create", {200, 200})) {
+        glm::vec3 position = m_camera->getPosition();
+        glm::vec3 target = m_camera->getFront();
+        auto v = m_chunksStorage->bresenham3D(
+                position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
+        );
+        if (v && v->voxel != nullptr) {
+            int x = v->end.x + v->normal.x;
+            int y = v->end.y + v->normal.y;
+            int z = v->end.z + v->normal.z;
+            setVoxel(x, y, z, m_selectedBlock);
+        }
+    }
+    ImGui::PopStyleColor();
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+    if (ImGui::Button("##delete", {200, 200})) {
+        glm::vec3 position = m_camera->getPosition();
+        glm::vec3 target = m_camera->getFront();
+        auto v = m_chunksStorage->bresenham3D(
+                position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
+        );
+        if (v && v->voxel != nullptr) {
+            int x = v->end.x;
+            int y = v->end.y;
+            int z = v->end.z;
+            setVoxel(x, y, z, VoxelType::NOTHING);
+        }
+    }
+
+    ImGui::PopStyleColor();
+    ImGui::End();
 #endif
 }
 

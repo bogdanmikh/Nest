@@ -18,7 +18,7 @@ void NestPBR::onAttach() {
     };
     Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
     Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
-    m_skyComponent = NEW(Foundation::getAllocator(), Nest::SkyComponent)(
+    m_skyComponent = F_NEW(Foundation::getAllocator(), Nest::SkyComponent)(
         {skyTextureAssetNotBlur, skyPathToVertexShader, skyPathToFragmentShader}
     );
 
@@ -58,16 +58,17 @@ void NestPBR::onAttach() {
     m_spheres[0].onAttachFigure(sphereCreateInfo);
 
     sphereCreateInfo.position = glm::vec3(6., 0., 0.);
-    sphereCreateInfo.pathToTexture = "Textures/Rust.jpg";
+    sphereCreateInfo.pathToTexture = "Textures/Dubil.png";
     m_spheres[1].onAttachFigure(sphereCreateInfo);
 
-    sphereCreateInfo.position = glm::vec3(8., 0., 0.);
-    sphereCreateInfo.pathToTexture = "Textures/Scratch.jpg";
+    sphereCreateInfo.position = glm::vec3(9., 0., 0.);
+    sphereCreateInfo.pathToTexture = "Textures/Rust.jpg";
     m_spheres[2].onAttachFigure(sphereCreateInfo);
 }
 
 void NestPBR::onUpdate(double deltaTime) {
     m_cameraMove.onUpdate(deltaTime);
+    m_cameraMove.onImGuiRender();
 
     static auto camera = Nest::Application::get()->getWorldCamera();
     static glm::mat4 projViewMtx;
@@ -79,6 +80,15 @@ void NestPBR::onUpdate(double deltaTime) {
     rotationCube.y += 0.5;
     m_cubeRenderer.getTransform().setRotationEuler(rotationCube);
     m_cubeRenderer.onUpdate(deltaTime);
+
+    auto rotationSphere = m_spheres[0].getTransform().getRotationEuler();
+    rotationSphere.x += 0.9;
+    m_spheres[0].getTransform().setRotationEuler(rotationSphere);
+
+    rotationSphere = m_spheres[1].getTransform().getRotationEuler();
+    rotationSphere.z = 90;
+    rotationSphere.y += 3;
+    m_spheres[1].getTransform().setRotationEuler(rotationSphere);
 
     // spheres
     for (auto &sphere : m_spheres) {
@@ -92,7 +102,7 @@ void NestPBR::onDetach() {
     for (auto &sphere : m_spheres) {
         sphere.onDetach();
     }
-    DELETE(Foundation::getAllocator(), m_skyComponent);
+    F_DELETE(Foundation::getAllocator(), m_skyComponent);
 }
 
 void NestPBR::addEntity(Nest::Entity *entity) {}

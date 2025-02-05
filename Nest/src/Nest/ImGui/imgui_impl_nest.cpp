@@ -3,6 +3,7 @@
 #include "Nest/Application/Application.hpp"
 #include "Nest/Events/WindowEvents.hpp"
 #include "Nest/Events/KeyEvents.hpp"
+#include "Nest/Events/TouchEvents.hpp"
 #include "Nest/Events/MouseEvents.hpp"
 
 struct ImGui_NestPlatformData {
@@ -252,6 +253,26 @@ IMGUI_IMPL_API void ImGui_ImplNest_HandleEvent(Nest::Event *event) {
             if (button >= 0 && button < ImGuiMouseButton_COUNT) {
                 io.AddMouseButtonEvent(button, false);
             }
+            event->isHandled = io.WantCaptureMouse;
+            break;
+        }
+        case EventType::TouchBegan: {
+            ImGui_ImplNest_UpdateKeyModifiers();
+            const TouchBeganEvent *ev = static_cast<const TouchBeganEvent *>(event);
+            io.AddMousePosEvent((float)ev->x, (float)ev->y);
+            io.AddMouseButtonEvent(0, true);
+            event->isHandled = io.WantCaptureMouse;
+            break;
+        }
+        case EventType::TouchEnded: {
+            io.AddMouseButtonEvent(0, false);
+            event->isHandled = io.WantCaptureMouse;
+            break;
+        }
+        case EventType::TouchMoved: {
+            const TouchMovedEvent *ev = static_cast<const TouchMovedEvent *>(event);
+            io.AddMousePosEvent((float)ev->x, (float)ev->y);
+            io.AddMouseButtonEvent(0, true);
             event->isHandled = io.WantCaptureMouse;
             break;
         }

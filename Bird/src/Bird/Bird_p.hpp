@@ -38,9 +38,9 @@ struct Context {
     // Main thread
     void init() {
         // Вызвано из главного потока: можно стартовать поток отрисовки.
-//#ifdef PLATFORM_DESKTOP
+        // #ifdef PLATFORM_DESKTOP
         m_thread.init(renderThread, nullptr, 0, "Render thread");
-//#endif
+        // #endif
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererInit);
         m_render->getPreCommandQueue().write(cmd);
         m_apiSemaphore.post();

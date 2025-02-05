@@ -10,6 +10,7 @@ public:
     void onImGuiRender() override;
 
 private:
+    double dt = 1.;
     bool cursorLock;
     glm::vec2 lastPos;
     float cameraSpeed = 5.f;

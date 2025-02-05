@@ -50,7 +50,7 @@ if (PLATFORM_DESKTOP)
     else ()
         target_link_libraries(Bird glfw)
     endif ()
-    target_include_directories(Bird PRIVATE Vendor/glfw/include)
+    target_include_directories(Bird PUBLIC Vendor/glfw/include)
 elseif (PLATFORM_IOS)
     # add_definitions("-x objective-c++")
     # Locate system libraries on iOS

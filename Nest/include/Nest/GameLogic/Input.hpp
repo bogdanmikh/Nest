@@ -5,9 +5,12 @@
 #pragma once
 
 #include "Bird/Base.hpp"
+
 #include "Nest/Events/Event.hpp"
 #include "Nest/Events/Key.hpp"
 #include "Nest/Base/Base.hpp"
+
+#include <Foundation/Semaphore.hpp>
 
 using namespace Bird;
 
@@ -28,6 +31,7 @@ public:
             , y(y) {}
     };
 
+    static void init();
     // GET INPUT DATA
     static bool isKeyPressed(Key key);
     static bool isKeyJustPressed(Key key);

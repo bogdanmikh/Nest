@@ -166,7 +166,7 @@ Input::Touch Input::getTouch(int index) {
     if (index >= 0 && index < activeTouches.size()) {
         return activeTouches[index];
     }
-    NEST_ASSERT_F(false, "WRONG TOUCH INDEX {}", index);
+//    NEST_ASSERT_F(false, "WRONG TOUCH INDEX {}", index);
     return Input::Touch(0, 0, 0);
 }
 
@@ -182,7 +182,7 @@ void Input::postTouchMovedEvent(int id, float x, float y) {
     auto touch = std::find_if(activeTouches.begin(), activeTouches.end(), [id](auto touch) {
         return touch.id == id;
     });
-    NEST_ASSERT(touch != activeTouches.end(), "TOUCH NOT FOUND");
+//    NEST_ASSERT(touch != activeTouches.end(), "TOUCH NOT FOUND");
     if (touch != activeTouches.end()) {
         touch->x = x;
         touch->y = y;
@@ -193,7 +193,7 @@ void Input::postTouchEndedEvent(int id) {
     auto touch = std::find_if(activeTouches.begin(), activeTouches.end(), [id](auto touch) {
         return touch.id == id;
     });
-    NEST_ASSERT(touch != activeTouches.end(), "TOUCH NOT FOUND");
+//    NEST_ASSERT(touch != activeTouches.end(), "TOUCH NOT FOUND");
     if (touch != activeTouches.end()) {
         activeTouches.erase(touch);
     }

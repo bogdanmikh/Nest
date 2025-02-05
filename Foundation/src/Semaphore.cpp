@@ -94,6 +94,7 @@ Semaphore::Semaphore(const char *name) {
     NEST_ASSERT_F(0 == result, "pthread_mutex_init %d", result);
 
     result = pthread_cond_init(&si->m_cond, NULL);
+
     NEST_ASSERT_F(0 == result, "pthread_cond_init %d", result);
 }
 

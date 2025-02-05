@@ -12,6 +12,7 @@ void CameraMove::onAttach() {
 
 void CameraMove::onUpdate(double deltaTime) {
     using namespace Nest;
+    dt = deltaTime;
 
     if (Input::isKeyPressed(Key::LEFT_SHIFT)) {
         cameraSpeed = 30.f;
@@ -52,7 +53,8 @@ void CameraMove::onUpdate(double deltaTime) {
     if (!cursorLocked)
         return;
 
-    glm::vec2 cursorPos = {Input::getMousePositionX(), Input::getMousePositionY()};
+    glm::vec2 cursorPos = {0, 0};
+    //    glm::vec2 cursorPos = {Input::getMousePositionX(), Input::getMousePositionY()};
     glm::vec2 diff = lastPos - cursorPos;
     if (resetMouse)
         diff = glm::vec2(0);
@@ -70,4 +72,33 @@ void CameraMove::onImGuiRender() {
         m_worldCamera->getPosition().z
     );
     ImGui::End();
+#ifdef PLATFORM_ANDROID
+    float coeff = 4.;
+    ImGui::SetNextWindowPos({100, 700});
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+                                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+                                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
+                                   ImGuiWindowFlags_AlwaysAutoResize;
+    ImGui::Begin("Move", nullptr, windowFlags);
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
+    if (ImGui::Button("Left", {200, 200})) {
+        m_worldCamera->translateLocal(-cameraSpeed * dt * coeff, 0., 0);
+    }
+    ImGui::PopStyleColor(3);
+
+    ImGui::SameLine();
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+    if (ImGui::Button("Right", {200, 200})) {
+        m_worldCamera->translateLocal(cameraSpeed * dt * coeff, 0., 0.);
+    }
+    ImGui::PopStyleColor(3);
+
+    ImGui::End();
+#endif
 }

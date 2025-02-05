@@ -8,6 +8,10 @@ namespace Nest {
 
 enum class MouseButton { LEFT = 0, RIGHT = 1, MIDDLE = 2 };
 
+enum class Gamepad {
+
+};
+
 enum class Key {
     UNKNOWN = -1,
     SPACE = 32,

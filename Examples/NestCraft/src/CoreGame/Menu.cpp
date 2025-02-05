@@ -14,7 +14,6 @@ Menu::Menu() {
 }
 
 void Menu::update() {
-#ifndef PLATFORM_ANDROID
     auto &colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = {0.639, 0.639, 0.639, 0.7};
 
@@ -39,7 +38,6 @@ void Menu::update() {
     ImGui::Text("7 - sand");
 
     ImGui::End();
-#endif
 }
 glm::vec3 Menu::getColor() {
     return {m_color[0], m_color[1], m_color[2]};

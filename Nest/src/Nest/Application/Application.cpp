@@ -115,8 +115,8 @@ void Application::loop() {
         m_ImGuiLayer->onUpdate(deltaTime);
         m_ImGuiLayer->begin(deltaTime);
         if (m_layer) {
-            m_layer->onUpdate(deltaTime);
             m_layer->onImGuiRender();
+            m_layer->onUpdate(deltaTime);
         }
         m_ImGuiLayer->end();
         m_window->pollEvents();
@@ -135,12 +135,11 @@ void Application::processEvents() {
             windowSizeChanged(Size(ev->getWidth(), ev->getHeight()));
         }
         if (!event->isHandled) {
+            Input::onEvent(event);
+        }
+        if (!event->isHandled) {
             m_ImGuiLayer->onEvent(event);
             m_layer->onEvent(event);
-        }
-
-        if (!event->isHandled) {
-            Input::onEvent(event);
         }
     }
     m_eventQueue.reset();

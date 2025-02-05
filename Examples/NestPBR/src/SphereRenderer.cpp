@@ -4,9 +4,7 @@ void SphereRenderer::onAttach() {
     m_camera = Nest::Application::get()->getWorldCamera();
 
     m_countIndices = 0;
-    metallic = 0.5;
-
-    Bird::setViewClear(0, 0x3D75C9FF);
+    metallic = 0.4;
 
     std::vector<VertexFigure> vertices;
     std::vector<uint32_t> indices;

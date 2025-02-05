@@ -59,7 +59,7 @@ RendererOpenGL::RendererOpenGL() {
     context = F_NEW(Foundation::getAllocator(), GlesContext);
 #elif defined(PLATFORM_ANDROID)
     context = F_NEW(Foundation::getAllocator(), AndroidContext);
-                    #elif defined(PLATFORM_DESKTOP)
+#elif defined(PLATFORM_DESKTOP)
     context = F_NEW(Foundation::getAllocator(), OpenGLContext);
 #endif
     context->create();
