@@ -135,12 +135,12 @@ void Application::processEvents() {
             windowSizeChanged(Size(ev->getWidth(), ev->getHeight()));
         }
         if (!event->isHandled) {
-            Input::onEvent(event);
-        }
-        if (!event->isHandled) {
             m_ImGuiLayer->onEvent(event);
             m_layer->onEvent(event);
         }
+        //        if (!event->isHandled) {
+        Input::onEvent(event);
+        //        }
     }
     m_eventQueue.reset();
 }

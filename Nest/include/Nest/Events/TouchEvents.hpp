@@ -28,11 +28,14 @@ struct TouchMovedEvent : public Event {
 };
 
 struct TouchEndedEvent : public Event {
-    TouchEndedEvent(int id)
+    TouchEndedEvent(int id, float x, float y)
         : Event(EventType::TouchEnded)
-        , id(id) {}
+        , id(id)
+        , x(x)
+        , y(y) {}
 
     int id;
+    float x, y;
 };
 
 } // namespace Nest

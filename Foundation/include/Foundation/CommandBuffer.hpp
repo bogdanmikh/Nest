@@ -2,6 +2,7 @@
 
 #include "Foundation/Allocator.hpp"
 #include "Foundation/Assert.hpp"
+#include "Foundation/Semaphore.hpp"
 
 #include <string>
 
@@ -34,7 +35,9 @@ public:
 
     CommandBuffer(uint32_t size)
         : m_size(size)
-        , m_pos(0) {
+        , m_pos(0)
+        , m_semaphore("Command buffer") {
+        m_semaphore.post();
         m_data = (uint8_t *)F_ALLOC(getAllocator(), size);
     }
 
@@ -45,31 +48,48 @@ public:
     template<typename CMD>
     void write(CMD &cmd) {
         static_assert(std::is_base_of_v<Command, CMD>, "Not inherited from Command");
+        m_semaphore.wait();
+
         Header header(sizeof(CMD), __alignof(CMD));
         writeHeader(header);
         align(__alignof(CMD));
         write(&cmd, sizeof(CMD));
+
+        m_semaphore.post();
     }
 
     Command *read() {
+        m_semaphore.wait();
+
         Header &header = readHeader();
         if (m_pos == 0 || header.size == COMMAND_BUFFER_FINISH_KEY) {
+            m_semaphore.post();
             return nullptr;
         }
         align(header.align);
         Command *cmd = (Command *)read(header.size);
+
+        m_semaphore.post();
+
         return cmd;
     }
 
-    // Finish writing commands. Start reading
     void finishWriting() {
+        m_semaphore.wait();
+
         Header header(COMMAND_BUFFER_FINISH_KEY, 0);
         writeHeader(header);
         m_pos = 0;
+
+        m_semaphore.post();
     }
 
     void reset() {
+        m_semaphore.wait();
+
         m_pos = 0;
+
+        m_semaphore.post();
     }
 
 private:
@@ -101,6 +121,7 @@ private:
         m_pos = pos;
     }
 
+    Semaphore m_semaphore;
     uint32_t m_size;
     uint32_t m_pos;
     uint8_t *m_data;

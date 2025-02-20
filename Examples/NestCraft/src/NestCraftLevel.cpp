@@ -27,12 +27,12 @@ static void drawCross();
 
 void NestCraftLevel::onUpdate(double deltaTime) {
     Bird::setViewClear(0, 0x3D75C9FF);
-    drawCross();
     m_viewport.update();
     for (const auto &entity : m_entities) {
         entity->onUpdate(deltaTime);
         entity->onImGuiRender();
     }
+    //    drawCross();
 }
 
 void NestCraftLevel::onDetach() {

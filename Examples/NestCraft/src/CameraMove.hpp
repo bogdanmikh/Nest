@@ -11,7 +11,7 @@ public:
 
 private:
     bool cursorLock;
-    glm::vec2 lastPos;
+    Nest::Vec2 lastPos;
     float cameraSpeed = 5.f;
     double dt;
 

@@ -1,13 +1,37 @@
 #include "CameraMove.hpp"
+#include "Nest/ImGui/ImGuiFonts.hpp"
 
+#include <imgui_internal.h>
 #include <Nest.hpp>
+
+static bool button(Nest::Input::Touch touch, Nest::Vec4 button) {
+    float x = touch.x;
+    float y = touch.y;
+
+    return x >= button.x && x <= button.x + button.z && y >= button.y && y <= button.y + button.w;
+}
 
 void CameraMove::onAttach() {
     m_window = Nest::Application::get()->getWindow();
     m_worldCamera = Nest::Application::get()->getWorldCamera();
-    m_worldCamera->setPosition(0.0, 10.0, 100.0);
+    m_worldCamera->setPosition(0.0, 7.5, 100.0);
     m_worldCamera->setFieldOfView(glm::radians(60.f));
     cursorLock = false;
+}
+
+void myCustomDrawing(Nest::Vec2 pos, int id) {
+    // Получаем текущий ImDrawList для окна
+    ImDrawList *draw_list = ImGui::GetBackgroundDrawList();
+    // Рисуем круг
+    ImVec2 circle_center = ImVec2(pos.x, pos.y);
+    float circle_radius = 100.0f;
+    draw_list->AddCircle(circle_center, circle_radius, IM_COL32(0, 255, 0, 255)); // Зеленый круг
+    char text[20];
+    ImFormatString(text, sizeof(text), "%d", id);
+    pos.y -= 200;
+    Nest::Fonts::pushFont("Large");
+    draw_list->AddText(pos, IM_COL32(255, 0, 0, 255), text);
+    Nest::Fonts::popFont();
 }
 
 void CameraMove::onUpdate(double deltaTime) {
@@ -50,44 +74,51 @@ void CameraMove::onUpdate(double deltaTime) {
         resetMouse = true;
     }
 
-
     if (!Nest::Application::get()->getWindow()->isCursorLocked())
         return;
     float mouseSpeed;
-    glm::vec2 delta = {0, 0};
+    Nest::Vec2 delta = {0, 0};
 #ifdef PLATFORM_DESKTOP
     mouseSpeed = 0.1f;
-    glm::vec2 cursorPos = {Nest::Input::getMousePositionX(), Nest::Input::getMousePositionY()};
+    Nest::Vec2 cursorPos = {
+        (float)Nest::Input::getMousePositionX(), (float)Nest::Input::getMousePositionY()
+    };
     delta = lastPos - cursorPos;
     if (resetMouse)
-        delta = glm::vec2(0);
+        delta = Nest::Vec2(0, 0);
     lastPos = cursorPos;
 #elif defined(PLATFORM_ANDROID)
-    mouseSpeed = 0.1;
     if (Input::touchCount() == 0) {
-        delta = {0, 0};
         lastPos = {0, 0};
-    } else {
-        Input::Touch touch(0, 0, 0);
-        bool find = false;
-        for (int i = 0; i < Input::touchCount(); ++i) {
-            Input::Touch currentTouch = Input::getTouch(i);
-            Nest::Size resolution = Application::get()->getWindow()->getSize();
-            if (currentTouch.x >= resolution.x / 2) {
-                touch = currentTouch;
-                find = true;
-                break;
+        return;
+    }
+    mouseSpeed = 0.1;
+    // pos_x, pos_y, width, height
+    Nest::Vec4 buttonLeft(100, 600, 200, 200);
+    Nest::Vec4 buttonRight(buttonLeft.x, buttonLeft.y + buttonLeft.w, 200, 200);
+
+    bool found = false;
+
+    for (int i = 0; i < Input::touchCount(); ++i) {
+        Input::Touch currentTouch = Input::getTouch(i);
+        Nest::Vec2 pos = {currentTouch.x, currentTouch.y};
+        //        if (button(currentTouch, buttonLeft)) {
+        //            m_worldCamera->translateLocal(0, 0., cameraSpeed * deltaTime * 0.5);
+        //        } else if (button(currentTouch, buttonRight)) {
+        //            m_worldCamera->translateLocal(0, 0., -cameraSpeed * deltaTime * 0.5);
+        //        }
+        if (!found && currentTouch.x >= resolution.x / 2) {
+            delta = lastPos - pos;
+            if (lastPos == Nest::Vec2(0, 0)) {
+                delta = {0, 0};
             }
+            if (lastPos != pos) {}
+            lastPos = pos;
+            found = true;
         }
-        glm::vec2 touchPos = {touch.x, touch.y};
-        if (!find) {
-            delta = {0, 0};
-        } else {
-            if (lastPos != glm::vec2(0, 0)) {
-                delta = lastPos - touchPos;
-            }
-        }
-        lastPos = touchPos;
+    }
+    if (!found) {
+        lastPos = {0, 0};
     }
 #endif
     m_worldCamera->rotate(-delta.y * mouseSpeed, -delta.x * mouseSpeed, 0.f);
@@ -95,31 +126,37 @@ void CameraMove::onUpdate(double deltaTime) {
 
 void CameraMove::onImGuiRender() {
 #ifdef PLATFORM_ANDROID
+    for (int i = 0; i < Nest::Input::touchCount(); ++i) {
+        Nest::Input::Touch currentTouch = Nest::Input::getTouch(i);
+        Nest::Vec2 pos = {currentTouch.x, currentTouch.y};
+
+        //        if (button(currentTouch, buttonLeft)) {
+        //            m_worldCamera->translateLocal(0, 0., cameraSpeed * deltaTime * 0.5);
+        //        } else if (button(currentTouch, buttonRight)) {
+        //            m_worldCamera->translateLocal(0, 0., -cameraSpeed * deltaTime * 0.5);
+        //        }
+        myCustomDrawing(pos, currentTouch.id);
+    }
+
     float coeff = 0.5;
     ImGui::SetNextWindowPos({100, 600});
-//    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-//                                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
-//                                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
-//                                   ImGuiWindowFlags_AlwaysAutoResize;
-
-    ImGuiWindowFlags windowFlags =
-                                   ImGuiWindowFlags_NoMove |
-                                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground;
-    ImGui::Begin("Move", nullptr);
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+                                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+                                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
+                                   ImGuiWindowFlags_AlwaysAutoResize;
+    ImGui::Begin("Move", nullptr, windowFlags);
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
-    if (ImGui::Button("##loh", {200, 200})) {
-    }
+    if (ImGui::Button("##loh", {200, 200})) {}
     if (ImGui::IsItemActive()) {
         m_worldCamera->translateLocal(0, 0., cameraSpeed * dt * coeff);
     }
     ImGui::PopStyleColor();
 
-//    ImGui::SameLine();
+    //    ImGui::SameLine();
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    if (ImGui::Button("##pi", {200, 200})) {
-    }
+    if (ImGui::Button("##pi", {200, 200})) {}
     if (ImGui::IsItemActive()) {
         m_worldCamera->translateLocal(0, 0., -cameraSpeed * dt * coeff);
     }

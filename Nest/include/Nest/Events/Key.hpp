@@ -8,9 +8,7 @@ namespace Nest {
 
 enum class MouseButton { LEFT = 0, RIGHT = 1, MIDDLE = 2 };
 
-enum class Gamepad {
-
-};
+enum class GamepadAxis { LEFT_X = 0, LEFT_Y, LEFT_Z, RIGHT_X, RIGHT_Y, RIGHT_Z, COUNT };
 
 enum class Key {
     UNKNOWN = -1,
@@ -137,7 +135,23 @@ enum class Key {
     MOD_SHIFT = 1,
     MOD_CONTROL = 2,
     MOD_ALT = 4,
-    MOD_SUPER = 8
+    MOD_SUPER = 8,
+
+    GAMEPAD_A = 400,
+    GAMEPAD_B = 401,
+    GAMEPAD_X = 402,
+    GAMEPAD_Y = 403,
+    GAMEPAD_THUMB_L = 404,    // Левый стик (нажатие)
+    GAMEPAD_THUMB_R = 405,    // Правый стик (нажатие)
+    GAMEPAD_SHOULDER_L = 406, // Левый бампер (L1)
+    GAMEPAD_SHOULDER_R = 407, // Правый бампер (R1)
+    GAMEPAD_UP = 408,         // Крестовина вверх
+    GAMEPAD_DOWN = 409,       // Крестовина вниз
+    GAMEPAD_LEFT = 410,       // Крестовина влево
+    GAMEPAD_RIGHT = 411,      // Крестовина вправо
+    GAMEPAD_BACK = 412,       // Кнопка Back (или Select)
+    GAMEPAD_START = 413,      // Кнопка Start
+    GAMEPAD_GUIDE = 414, // Кнопка Guide (обычно центральная кнопка на геймпаде)
 };
 
 } // namespace Nest

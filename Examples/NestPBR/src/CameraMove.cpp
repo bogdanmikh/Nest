@@ -112,18 +112,16 @@ void CameraMove::onImGuiRender() {
     ImGui::Begin("Move", nullptr, windowFlags);
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.9f, 0.0f, 1.0f));
-    if (ImGui::Button("##loh", {200, 200})) {
-    }
+    if (ImGui::Button("##loh", {200, 200})) {}
     if (ImGui::IsItemActive()) {
         m_worldCamera->translateLocal(0, 0., cameraSpeed * dt * coeff);
     }
     ImGui::PopStyleColor();
 
-//    ImGui::SameLine();
+    //    ImGui::SameLine();
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-    if (ImGui::Button("##pi", {200, 200})) {
-    }
+    if (ImGui::Button("##pi", {200, 200})) {}
     if (ImGui::IsItemActive()) {
         m_worldCamera->translateLocal(0, 0., -cameraSpeed * dt * coeff);
     }

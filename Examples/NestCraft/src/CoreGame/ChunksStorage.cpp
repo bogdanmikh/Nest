@@ -26,18 +26,30 @@ ChunksStorage::ChunksStorage() {
     auto seed = getMillis() % 10000ULL;
     PerlinNoise::generate2DGlm(seed, getMillis() % 20, 10.0f, terrain, WORLD_SIZE_X, WORLD_SIZE_Z);
 
+    bool createBorder = true;
+    int heightBorder = 50;
     for (int x = 0; x < WORLD_SIZE_X; x++) {
         for (int y = 0; y < WORLD_SIZE_Y; y++) {
             for (int z = 0; z < WORLD_SIZE_Z; z++) {
                 VoxelType voxelType;
                 int height =
-                    (int)(terrain[x * WORLD_SIZE_X + z] * (WORLD_SIZE_Y + getMillis() % 10));
+                    (int)(terrain[x * WORLD_SIZE_X + z] * (WORLD_SIZE_Y + getMillis() % 20));
                 if (y < height) {
-                    voxelType = y <= 2 ? VoxelType::SAND : VoxelType::STONE;
+                    voxelType = y <= 2 ? VoxelType::SAND : VoxelType::GROUND;
                 } else if (y == height) {
-                    voxelType = VoxelType(VoxelType::GRASS);
+                    voxelType = (VoxelType)12;
                 } else {
                     voxelType = VoxelType::NOTHING;
+                }
+                if (createBorder && y <= heightBorder) {
+                    bool isEdge = false;
+                    isEdge |= x == 0;
+                    isEdge |= z == 0;
+                    isEdge |= x == WORLD_SIZE_X - 1;
+                    isEdge |= z == WORLD_SIZE_Z - 1;
+                    if (isEdge) {
+                        voxelType = (VoxelType)10;
+                    }
                 }
                 int chunkIndexX = x / Chunk::SIZE_X;
                 int chunkIndexY = y / Chunk::SIZE_Y;

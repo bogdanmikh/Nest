@@ -23,7 +23,7 @@ public:
     void postMouseEvent(double x, double y);
     void postTouchBeganEvent(int id, float x, float y);
     void postTouchMovedEvent(int id, float x, float y);
-    void postTouchEndedEvent(int id);
+    void postTouchEndedEvent(int id, float x, float y);
     void postScrollEvent(double xoffset, double yoffset);
     void postWindowCloseEvent();
     Event *poll();

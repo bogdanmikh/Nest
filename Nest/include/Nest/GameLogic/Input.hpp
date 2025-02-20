@@ -31,7 +31,6 @@ public:
             , y(y) {}
     };
 
-    static void init();
     // GET INPUT DATA
     static bool isKeyPressed(Key key);
     static bool isKeyJustPressed(Key key);

@@ -83,30 +83,22 @@ void BlocksCreation::update(double deltaTime) {
 }
 
 void BlocksCreation::onImGuiRender() {
-#ifndef PLATFORM_ANDROID
-    ImGui::SetNextWindowPos(ImVec2(500.0f, 500.0f));
-    ImGui::Begin("Block");
-    if (ImGui::Button("TREE")) {
-        m_selectedBlock = VoxelType::TREE;
-    }
-    if (ImGui::Button("STONE BRICKS")) {
-        m_selectedBlock = VoxelType::STONE_BRICKS;
-    }
-    if (ImGui::Button("BOARDS")) {
-        m_selectedBlock = VoxelType::BOARDS;
-    }
-    ImGui::End();
-#else
+#ifdef PLATFORM_ANDROID
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+                                   ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+                                   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
+                                   ImGuiWindowFlags_AlwaysAutoResize;
+
     float coeff = 0.5;
     ImGui::SetNextWindowPos({600, 600});
-    ImGui::Begin("Create", nullptr);
+    ImGui::Begin("Create", nullptr, windowFlags);
 
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
     if (ImGui::Button("##create", {200, 200})) {
         glm::vec3 position = m_camera->getPosition();
         glm::vec3 target = m_camera->getFront();
         auto v = m_chunksStorage->bresenham3D(
-                position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
+            position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
         );
         if (v && v->voxel != nullptr) {
             int x = v->end.x + v->normal.x;
@@ -122,7 +114,7 @@ void BlocksCreation::onImGuiRender() {
         glm::vec3 position = m_camera->getPosition();
         glm::vec3 target = m_camera->getFront();
         auto v = m_chunksStorage->bresenham3D(
-                position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
+            position.x, position.y, position.z, target.x, target.y, target.z, MAXIMUM_DISTANCE
         );
         if (v && v->voxel != nullptr) {
             int x = v->end.x;

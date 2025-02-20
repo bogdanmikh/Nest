@@ -166,10 +166,9 @@ static void ImGui_ImplNest_UpdateKeyModifiers() {
 
 IMGUI_IMPL_API void ImGui_ImplNest_HandleEvent(Nest::Event *event) {
     using namespace Nest;
-
     ImGuiIO &io = ImGui::GetIO();
     ImGui_NestPlatformData *pd = ImGui_ImplGlfw_GetBackendData();
-
+    static int32_t lastTouchId = -1;
     switch (event->type) {
         case EventType::None:
             break;
@@ -257,22 +256,36 @@ IMGUI_IMPL_API void ImGui_ImplNest_HandleEvent(Nest::Event *event) {
             break;
         }
         case EventType::TouchBegan: {
-            ImGui_ImplNest_UpdateKeyModifiers();
             const TouchBeganEvent *ev = static_cast<const TouchBeganEvent *>(event);
+            //            if (lastTouchId != -1 && lastTouchId != ev->id) {
+            //                break;
+            //            }
             io.AddMousePosEvent((float)ev->x, (float)ev->y);
             io.AddMouseButtonEvent(0, true);
             event->isHandled = io.WantCaptureMouse;
+            //            if (lastTouchId == -1 && io.WantCaptureMouse) {
+            //                lastTouchId = ev->id;
+            //            }
             break;
         }
         case EventType::TouchEnded: {
+            const TouchEndedEvent *ev = static_cast<const TouchEndedEvent *>(event);
+            //            if (lastTouchId != ev->id) {
+            //                break;
+            //            }
             io.AddMouseButtonEvent(0, false);
             event->isHandled = io.WantCaptureMouse;
+            if (lastTouchId == ev->id) {
+                lastTouchId = -1;
+            }
             break;
         }
         case EventType::TouchMoved: {
             const TouchMovedEvent *ev = static_cast<const TouchMovedEvent *>(event);
+            //            if (lastTouchId != ev->id) {
+            //                break;
+            //            }
             io.AddMousePosEvent((float)ev->x, (float)ev->y);
-            io.AddMouseButtonEvent(0, true);
             event->isHandled = io.WantCaptureMouse;
             break;
         }

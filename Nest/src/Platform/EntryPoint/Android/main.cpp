@@ -6,6 +6,7 @@
 #include <jni.h>
 
 #include <android_native_app_glue.h>
+#include <android/looper.h>
 
 extern "C" {
 #include <android_native_app_glue.c>
@@ -33,7 +34,7 @@ void onAppCmd(int cmd) {
             Bird::PlatformData::get()->nativeWindowHandle = m_app->window;
             Bird::PlatformData::get()->assetManager = m_app->activity->assetManager;
             if (!m_thread.isRunning()) {
-                m_thread.init(mainF, nullptr, 0, "main");
+                m_thread.init(mainF, nullptr, 0, "MainF");
             }
             break;
         case APP_CMD_TERM_WINDOW:
@@ -48,6 +49,8 @@ static void onAppCmdCB(struct android_app *app, int32_t cmd) {
 int32_t onInputEvent(AInputEvent *event) {
     if (m_thread.isRunning()) {
         m_eventQueue = Nest::Application::get()->getEventQueue();
+    } else {
+        return 0;
     }
     const int32_t type = AInputEvent_getType(event);
     const int32_t source = AInputEvent_getSource(event);
@@ -73,38 +76,43 @@ int32_t onInputEvent(AInputEvent *event) {
                 return 1;
             } else {
                 int32_t count = AMotionEvent_getPointerCount(event);
-
-                int32_t action = (actionBits & AMOTION_EVENT_ACTION_MASK);
-                int32_t index = (actionBits & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >>
+                int32_t action = AMotionEvent_getAction(event);
+                int32_t actionBits = action & AMOTION_EVENT_ACTION_MASK;
+                int32_t index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >>
                                 AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-                Size touchLocation;
-                touchLocation.x = AMotionEvent_getX(event, index);
-                touchLocation.y = AMotionEvent_getY(event, index);
-                const int32_t id = AMotionEvent_getPointerId(event, index);
 
-                switch (action) {
-                    case AMOTION_EVENT_ACTION_DOWN:
-                    case AMOTION_EVENT_ACTION_POINTER_DOWN:
-                        m_eventQueue->postTouchBeganEvent(id, touchLocation.x, touchLocation.y);
-                        break;
-                    case AMOTION_EVENT_ACTION_UP:
-                    case AMOTION_EVENT_ACTION_POINTER_UP:
-                        m_eventQueue->postTouchEndedEvent(id);
-                        break;
+                for (int32_t i = 0; i < count; ++i) {
+                    Size touchLocation;
+                    touchLocation.x = AMotionEvent_getX(event, i);
+                    touchLocation.y = AMotionEvent_getY(event, i);
+                    int32_t id = AMotionEvent_getPointerId(event, i);
 
-                    default:
-                        break;
-                }
-
-                switch (action) {
-                    case AMOTION_EVENT_ACTION_MOVE:
-                        if (index == 0) {
+                    switch (actionBits) {
+                        case AMOTION_EVENT_ACTION_DOWN:
+                        case AMOTION_EVENT_ACTION_POINTER_DOWN:
+                            if (i == index) {
+                                m_eventQueue->postTouchBeganEvent(
+                                    id, touchLocation.x, touchLocation.y
+                                );
+                            }
+                            break;
+                        case AMOTION_EVENT_ACTION_UP:
+                        case AMOTION_EVENT_ACTION_POINTER_UP:
+                            if (i == index) {
+                                m_eventQueue->postTouchEndedEvent(
+                                    id, touchLocation.x, touchLocation.y
+                                );
+                            }
+                            break;
+                        case AMOTION_EVENT_ACTION_MOVE:
                             m_eventQueue->postTouchMovedEvent(id, touchLocation.x, touchLocation.y);
-                        }
-                        break;
-
-                    default:
-                        break;
+                            break;
+                        case AMOTION_EVENT_ACTION_CANCEL:
+                            m_eventQueue->postTouchEndedEvent(id, touchLocation.x, touchLocation.y);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         } break;

@@ -11,7 +11,7 @@ void ChunksRenderer::onAttach() {
     Nest::TextureAsset textureAsset = Nest::AssetLoader::loadTexture("Textures/BlocksTile.png");
 
     Bird::TextureCreate textureCreate = textureAsset.getBirdTextureCreate();
-    textureCreate.m_numMips = 4;
+    textureCreate.m_numMips = 3;
     textureCreate.m_minFiltering = Bird::NEAREST_MIPMAP_LINEAR;
     textureCreate.m_magFiltering = Bird::NEAREST;
     m_texture = createTexture(textureCreate);

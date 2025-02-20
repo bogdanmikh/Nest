@@ -36,6 +36,24 @@ struct Vec2 : public Rain::Codable {
         : x(vec.x)
         , y(vec.y) {}
 
+    Vec2 operator+(const Vec2 &l) {
+        return {x + l.x, y + l.y};
+    }
+
+    Vec2 operator-(const Vec2 &l) {
+        return {x - l.x, y - l.y};
+    }
+
+    void operator+=(const Vec2 &l) {
+        x += l.x;
+        y += l.y;
+    }
+
+    void operator-=(const Vec2 &l) {
+        x -= l.x;
+        y -= l.y;
+    }
+
     bool operator==(const Vec2 &l) {
         return l.x == x && l.y == y;
     }
