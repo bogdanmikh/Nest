@@ -18,9 +18,9 @@ void StreetLamp::onAttach() {
 
 void StreetLamp::onUpdate(double deltaTime) {
     auto &transform = m_model.getTransform();
-    transform.setPosition({15, -1, 2});
+    transform.setPosition({-8, -1, 2});
     //    transform.setScale({10., 10., 10.});
-    transform.setRotationEuler({-90, 0, 0});
+    transform.setRotationEuler({-90, 180, 0});
     transform.setScale({0.04, 0.04, 0.04});
     m_light.update();
     m_light.setUniforms(m_shaderHandle);

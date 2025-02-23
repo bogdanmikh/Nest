@@ -13,6 +13,7 @@ Nest is a simple set of basic tools for creating a small game
 * [NestPBR](Examples/NestPBR/README.md)
 * [NestCraft](Examples/NestCraft/README.md)
 * [Snow Scene](Examples/SnowScene/README.md)
+* [Hello Light](Examples/HelloLight/README.md)
 * [Content Browser](Examples/ContentBrowser/README.md)
 * [Profiler (in developing)](Examples/Profiler/README.md)
 

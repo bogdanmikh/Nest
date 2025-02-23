@@ -34,16 +34,16 @@ SimpleLight::SimpleLight() {
     m_pointLights.emplace_back(pointLight);
 
     SpotLight spotLight;
-    spotLight.position = {0, 0, 0, 0};
-    spotLight.direction = {0, 0, 0, 0};
-    spotLight.ambient = {0, 0, 0, 0};
+    spotLight.position = {-3.4, 24, 2.8, 0};
+    spotLight.direction = {0.18, -0.87, -0.45, 0};
+    spotLight.ambient = {1, 0.8, 0.23, 0};
     spotLight.diffuse = {1.0f, 1.0f, 1.0, 0};
     spotLight.specular = {1.0f, 1.0f, 1.0, 0};
-    spotLight.constant.r = 1.f;
+    spotLight.constant.r = 0.4f;
     spotLight.linear.r = 0.009f;
     spotLight.quadratic.r = 0.0032f;
-    spotLight.cutOff.r = glm::cos(glm::radians(10.0f));
-    spotLight.outerCutOff.r = glm::cos(glm::radians(30.5f));
+    spotLight.cutOff.r = glm::cos(glm::radians(2.0f));
+    spotLight.outerCutOff.r = glm::cos(glm::radians(20.5f));
     m_spotLights.emplace_back(spotLight);
 }
 
@@ -79,13 +79,24 @@ void SimpleLight::setUniforms(Bird::ProgramHandle programHandle) {
 
 void SimpleLight::update() {
     auto camera = Nest::Application::get()->getWorldCamera();
+    auto time = Nest::Application::get()->getWindow()->getTime();
+    float diff = (time - int(time)) * 10;
+    int random = Nest::getRandomInt(0, 10);
+    if (diff - 3 >= random) {
+        m_spotLights.back().ambient = {0, 0, 0, 0};
+    } else {
+        m_spotLights.back().ambient = {1, 0.8, 0.23, 0};
+    }
+    LOG_INFO("{}", time);
     if (!m_spotLights.empty()) {
         //        m_spotLights.back().position = {camera->getPosition(), 0};
         //        m_spotLights.back().direction = {camera->getFront(), 0};
-        LOG_INFO(
-            "{} {} {}", camera->getPosition().x, camera->getPosition().y, camera->getPosition().z
-        );
-        LOG_INFO("{} {} {}", camera->getFront().x, camera->getFront().y, camera->getFront().z);
+        //        LOG_INFO(
+        //            "{} {} {}", camera->getPosition().x, camera->getPosition().y,
+        //            camera->getPosition().z
+        //        );
+        //        LOG_INFO("{} {} {}", camera->getFront().x, camera->getFront().y,
+        //        camera->getFront().z);
     }
 }
 

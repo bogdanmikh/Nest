@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lada (VAZ) 2110
+* source:	https://sketchfab.com/3d-models/lada-vaz-2110-6622502050b548ef85796886f319dc99
+* author:	nyranarod (https://sketchfab.com/nyranarod)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lada (VAZ) 2110" (https://sketchfab.com/3d-models/lada-vaz-2110-6622502050b548ef85796886f319dc99) by nyranarod (https://sketchfab.com/nyranarod) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

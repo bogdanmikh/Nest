@@ -5,19 +5,27 @@
 #include "NightSky.hpp"
 
 void NightSky::onAttach() {
-    //    std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
-    //        "Textures/NightSky/px.png",
-    //        "Textures/NightSky/nx.png",
-    //        "Textures/NightSky/py.png",
-    //        "Textures/NightSky/ny.png",
-    //        "Textures/NightSky/pz.png",
-    //        "Textures/NightSky/nz.png"
-    //    };
-    Nest::Path skyPathToVertexShader = "Shaders/vstSky.glsl";
-    Nest::Path skyPathToFragmentShader = "Shaders/fstSky.glsl";
+    std::array<Nest::Path, 6> skyTextureAssetNotBlur = {
+        "Textures/NightSky/px.png",
+        "Textures/NightSky/nx.png",
+        "Textures/NightSky/py.png",
+        "Textures/NightSky/ny.png",
+        "Textures/NightSky/pz.png",
+        "Textures/NightSky/nz.png"
+    };
+    Nest::Path skyPathToVertexShaderHdr = "Shaders/vstSkyHdr.glsl";
+    Nest::Path skyPathToFragmentShaderHdr = "Shaders/fstSkyHdr.glsl";
+
+    Nest::Path skyPathToVertexShaderCubemap = "Shaders/vstSkyCubemap.glsl";
+    Nest::Path skyPathToFragmentShaderCubemap = "Shaders/fstSkyCubemap.glsl";
+
+    Nest::Path pathToHdr = "Textures/Hdr/field.jpeg";
     m_nightSky = F_NEW(Foundation::getAllocator(), Nest::SkyComponent)(
-        {"Textures/Hdr/field.jpeg", skyPathToVertexShader, skyPathToFragmentShader}
+        {skyTextureAssetNotBlur, skyPathToVertexShaderCubemap, skyPathToFragmentShaderCubemap}
     );
+    //    m_nightSky = F_NEW(Foundation::getAllocator(), Nest::SkyComponent)(
+    //        {pathToHdr, skyPathToVertexShaderHdr, skyPathToFragmentShaderHdr}
+    //    );
 }
 
 void NightSky::onUpdate(double deltaTime) {
