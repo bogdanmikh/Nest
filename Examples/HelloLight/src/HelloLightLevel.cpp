@@ -2,7 +2,8 @@
 #include "CameraMove.hpp"
 #include "NightSky.hpp"
 #include "Objects/Asphalt.hpp"
-#include "Objects/CarObject.hpp"
+#include "Objects/DpsLada.hpp"
+#include "Objects/OldLada.hpp"
 #include "Objects/Garage.hpp"
 #include "Objects/StreetLamp.hpp"
 
@@ -10,10 +11,11 @@
 
 void HelloLightLevel::onAttach() {
     addEntity(new NightSky);
-    addEntity(new CarObject);
-//    addEntity(new StreetLamp);
-//    addEntity(new Asphalt);
-//    addEntity(new Garage);
+    addEntity(new DpsLada);
+    addEntity(new OldLada);
+    //    addEntity(new StreetLamp);
+    //    addEntity(new Asphalt);
+    //    addEntity(new Garage);
     addEntity(new CameraMove);
     for (auto &entity : m_entities) {
         entity->onAttach();

@@ -35,7 +35,7 @@ struct Uniform {
         free(data);
     }
 
-    Uniform(const Uniform& uniform)
+    Uniform(const Uniform &uniform)
         : handle(uniform.handle)
         , name(uniform.name)
         , data(nullptr)

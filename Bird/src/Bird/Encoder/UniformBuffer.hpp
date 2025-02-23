@@ -27,6 +27,7 @@ public:
     void reset() {
         m_buffer.clear();
     }
+
 private:
     std::deque<Uniform> m_buffer;
 };

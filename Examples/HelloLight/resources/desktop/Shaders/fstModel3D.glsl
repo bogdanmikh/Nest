@@ -79,7 +79,7 @@ struct SpotLightVec4 {
 };
 
 #define MAX_DIR_LIGHTS 1
-#define MAX_POINT_LIGHTS 1
+#define MAX_POINT_LIGHTS 10
 #define MAX_SPOT_LIGHTS 1
 
 in vec2 TexCoords;
@@ -130,10 +130,6 @@ void main() {
         result += calcSpotLight(spotLights[i], norm, FragPos, cameraDir);
     }
 
-//    if (dirLights[0].specular.r == -999) {
-//        result = vec3(1,0,0);
-//    }
-
     fragColor = vec4(result, 1);
 }
 
@@ -141,9 +137,6 @@ void initLights() {
     // dir light
     for(int i = 0; i < min(numDirLights, MAX_DIR_LIGHTS); i++) {
         dirLights[i].specular = dirLightsVec4[i].specular.rgb;
-        if (dirLights[i].specular.r == 0) {
-            dirLights[i].specular.r = -999;
-        }
         dirLights[i].diffuse = dirLightsVec4[i].diffuse.rgb;
         dirLights[i].direction = dirLightsVec4[i].direction.rgb;
         dirLights[i].ambient = dirLightsVec4[i].ambient.rgb;
@@ -173,7 +166,6 @@ void initLights() {
         spotLights[i].diffuse = spotLightsVec4[i].diffuse.rgb;
         spotLights[i].specular = spotLightsVec4[i].specular.rgb;
     }
-
 }
 
 // calculates the color when using a directional light.
