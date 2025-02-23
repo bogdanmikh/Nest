@@ -246,7 +246,7 @@ struct Context {
     }
 
     void checkIfHasInitCommand() {
-        Foundation::CommandBuffer::Command *command = m_submit->getPreCommandQueue().read();
+        Foundation::CommandBuffer::Command *command = m_render->getPreCommandQueue().read();
         if (command != nullptr) {
             CMDBUF_LOG("RENDERER INIT COMMAND");
             NEST_ASSERT(

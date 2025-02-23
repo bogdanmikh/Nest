@@ -38,7 +38,7 @@ struct RenderDraw {
         , m_vertexBuffer(BIRD_INVALID_HANDLE)
         , m_vertexLayout(BIRD_INVALID_HANDLE)
         , m_scissorRect(Rect::zero())
-        , m_uniformBuffer(5000) {}
+        , m_uniformBuffer() {}
 
     void reset() {
         m_isSubmitted = false;

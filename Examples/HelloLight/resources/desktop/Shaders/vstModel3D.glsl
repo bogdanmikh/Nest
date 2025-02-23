@@ -15,7 +15,6 @@ void main() {
 
      gl_Position = projViewMtx * model * vec4(aPos, 1.0);
      TexCoords = aTexCoords;
-     Normal = aNormal;
-    //gl_Position = vec4(aPos, 1.0);
+     Normal = mat3(transpose(inverse(model))) * aNormal;
 //    gl_Position = vec4(aPos, 1.0);
 }

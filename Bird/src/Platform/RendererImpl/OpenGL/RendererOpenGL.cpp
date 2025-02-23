@@ -215,22 +215,22 @@ void RendererOpenGL::setUniform(const Uniform &uniform) {
     switch (uniform.type) {
         case UniformType::Sampler:
             shaders[uniform.handle.id].setUniformInt(
-                uniform.name, static_cast<int *>(uniform.data), uniform.count
+                uniform.name.c_str(), static_cast<int *>(uniform.data), uniform.count
             );
             return;
         case UniformType::Mat3:
             shaders[uniform.handle.id].setUniformMat3(
-                uniform.name, static_cast<float *>(uniform.data), uniform.count
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
             );
             return;
         case UniformType::Mat4:
             shaders[uniform.handle.id].setUniformMat4(
-                uniform.name, static_cast<float *>(uniform.data), uniform.count
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
             );
             return;
         case UniformType::Vec4:
             shaders[uniform.handle.id].setUniformVec4(
-                uniform.name, static_cast<float *>(uniform.data), uniform.count
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
             );
             return;
         case UniformType::Count:
@@ -306,10 +306,9 @@ void RendererOpenGL::viewChanged(View &view) {
 void RendererOpenGL::submit(RenderDraw *draw) {
     // TODO: Capture time
     shaders[draw->m_shader.id].bind();
-    draw->m_uniformBuffer.finishWriting();
-    Uniform *uniform;
-    while ((uniform = draw->m_uniformBuffer.readUniform()) != nullptr) {
-        setUniform(*uniform);
+    while (!draw->m_uniformBuffer.isEmpty()) {
+        Uniform uniform = draw->m_uniformBuffer.readUniform();
+        setUniform(uniform);
     }
     for (size_t t = 0; t < draw->m_textureBindingsCount; t++) {
         TextureBinding &textureBinding = draw->m_textureBindings[t];
