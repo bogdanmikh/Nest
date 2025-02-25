@@ -5,7 +5,7 @@
 This mini game is written on the NestEngine
 
 [//]: # (![Alt text]&#40;Screenshot.png "Screenshot"&#41;)
-<img src="Screenshot.png" width="900" alt="Reduced image">
+<img src="Screenshot.png" width="900" alt="Reduced image" style="border-radius: 20px;">
 
 ### Windows
 Build with CMake:

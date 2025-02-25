@@ -4,8 +4,8 @@
 
 This scene with 3d models
 
-<img src="Screenshot1.png" width="900" alt="Reduced image">
-<img src="Screenshot2.png" width="900" alt="Reduced image">
+<img src="Screenshot1.png" width="900" alt="Reduced image" style="border-radius: 20px;">
+<img src="Screenshot2.png" width="900" alt="Reduced image" style="border-radius: 20px;">
 
 ### Windows
 Build with CMake:

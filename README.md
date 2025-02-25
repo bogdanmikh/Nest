@@ -1,6 +1,6 @@
 # Nest
 
-<img src="Logo.png" width="500" alt="Reduced image">
+<img src="Logo.png" width="500" alt="Reduced image" style="border-radius: 20px;">
 
 ## About Nest
 Nest is a simple set of basic tools for creating a small game

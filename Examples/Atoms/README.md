@@ -1,6 +1,6 @@
 # Atoms
 
-<img src="AtomsIcon.png" width="700" alt="Reduced image">
+<img src="AtomsIcon.png" width="700" alt="Reduced image" style="border-radius: 20px;">
 
 ### Game on NestEngine
 
