@@ -1460,7 +1460,7 @@ GeometryObject $geometry2		// Floor
 	}
 }
 
-LightObject $light3 (type = "point")		// Lamp
+GameObject $light3 (type = "point")		// Lamp
 {
 	Color (attrib = "light") {float[3] {{1.0, 1.0, 1.0}}}
 
@@ -1470,7 +1470,7 @@ LightObject $light3 (type = "point")		// Lamp
 	}
 }
 
-LightObject $light1 (type = "point")		// pointLight1
+GameObject $light1 (type = "point")		// pointLight1
 {
 	Color (attrib = "light") {float[3] {{1.0, 1.0, 1.0}}}
 
@@ -1480,7 +1480,7 @@ LightObject $light1 (type = "point")		// pointLight1
 	}
 }
 
-LightObject $light2 (type = "point")		// Light
+GameObject $light2 (type = "point")		// Light
 {
 	Color (attrib = "light") {float[3] {{1.0, 1.0, 1.0}}}
 

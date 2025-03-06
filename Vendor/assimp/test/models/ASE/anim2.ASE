@@ -810,7 +810,7 @@
 		}
 	}
 }
-*LIGHTOBJECT {
+*GameObject {
 	*NODE_NAME "FDirect01"
 	*LIGHT_TYPE Directional
 	*NODE_TM {
@@ -849,7 +849,7 @@
 		*LIGHT_RAYBIAS 0.0000
 	}
 }
-*LIGHTOBJECT {
+*GameObject {
 	*NODE_NAME "FDirect02"
 	*LIGHT_TYPE Directional
 	*NODE_TM {
@@ -888,7 +888,7 @@
 		*LIGHT_RAYBIAS 0.0000
 	}
 }
-*LIGHTOBJECT {
+*GameObject {
 	*NODE_NAME "Sky01"
 	*LIGHT_TYPE Free
 	*NODE_TM {

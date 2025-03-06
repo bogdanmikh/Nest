@@ -117,7 +117,7 @@ protected:
     void handleLightNode( ODDLParser::DDLNode *node, aiScene *pScene );
     void handleGeometryObject( ODDLParser::DDLNode *node, aiScene *pScene );
     void handleCameraObject( ODDLParser::DDLNode *node, aiScene *pScene );
-    void handleLightObject( ODDLParser::DDLNode *node, aiScene *pScene );
+    void handleGameObject( ODDLParser::DDLNode *node, aiScene *pScene );
     void handleTransformNode( ODDLParser::DDLNode *node, aiScene *pScene );
     void handleMeshNode( ODDLParser::DDLNode *node, aiScene *pScene );
     void handleVertexArrayNode( ODDLParser::DDLNode *node, aiScene *pScene );

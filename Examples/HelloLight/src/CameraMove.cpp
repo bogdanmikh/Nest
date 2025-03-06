@@ -68,6 +68,8 @@ void CameraMove::onImGuiRender() {
         m_worldCamera->getPosition().y,
         m_worldCamera->getPosition().z
     );
+    //    auto rot = m_worldCamera->getFront();
+    //    ImGui::Text("Rot x: %f, y: %f, z: %f", rot.x, rot.y, rot.z);
     if (ImGui::Button("Reset")) {
         m_worldCamera->setPosition(0, 0, 0);
     }

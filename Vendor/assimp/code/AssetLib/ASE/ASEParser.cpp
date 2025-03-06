@@ -288,7 +288,7 @@ void Parser::Parse() {
                 continue;
             }
             // light object
-            if (TokenMatch(mFilePtr, "LIGHTOBJECT", 11))
+            if (TokenMatch(mFilePtr, "GameObject", 11))
 
             {
                 m_vLights.emplace_back("UNNAMED");

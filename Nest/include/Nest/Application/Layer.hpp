@@ -22,8 +22,6 @@ public:
         return m_debugName;
     }
 
-    virtual void addEntity(Entity *entity) {}
-
 protected:
     std::string m_debugName;
     std::vector<Entity *> m_entities;

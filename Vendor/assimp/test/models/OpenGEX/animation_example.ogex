@@ -1713,7 +1713,7 @@ GeometryObject $geometry1		// Cube.001
 	}
 }
 
-LightObject $light1 (type = "point")		// Lamp
+GameObject $light1 (type = "point")		// Lamp
 {
 	Color (attrib = "light") {float[3] {{1.0, 1.0, 1.0}}}
 

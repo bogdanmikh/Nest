@@ -112,6 +112,8 @@ vec3 calcDirLight(DirLight light, vec3 normal, vec3 cameraDir);
 vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 cameraDir);
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 cameraDir);
 
+float gamma = 1.2;
+
 void main() {
     initLights();
     vec3 norm = normalize(Normal);
@@ -130,6 +132,7 @@ void main() {
         result += calcSpotLight(spotLights[i], norm, FragPos, cameraDir);
     }
 
+    result = pow(result, vec3(1.0 / gamma));
     fragColor = vec4(result, 1);
 }
 

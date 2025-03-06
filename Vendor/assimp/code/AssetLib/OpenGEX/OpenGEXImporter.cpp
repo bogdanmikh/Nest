@@ -80,7 +80,7 @@ namespace Grammar {
     static constexpr char LightNodeType[] = "LightNode";
     static constexpr char GeometryObjectType[] = "GeometryObject";
     static constexpr char CameraObjectType[] = "CameraObject";
-    static constexpr char LightObjectType[] = "LightObject";
+    static constexpr char GameObjectType[] = "GameObject";
     static constexpr char TransformType[] = "Transform";
     static constexpr char MeshType[] = "Mesh";
     static constexpr char VertexArrayType[] = "VertexArray";
@@ -115,7 +115,7 @@ namespace Grammar {
         LightNodeToken,
         GeometryObjectToken,
         CameraObjectToken,
-        LightObjectToken,
+        GameObjectToken,
         TransformToken,
         MeshToken,
         VertexArrayToken,
@@ -172,8 +172,8 @@ namespace Grammar {
             return GeometryObjectToken;
         } else if (0 == strncmp(CameraObjectType, tokenType, len)) {
             return CameraObjectToken;
-        } else if (0 == strncmp(LightObjectType, tokenType, len)) {
-            return LightObjectToken;
+        } else if (0 == strncmp(GameObjectType, tokenType, len)) {
+            return GameObjectToken;
         } else if (0 == strncmp(TransformType, tokenType, len)) {
             return TransformToken;
         } else if (0 == strncmp(MeshType, tokenType, len)) {
@@ -378,8 +378,8 @@ void OpenGEXImporter::handleNodes(DDLNode *node, aiScene *pScene) {
             handleCameraObject(*it, pScene);
             break;
 
-        case Grammar::LightObjectToken:
-            handleLightObject(*it, pScene);
+        case Grammar::GameObjectToken:
+            handleGameObject(*it, pScene);
             break;
 
         case Grammar::TransformToken:
@@ -599,7 +599,7 @@ void OpenGEXImporter::handleCameraObject(ODDLParser::DDLNode *node, aiScene *pSc
 }
 
 //------------------------------------------------------------------------------------------------
-void OpenGEXImporter::handleLightObject(ODDLParser::DDLNode *node, aiScene *pScene) {
+void OpenGEXImporter::handleGameObject(ODDLParser::DDLNode *node, aiScene *pScene) {
     aiLight *light(new aiLight);
     m_lightCache.push_back(light);
     std::string objName = node->getName();

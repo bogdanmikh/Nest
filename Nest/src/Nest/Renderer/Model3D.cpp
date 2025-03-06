@@ -21,6 +21,8 @@ TransformComponent &Model3D::getTransform() {
 void Model3D::create(
     Bird::ProgramHandle shader, Path pathToModel, const CreateInfoModel3D &createInfoModel3D
 ) {
+    m_viewId = 0;
+
     m_pathToModel3D = pathToModel;
     m_shader = shader;
     m_createInfo = createInfoModel3D;
@@ -199,8 +201,16 @@ void Model3D::draw() {
         Bird::setVertexBuffer(mesh->m_vertexBufferHandle);
         NEST_ASSERT(mesh->m_vertexBufferHandle.isValid(), "Invalid index buffer for mesh");
         Bird::setIndexBuffer(mesh->m_indexBufferHandle, 0, mesh->m_indicesCount);
-        Bird::submit(0);
+        Bird::submit(m_viewId);
     }
+}
+
+void Model3D::setViewId(Bird::ViewId viewId) {
+    m_viewId = viewId;
+}
+
+void Model3D::setShader(Bird::ProgramHandle shader) {
+    m_shader = shader;
 }
 
 } // namespace Nest

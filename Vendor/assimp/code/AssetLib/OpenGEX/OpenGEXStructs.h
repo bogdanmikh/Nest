@@ -50,7 +50,7 @@ namespace OpenGEX {
 
 struct Skin;
 struct Object;
-struct LightObject;
+struct GameObject;
 struct CameraObject;
 struct Material;
 struct BoneNode;
@@ -94,7 +94,7 @@ struct GeometryNode {
 
 struct LightNode {
     bool shadowFlag[ 2 ];
-    const LightObject *lightObjectStructure;
+    const GameObject *GameObjectStructure;
 };
 
 struct CameraNode {
@@ -109,7 +109,7 @@ struct GeometryObject {
     std::map<std::string, Mesh*> meshMap;
 };
 
-struct LightObject {
+struct GameObject {
     Object *object;
     std::string typeString;
     bool shadowFlag;

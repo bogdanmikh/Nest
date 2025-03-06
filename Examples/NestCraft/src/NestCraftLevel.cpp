@@ -23,8 +23,6 @@ void NestCraftLevel::onAttach() {
     addEntity(managerEffects);
 }
 
-static void drawCross();
-
 void NestCraftLevel::onUpdate(double deltaTime) {
     Bird::setViewClear(0, 0x3D75C9FF);
     m_viewport.update();
@@ -45,36 +43,4 @@ void NestCraftLevel::onDetach() {
 void NestCraftLevel::addEntity(Nest::Entity *entity) {
     entity->onAttach();
     m_entities.emplace_back(entity);
-}
-
-static void drawCross() {
-    ImGuiIO &io = ImGui::GetIO();
-    ImGui::SetNextWindowSize(io.DisplaySize);
-    ImGui::Begin(
-        "##crosshair",
-        nullptr,
-        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse |
-            ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground
-    );
-    //      ImGui::Begin("##crosshair");
-
-    ImDrawList *drawList = ImGui::GetWindowDrawList();
-
-    float windowWidth = io.DisplaySize.x;
-    float windowHeight = io.DisplaySize.y;
-
-    float centerX = windowWidth / 2.0f;
-    float centerY = windowHeight / 2.0f;
-
-    float lineLength = 20.0f;
-
-    auto color = IM_COL32(255, 0, 0, 255);
-    drawList->AddLine(
-        ImVec2(centerX - lineLength, centerY), ImVec2(centerX + lineLength, centerY), color
-    );
-    drawList->AddLine(
-        ImVec2(centerX, centerY - lineLength), ImVec2(centerX, centerY + lineLength), color
-    );
-    ImGui::End();
 }

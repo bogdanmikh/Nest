@@ -14,12 +14,14 @@ SimpleLight::SimpleLight() {
     dirLight.specular = {0.2f, 0.2f, 0.2, 0};
     m_dirLights.emplace_back(dirLight);
 
+    // d - distance light to camera
+    // intensity = 1 / constant + linear * d + quadratic * d * d
     PointLight pointLight;
     pointLight.position = {13.3, 7.7, 0.9, 0};
     pointLight.ambient = {0.0f, 0.0f, 1.0f, 0};
     pointLight.diffuse = {1.0f, 0.6f, 0.0f, 0};
     pointLight.specular = {1.0f, 0.6f, 0.0f, 0};
-    pointLight.constant.r = 0.5;
+    pointLight.constant.r = 1.0;
     pointLight.linear.r = 0.09;
     pointLight.quadratic.r = 0.032;
     m_pointLights.emplace_back(pointLight);
@@ -34,7 +36,7 @@ SimpleLight::SimpleLight() {
     m_pointLights.emplace_back(pointLight);
 
     SpotLight spotLight;
-    spotLight.position = {-3.4, 24, 2.8, 0};
+    spotLight.position = {-3.4, 21, 2.8, 0};
     spotLight.direction = {0.18, -0.87, -0.45, 0};
     spotLight.ambient = {1, 0.8, 0.23, 0};
     spotLight.diffuse = {1.0f, 1.0f, 1.0, 0};
@@ -87,7 +89,7 @@ void SimpleLight::update() {
     } else {
         m_spotLights.back().ambient = {1, 0.8, 0.23, 0};
     }
-    LOG_INFO("{}", time);
+    //    LOG_INFO("{}", time);
     if (!m_spotLights.empty()) {
         //        m_spotLights.back().position = {camera->getPosition(), 0};
         //        m_spotLights.back().direction = {camera->getFront(), 0};

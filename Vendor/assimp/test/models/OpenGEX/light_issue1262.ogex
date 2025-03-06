@@ -1,4 +1,4 @@
-LightObject (type = "infinite") {
+GameObject (type = "infinite") {
     Param (attrib = "intensity") {
         float { 3.0 }
     }
@@ -8,13 +8,13 @@ LightObject (type = "infinite") {
     }
 }
 
-LightObject (type = "point") {
+GameObject (type = "point") {
     Param (attrib = "intensity") {
         float { 0.5 }
     }
 }
 
-LightObject (type = "spot") {
+GameObject (type = "spot") {
     Color (attrib = "light") {
         float[4] { { 0.1, 0.0, 0.1, 1.0 } }
     }

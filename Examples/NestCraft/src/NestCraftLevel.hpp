@@ -10,7 +10,7 @@ public:
     void onAttach() override;
     void onUpdate(double deltaTime) override;
     void onDetach() override;
-    void addEntity(Nest::Entity *entity) override;
+    void addEntity(Nest::Entity *entity);
 
 private:
     Menu m_menu;

@@ -30,6 +30,7 @@ public:
         glm::vec3 Normal;
     };
 
+
     void create(
         Bird::ProgramHandle shader,
         Path pathToModel,
@@ -38,6 +39,9 @@ public:
     TransformComponent &getTransform();
 
     void draw();
+
+    void setShader(Bird::ProgramHandle shader);
+    void setViewId(Bird::ViewId viewId);
 
     ~Model3D();
 
@@ -64,6 +68,7 @@ private:
     std::vector<std::vector<int>> m_slots;
 
     TransformComponent m_transformComponent;
+    Bird::ViewId m_viewId;
     glm::mat4 m_viewProj;
 };
 
