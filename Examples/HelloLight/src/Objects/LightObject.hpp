@@ -30,16 +30,24 @@ public:
             Nest::AssetLoader::loadProgram("Shaders/vstModel3D.glsl", "Shaders/fstModel3D.glsl");
         m_shaderLight = createProgram(programAsset.getBirdProgramCreate());
 
-        programAsset = Nest::AssetLoader::loadProgram("Shaders/vstDepthModel3D.glsl", "Shaders/fstDepthModel3D.glsl");
-
-        m_shaderDepth = createProgram(programAsset.getBirdProgramCreate());
-        m_currentShader = &m_shaderLight;
-
-        m_model.create(
-            *m_currentShader, m_infoObject.pathToModel, m_infoObject.createInfoModel3D
+        programAsset = Nest::AssetLoader::loadProgram(
+            "Shaders/vstDepthModel3D.glsl", "Shaders/fstDepthModel3D.glsl"
         );
+        m_shaderDepth = createProgram(programAsset.getBirdProgramCreate());
+
+        setRendererMode(RendererMode::DEPTH);
+
+        m_model.create(*m_currentShader, m_infoObject.pathToModel, m_infoObject.createInfoModel3D);
+        m_viewport.init();
     }
     void onUpdate(double deltaTime) override {
+        if (Nest::Input::isKeyJustPressed(Nest::Key::E)) {
+            if (m_rendererMode == RendererMode::DEFAULT) {
+                setRendererMode(RendererMode::DEPTH);
+            } else {
+                setRendererMode(RendererMode::DEFAULT);
+            }
+        }
         setUniforms();
 
         auto &transform = m_model.getTransform();
@@ -73,36 +81,41 @@ private:
                 break;
         }
     }
-    Bird::ProgramHandle m_shaderLight;
-    Bird::ProgramHandle m_shaderDepth;
-    RendererMode m_rendererMode;
-    SimpleLight m_light;
-    Nest::Viewport m_viewport;
+
     void setUniforms() {
         if (m_rendererMode == RendererMode::DEPTH) {
-            float near_plane = 1.0f, far_plane = 7.5f;
-            glm::mat4 lightProjection =
-                glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-            glm::mat4 lightView = glm::lookAt(
-                glm::vec3(-2.0f, 4.0f, -1.0f),
-                glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(0.0f, 1.0f, 0.0f)
-            );
-
-            glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-            Bird::setShader(m_shaderDepth);
-            Bird::setUniform(
-                m_shaderDepth, "lightProjViewMtx", &lightSpaceMatrix, Bird::UniformType::Mat4
-            );
+            //            float near_plane = 1.0f, far_plane = 7.5f;
+            //            glm::mat4 lightProjection =
+            //                glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+            //            glm::mat4 lightView = glm::lookAt(
+            //                glm::vec3(-2.0f, 4.0f, -1.0f),
+            //                glm::vec3(0.0f, 0.0f, 0.0f),
+            //                glm::vec3(0.0f, 1.0f, 0.0f)
+            //            );
+            //
+            //            glm::mat4 lightSpaceMatrix = lightProjection * lightView;
+            //            Bird::setShader(m_shaderDepth);
+            //            Bird::setUniform(
+            //                m_shaderDepth, "lightProjViewMtx", &lightSpaceMatrix,
+            //                Bird::UniformType::Mat4
+            //            );
         } else {
-            m_light.setUniforms(*m_currentShader);
+            m_light.setUniforms(m_shaderLight);
             m_light.update();
         }
     }
 
     Bird::ProgramHandle *m_currentShader;
-    Bird::TextureHandle m_textureDepth;
-    InfoLightObject m_infoObject;
+    Bird::ProgramHandle m_shaderDepth;
+    Bird::ProgramHandle m_shaderLight;
 
+    Bird::TextureHandle m_textureDepth;
+
+    Nest::Viewport m_viewport;
     Nest::Model3D m_model;
+
+    InfoLightObject m_infoObject;
+    RendererMode m_rendererMode;
+
+    SimpleLight m_light;
 };

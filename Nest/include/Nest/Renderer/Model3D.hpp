@@ -30,7 +30,6 @@ public:
         glm::vec3 Normal;
     };
 
-
     void create(
         Bird::ProgramHandle shader,
         Path pathToModel,

@@ -15,6 +15,7 @@ public:
     ~Viewport();
 
     void init();
+    void initWithSize(Vec2 size);
     void update();
     Bird::ViewId getViewId();
     Bird::TextureHandle getTextureHandle();

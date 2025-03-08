@@ -32,6 +32,7 @@ void Model3D::create(
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         LOG_CRITICAL("ERROR::ASSIMP::{}", importer.GetErrorString());
+        assert(false);
     }
     processNode(scene->mRootNode, scene);
     m_slots.resize(m_meshes.size());
@@ -211,6 +212,9 @@ void Model3D::setViewId(Bird::ViewId viewId) {
 
 void Model3D::setShader(Bird::ProgramHandle shader) {
     m_shader = shader;
+    for (auto &mesh : m_meshes) {
+        mesh->setShader(shader);
+    }
 }
 
 } // namespace Nest

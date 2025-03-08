@@ -29,7 +29,7 @@ void HelloLightLevel::onAttach() {
     info.position = {-8, -1, 2};
     info.degrees = {-90, 180, 0};
     info.scale = {0.04, 0.04, 0.04};
-    info.pathToModel =  "Models/street_lamp/scene.gltf";
+    info.pathToModel = "Models/street_lamp/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
 //    addLightObject(info);
 
@@ -37,7 +37,14 @@ void HelloLightLevel::onAttach() {
     info.position = {15, 4.4, 0};
     info.degrees = {0, 0, 0};
     info.scale = {0.5, 0.5, 0.5};
-    info.pathToModel ="Models/lada_2109_dps/scene.gltf";
+    info.pathToModel = "Models/lada_2109_dps/scene.gltf";
+    info.createInfoModel3D = {"material.diffuse", "material.specular"};
+//    addLightObject(info);
+
+    info.position = {0, 0, 0};
+    info.degrees = {0, 0, 0};
+    info.scale = {0.1, 0.1, 0.1};
+    info.pathToModel = "Models/Sponza/sponza.obj";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
 //    addLightObject(info);
 

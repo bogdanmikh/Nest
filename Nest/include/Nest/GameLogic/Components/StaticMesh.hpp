@@ -33,6 +33,10 @@ public:
         return m_shaderHandle;
     }
 
+    void setShader(Bird::ProgramHandle shaderHandle) {
+        m_shaderHandle = shaderHandle;
+    }
+
     void deleteTextures();
 
 private:

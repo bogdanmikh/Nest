@@ -38,7 +38,7 @@ SimpleLight::SimpleLight() {
     SpotLight spotLight;
     spotLight.position = {-3.4, 21, 2.8, 0};
     spotLight.direction = {0.18, -0.87, -0.45, 0};
-    spotLight.ambient = {1, 0.8, 0.23, 0};
+    spotLight.ambient = {1, 1., 1., 0};
     spotLight.diffuse = {1.0f, 1.0f, 1.0, 0};
     spotLight.specular = {1.0f, 1.0f, 1.0, 0};
     spotLight.constant.r = 0.4f;
@@ -51,6 +51,16 @@ SimpleLight::SimpleLight() {
 
 void SimpleLight::setUniforms(Bird::ProgramHandle programHandle) {
     auto camera = Nest::Application::get()->getWorldCamera();
+
+    auto &spot = m_spotLights.back();
+
+    spot.position.x = camera->getPosition().x;
+    spot.position.y = camera->getPosition().y;
+    spot.position.z = camera->getPosition().z;
+
+    spot.direction.x = camera->getFront().x;
+    spot.direction.y = camera->getFront().y;
+    spot.direction.z = camera->getFront().z;
 
     glm::vec4 numLights;
     numLights.x = m_dirLights.size();

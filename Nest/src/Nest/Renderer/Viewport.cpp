@@ -36,6 +36,24 @@ void Viewport::init() {
     Bird::setViewFrameBuffer(m_viewId, m_frameBuffer);
 }
 
+void Viewport::initWithSize(Nest::Vec2 size) {
+    m_windowSize = size;
+    Bird::TextureCreate create;
+    create.m_data = Foundation::Memory(nullptr);
+    create.m_format = Bird::TextureFormat::RGBA8;
+    create.m_width = m_windowSize.width;
+    create.m_height = m_windowSize.height;
+    m_colorAttachment = Bird::createTexture(create);
+    create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
+    Bird::TextureHandle depthAttachment = Bird::createTexture(create);
+    Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, depthAttachment};
+    m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);
+    m_frameBuffer = Bird::createFrameBuffer(m_fbSpecification);
+    Bird::setViewport(m_viewId, Bird::Rect(0, 0, m_windowSize.width, m_windowSize.height));
+    Bird::setViewClear(m_viewId, 0x12212bff);
+    Bird::setViewFrameBuffer(m_viewId, m_frameBuffer);
+}
+
 void Viewport::update() {
     auto currentSize = Nest::Application::get()->getWindow()->getSize();
     auto currentDpi = Nest::Application::get()->getWindow()->getDpi();
