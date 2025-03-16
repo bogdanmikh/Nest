@@ -15,7 +15,6 @@ void NestProfiler::Instrumentor::setEndTimeFrame(const uint64_t &endTime) {
     m_appInfo.m_frameResults[currentFrame].endTime = endTime;
     uint64_t start = m_appInfo.m_frameResults[currentFrame].startTime,
              end = m_appInfo.m_frameResults[currentFrame].endTime;
-    m_appInfo.m_frameResults[currentFrame].elapsedTime = end - start;
 }
 
 void NestProfiler::Instrumentor::addFunc(const FuncInfo &funcInfo) {

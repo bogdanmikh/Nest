@@ -81,11 +81,6 @@ target_link_libraries(Nest imgui)
 target_include_directories(Nest PUBLIC ${VENDOR_DIRECTORY}/imgui)
 
 if (PLATFORM_DESKTOP)
-    # Dependencies - nfd
-    target_link_libraries(Nest nfd)
-endif ()
-
-if (PLATFORM_DESKTOP)
     # Dependencies - enet
     target_link_libraries(Nest enet_static)
     target_include_directories(Nest PRIVATE ${VENDOR_DIRECTORY}/enet)

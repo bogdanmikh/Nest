@@ -15,7 +15,7 @@ void HelloLightLevel::onAttach() {
     info.scale = {0.1, 0.1, 0.1};
     info.pathToModel = "Models/old_lada/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-    addLightObject(info);
+//    addLightObject(info);
 
     // asphalt
     info.position = {0, -0.2, 7};
@@ -31,7 +31,7 @@ void HelloLightLevel::onAttach() {
     info.scale = {0.04, 0.04, 0.04};
     info.pathToModel = "Models/street_lamp/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-//    addLightObject(info);
+    //    addLightObject(info);
 
     // dps
     info.position = {15, 4.4, 0};
@@ -39,14 +39,14 @@ void HelloLightLevel::onAttach() {
     info.scale = {0.5, 0.5, 0.5};
     info.pathToModel = "Models/lada_2109_dps/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-//    addLightObject(info);
+    //    addLightObject(info);
 
     info.position = {0, 0, 0};
     info.degrees = {0, 0, 0};
     info.scale = {0.1, 0.1, 0.1};
     info.pathToModel = "Models/Sponza/sponza.obj";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-//    addLightObject(info);
+    //    addLightObject(info);
 
     for (auto &entity : m_entities) {
         entity->onAttach();

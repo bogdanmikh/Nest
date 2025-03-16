@@ -168,17 +168,17 @@ Model3D::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string t
 }
 
 void Model3D::draw() {
-    static auto camera = Nest::Application::get()->getWorldCamera();
+    auto camera = Nest::Application::get()->getWorldCamera();
     m_viewProj = camera->getProjectionMatrix() * camera->getViewMatrix();
     for (int i = 0; i < m_meshes.size(); ++i) {
         auto *mesh = m_meshes[i];
-        NEST_ASSERT(mesh->m_shaderHandle.isValid(), "Invalid shader for mesh");
-        Bird::setShader(mesh->m_shaderHandle);
+        NEST_ASSERT(mesh->getShaderHandle().isValid(), "Invalid shader for mesh");
+        Bird::setShader(mesh->getShaderHandle());
         mesh->m_model = m_transformComponent.getTransform();
         Bird::setUniform(
-            mesh->m_shaderHandle, "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
+            mesh->getShaderHandle(), "model", &mesh->m_model[0][0], Bird::UniformType::Mat4
         );
-        Bird::setUniform(mesh->m_shaderHandle, "projViewMtx", &m_viewProj, Bird::UniformType::Mat4);
+        Bird::setUniform(mesh->getShaderHandle(), "projViewMtx", &m_viewProj, Bird::UniformType::Mat4);
         if (m_slots[i].size() != mesh->m_textureBinding.size() &&
             mesh->m_textureBinding.size() > 0) {
             // int a = mesh->m_textureBinding.size(), b = m_slots[i].size();
@@ -191,7 +191,7 @@ void Model3D::draw() {
         for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
             Bird::setTexture(mesh->m_textureBinding[j].texture, j);
             Bird::setUniform(
-                mesh->m_shaderHandle,
+                mesh->getShaderHandle(),
                 mesh->m_textureBinding[j].name.c_str(),
                 &m_slots[i][j],
                 Bird::UniformType::Sampler
@@ -213,7 +213,7 @@ void Model3D::setViewId(Bird::ViewId viewId) {
 void Model3D::setShader(Bird::ProgramHandle shader) {
     m_shader = shader;
     for (auto &mesh : m_meshes) {
-        mesh->setShader(shader);
+        mesh->setShader(m_shader);
     }
 }
 

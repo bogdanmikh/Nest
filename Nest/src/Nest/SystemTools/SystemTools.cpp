@@ -4,27 +4,27 @@
 #include <Foundation/PlatformDetection.hpp>
 
 #ifdef PLATFORM_DESKTOP
-#    include <nfd.hpp>
+//#    include <nfd.hpp>
 #endif
 
 namespace Nest {
 
 std::optional<Path> SystemTools::openFolderDialog(const char *initialFolder) {
 #ifdef PLATFORM_DESKTOP
-    NFD::Init();
-    nfdu8char_t *outPath;
-    nfdresult_t result = NFD::PickFolder(outPath);
-    std::optional<std::filesystem::path> res;
-    if (result == NFD_OKAY) {
-        res = outPath;
-        NFD::FreePath(outPath);
-    } else if (result == NFD_CANCEL) {
-        LOG_INFO("User pressed cancel.");
-    } else {
-        LOG_ERROR("Error: %s", NFD::GetError());
-    }
-    NFD::Quit();
-    return res;
+//    NFD::Init();
+//    nfdu8char_t *outPath;
+//    nfdresult_t result = NFD::PickFolder(outPath);
+//    std::optional<std::filesystem::path> res;
+//    if (result == NFD_OKAY) {
+//        res = outPath;
+//        NFD::FreePath(outPath);
+//    } else if (result == NFD_CANCEL) {
+//        LOG_INFO("User pressed cancel.");
+//    } else {
+//        LOG_ERROR("Error: %s", NFD::GetError());
+//    }
+//    NFD::Quit();
+//    return res;
 #endif
     return {};
 }
@@ -36,20 +36,20 @@ std::optional<Path> SystemTools::openFileDialog(const char *filter) {
 std::optional<Path>
 SystemTools::saveFileDialog(const char *filter, const char *defaultPath, const char *defaultName) {
 #ifdef PLATFORM_DESKTOP
-    NFD::Init();
-    nfdu8char_t *outPath;
-    nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, defaultPath, defaultName);
-    std::optional<std::filesystem::path> res;
-    if (result == NFD_OKAY) {
-        res = outPath;
-        NFD::FreePath(outPath);
-    } else if (result == NFD_CANCEL) {
-        LOG_INFO("User pressed cancel.");
-    } else {
-        LOG_ERROR("Error: %s", NFD::GetError());
-    }
-    NFD::Quit();
-    return res;
+//    NFD::Init();
+//    nfdu8char_t *outPath;
+//    nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, defaultPath, defaultName);
+//    std::optional<std::filesystem::path> res;
+//    if (result == NFD_OKAY) {
+//        res = outPath;
+//        NFD::FreePath(outPath);
+//    } else if (result == NFD_CANCEL) {
+//        LOG_INFO("User pressed cancel.");
+//    } else {
+//        LOG_ERROR("Error: %s", NFD::GetError());
+//    }
+//    NFD::Quit();
+//    return res;
 #endif
 }
 

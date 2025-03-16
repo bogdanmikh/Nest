@@ -10,6 +10,7 @@
 #include <Bird/Bird.hpp>
 #include "SimpleLight.hpp"
 #include "Nest/Renderer/Viewport.hpp"
+#include "PostprocessingEffect.hpp"
 
 struct InfoLightObject {
     Nest::Vec3 position = {0, 0, 0};
@@ -22,88 +23,19 @@ struct InfoLightObject {
 
 struct LightObject final : public Nest::Entity {
 public:
-    void setInfoLightObject(const InfoLightObject &infoLightObject) {
-        m_infoObject = infoLightObject;
-    }
-    void onAttach() override {
-        Nest::ProgramAsset programAsset =
-            Nest::AssetLoader::loadProgram("Shaders/vstModel3D.glsl", "Shaders/fstModel3D.glsl");
-        m_shaderLight = createProgram(programAsset.getBirdProgramCreate());
+    void setInfoLightObject(const InfoLightObject &infoLightObject);
+    void onAttach() override;
+    void onUpdate(double deltaTime) override;
+    void onImGuiRender() override;
 
-        programAsset = Nest::AssetLoader::loadProgram(
-            "Shaders/vstDepthModel3D.glsl", "Shaders/fstDepthModel3D.glsl"
-        );
-        m_shaderDepth = createProgram(programAsset.getBirdProgramCreate());
-
-        setRendererMode(RendererMode::DEPTH);
-
-        m_model.create(*m_currentShader, m_infoObject.pathToModel, m_infoObject.createInfoModel3D);
-        m_viewport.init();
-    }
-    void onUpdate(double deltaTime) override {
-        if (Nest::Input::isKeyJustPressed(Nest::Key::E)) {
-            if (m_rendererMode == RendererMode::DEFAULT) {
-                setRendererMode(RendererMode::DEPTH);
-            } else {
-                setRendererMode(RendererMode::DEFAULT);
-            }
-        }
-        setUniforms();
-
-        auto &transform = m_model.getTransform();
-        transform.setPosition(m_infoObject.position);
-        transform.setScale(m_infoObject.scale);
-        transform.setRotationEuler(m_infoObject.degrees);
-
-        m_model.setViewId(0);
-        m_model.setShader(*m_currentShader);
-
-        m_model.draw();
-    }
-    void onImGuiRender() override {}
-
-    void onDetach() override {
-        deleteProgram(m_shaderDepth);
-        deleteProgram(m_shaderLight);
-    }
+    void onDetach() override;
 
 private:
     enum RendererMode { DEFAULT, DEPTH };
 
-    void setRendererMode(RendererMode rendererMode) {
-        m_rendererMode = rendererMode;
-        switch (m_rendererMode) {
-            case DEFAULT:
-                m_currentShader = &m_shaderLight;
-                break;
-            case DEPTH:
-                m_currentShader = &m_shaderDepth;
-                break;
-        }
-    }
+    void setRendererMode(RendererMode rendererMode);
 
-    void setUniforms() {
-        if (m_rendererMode == RendererMode::DEPTH) {
-            //            float near_plane = 1.0f, far_plane = 7.5f;
-            //            glm::mat4 lightProjection =
-            //                glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-            //            glm::mat4 lightView = glm::lookAt(
-            //                glm::vec3(-2.0f, 4.0f, -1.0f),
-            //                glm::vec3(0.0f, 0.0f, 0.0f),
-            //                glm::vec3(0.0f, 1.0f, 0.0f)
-            //            );
-            //
-            //            glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-            //            Bird::setShader(m_shaderDepth);
-            //            Bird::setUniform(
-            //                m_shaderDepth, "lightProjViewMtx", &lightSpaceMatrix,
-            //                Bird::UniformType::Mat4
-            //            );
-        } else {
-            m_light.setUniforms(m_shaderLight);
-            m_light.update();
-        }
-    }
+    void setUniforms();
 
     Bird::ProgramHandle *m_currentShader;
     Bird::ProgramHandle m_shaderDepth;
@@ -111,11 +43,13 @@ private:
 
     Bird::TextureHandle m_textureDepth;
 
-    Nest::Viewport m_viewport;
+    static Nest::Viewport m_viewport;
     Nest::Model3D m_model;
 
     InfoLightObject m_infoObject;
     RendererMode m_rendererMode;
 
     SimpleLight m_light;
+    
+    PostprocessingEffect *m_effect;
 };

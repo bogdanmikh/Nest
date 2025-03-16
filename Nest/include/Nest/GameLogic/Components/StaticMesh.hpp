@@ -50,7 +50,6 @@ private:
 
     friend class Renderer3D;
     friend class Model3D;
-    friend class NaniteModel3D;
 };
 
 } // namespace Nest

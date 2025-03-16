@@ -42,6 +42,10 @@ public:
     void setShader(Bird::ProgramHandle shader);
     void setViewId(Bird::ViewId viewId);
 
+    int getCountTextures() {
+        return m_meshes.front()->m_textureBinding.size();
+    }
+
     ~Model3D();
 
 private:

@@ -18,6 +18,7 @@ StaticMesh::~StaticMesh() {
     if (m_bufferLayoutHandle.isValid()) {
         deleteVertexLayout(m_bufferLayoutHandle);
     }
+    deleteTextures();
 }
 
 void StaticMesh::deleteTextures() {

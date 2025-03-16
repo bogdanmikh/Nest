@@ -21,7 +21,6 @@ set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
 if(PLATFORM_DESKTOP)
     add_subdirectory(Vendor/glfw)
     add_subdirectory(Vendor/glad)
-    add_subdirectory(Vendor/nfd)
 endif()
 
 if (USE_VULKAN AND PLATFORM_DESKTOP)
