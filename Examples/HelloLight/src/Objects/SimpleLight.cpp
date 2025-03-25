@@ -5,6 +5,40 @@
 #include "SimpleLight.hpp"
 #include <Bird/Bird.hpp>
 
+// struct DirectionalLightComponent
+//{
+//     glm::vec3 Radiance = { 1.0f, 1.0f, 1.0f };
+//     float Intensity = 1.0f;
+//     bool CastShadows = true;
+//     bool SoftShadows = true;
+//     float LightSize = 0.5f; // For PCSS
+//     float ShadowAmount = 1.0f;
+// };
+//
+// struct PointLightComponent
+//{
+//     glm::vec3 Radiance = { 1.0f, 1.0f, 1.0f };
+//     float Intensity = 1.0f;
+//     float LightSize = 0.5f; // For PCSS
+//     float MinRadius = 1.f;
+//     float Radius = 10.0f;
+//     bool CastsShadows = true;
+//     bool SoftShadows = true;
+//     float Falloff = 1.0f;
+// };
+//
+// struct SpotLightComponent
+//{
+//     glm::vec3 Radiance { 1.0f };
+//     float Intensity = 1.0f;
+//     float Range = 10.0f;
+//     float Angle = 60.0f;
+//     float AngleAttenuation = 5.0f;
+//     bool CastsShadows = false;
+//     bool SoftShadows = false;
+//     float Falloff = 1.0f;
+// };
+
 SimpleLight::SimpleLight() {
     m_shininess.x = 32;
     DirLight dirLight;
@@ -92,13 +126,13 @@ void SimpleLight::setUniforms(Bird::ProgramHandle programHandle) {
 void SimpleLight::update() {
     auto camera = Nest::Application::get()->getWorldCamera();
     auto time = Nest::Application::get()->getWindow()->getTime();
-    float diff = (time - int(time)) * 10;
-    int random = Nest::getRandomInt(0, 10);
-    if (diff - 3 >= random) {
-        m_spotLights.back().ambient = {0, 0, 0, 0};
-    } else {
-        m_spotLights.back().ambient = {1, 0.8, 0.23, 0};
-    }
+    //    float diff = (time - int(time)) * 10;
+    //    int random = Nest::getRandomInt(0, 10);
+    //    if (diff - 3 >= random) {
+    //        m_spotLights.back().ambient = {0, 0, 0, 0};
+    //    } else {
+    //        m_spotLights.back().ambient = {1, 0.8, 0.23, 0};
+    //    }
     //    LOG_INFO("{}", time);
     if (!m_spotLights.empty()) {
         //        m_spotLights.back().position = {camera->getPosition(), 0};

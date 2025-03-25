@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Nest.hpp>
-#include "Objects/LightObject.hpp"
+#include "Objects/LightEnvironment.hpp"
 
 class HelloLightLevel final : public Nest::Layer {
 public:
@@ -12,6 +12,5 @@ public:
     void addEntity(Nest::Entity *entity);
 
 private:
-    void addLightObject(const InfoLightObject &info);
     std::vector<Nest::Entity *> m_entities;
 };

@@ -19,11 +19,15 @@ public:
     void update();
     Bird::ViewId getViewId();
     Bird::TextureHandle getTextureHandle();
+    Bird::TextureHandle getDepthHandle();
 
 private:
     void updateViewportSize(Nest::Size size);
 
+    static Bird::ViewId m_lastViewId;
+
     Bird::TextureHandle m_colorAttachment;
+    Bird::TextureHandle m_depthAttachment;
     Bird::ViewId m_viewId;
     Nest::Vec2 m_windowSize;
     Bird::FrameBufferSpecification m_fbSpecification;

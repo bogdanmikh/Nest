@@ -30,26 +30,24 @@ public:
 
     void onDetach() override;
 
+    static void drawAll();
+
+    // сначала глубину всех 3д моделей
+    // свет и цвет потом
 private:
-    enum RendererMode { DEFAULT, DEPTH };
-
-    void setRendererMode(RendererMode rendererMode);
-
     void setUniforms();
-
-    Bird::ProgramHandle *m_currentShader;
-    Bird::ProgramHandle m_shaderDepth;
-    Bird::ProgramHandle m_shaderLight;
+    Bird::ProgramHandle m_shader;
 
     Bird::TextureHandle m_textureDepth;
 
-    static Nest::Viewport m_viewport;
+    Nest::Viewport m_result;
+    //    static Nest::Viewport m_viewport;
+
     Nest::Model3D m_model;
 
     InfoLightObject m_infoObject;
-    RendererMode m_rendererMode;
 
     SimpleLight m_light;
-    
-    PostprocessingEffect *m_effect;
+
+    static PostprocessingEffect m_effect;
 };

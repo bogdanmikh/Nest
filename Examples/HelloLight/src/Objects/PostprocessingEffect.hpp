@@ -9,7 +9,8 @@
 class PostprocessingEffect : public Nest::Entity {
 public:
     PostprocessingEffect();
-    void setFBTexture(Bird::TextureHandle textureHandle);
+    void setChannel0(Bird::TextureHandle textureHandle);
+    void setChannel1(Bird::TextureHandle textureHandle);
     void setViewId(Bird::ViewId viewId);
     void setPathToShaders(const std::string &vertexPath, const std::string &fragmentPath);
     void onAttach() override;
@@ -22,7 +23,7 @@ private:
     std::string m_fragmentPath;
 
     Bird::ViewId m_viewId;
-    Bird::TextureHandle m_textureHandle;
+    Bird::TextureHandle m_channel0;
     Bird::VertexBufferHandle m_vertexBuffer;
     Bird::IndexBufferHandle m_indexBuffer;
     Bird::ProgramHandle m_shader;
@@ -31,6 +32,4 @@ private:
     glm::vec2 mousePos;
     glm::vec2 resolution;
     float time;
-
-    int slot = 0;
 };

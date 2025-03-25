@@ -7,12 +7,18 @@
 
 namespace Nest {
 
+// TODO: сделать систему раздачи viewId viewport-ам
+Bird::ViewId Viewport::m_lastViewId = 1;
+
 Viewport::Viewport()
-    : m_viewId(1) {}
+    : m_viewId(m_lastViewId) {
+    m_lastViewId++;
+}
 
 Viewport::~Viewport() {
     deleteFrameBuffer(m_frameBuffer);
     deleteTexture(m_colorAttachment);
+    deleteTexture(m_depthAttachment);
 }
 
 void Viewport::init() {
@@ -27,8 +33,8 @@ void Viewport::init() {
     create.m_height = m_windowSize.height;
     m_colorAttachment = Bird::createTexture(create);
     create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
-    Bird::TextureHandle depthAttachment = Bird::createTexture(create);
-    Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, depthAttachment};
+    m_depthAttachment = Bird::createTexture(create);
+    Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, m_depthAttachment};
     m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);
     m_frameBuffer = Bird::createFrameBuffer(m_fbSpecification);
     Bird::setViewport(m_viewId, Bird::Rect(0, 0, m_windowSize.width, m_windowSize.height));
@@ -45,8 +51,8 @@ void Viewport::initWithSize(Nest::Vec2 size) {
     create.m_height = m_windowSize.height;
     m_colorAttachment = Bird::createTexture(create);
     create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
-    Bird::TextureHandle depthAttachment = Bird::createTexture(create);
-    Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, depthAttachment};
+    m_depthAttachment = Bird::createTexture(create);
+    Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, m_depthAttachment};
     m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);
     m_frameBuffer = Bird::createFrameBuffer(m_fbSpecification);
     Bird::setViewport(m_viewId, Bird::Rect(0, 0, m_windowSize.width, m_windowSize.height));
@@ -86,6 +92,10 @@ Bird::ViewId Viewport::getViewId() {
 
 Bird::TextureHandle Viewport::getTextureHandle() {
     return m_colorAttachment;
+}
+
+Bird::TextureHandle Viewport::getDepthHandle() {
+    return m_depthAttachment;
 }
 
 } // namespace Nest

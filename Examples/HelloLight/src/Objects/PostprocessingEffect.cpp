@@ -49,9 +49,13 @@ void PostprocessingEffect::onUpdate(double deltaTime) {
                      Bird::UniformType::Vec4); /// vec2
     Bird::setUniform(m_shader, "iMouseVec4", &mousePos,
                      Bird::UniformType::Vec4); /// vec2
-    if (m_textureHandle.isValid()) {
-        Bird::setTexture(m_textureHandle, slot);
+
+    int slot = 0;
+
+    if (m_channel0.isValid()) {
+        Bird::setTexture(m_channel0, slot);
         Bird::setUniform(m_shader, "iChannel0", &slot, Bird::UniformType::Sampler);
+        slot++;
     }
 
     Bird::setShader(m_shader);
@@ -75,8 +79,8 @@ void PostprocessingEffect::setPathToShaders(
     m_fragmentPath = fragmentPath;
 }
 
-void PostprocessingEffect::setFBTexture(Bird::TextureHandle textureHandle) {
-    m_textureHandle = textureHandle;
+void PostprocessingEffect::setChannel0(Bird::TextureHandle textureHandle) {
+    m_channel0 = textureHandle;
 }
 
 void PostprocessingEffect::setViewId(Bird::ViewId viewId) {
