@@ -59,7 +59,7 @@ void LightEnvironment::initObjects() {
     // old lada
     info.position = {0, 0, 0};
     info.degrees = {0, 0, 0};
-    info.scale = {0.01, 0.01, 0.01};
+    info.scale = {0.05, 0.05, 0.05};
     info.pathToModel = "Models/old_lada/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
     m_managerObjects.add(info);
@@ -236,11 +236,11 @@ void LightEnvironment::setDepthUniforms() {
     glm::vec3 lightDir = {spotLight.direction.x, spotLight.direction.y, spotLight.direction.z};
 
     glm::vec4 nearPlane;
-    nearPlane.x = 1.;
+    nearPlane.x = 0.1;
     glm::vec4 farPlane;
-    farPlane.x = 5.5;
+    farPlane.x = 100.5;
 
-    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(lightPos, lightDir, 20, nearPlane.x, farPlane.x);
+    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(lightPos, lightDir, 30, nearPlane.x, farPlane.x);
 //    m_lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, lightDir, nearPlane.x, farPlane.x);
 
     Bird::setShader(m_depthShader);
