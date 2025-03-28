@@ -17,8 +17,13 @@ struct InfoObject {
 
 class ManagerObjects {
 public:
-    void add(const InfoObject &infoObject);
+    ManagerObjects();
     std::vector<Nest::Model3D> &getModels();
+
+    void add(const InfoObject &infoObject);
+    void setShader(Bird::ProgramHandle shader);
+    void setViewId(Bird::ViewId viewId);
+    void draw();
 
 private:
     std::vector<Nest::Model3D> m_models;

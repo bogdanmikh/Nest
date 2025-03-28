@@ -68,8 +68,6 @@ private:
 
     CreateInfoModel3D m_createInfo;
 
-    std::vector<std::vector<int>> m_slots;
-
     TransformComponent m_transformComponent;
     Bird::ViewId m_viewId;
     glm::mat4 m_viewProj;

@@ -122,7 +122,8 @@ struct Vec3 : public Rain::Codable {
     RAIN_FIELDS_END
 };
 
-struct Vec4 : public Rain::Codable {
+struct Vec4 {
+    //    : public Rain::Codable {
     union {
         float x, r, width;
     };
@@ -173,12 +174,12 @@ struct Vec4 : public Rain::Codable {
         return q;
     }
 
-    RAIN_FIELDS_BEGIN(Vec4)
-    RAIN_FIELD(x)
-    RAIN_FIELD(y)
-    RAIN_FIELD(z)
-    RAIN_FIELD(w)
-    RAIN_FIELDS_END
+    //    RAIN_FIELDS_BEGIN(Vec4)
+    //    RAIN_FIELD(x)
+    //    RAIN_FIELD(y)
+    //    RAIN_FIELD(z)
+    //    RAIN_FIELD(w)
+    //    RAIN_FIELDS_END
 };
 
 using id_t = int32_t;

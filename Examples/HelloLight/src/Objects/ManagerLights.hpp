@@ -126,6 +126,10 @@ public:
     void add(const PointLight &pointLight);
     void add(const SpotLight &spotLight);
 
+    std::vector<DirLight> &getDirLights();
+    std::vector<PointLight> &getPointLights();
+    std::vector<SpotLight> &getSpotLights();
+
 private:
     std::vector<DirLight> m_dirLights;
     std::vector<PointLight> m_pointLights;

@@ -10,7 +10,6 @@ class PostprocessingEffect : public Nest::Entity {
 public:
     PostprocessingEffect();
     void setChannel0(Bird::TextureHandle textureHandle);
-    void setChannel1(Bird::TextureHandle textureHandle);
     void setViewId(Bird::ViewId viewId);
     void setPathToShaders(const std::string &vertexPath, const std::string &fragmentPath);
     void onAttach() override;

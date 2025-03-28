@@ -35,7 +35,6 @@ void Model3D::create(
         assert(false);
     }
     processNode(scene->mRootNode, scene);
-    m_slots.resize(m_meshes.size());
 }
 
 void Model3D::processNode(aiNode *node, const aiScene *scene) {
@@ -181,21 +180,13 @@ void Model3D::draw() {
         Bird::setUniform(
             mesh->getShaderHandle(), "projViewMtx", &m_viewProj, Bird::UniformType::Mat4
         );
-        if (m_slots[i].size() != mesh->m_textureBinding.size() &&
-            mesh->m_textureBinding.size() > 0) {
-            // int a = mesh->m_textureBinding.size(), b = m_slots[i].size();
-            m_slots[i].resize(mesh->m_textureBinding.size());
-            for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
-                m_slots[i][j] = j;
-            }
-        }
 
         for (int j = 0; j < mesh->m_textureBinding.size(); j++) {
             Bird::setTexture(mesh->m_textureBinding[j].texture, j);
             Bird::setUniform(
                 mesh->getShaderHandle(),
                 mesh->m_textureBinding[j].name.c_str(),
-                &m_slots[i][j],
+                &j,
                 Bird::UniformType::Sampler
             );
         }
