@@ -31,6 +31,8 @@ void Viewport::init() {
     create.m_format = Bird::TextureFormat::RGBA8;
     create.m_width = m_windowSize.width;
     create.m_height = m_windowSize.height;
+    create.m_wrap = Bird::CLAMP_TO_BORDER;
+    create.m_borderColor = 0xFFFFFFFF;
     m_colorAttachment = Bird::createTexture(create);
     create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
     m_depthAttachment = Bird::createTexture(create);
@@ -96,6 +98,10 @@ Bird::TextureHandle Viewport::getTextureHandle() {
 
 Bird::TextureHandle Viewport::getDepthHandle() {
     return m_depthAttachment;
+}
+
+Vec2 Viewport::getSize() {
+    return m_windowSize;
 }
 
 } // namespace Nest

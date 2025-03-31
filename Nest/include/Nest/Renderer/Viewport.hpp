@@ -20,6 +20,7 @@ public:
     Bird::ViewId getViewId();
     Bird::TextureHandle getTextureHandle();
     Bird::TextureHandle getDepthHandle();
+    Vec2 getSize();
 
 private:
     void updateViewportSize(Nest::Size size);

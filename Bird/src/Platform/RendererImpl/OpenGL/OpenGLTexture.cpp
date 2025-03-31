@@ -57,10 +57,21 @@ void OpenGLTexture::create(TextureCreate &create) {
     }
 
     switch (create.m_wrap) {
-        case CLAMP:
+        case CLAMP_TO_EDGE:
             GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
             GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+            break;
+        case CLAMP_TO_BORDER:
+            GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+            GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+            GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER));
+            float borderColor[4];
+            borderColor[0] = ((create.m_borderColor >> 24) & 0xFF) / 255.0f;
+            borderColor[1] = ((create.m_borderColor >> 16) & 0xFF) / 255.0f;
+            borderColor[2] = ((create.m_borderColor >> 8) & 0xFF) / 255.0f;
+            borderColor[3] = ((create.m_borderColor >> 0) & 0xFF) / 255.0f;
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
             break;
         case REPEAT:
             GL_CALL(glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT));

@@ -6,6 +6,7 @@
 #include "LightObject.hpp"
 
 static glm::mat4 calculateLightSpaceMatrix(
+    glm::vec2 sizeViewport,
     const glm::vec3 &lightPos,  // Позиция источника света
     const glm::vec3 &lightDir,  // Направление источника света
     float nearPlane = 0.1f,     // Ближняя плоскость усечения
@@ -20,8 +21,8 @@ static glm::mat4 calculateLightSpaceMatrix(
 
     // 2. Матрица проекции (перспективная или ортографическая)
     // Для SpotLight лучше использовать перспективную проекцию
-    float fov = glm::radians(90.0f); // Угол обзора (можно регулировать)
-    float aspectRatio = 1.0f; // Соотношение сторон (обычно 1:1 для теней)
+    float fov = glm::radians(45.0f); // Угол обзора (можно регулировать)
+    float aspectRatio = sizeViewport.x / sizeViewport.y;
 
     glm::mat4 lightProjection = glm::perspective(fov, aspectRatio, nearPlane, farPlane);
 
@@ -81,19 +82,19 @@ void LightEnvironment::initObjects() {
     //    m_managerObjects.add(info);
 
     // dps
-    info.position = {15, 4.4, 0};
+    info.position = {7, 2., 0};
     info.degrees = {0, 0, 0};
-    info.scale = {0.5, 0.5, 0.5};
+    info.scale = {0.3, 0.3, 0.3};
     info.pathToModel = "Models/lada_2109_dps/scene.gltf";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-    //            m_managerObjects.add(info);
+    m_managerObjects.add(info);
 
     info.position = {0, 0, 0};
     info.degrees = {0, 0, 0};
-    info.scale = {0.1, 0.1, 0.1};
+    info.scale = {0.05, 0.05, 0.05};
     info.pathToModel = "Models/Sponza/sponza.obj";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-    //            m_managerObjects.add(info);
+//                m_managerObjects.add(info);
 }
 
 void LightEnvironment::initLights() {
@@ -158,14 +159,22 @@ void LightEnvironment::onImGuiRender() {
             (ImTextureID)(intptr_t)m_debugDepthViewport.getTextureHandle().id, {200, 200}
         );
         auto &pos = m_managerLights.getSpotLights().back().position;
-        glm::vec3 newPos;
-        newPos.x = pos.x;
-        newPos.y = pos.y;
-        newPos.z = pos.z;
-        ImGui::DragFloat3("Pos: ", &newPos[0]);
-        pos.x = newPos.x;
-        pos.y = newPos.y;
-        pos.z = newPos.z;
+        auto &dir = m_managerLights.getSpotLights().back().direction;
+        glm::vec3 vec3;
+        vec3.x = pos.x;
+        vec3.y = pos.y;
+        vec3.z = pos.z;
+        ImGui::DragFloat3("Pos: ", &vec3[0]);
+        pos.x = vec3.x;
+        pos.y = vec3.y;
+        pos.z = vec3.z;
+        vec3.x = dir.x;
+        vec3.y = dir.y;
+        vec3.z = dir.z;
+        ImGui::DragFloat3("Dir: ", &vec3[0]);
+        dir.x = vec3.x;
+        dir.y = vec3.y;
+        dir.z = vec3.z;
         ImGui::End();
 }
 
@@ -240,8 +249,8 @@ void LightEnvironment::setDepthUniforms() {
     glm::vec4 farPlane;
     farPlane.x = 100.5;
 
-    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(lightPos, lightDir, 30, nearPlane.x, farPlane.x);
-//    m_lightSpaceMatrix = calculateLightSpaceMatrix(lightPos, lightDir, nearPlane.x, farPlane.x);
+    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(lightPos, lightDir, 10, nearPlane.x, farPlane.x);
+//    m_lightSpaceMatrix = calculateLightSpaceMatrix(m_depthViewport.getSize(), lightPos, lightDir, nearPlane.x, farPlane.x);
 
     Bird::setShader(m_depthShader);
     Bird::setUniform(m_depthShader, "lightSpaceMatrix", &m_lightSpaceMatrix, Bird::UniformType::Mat4);

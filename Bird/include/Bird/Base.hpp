@@ -51,7 +51,7 @@ enum TextureFormat {
     DEPTH24STENCIL8
 };
 
-enum TextureWrapMode { CLAMP, REPEAT };
+enum TextureWrapMode { CLAMP_TO_EDGE, CLAMP_TO_BORDER, REPEAT };
 
 enum TextureFiltering {
     NEAREST,
@@ -75,6 +75,7 @@ struct TextureCreate {
     uint16_t m_width;
     uint16_t m_height;
     uint8_t m_numMips;
+    uint32_t m_borderColor;
     bool m_isCubeMap;
     Foundation::Memory m_data;
 

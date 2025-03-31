@@ -25,7 +25,6 @@ private:
     void draw();
 
     void setDepthUniforms();
-    void setDebugDepthUniforms();
     void setSpotLightUniforms(Bird::ProgramHandle programHandle, SpotLight &light, int index);
 
     ManagerObjects m_managerObjects;
