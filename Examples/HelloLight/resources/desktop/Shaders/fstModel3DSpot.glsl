@@ -67,16 +67,17 @@ vec3 cameraFront = cameraFrontVec4.rgb;
 
 void initLights();
 vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 cameraDir, float shadow);
-float shadowCalculation(vec4 fragPosLightSpace, vec3 lightPos, vec3 normal, vec3 fragPos);
+float shadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir);
 
 float gamma = 1.2;
 
 void main() {
     vec3 norm = normalize(Normal);
     vec3 cameraDir = normalize(cameraPos - FragPos);
+    vec3 lightDir = normalize(spotLights[0].position - FragPos);
 
     initLights();
-    float shadow = shadowCalculation(FragPosLightSpace, spotLights[0].position, norm, FragPos);
+    float shadow = shadowCalculation(FragPosLightSpace, norm, lightDir);
 //    shadow = abs(shadow - 1);
     fragColor = vec4(vec3(shadow), 1.);
 //    return;
@@ -131,7 +132,7 @@ vec3 calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, flo
     return (1 - shadow) * (ambient + (diffuse + specular));
 }
 
-float shadowCalculation(vec4 fragPosLightSpace, vec3 lightPos, vec3 normal, vec3 fragPos) {
+float shadowCalculation(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir) {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
@@ -144,10 +145,10 @@ float shadowCalculation(vec4 fragPosLightSpace, vec3 lightPos, vec3 normal, vec3
         return 0.0;
     }
     // check whether current frag pos is in shadow
-//    vec3 lightDir = spotLights[0].direction;
-    vec3 lightDir = normalize(lightPos - fragPos);
-    float bias = 0.005;
-//    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+//    float bias = 0.005;
+    float minBias = 0.005;
+    float maxBias = 0.05;
+    float bias = max(maxBias * (1.0 - dot(normal, lightDir)), minBias);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
     // PCF

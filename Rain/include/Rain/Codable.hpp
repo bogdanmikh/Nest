@@ -5,7 +5,6 @@
 namespace Rain {
 
 struct Codable {
-    virtual ~Codable() = default;
 };
 
 } // namespace Rain

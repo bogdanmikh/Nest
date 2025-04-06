@@ -7,10 +7,10 @@
 
 static glm::mat4 calculateLightSpaceMatrix(
     glm::vec2 sizeViewport,
-    const glm::vec3 &lightPos,  // Позиция источника света
-    const glm::vec3 &lightDir,  // Направление источника света
-    float nearPlane = 0.1f,     // Ближняя плоскость усечения
-    float farPlane = 100.0f     // Дальняя плоскость усечения
+    const glm::vec3 &lightPos, // Позиция источника света
+    const glm::vec3 &lightDir, // Направление источника света
+    float nearPlane = 0.1f,    // Ближняя плоскость усечения
+    float farPlane = 100.0f    // Дальняя плоскость усечения
 ) {
     // 1. Матрица вида (view) из позиции света
     glm::mat4 lightView = glm::lookAt(
@@ -21,7 +21,7 @@ static glm::mat4 calculateLightSpaceMatrix(
 
     // 2. Матрица проекции (перспективная или ортографическая)
     // Для SpotLight лучше использовать перспективную проекцию
-    float fov = glm::radians(45.0f); // Угол обзора (можно регулировать)
+    float fov = glm::radians(90.0f); // Угол обзора (можно регулировать)
     float aspectRatio = sizeViewport.x / sizeViewport.y;
 
     glm::mat4 lightProjection = glm::perspective(fov, aspectRatio, nearPlane, farPlane);
@@ -29,19 +29,24 @@ static glm::mat4 calculateLightSpaceMatrix(
     // 3. Итоговая lightSpaceMatrix
     return lightProjection * lightView;
 }
-
 static glm::mat4 calculateOrthoLightSpaceMatrix(
     const glm::vec3 &lightPos,
     const glm::vec3 &lightDir,
-    float orthoSize = 20.0f, // Размер области видимости
+    float orthoSize = 20.0f,
     float nearPlane = 0.1f,
     float farPlane = 100.0f
 ) {
-    // 1. Матрица вида (view)
-    glm::mat4 lightView = glm::lookAt(lightPos, lightPos + lightDir, glm::vec3(0.0f, 1.0f, 0.0f));
-    lightView = glm::lookAt(lightPos, glm::vec3(0.), glm::vec3(0.0f, 1.0f, 0.0f));
+    // Нормализуем направление света
+    glm::vec3 normalizedLightDir = glm::normalize(lightDir);
 
-    // 2. Ортографическая проекция
+    // Выбираем up-вектор в зависимости от направления света
+    glm::vec3 up = glm::abs(normalizedLightDir.y) < 0.999f ? glm::vec3(0.0f, 1.0f, 0.0f)
+                                                           : glm::vec3(0.0f, 0.0f, 1.0f);
+
+    // Матрица вида света
+    glm::mat4 lightView = glm::lookAt(lightPos, lightPos + normalizedLightDir, up);
+
+    // Ортографическая проекция
     glm::mat4 lightProjection = glm::ortho(
         -orthoSize,
         orthoSize, // left, right
@@ -51,7 +56,7 @@ static glm::mat4 calculateOrthoLightSpaceMatrix(
         farPlane // near, far
     );
 
-    // 3. Итоговая lightSpaceMatrix
+    // Итоговая матрица (обратите внимание на порядок умножения)
     return lightProjection * lightView;
 }
 
@@ -94,7 +99,7 @@ void LightEnvironment::initObjects() {
     info.scale = {0.05, 0.05, 0.05};
     info.pathToModel = "Models/Sponza/sponza.obj";
     info.createInfoModel3D = {"material.diffuse", "material.specular"};
-//                m_managerObjects.add(info);
+    //                m_managerObjects.add(info);
 }
 
 void LightEnvironment::initLights() {
@@ -126,8 +131,11 @@ void LightEnvironment::onAttach() {
     initLights();
 
     // depth viewport
-    m_depthViewport.init();
-    m_debugDepthViewport.init();
+    auto *window = Nest::Application::get()->getWindow();
+//    Nest::Vec2 size = {200, 200};
+    Nest::Vec2 size = window->getSize() * window->getDpi();
+    m_depthViewport.initWithSize(size);
+    m_debugDepthViewport.initWithSize(size);
 
     // Shaders
     Nest::ProgramAsset programAsset =
@@ -154,28 +162,27 @@ void LightEnvironment::onUpdate(double deltaTime) {
 }
 
 void LightEnvironment::onImGuiRender() {
-        ImGui::Begin("Mode");
-        ImGui::Image(
-            (ImTextureID)(intptr_t)m_debugDepthViewport.getTextureHandle().id, {200, 200}
-        );
-        auto &pos = m_managerLights.getSpotLights().back().position;
-        auto &dir = m_managerLights.getSpotLights().back().direction;
-        glm::vec3 vec3;
-        vec3.x = pos.x;
-        vec3.y = pos.y;
-        vec3.z = pos.z;
-        ImGui::DragFloat3("Pos: ", &vec3[0]);
-        pos.x = vec3.x;
-        pos.y = vec3.y;
-        pos.z = vec3.z;
-        vec3.x = dir.x;
-        vec3.y = dir.y;
-        vec3.z = dir.z;
-        ImGui::DragFloat3("Dir: ", &vec3[0]);
-        dir.x = vec3.x;
-        dir.y = vec3.y;
-        dir.z = vec3.z;
-        ImGui::End();
+    ImGui::Begin("Mode");
+    ImGui::Image((ImTextureID)(intptr_t)m_debugDepthViewport.getTextureHandle().id, {200, 200});
+    auto &pos = m_managerLights.getSpotLights().back().position;
+    auto &dir = m_managerLights.getSpotLights().back().direction;
+    glm::vec3 vec3;
+    vec3.x = pos.x;
+    vec3.y = pos.y;
+    vec3.z = pos.z;
+    ImGui::DragFloat3("Pos: ", &vec3[0]);
+    pos.x = vec3.x;
+    pos.y = vec3.y;
+    pos.z = vec3.z;
+
+    vec3.x = dir.x;
+    vec3.y = dir.y;
+    vec3.z = dir.z;
+    ImGui::DragFloat3("Dir: ", &vec3[0]);
+    dir.x = vec3.x;
+    dir.y = vec3.y;
+    dir.z = vec3.z;
+    ImGui::End();
 }
 
 void LightEnvironment::onDetach() {
@@ -186,7 +193,6 @@ void LightEnvironment::onDetach() {
 }
 
 void LightEnvironment::generateDepthTexture() {
-    m_depthViewport.update();
     m_managerObjects.setViewId(m_depthViewport.getViewId());
     m_managerObjects.setShader(m_depthShader);
     setDepthUniforms();
@@ -194,7 +200,6 @@ void LightEnvironment::generateDepthTexture() {
 }
 
 void LightEnvironment::generateDebugDepthTexture() {
-    m_debugDepthViewport.update();
     m_debugDepthEffect.onUpdate(0);
 }
 
@@ -213,7 +218,9 @@ void LightEnvironment::draw() {
     glm::vec4 shininess;
     shininess.x = 32.;
 
-    Bird::setUniform(m_lightShader, "lightSpaceMatrix", &m_lightSpaceMatrix, Bird::UniformType::Mat4);
+    Bird::setUniform(
+        m_lightShader, "lightSpaceMatrix", &m_lightSpaceMatrix, Bird::UniformType::Mat4
+    );
 
     Bird::setUniform(m_lightShader, "material.shininess", &shininess, Bird::UniformType::Vec4);
     Bird::setUniform(m_lightShader, "numLights", &numLights, Bird::UniformType::Vec4);
@@ -247,13 +254,17 @@ void LightEnvironment::setDepthUniforms() {
     glm::vec4 nearPlane;
     nearPlane.x = 0.1;
     glm::vec4 farPlane;
-    farPlane.x = 100.5;
+    farPlane.x = 200.5;
 
-    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(lightPos, lightDir, 10, nearPlane.x, farPlane.x);
-//    m_lightSpaceMatrix = calculateLightSpaceMatrix(m_depthViewport.getSize(), lightPos, lightDir, nearPlane.x, farPlane.x);
+    m_lightSpaceMatrix = calculateOrthoLightSpaceMatrix(
+        lightPos, glm::normalize(lightDir), 10, nearPlane.x, farPlane.x
+    );
+    //    m_lightSpaceMatrix = calculateLightSpaceMatrix(m_depthViewport.getSize(), lightPos,
+    //    glm::normalize(lightDir), nearPlane.x, farPlane.x);
 
-    Bird::setShader(m_depthShader);
-    Bird::setUniform(m_depthShader, "lightSpaceMatrix", &m_lightSpaceMatrix, Bird::UniformType::Mat4);
+    Bird::setUniform(
+        m_depthShader, "lightSpaceMatrix", &m_lightSpaceMatrix, Bird::UniformType::Mat4
+    );
     Bird::setUniform(m_depthShader, "nearPlaneVec4", &nearPlane, Bird::UniformType::Vec4);
     Bird::setUniform(m_depthShader, "farPlaneVec4", &farPlane, Bird::UniformType::Vec4);
 }
