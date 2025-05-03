@@ -36,7 +36,7 @@ elseif(PLATFORM_MACOS)
         add_executable(${TARGET_NAME} MACOSX_BUNDLE ${SOURCE} ${INCLUDE} ${ASSETS})
 
         set_target_properties(${TARGET_NAME} PROPERTIES
-                XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.vivo.${TARGET_NAME}"
+                XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.toyship.${TARGET_NAME}"
                 MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/native/OSX/Info.plist"
                 # XCODE_ATTRIBUTE_CODE_SIGN_ENTITLEMENTS "${PROJECT_SOURCE_DIR}/native/OSX/VivoVideoEditor.entitlements"
                 XCODE_ATTRIBUTE_ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon"

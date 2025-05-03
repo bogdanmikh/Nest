@@ -132,7 +132,7 @@ void LightEnvironment::onAttach() {
 
     // depth viewport
     auto *window = Nest::Application::get()->getWindow();
-//    Nest::Vec2 size = {200, 200};
+    //    Nest::Vec2 size = {200, 200};
     Nest::Vec2 size = window->getSize() * window->getDpi();
     m_depthViewport.initWithSize(size);
     m_debugDepthViewport.initWithSize(size);

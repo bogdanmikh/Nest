@@ -6,23 +6,12 @@
 #include "Bird/PlatformData.hpp"
 
 #include <Foundation/Logger.hpp>
-#include <GLFW/glfw3.h>
 
 namespace Bird {
 
-void VulkanContext::create() {
-    glfwWindowHandle = PlatformData::get()->nativeWindowHandle;
-    glfwMakeContextCurrent((GLFWwindow *)glfwWindowHandle);
-    if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == false) {
-        LOG_CRITICAL("Failed to initialize GLAD");
-    }
-    // Enable v-sync
-    glfwSwapInterval(1);
-}
+void VulkanContext::create() {}
 
-void VulkanContext::flip() {
-    glfwSwapBuffers((GLFWwindow *)glfwWindowHandle);
-}
+void VulkanContext::flip() {}
 
 uint32_t VulkanContext::getDefaultFrameBufferId() {
     return 0;

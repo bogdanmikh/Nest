@@ -211,7 +211,7 @@ Semaphore::Semaphore(const char *name) {
     // #else
     // 		si->m_handle = CreateSemaphoreA(NULL, 0, LONG_MAX, NULL);
     // #endif
-    PND_ASSERT(NULL != si->m_handle, "Failed to create Semaphore!");
+    NEST_ASSERT(NULL != si->m_handle, "Failed to create Semaphore!");
 }
 
 Semaphore::~Semaphore() {

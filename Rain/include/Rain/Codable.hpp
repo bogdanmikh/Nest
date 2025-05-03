@@ -4,7 +4,6 @@
 
 namespace Rain {
 
-struct Codable {
-};
+struct Codable {};
 
 } // namespace Rain

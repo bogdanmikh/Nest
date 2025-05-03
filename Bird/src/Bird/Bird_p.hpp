@@ -9,6 +9,7 @@
 #include "Bird/BirdStates.hpp"
 #include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
 #include "RendererI.hpp"
+#include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
 
 #include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Foundation.hpp>
@@ -253,7 +254,11 @@ struct Context {
                 command->type == RendererCommandType::RendererInit,
                 "First command should be RendererInit"
             );
+#if USE_VULKAN
+            m_renderer = F_NEW(Foundation::getAllocator(), RendererVulkan);
+#else
             m_renderer = F_NEW(Foundation::getAllocator(), RendererOpenGL);
+#endif
             BIRD_LOG("RENDERER CREATED");
         }
     }

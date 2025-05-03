@@ -537,7 +537,7 @@ bool propertyTexture(
     }
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload(PANDA_DRAGDROP_NAME)) {
-            PND_ASSERT(payload->DataSize == sizeof(DragDropItem), "WRONG DRAGDROP ITEM SIZE");
+            NEST_ASSERT(payload->DataSize == sizeof(DragDropItem), "WRONG DRAGDROP ITEM SIZE");
             DragDropItem &item = *(DragDropItem *)payload->Data;
             if (item.type == DragDropItemType::TEXTURE) {
                 memcpy(&textureId, item.data, sizeof(textureId));
@@ -595,7 +595,7 @@ bool propertyEntity(const char *label, UUID *value) {
     }
     if (ImGui::BeginDragDropTarget()) {
         if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload(PANDA_DRAGDROP_NAME)) {
-            PND_ASSERT(payload->DataSize == sizeof(DragDropItem), "WRONG DRAGDROP ITEM SIZE");
+            NEST_ASSERT(payload->DataSize == sizeof(DragDropItem), "WRONG DRAGDROP ITEM SIZE");
             DragDropItem &item = *(DragDropItem *)payload->Data;
             if (item.type == DragDropItemType::ENTITY) {
                 memcpy(value, item.data, sizeof(UUID));

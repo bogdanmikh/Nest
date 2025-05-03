@@ -13,6 +13,13 @@ set(BIRD_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Bird)
 set(ENET_STATIC ON)
 set(USE_VULKAN ON)
 set(USE_ASSIMP ON)
+
+if (USE_VULKAN)
+    add_compile_definitions(USE_VULKAN=1)
+else ()
+    add_compile_definitions(USE_VULKAN=0)
+endif ()
+
 if (PLATFORM_ANDROID)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_onCreate")
 endif ()

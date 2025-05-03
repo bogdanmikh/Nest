@@ -1,5 +1,3 @@
-#include "GlfwWindow.hpp"
-// #include "Nest/GlfwWindow/GlfwNests.hpp"
 //
 // Created by Admin on 26.01.2022.
 //
@@ -43,12 +41,15 @@ GlfwWindow::GlfwWindow(const char *title, Size size, bool isFullscreen, bool isM
         LOG_CRITICAL("GLFW INITIALIZATION ERROR");
         exit(1);
     }
-    glfwDefaultWindowHints();
-#ifdef PLATFORM_MACOS
+#if USE_VULKAN
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#elif
+#    ifdef PLATFORM_MACOS
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+#    endif
 #endif
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Bird/GraphicsContext.hpp"
+#include <GLFW/glfw3.h>
 
 namespace Bird {
 
