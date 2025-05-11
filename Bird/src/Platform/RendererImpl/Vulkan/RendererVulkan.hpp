@@ -3,7 +3,7 @@
 //
 
 #pragma once
-
+#include <Bird/Base.hpp>
 #include "Bird/RendererI.hpp"
 #include "VulkanFrameBuffer.hpp"
 #include "VulkanShader.hpp"
@@ -88,6 +88,8 @@ private:
     void createSurface();
     void pickPhysicalDevice();
     void createLogicalDevice();
+    void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
+    void cleanupSwapchain();
 
     struct QueueFamilyIndices {
         const uint32_t invalidValue = UINT32_MAX;
@@ -97,6 +99,15 @@ private:
         bool isComplete() {
             return graphicsFamily != invalidValue && presentFamily != invalidValue;
         }
+    };
+
+    struct SwapchainFrame {
+        VkImage image;
+        VkImageView imageView;
+        VkFramebuffer framebuffer;
+        VkCommandBuffer commandBuffer;
+        VkSemaphore imageAvailable, renderFinished;
+        VkFence inFlight;
     };
 
     QueueFamilyIndices findQueueFamilies();
@@ -116,6 +127,14 @@ private:
     // Device-related variables
     VkPhysicalDevice m_physicalDevice;
     VkDevice m_device;
+    VkQueue m_graphicsQueue;
+    VkQueue m_presentQueue;
+    VkSwapchainKHR m_swapchain;
+    std::vector<SwapchainFrame> m_swapchainFrames;
+    VkFormat m_swapchainFormat;
+    VkExtent2D m_swapchainExtent;
+
+    int32_t maxFramesInFlight, frameNumber;
 };
 
 } // namespace Bird

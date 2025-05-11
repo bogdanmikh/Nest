@@ -21,117 +21,23 @@
 #    include "Platform/RendererImpl/Context/AndroidContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
 #    include "Platform/RendererImpl/Context/VulkanContext.hpp"
+#    include <vulkan/vk_enum_string_helper.h>
 #endif
 
 #ifdef PLATFORM_MACOS
 #    include <vulkan/vulkan_beta.h>
 #endif
 
-const char *getResultToString(VkResult result) {
-    switch (result) {
-        case VK_SUCCESS:
-            return "VK_SUCCESS";
-        case VK_NOT_READY:
-            return "VK_NOT_READY";
-        case VK_TIMEOUT:
-            return "VK_TIMEOUT";
-        case VK_EVENT_SET:
-            return "VK_EVENT_SET";
-        case VK_EVENT_RESET:
-            return "VK_EVENT_RESET";
-        case VK_INCOMPLETE:
-            return "VK_INCOMPLETE";
-        case VK_ERROR_OUT_OF_HOST_MEMORY:
-            return "VK_ERROR_OUT_OF_HOST_MEMORY";
-        case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-            return "VK_ERROR_OUT_OF_DEVICE_MEMORY";
-        case VK_ERROR_INITIALIZATION_FAILED:
-            return "VK_ERROR_INITIALIZATION_FAILED";
-        case VK_ERROR_DEVICE_LOST:
-            return "VK_ERROR_DEVICE_LOST";
-        case VK_ERROR_MEMORY_MAP_FAILED:
-            return "VK_ERROR_MEMORY_MAP_FAILED";
-        case VK_ERROR_LAYER_NOT_PRESENT:
-            return "VK_ERROR_LAYER_NOT_PRESENT";
-        case VK_ERROR_EXTENSION_NOT_PRESENT:
-            return "VK_ERROR_EXTENSION_NOT_PRESENT";
-        case VK_ERROR_FEATURE_NOT_PRESENT:
-            return "VK_ERROR_FEATURE_NOT_PRESENT";
-        case VK_ERROR_INCOMPATIBLE_DRIVER:
-            return "VK_ERROR_INCOMPATIBLE_DRIVER";
-        case VK_ERROR_TOO_MANY_OBJECTS:
-            return "VK_ERROR_TOO_MANY_OBJECTS";
-        case VK_ERROR_FORMAT_NOT_SUPPORTED:
-            return "VK_ERROR_FORMAT_NOT_SUPPORTED";
-        case VK_ERROR_FRAGMENTED_POOL:
-            return "VK_ERROR_FRAGMENTED_POOL";
-        case VK_ERROR_UNKNOWN:
-            return "VK_ERROR_UNKNOWN";
-        case VK_ERROR_OUT_OF_POOL_MEMORY:
-            return "VK_ERROR_OUT_OF_POOL_MEMORY";
-        case VK_ERROR_INVALID_EXTERNAL_HANDLE:
-            return "VK_ERROR_INVALID_EXTERNAL_HANDLE";
-        case VK_ERROR_FRAGMENTATION:
-            return "VK_ERROR_FRAGMENTATION";
-        case VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS:
-            return "VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS";
-        case VK_PIPELINE_COMPILE_REQUIRED:
-            return "VK_PIPELINE_COMPILE_REQUIRED";
-        case VK_ERROR_SURFACE_LOST_KHR:
-            return "VK_ERROR_SURFACE_LOST_KHR";
-        case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
-            return "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
-        case VK_SUBOPTIMAL_KHR:
-            return "VK_SUBOPTIMAL_KHR";
-        case VK_ERROR_OUT_OF_DATE_KHR:
-            return "VK_ERROR_OUT_OF_DATE_KHR";
-        case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
-            return "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
-        case VK_ERROR_VALIDATION_FAILED_EXT:
-            return "VK_ERROR_VALIDATION_FAILED_EXT";
-        case VK_ERROR_INVALID_SHADER_NV:
-            return "VK_ERROR_INVALID_SHADER_NV";
-        case VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_IMAGE_USAGE_NOT_SUPPORTED_KHR";
-        case VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_VIDEO_PICTURE_LAYOUT_NOT_SUPPORTED_KHR";
-        case VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_VIDEO_PROFILE_OPERATION_NOT_SUPPORTED_KHR";
-        case VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_VIDEO_PROFILE_FORMAT_NOT_SUPPORTED_KHR";
-        case VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR";
-        case VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR:
-            return "VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR";
-        case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT:
-            return "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT";
-        case VK_ERROR_NOT_PERMITTED_KHR:
-            return "VK_ERROR_NOT_PERMITTED_KHR";
-        case VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT:
-            return "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT";
-        case VK_THREAD_IDLE_KHR:
-            return "VK_THREAD_IDLE_KHR";
-        case VK_THREAD_DONE_KHR:
-            return "VK_THREAD_DONE_KHR";
-        case VK_OPERATION_DEFERRED_KHR:
-            return "VK_OPERATION_DEFERRED_KHR";
-        case VK_OPERATION_NOT_DEFERRED_KHR:
-            return "VK_OPERATION_NOT_DEFERRED_KHR";
-        case VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR:
-            return "VK_ERROR_INVALID_VIDEO_STD_PARAMETERS_KHR";
-        case VK_ERROR_COMPRESSION_EXHAUSTED_EXT:
-            return "VK_ERROR_COMPRESSION_EXHAUSTED_EXT";
-        case VK_INCOMPATIBLE_SHADER_BINARY_EXT:
-            return "VK_INCOMPATIBLE_SHADER_BINARY_EXT";
-        default:
-            return "UNKNOWN_VK_RESULT";
-    }
-}
+struct SwapchainSupportDetails {
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
+};
 
 #if BIRD_LOG_ENABLED == 1
 #    define VK_CHECK(result)                                                                       \
         if (result != VK_SUCCESS) {                                                                \
-            LOG_ERROR("Vulkan error: {}", getResultToString(result));                              \
+            LOG_ERROR("Vulkan error: {}", string_VkResult(result));                                \
             assert(false);                                                                         \
         }
 #else
@@ -141,8 +47,16 @@ const char *getResultToString(VkResult result) {
         }
 #endif
 
-#include <vector>
-#include <cstring>
+Bird::Size getSize() {
+    Bird::Size size;
+    void *nativeWindow = Bird::PlatformData::get()->nativeWindowHandle;
+#ifdef PLATFORM_DESKTOP
+    GLFWwindow *glfWwindow = static_cast<GLFWwindow *>(nativeWindow);
+
+    glfwGetWindowSize(glfWwindow, &size.width, &size.height);
+#endif
+    return size;
+}
 
 const char **getRequiredInstanceExtensions(uint32_t *extensionCount) {
     static std::vector<const char *> extensions;
@@ -279,7 +193,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
     void *pUserData
 ) {
-
     std::ostringstream message;
     message << "Validation layer: ";
     message << pCallbackData->pMessage;
@@ -398,6 +311,289 @@ bool isSuitable(const VkPhysicalDevice &device, uint32_t size, const char **requ
     }
 }
 
+std::vector<const char *> logTransformBits(const VkSurfaceTransformFlagsKHR &bits) {
+    std::vector<const char *> result;
+    if (bits & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
+        result.emplace_back("identity");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) {
+        result.emplace_back("90 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR) {
+        result.emplace_back("180 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) {
+        result.emplace_back("270 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR) {
+        result.emplace_back("horizontal mirror");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR) {
+        result.emplace_back("horizontal mirror, then 90 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR) {
+        result.emplace_back("horizontal mirror, then 180 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR) {
+        result.emplace_back("horizontal mirror, then 270 degree rotation");
+    }
+    if (bits & VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR) {
+        result.emplace_back("inherited");
+    }
+
+    return result;
+}
+
+std::vector<const char *> logAlphaCompositeBits(const VkCompositeAlphaFlagsKHR &bits) {
+    std::vector<const char *> result;
+    if (bits & VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) {
+        result.emplace_back("opaque (alpha ignored)");
+    }
+    if (bits & VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR) {
+        result.emplace_back("pre multiplied (alpha expected to already be multiplied in image)");
+    }
+    if (bits & VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR) {
+        result.emplace_back("post multiplied (alpha will be applied during composition)");
+    }
+    if (bits & VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR) {
+        result.emplace_back("inherited");
+    }
+
+    return result;
+}
+
+std::vector<const char *> logImageUsageBits(const VkImageUsageFlags &bits) {
+    std::vector<const char *> result;
+    if (bits & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) {
+        result.push_back("transfer src: image can be used as the source of a transfer command.");
+    }
+    if (bits & VK_IMAGE_USAGE_TRANSFER_DST_BIT) {
+        result.push_back("transfer dst: image can be used as the destination of a transfer command."
+        );
+    }
+    if (bits & VK_IMAGE_USAGE_SAMPLED_BIT) {
+        result.push_back(
+            "sampled: image can be used to create a VkImageView suitable for occupying a \
+VkDescriptorSet slot either of type VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE or \
+VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, and be sampled by a shader."
+        );
+    }
+    if (bits & VK_IMAGE_USAGE_STORAGE_BIT) {
+        result.push_back(
+            "storage: image can be used to create a VkImageView suitable for occupying a \
+VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_STORAGE_IMAGE."
+        );
+    }
+    if (bits & VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT) {
+        result.push_back(
+            "color attachment: image can be used to create a VkImageView suitable for use as \
+a color or resolve attachment in a VkFramebuffer."
+        );
+    }
+    if (bits & VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) {
+        result.push_back("depth/stencil attachment: image can be used to create a VkImageView \
+suitable for use as a depth/stencil or depth/stencil resolve attachment in a VkFramebuffer.");
+    }
+    if (bits & VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT) {
+        result.push_back(
+            "transient attachment: implementations may support using memory allocations \
+with the VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT to back an image with this usage. This \
+bit can be set for any image that can be used to create a VkImageView suitable for use as \
+a color, resolve, depth/stencil, or input attachment."
+        );
+    }
+    if (bits & VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT) {
+        result.push_back("input attachment: image can be used to create a VkImageView suitable for \
+occupying VkDescriptorSet slot of type VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT; be read from \
+a shader as an input attachment; and be used as an input attachment in a framebuffer.");
+    }
+    if (bits & VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT) {
+        result.push_back("fragment density map: image can be used to create a VkImageView suitable \
+for use as a fragment density map image.");
+    }
+    if (bits & VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR) {
+        result.push_back(
+            "fragment shading rate attachment: image can be used to create a VkImageView \
+suitable for use as a fragment shading rate attachment or shading rate image"
+        );
+    }
+    return result;
+}
+
+const char *logPresentMode(const VkPresentModeKHR &presentMode) {
+    if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+        return "immediate: the presentation engine does not wait for a vertical blanking period \
+to update the current image, meaning this mode may result in visible tearing. No internal \
+queuing of presentation requests is needed, as the requests are applied immediately.";
+    }
+    if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+        return "mailbox: the presentation engine waits for the next vertical blanking period \
+to update the current image. Tearing cannot be observed. An internal single-entry queue is \
+used to hold pending presentation requests. If the queue is full when a new presentation \
+request is received, the new request replaces the existing entry, and any images associated \
+with the prior entry become available for re-use by the application. One request is removed \
+from the queue and processed during each vertical blanking period in which the queue is non-empty.";
+    }
+    if (presentMode == VK_PRESENT_MODE_FIFO_KHR) {
+        return "fifo: the presentation engine waits for the next vertical blanking \
+period to update the current image. Tearing cannot be observed. An internal queue is used to \
+hold pending presentation requests. New requests are appended to the end of the queue, and one \
+request is removed from the beginning of the queue and processed during each vertical blanking \
+period in which the queue is non-empty. This is the only value of presentMode that is required \
+to be supported.";
+    }
+    if (presentMode == VK_PRESENT_MODE_FIFO_RELAXED_KHR) {
+        return "relaxed fifo: the presentation engine generally waits for the next vertical \
+blanking period to update the current image. If a vertical blanking period has already passed \
+since the last update of the current image then the presentation engine does not wait for \
+another vertical blanking period for the update, meaning this mode may result in visible tearing \
+in this case. This mode is useful for reducing visual stutter with an application that will \
+mostly present a new image before the next vertical blanking period, but may occasionally be \
+late, and present a new image just after the next vertical blanking period. An internal queue \
+is used to hold pending presentation requests. New requests are appended to the end of the queue, \
+and one request is removed from the beginning of the queue and processed during or after each \
+vertical blanking period in which the queue is non-empty.";
+    }
+    if (presentMode == VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR) {
+        return "shared demand refresh: the presentation engine and application have \
+concurrent access to a single image, which is referred to as a shared presentable image. \
+The presentation engine is only required to update the current image after a new presentation \
+request is received. Therefore the application must make a presentation request whenever an \
+update is required. However, the presentation engine may update the current image at any point, \
+meaning this mode may result in visible tearing.";
+    }
+    if (presentMode == VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR) {
+        return "shared continuous refresh: the presentation engine and application have \
+concurrent access to a single image, which is referred to as a shared presentable image. The \
+presentation engine periodically updates the current image on its regular refresh cycle. The \
+application is only required to make one initial presentation request, after which the \
+presentation engine must update the current image without any need for further presentation \
+requests. The application can indicate the image contents have been updated by making a \
+presentation request, but this does not guarantee the timing of when it will be updated. \
+This mode may result in visible tearing if rendering to the image is not timed correctly.";
+    }
+    return "none/undefined";
+}
+
+SwapchainSupportDetails
+querySwapchainSupport(const VkPhysicalDevice &device, const VkSurfaceKHR &surface) {
+    SwapchainSupportDetails support;
+    VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &support.capabilities));
+
+    std::ostringstream message;
+#if BIRD_DEBUG_MODE
+    message << "Swapchain INFO:\n";
+    message << "\tMinimum image count: " << support.capabilities.minImageCount << "\n";
+    message << "\tMaximum image count: " << support.capabilities.maxImageCount << "\n";
+
+    message << "\t\tWidth: " << support.capabilities.currentExtent.width << "\n";
+    message << "\t\tHeight: " << support.capabilities.currentExtent.height << "\n";
+
+    message << "\tMinimum supported extent: \n";
+    message << "\t\tWidth: " << support.capabilities.minImageExtent.width << "\n";
+    message << "\t\tHeight: " << support.capabilities.minImageExtent.height << "\n";
+
+    message << "\tMaximum supported extent: \n";
+    message << "\t\tWidth: " << support.capabilities.maxImageExtent.width << "\n";
+    message << "\t\tHeight: " << support.capabilities.maxImageExtent.height << "\n";
+
+    message << "\tMaximum image array layers: " << support.capabilities.maxImageArrayLayers << "\n";
+
+    message << "\tSupported transforms:\n";
+    std::vector<const char *> stringList =
+        logTransformBits(support.capabilities.supportedTransforms);
+    for (const auto &line : stringList) {
+        message << "\t\t" << line << '\n';
+    }
+
+    message << "\tCurrent transform:\n";
+    stringList = logTransformBits(support.capabilities.currentTransform);
+    for (const auto &line : stringList) {
+        message << "\t\t" << line << '\n';
+    }
+
+    message << "\tSupported alpha operations:\n";
+    stringList = logAlphaCompositeBits(support.capabilities.supportedCompositeAlpha);
+    for (const auto &line : stringList) {
+        message << "\t\t" << line << "\n";
+    }
+
+    message << "\tsupported image usage:\n";
+    stringList = logImageUsageBits(support.capabilities.supportedUsageFlags);
+    for (const auto &line : stringList) {
+        message << "\t\t" << line << "\n";
+    }
+#endif
+
+    uint32_t count;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &count, nullptr);
+    support.formats.resize(count);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &count, support.formats.data());
+
+#if BIRD_DEBUG_MODE
+    for (const auto &supportedFormat : support.formats) {
+        message << "\tSupported pixel format: " << string_VkFormat(supportedFormat.format) << "\n";
+        message << "\tSupported color space: " << string_VkColorSpaceKHR(supportedFormat.colorSpace)
+                << "\n";
+    }
+#endif
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, nullptr);
+    support.presentModes.resize(count);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, support.presentModes.data());
+#if BIRD_DEBUG_MODE
+    for (const auto &presentMode : support.presentModes) {
+        message << "\t" << logPresentMode(presentMode) << "\n";
+    }
+    std::string messageStr = std::string(message.str());
+    messageStr.erase(messageStr.end() - 1);
+    LOG_INFO("{}", messageStr.c_str());
+#endif
+    return support;
+}
+
+VkSurfaceFormatKHR chooseSwapchainSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &formats) {
+    for (const auto &format : formats) {
+        // color format an 0-255, non linear
+        if (format.format == VK_FORMAT_B8G8R8A8_UNORM &&
+            format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            return format;
+        }
+    }
+    return formats[0];
+}
+
+VkPresentModeKHR chooseSwapchainPresentMode(const std::vector<VkPresentModeKHR> &presentModes) {
+    for (const auto &presentMode : presentModes) {
+        // rendering mode
+        if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+            return presentMode;
+        }
+    }
+    return VK_PRESENT_MODE_FIFO_KHR;
+}
+
+VkExtent2D chooseSwapchainExtent(
+    uint32_t width, uint32_t height, const VkSurfaceCapabilitiesKHR &capabilities
+) {
+    if (capabilities.currentExtent.width != UINT32_MAX) {
+        return capabilities.currentExtent;
+    } else {
+        VkExtent2D extent = {width, height};
+
+        extent.width = std::min(
+            capabilities.maxImageExtent.width,
+            std::max(capabilities.minImageExtent.width, extent.width)
+        );
+
+        extent.height = std::min(
+            capabilities.maxImageExtent.height,
+            std::max(capabilities.minImageExtent.height, extent.height)
+        );
+
+        return extent;
+    }
+}
+
 namespace Bird {
 
 RendererVulkan::RendererVulkan()
@@ -417,6 +613,7 @@ RendererVulkan::RendererVulkan()
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+    createSwapchain(getSize(), nullptr);
 }
 
 void RendererVulkan::createInstance() {
@@ -587,9 +784,130 @@ void RendererVulkan::createLogicalDevice() {
     deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
     VK_CHECK(vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_device));
+
+    vkGetDeviceQueue(m_device, indices.graphicsFamily, 0, &m_graphicsQueue);
+    vkGetDeviceQueue(m_device, indices.presentFamily, 0, &m_presentQueue);
+}
+
+void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
+    SwapchainSupportDetails support(std::move(querySwapchainSupport(m_physicalDevice, m_surface)));
+
+    VkSurfaceFormatKHR format = chooseSwapchainSurfaceFormat(support.formats);
+
+    VkPresentModeKHR presentMode = chooseSwapchainPresentMode(support.presentModes);
+
+    VkExtent2D extent = chooseSwapchainExtent(size.width, size.height, support.capabilities);
+
+    uint32_t imageCount;
+    if (support.capabilities.maxImageCount == 0) {
+        imageCount = std::min(int(support.capabilities.minImageCount + 1), 3);
+    } else {
+        imageCount = std::min(
+            std::min((int)support.capabilities.minImageCount + 1, 3),
+            (int)support.capabilities.maxImageCount
+        );
+    }
+
+    // Базовая инициализация структуры (обязательно для всех Vulkan-структур)
+    VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+    // Указываем тип структуры для корректной работы Vulkan API
+    swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    // Поверхность (окно), с которой будет связан свопчейн
+    swapchainCreateInfo.surface = m_surface;
+
+    // Минимальное количество изображений в цепочке подкачки
+    swapchainCreateInfo.minImageCount = imageCount;
+    // Формат пикселей (например, VK_FORMAT_B8G8R8A8_UNORM)
+    swapchainCreateInfo.imageFormat = format.format;
+    // Цветовое пространство (например, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+    swapchainCreateInfo.imageColorSpace = format.colorSpace;
+    // Разрешение изображений в свопчейне (ширина/высота в пикселях)
+    swapchainCreateInfo.imageExtent = extent;
+
+    // Как обрабатывать альфа-канал (здесь - игнорировать, делая окно непрозрачным)
+    swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+
+    // Оптимизация: не рендерить части изображения, скрытые другими окнами
+    swapchainCreateInfo.clipped = VK_TRUE;
+
+    // Определяет, как будут использоваться изображения свопчейна:
+    // VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT - для рендеринга напрямую
+    swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+    // Количество слоев в изображении (1 для обычных 2D-приложений)
+    swapchainCreateInfo.imageArrayLayers = 1;
+
+    // Получаем индексы семейств очередей
+    QueueFamilyIndices indices = findQueueFamilies();
+    uint32_t queueFamilyIndices[] = {indices.graphicsFamily, indices.presentFamily};
+
+    // Настройка совместного доступа к изображениям:
+    if (indices.graphicsFamily != indices.presentFamily) {
+        // CONCURRENT - если разные очереди для рендеринга и отображения
+        swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        // Количество семейств очередей
+        swapchainCreateInfo.queueFamilyIndexCount = 2;
+        // Указатель на массив семейств очередей
+        swapchainCreateInfo.pQueueFamilyIndices = queueFamilyIndices;
+    } else {
+        // EXCLUSIVE - если одна очередь и для рендеринга, и для отображения (оптимальнее)
+        swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    }
+
+    // Трансформация изображения (например, поворот на 90° для мобильных устройств)
+    swapchainCreateInfo.preTransform = support.capabilities.currentTransform;
+
+    // Режим презентации (например, VK_PRESENT_MODE_MAILBOX_KHR для тройной буферизации)
+    swapchainCreateInfo.presentMode = presentMode;
+
+    // Обработка пересоздания свопчейна (например, при изменении размера окна)
+    if (oldSwapchain != nullptr) {
+        // Передаем старый свопчейн для корректного пересоздания
+        swapchainCreateInfo.oldSwapchain = *oldSwapchain;
+    } else {
+        // Первое создание свопчейна
+        swapchainCreateInfo.oldSwapchain = VkSwapchainKHR(nullptr);
+    }
+
+    VK_CHECK(vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapchain));
+    
+    uint32_t count;
+    vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, nullptr);
+    std::vector<VkImage> images(count);
+    vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, images.data());
+    m_swapchainFrames.resize(images.size());
+    for (int i = 0; i < images.size(); ++i) {
+        VkImageViewCreateInfo imageViewInfo;
+        imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        imageViewInfo.image = images[i];
+        imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        // We can change the order of the colors
+        imageViewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        imageViewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        imageViewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        imageViewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+        
+        imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imageViewInfo.subresourceRange.baseMipLevel = 0;
+        imageViewInfo.subresourceRange.levelCount = 1;
+        imageViewInfo.subresourceRange.baseArrayLayer = 0;
+        imageViewInfo.subresourceRange.layerCount = 1;
+        imageViewInfo.format = format.format;
+
+        m_swapchainFrames[i].image = images[i];
+        VK_CHECK(vkCreateImageView(m_device, &imageViewInfo, nullptr, &m_swapchainFrames[i].imageView));
+    }
+    m_swapchainFormat = format.format;
+    m_swapchainExtent = extent;
+
+    maxFramesInFlight = m_swapchainFrames.size();
 }
 
 RendererVulkan::~RendererVulkan() {
+    cleanupSwapchain();
+
+    vkDestroyDevice(m_device, nullptr);
+    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 #if BIRD_DEBUG_MODE
     cleanupDebugMessenger(m_instance, m_debugMessenger);
 #endif
@@ -637,6 +955,18 @@ RendererVulkan::QueueFamilyIndices RendererVulkan::findQueueFamilies() {
     LOG_INFO("{}", message.str());
 #endif
     return indices;
+}
+
+void RendererVulkan::cleanupSwapchain() {
+    for (const auto &frame: m_swapchainFrames) {
+        vkDestroyImageView(m_device, frame.imageView, nullptr);
+        vkDestroyFramebuffer(m_device, frame.framebuffer, nullptr);
+        vkDestroyFence(m_device, frame.inFlight, nullptr);
+        vkDestroySemaphore(m_device, frame.imageAvailable, nullptr);
+        vkDestroySemaphore(m_device, frame.renderFinished, nullptr);
+    }
+
+    vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
 }
 
 RendererType RendererVulkan::getRendererType() const {
