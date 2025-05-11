@@ -84,8 +84,22 @@ private:
     void viewChanged(View &view);
     void submit(RenderDraw *draw);
 
-    void makeInstance();
-    void makeDevice();
+    void createInstance();
+    void createSurface();
+    void pickPhysicalDevice();
+    void createLogicalDevice();
+
+    struct QueueFamilyIndices {
+        const uint32_t invalidValue = UINT32_MAX;
+        uint32_t graphicsFamily = invalidValue;
+        uint32_t presentFamily = invalidValue;
+
+        bool isComplete() {
+            return graphicsFamily != invalidValue && presentFamily != invalidValue;
+        }
+    };
+
+    QueueFamilyIndices findQueueFamilies();
 
     uint32_t m_uselessVao;
     GraphicsContext *context;
@@ -98,9 +112,10 @@ private:
     // Instance-related variables
     VkInstance m_instance;
     VkSurfaceKHR m_surface;
-
+    VkDebugUtilsMessengerEXT m_debugMessenger;
     // Device-related variables
     VkPhysicalDevice m_physicalDevice;
+    VkDevice m_device;
 };
 
 } // namespace Bird

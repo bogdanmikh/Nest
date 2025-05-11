@@ -10,6 +10,9 @@
 #include "Nest/Window/Window.hpp"
 
 #include <Foundation/Foundation.hpp>
+#if USE_VULKAN
+#    define GLFW_INCLUDE_VULKAN
+#endif
 #include <GLFW/glfw3.h>
 
 namespace Nest {

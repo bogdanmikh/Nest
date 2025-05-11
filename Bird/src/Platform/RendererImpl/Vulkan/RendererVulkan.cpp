@@ -8,11 +8,12 @@
 #include <Foundation/Assert.hpp>
 #include <Foundation/Allocator.hpp>
 #include <Foundation/Logger.hpp>
-#include <vulkan/vulkan.h>
-#include <sstream>
 #include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Assert.hpp>
 #include "Bird/PlatformData.hpp"
+
+#include <sstream>
+#include <set>
 
 #ifdef PLATFORM_IOS
 #    include "Platform/RendererImpl/Context/GlesContext.hpp"
@@ -20,6 +21,10 @@
 #    include "Platform/RendererImpl/Context/AndroidContext.hpp"
 #elif defined(PLATFORM_DESKTOP)
 #    include "Platform/RendererImpl/Context/VulkanContext.hpp"
+#endif
+
+#ifdef PLATFORM_MACOS
+#    include <vulkan/vulkan_beta.h>
 #endif
 
 const char *getResultToString(VkResult result) {
@@ -245,22 +250,152 @@ bool supported(
 std::array<bool, 5> getDeviceProperties(const VkPhysicalDevice &device) {
     VkPhysicalDeviceProperties properties;
     vkGetPhysicalDeviceProperties(device, &properties);
+#if BIRD_DEBUG_MODE
+    std::string deviceName = properties.deviceName;
+    LOG_INFO("Device name: {}", deviceName.c_str());
+#endif
 
     std::array<bool, 5> typeGPU{false};
     // 0 - Discrete GPU, 1 - Integrated GPU, 2 - Virtual GPU, 3 - CPU, 4 - Other
     switch (properties.deviceType) {
-        case (VK_PHYSICAL_DEVICE_TYPE_CPU):
-            typeGPU[3] = true;
         case (VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU):
             typeGPU[0] = true;
         case (VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU):
             typeGPU[1] = true;
         case (VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU):
             typeGPU[2] = true;
+        case (VK_PHYSICAL_DEVICE_TYPE_CPU):
+            typeGPU[3] = true;
         default:
             typeGPU[4] = true;
     }
     return typeGPU;
+}
+
+/// DEBUG MESSENGER
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageType,
+    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+    void *pUserData
+) {
+
+    std::ostringstream message;
+    message << "Validation layer: ";
+    message << pCallbackData->pMessage;
+    LOG_ERROR("{}", message.str().c_str());
+    return VK_FALSE;
+}
+
+VkResult createDebugUtilsMessengerEXT(
+    VkInstance instance,
+    const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator,
+    VkDebugUtilsMessengerEXT *pDebugMessenger
+) {
+
+    PFN_vkCreateDebugUtilsMessengerEXT func = (PFN_vkCreateDebugUtilsMessengerEXT
+    )vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+
+    if (func != NULL) {
+        return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+    } else {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
+}
+
+void destroyDebugUtilsMessengerEXT(
+    VkInstance instance,
+    VkDebugUtilsMessengerEXT debugMessenger,
+    const VkAllocationCallbacks *pAllocator
+) {
+
+    PFN_vkDestroyDebugUtilsMessengerEXT func = (PFN_vkDestroyDebugUtilsMessengerEXT
+    )vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+
+    if (func != NULL) {
+        func(instance, debugMessenger, pAllocator);
+    }
+}
+
+VkResult setupDebugMessenger(VkInstance instance, VkDebugUtilsMessengerEXT &debugMessenger) {
+    VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    createInfo.pfnUserCallback = debugCallback;
+    createInfo.pUserData = nullptr;
+
+    return createDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger);
+}
+
+void cleanupDebugMessenger(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger) {
+    if (debugMessenger != VK_NULL_HANDLE) {
+        destroyDebugUtilsMessengerEXT(instance, debugMessenger, NULL);
+        debugMessenger = VK_NULL_HANDLE;
+    }
+}
+
+bool checkDeviceExtensionSupport(
+    const VkPhysicalDevice &physicalDevice, uint32_t size, const char **requestedExtensions
+) {
+    //    Check if a given physical device can satisfy a list of requested device extensions.
+    std::set<std::string> requiredExtensions(requestedExtensions, requestedExtensions + size);
+
+    std::ostringstream message;
+#if BIRD_DEBUG_MODE
+    message << "Device can support extensions:";
+#endif
+    uint32_t extensionCount = 0;
+    vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
+    VkExtensionProperties *extensions =
+        static_cast<VkExtensionProperties *>(malloc(sizeof(VkExtensionProperties) * extensionCount)
+        );
+    vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, extensions);
+    for (int i = 0; i < extensionCount; ++i) {
+        auto &extension = extensions[i];
+#if BIRD_DEBUG_MODE
+        message << "\n\t" << static_cast<const char *>(extension.extensionName);
+#endif
+        // remove this from the list of required extensions (set checks for equality automatically)
+        requiredExtensions.erase(extension.extensionName);
+    }
+    free(extensions);
+#if BIRD_DEBUG_MODE
+    LOG_INFO("{}", message.str());
+#endif
+    // if the set is empty then all requirements have been satisfied
+    return requiredExtensions.empty();
+}
+
+bool isSuitable(const VkPhysicalDevice &device, uint32_t size, const char **requestedExtensions) {
+    std::ostringstream message;
+    message << "Checking if device is suitable";
+#if BIRD_DEBUG_MODE
+    message << "\n\tWe are requesting device extensions:";
+    for (int i = 0; i < size; i++) {
+        const char *extension = requestedExtensions[i];
+        message << "\n\t\"" << std::string(extension) << "\"";
+    }
+#endif
+
+    bool extensionsSupported = checkDeviceExtensionSupport(device, size, requestedExtensions);
+    if (extensionsSupported) {
+#if BIRD_DEBUG_MODE
+        message << "\n\tDevice can support the requested extensions!";
+        LOG_INFO("{}", message.str());
+#endif
+        return true;
+    } else {
+#if BIRD_DEBUG_MODE
+        message << "\n\tDevice can't support the requested extensions!";
+        LOG_INFO("{}", message.str());
+#endif
+        return false;
+    }
 }
 
 namespace Bird {
@@ -274,18 +409,17 @@ RendererVulkan::RendererVulkan()
     , m_vertexBuffers()
     , m_textures() {
 #ifdef PLATFORM_DESKTOP
-    if (!glfwVulkanSupported()) {
-        LOG_CRITICAL("GLFW NOT SUPPORT VULKAN!");
-        exit(1);
-    }
+    NEST_ASSERT(glfwVulkanSupported(), "GLFW NOT SUPPORT VULKAN!")
     context = F_NEW(Foundation::getAllocator(), VulkanContext);
 #endif
     context->create();
-    makeInstance();
-    //    makeDevice();
+    createInstance();
+    createSurface();
+    pickPhysicalDevice();
+    createLogicalDevice();
 }
 
-void RendererVulkan::makeInstance() {
+void RendererVulkan::createInstance() {
     BIRD_LOG("Make instance...");
     uint32_t version;
     VK_CHECK(vkEnumerateInstanceVersion(&version));
@@ -304,9 +438,9 @@ void RendererVulkan::makeInstance() {
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "PandaEditor";
     appInfo.pEngineName = "Panda";
-    appInfo.applicationVersion = version;
+    appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
     //    appInfo.apiVersion = version;
-    appInfo.apiVersion = VK_MAKE_VERSION(1, 1, 0);
+    appInfo.apiVersion = VK_API_VERSION_1_2;
     appInfo.pNext = nullptr;
 
     uint32_t extensionCount = 0;
@@ -329,7 +463,20 @@ void RendererVulkan::makeInstance() {
 
     std::vector<const char *> layers;
 #if BIRD_DEBUG_MODE
+    // Проверяет вызовы Vulkan API на соответствие спецификации, выявляет ошибки, предупреждения и
+    // потенциальные проблемы производительности.
     layers.push_back("VK_LAYER_KHRONOS_validation");
+
+    // Логирует все вызовы Vulkan API и их параметры в консоль или файл. Полезен для глубокой
+    // отладки.
+    //    layers.push_back("VK_LAYER_LUNARG_api_dump");
+
+    // Выводит в реальном времени статистику по использованию Vulkan (FPS, количество вызовов и т.
+    // д.).
+    //    layers.push_back("VK_LAYER_LUNARG_monitor");
+
+    // Анализирует код на предмет best practices и даёт рекомендации по оптимизации.
+//    layers.push_back("VK_LAYER_LUNARG_assistant_layer");
 #endif
     NEST_ASSERT(
         supported(extensions, layers),
@@ -346,6 +493,12 @@ void RendererVulkan::makeInstance() {
     instanceCreateInfo.ppEnabledLayerNames = layers.data();
     instanceCreateInfo.pNext = nullptr;
     VK_CHECK(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
+#if BIRD_DEBUG_MODE
+    VK_CHECK(setupDebugMessenger(m_instance, m_debugMessenger));
+#endif
+}
+
+void RendererVulkan::createSurface() {
 #ifdef PLATFORM_DESKTOP
     VkSurfaceKHR surface;
     auto *window = static_cast<GLFWwindow *>(PlatformData::get()->nativeWindowHandle);
@@ -357,7 +510,7 @@ void RendererVulkan::makeInstance() {
 #endif
 }
 
-void RendererVulkan::makeDevice() {
+void RendererVulkan::pickPhysicalDevice() {
     BIRD_LOG("Choosing physical device...");
     uint32_t physicalDeviceCount = 0;
     VK_CHECK(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
@@ -376,11 +529,114 @@ void RendererVulkan::makeDevice() {
     for (const auto &device : physicalDevices) {
         devicesTypes.emplace_back(getDeviceProperties(device));
     }
+
+    std::vector<const char *> extensions;
+    extensions.emplace_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+#ifdef PLATFORM_MACOS
+    extensions.emplace_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
+#endif
+    for (int numType = 0; numType < 5; ++numType) {
+        for (int numDevice = 0; numDevice < physicalDeviceCount; ++numDevice) {
+            if (devicesTypes[numDevice][numType] &&
+                isSuitable(physicalDevices[numDevice], extensions.size(), extensions.data())) {
+                m_physicalDevice = physicalDevices[numDevice];
+            }
+        }
+    }
+}
+
+void RendererVulkan::createLogicalDevice() {
+    QueueFamilyIndices indices = findQueueFamilies();
+    NEST_ASSERT(indices.isComplete(), "Indices not complete");
+    float queuePriority = 1.0f;
+    std::set<uint32_t> uniqueQueueFamilies;
+    uniqueQueueFamilies.emplace(indices.graphicsFamily);
+    uniqueQueueFamilies.emplace(indices.presentFamily);
+
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    for (const uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo = {};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.emplace_back(queueCreateInfo);
+    }
+
+    std::vector<const char *> enabledLayers;
+#if BIRD_DEBUG_MODE
+    enabledLayers.emplace_back("VK_LAYER_KHRONOS_validation");
+#endif
+
+    std::vector<const char *> extensions;
+    extensions.emplace_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+#ifdef PLATFORM_MACOS
+    extensions.emplace_back(VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME);
+#endif
+
+    VkPhysicalDeviceFeatures deviceFeatures = {};
+
+    VkDeviceCreateInfo deviceCreateInfo = {};
+    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.enabledLayerCount = enabledLayers.size();
+    deviceCreateInfo.ppEnabledLayerNames = enabledLayers.data();
+    deviceCreateInfo.enabledExtensionCount = extensions.size();
+    deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+    deviceCreateInfo.queueCreateInfoCount = queueCreateInfos.size();
+    deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+    deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+
+    VK_CHECK(vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_device));
 }
 
 RendererVulkan::~RendererVulkan() {
+#if BIRD_DEBUG_MODE
+    cleanupDebugMessenger(m_instance, m_debugMessenger);
+#endif
     vkDestroyInstance(m_instance, nullptr);
     F_DELETE(Foundation::getAllocator(), context);
+}
+
+RendererVulkan::QueueFamilyIndices RendererVulkan::findQueueFamilies() {
+    QueueFamilyIndices indices;
+
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, nullptr);
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(
+        m_physicalDevice, &queueFamilyCount, queueFamilies.data()
+    );
+
+    std::ostringstream message;
+#if BIRD_DEBUG_MODE
+    message << "System can support " << queueFamilies.size() << " queue families";
+#endif
+    for (int i = 0; i < queueFamilyCount; i++) {
+        VkQueueFamilyProperties &queueFamily = queueFamilies[i];
+        if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            indices.graphicsFamily = i;
+#if BIRD_DEBUG_MODE
+            message << "\n\tQueue Family " << i << " is suitable for graphics";
+#endif
+        }
+
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, i, m_surface, &presentSupport);
+
+        if (presentSupport) {
+            indices.presentFamily = i;
+#if BIRD_DEBUG_MODE
+            message << "\n\tQueue Family " << i << " is suitable for presenting";
+#endif
+        }
+        if (indices.isComplete()) {
+            break;
+        }
+    }
+#if BIRD_DEBUG_MODE
+    LOG_INFO("{}", message.str());
+#endif
+    return indices;
 }
 
 RendererType RendererVulkan::getRendererType() const {
