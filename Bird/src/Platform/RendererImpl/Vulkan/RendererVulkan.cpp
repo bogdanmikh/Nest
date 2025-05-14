@@ -231,20 +231,6 @@ void destroyDebugUtilsMessengerEXT(
     }
 }
 
-VkResult setupDebugMessenger(VkInstance instance, VkDebugUtilsMessengerEXT &debugMessenger) {
-    VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
-    createInfo.pUserData = nullptr;
-
-    return createDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger);
-}
-
 void cleanupDebugMessenger(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger) {
     if (debugMessenger != VK_NULL_HANDLE) {
         destroyDebugUtilsMessengerEXT(instance, debugMessenger, NULL);
@@ -610,10 +596,14 @@ RendererVulkan::RendererVulkan()
 #endif
     context->create();
     createInstance();
+#if BIRD_DEBUG_MODE
+    setupDebugMessenger();
+#endif
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
     createSwapchain(getSize(), nullptr);
+    createGraphicsPipeline();
 }
 
 void RendererVulkan::createInstance() {
@@ -690,9 +680,20 @@ void RendererVulkan::createInstance() {
     instanceCreateInfo.ppEnabledLayerNames = layers.data();
     instanceCreateInfo.pNext = nullptr;
     VK_CHECK(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance));
-#if BIRD_DEBUG_MODE
-    VK_CHECK(setupDebugMessenger(m_instance, m_debugMessenger));
-#endif
+}
+
+void RendererVulkan::setupDebugMessenger() {
+    VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                 VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    createInfo.pfnUserCallback = debugCallback;
+    createInfo.pUserData = nullptr;
+
+    VK_CHECK(createDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger));
 }
 
 void RendererVulkan::createSurface() {
@@ -901,6 +902,10 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     m_swapchainExtent = extent;
 
     maxFramesInFlight = m_swapchainFrames.size();
+}
+
+void RendererVulkan::createGraphicsPipeline() {
+
 }
 
 RendererVulkan::~RendererVulkan() {

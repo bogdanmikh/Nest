@@ -85,10 +85,12 @@ private:
     void submit(RenderDraw *draw);
 
     void createInstance();
+    void setupDebugMessenger();
     void createSurface();
     void pickPhysicalDevice();
     void createLogicalDevice();
     void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
+    void createGraphicsPipeline();
     void cleanupSwapchain();
 
     struct QueueFamilyIndices {
