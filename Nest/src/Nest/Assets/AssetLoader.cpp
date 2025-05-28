@@ -213,6 +213,72 @@ AssetLoader::loadProgram(const std::string &vertexPath, const std::string &fragm
 #endif
 }
 
+ProgramAsset
+AssetLoader::loadProgramBin(const std::string &vertexPath, const std::string &fragmentPath) {
+#ifdef PLATFORM_DESKTOP
+    std::string vertexCode, fragmentCode;
+    std::ifstream vShaderFile, fShaderFile;
+    // ensure ifstream objects can throw exceptions:
+    vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    try {
+        // open files
+        vShaderFile.open(AssetLoader::getResourcesPath() + vertexPath, std::ios::binary);
+        fShaderFile.open(AssetLoader::getResourcesPath() + fragmentPath, std::ios::binary);
+        std::stringstream vShaderStream, fShaderStream;
+        // read file's buffer contents into streams
+        vShaderStream << vShaderFile.rdbuf();
+        fShaderStream << fShaderFile.rdbuf();
+        // close file handlers
+        vShaderFile.close();
+        fShaderFile.close();
+        // convert stream into string
+        vertexCode = vShaderStream.str();
+        fragmentCode = fShaderStream.str();
+    } catch (std::ifstream::failure &e) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
+    Foundation::Memory vertexData =
+        Foundation::Memory::copying((void *)vertexCode.data(), vertexCode.size() + 1);
+    vertexData.userData = malloc(sizeof(uint32_t));
+    uint32_t *ptrVertexSize = static_cast<uint32_t *>(vertexData.userData);
+    *ptrVertexSize = vertexCode.size();
+    Foundation::Memory fragmentData =
+        Foundation::Memory::copying((void *)fragmentCode.data(), fragmentCode.size() + 1);
+    fragmentData.userData = malloc(sizeof(uint32_t));
+    uint32_t *ptrFragmentSize = static_cast<uint32_t *>(fragmentData.userData);
+    *ptrFragmentSize = fragmentCode.size();
+    return {vertexData, fragmentData};
+#elif defined(PLATFORM_ANDROID)
+    auto vertexMemory = readFile(vertexPath);
+    if (!vertexMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
+    auto fragmentMemory = readFile(fragmentPath);
+    if (!fragmentMemory.has_value()) {
+        NEST_ASSERT_F(
+            false, "SHADER::FILE {} or {} NOT SUCCESSFULLY READ", vertexPath, fragmentPath
+        );
+    }
+    std::stringstream vShaderStream, fShaderStream;
+    vShaderStream << (const char *)vertexMemory.value().first.data;
+    fShaderStream << (const char *)fragmentMemory.value().first.data;
+
+    auto vertexCode = vShaderStream.str();
+    auto fragmentCode = fShaderStream.str();
+
+    Foundation::Memory vertexData =
+        Foundation::Memory::copying((void *)vertexCode.c_str(), vertexCode.size() + 1);
+    Foundation::Memory fragmentData =
+        Foundation::Memory::copying((void *)fragmentCode.c_str(), fragmentCode.size() + 1);
+    return {vertexData, fragmentData};
+#endif
+}
+
 ProgramAsset AssetLoader::loadProgramXml(const std::string &pathXml) {
     auto shadersCode = ShaderEnvelope::openEnvelope(pathXml);
 

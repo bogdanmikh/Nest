@@ -147,9 +147,16 @@ IMGUI_IMPL_API void ImGui_ImplBird_DestroyFontsTexture() {
 
 IMGUI_IMPL_API bool ImGui_ImplBird_CreateDeviceObjects() {
     using namespace Bird;
-    Nest::ProgramAsset programAsset = Nest::AssetLoader::loadProgram(
+    Nest::ProgramAsset programAsset;
+#if USE_VULKAN
+    programAsset = Nest::AssetLoader::loadProgramBin(
+        "default-shaders/imgui/imgui_vertex.spv", "default-shaders/imgui/imgui_fragment.spv"
+    );
+#else
+    programAsset = Nest::AssetLoader::loadProgram(
         "default-shaders/imgui/imgui_vertex.glsl", "default-shaders/imgui/imgui_fragment.glsl"
     );
+#endif
     shader = Bird::createProgram(programAsset.getBirdProgramCreate());
 
     VertexBufferLayoutData layoutData;

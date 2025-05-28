@@ -40,6 +40,8 @@ public:
     static TextureAsset loadTexture(const std::string &path);
     static TextureAsset loadCubeMapTexture(std::array<std::string, 6> paths);
     static ProgramAsset loadProgram(const std::string &vertexPath, const std::string &fragmentPath);
+    static ProgramAsset
+    loadProgramBin(const std::string &vertexPath, const std::string &fragmentPath);
     static ProgramAsset loadProgramXml(const std::string &pathXml);
     static std::optional<std::pair<Foundation::Memory, int>> readFile(const std::string &path);
 

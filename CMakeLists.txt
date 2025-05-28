@@ -52,6 +52,7 @@ add_subdirectory(Vendor/stb_image)
 add_subdirectory(Vendor/enet)
 add_subdirectory(Vendor/miniaudio)
 add_subdirectory(Vendor/pugixml)
+add_subdirectory(Vendor/VulkanMemoryAllocator)
 add_subdirectory(Rain)
 
 include(cmake/add_app.cmake)

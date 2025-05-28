@@ -86,3 +86,8 @@ if (PLATFORM_DESKTOP)
     target_link_libraries(Bird glad)
     target_include_directories(Bird PUBLIC ${VENDOR_DIRECTORY}/glad/include)
 endif ()
+
+if (USE_VULKAN)
+    target_link_libraries(Bird VulkanMemoryAllocator)
+    target_include_directories(Bird PRIVATE ${VENDOR_DIRECTORY}/VulkanMemoryAllocator/include)
+endif ()

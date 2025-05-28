@@ -3,6 +3,7 @@
 //
 
 #include "RendererVulkan.hpp"
+#include "VulkanAllocator.hpp"
 #include "Bird/Base.hpp"
 
 #include <Foundation/Assert.hpp>
@@ -11,6 +12,7 @@
 #include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Assert.hpp>
 #include "Bird/PlatformData.hpp"
+#include "Bird/Bird.hpp"
 
 #include <sstream>
 #include <set>
@@ -33,19 +35,6 @@ struct SwapchainSupportDetails {
     std::vector<VkSurfaceFormatKHR> formats;
     std::vector<VkPresentModeKHR> presentModes;
 };
-
-#if BIRD_LOG_ENABLED == 1
-#    define VK_CHECK(result)                                                                       \
-        if (result != VK_SUCCESS) {                                                                \
-            LOG_ERROR("Vulkan error: {}", string_VkResult(result));                                \
-            assert(false);                                                                         \
-        }
-#else
-#    define VK_CHECK(result)                                                                       \
-        if (result != VK_SUCCESS) {                                                                \
-            assert(false);                                                                         \
-        }
-#endif
 
 Bird::Size getSize() {
     Bird::Size size;
@@ -580,7 +569,59 @@ VkExtent2D chooseSwapchainExtent(
     }
 }
 
+void setBlendState(VkPipelineColorBlendStateCreateInfo &colorBlendState, uint64_t state) {
+    VkPipelineColorBlendAttachmentState colorBlendAttachment;
+    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+                                          VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.blendEnable = VK_TRUE;
+    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+    colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    colorBlendState.logicOpEnable = VK_FALSE;
+    colorBlendState.logicOp = VK_LOGIC_OP_COPY; // Optional
+    colorBlendState.attachmentCount = 1;
+    colorBlendState.pAttachments = &colorBlendAttachment;
+    colorBlendState.blendConstants[0] = 0.0f; // Optional
+    colorBlendState.blendConstants[1] = 0.0f; // Optional
+    colorBlendState.blendConstants[2] = 0.0f; // Optional
+    colorBlendState.blendConstants[3] = 0.0f; // Optional
+}
+
+void setRasterizerState(
+    VkPipelineRasterizationStateCreateInfo &rasterizationState,
+    uint64_t state,
+    bool wireframe = false
+) {
+    rasterizationState.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+    rasterizationState.pNext = NULL;
+    rasterizationState.flags = 0;
+    rasterizationState.depthClampEnable = state & BIRD_STATE_DEPTH_CLAMP;
+    rasterizationState.rasterizerDiscardEnable = VK_FALSE;
+    rasterizationState.polygonMode = wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
+    if (state & BIRD_STATE_CULL_FACE) {
+        rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+    } else {
+        rasterizationState.cullMode = VK_CULL_MODE_NONE;
+    }
+    rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterizationState.depthBiasEnable = VK_FALSE;
+    rasterizationState.depthBiasConstantFactor = 0.0f;
+    rasterizationState.depthBiasClamp = 0.0f;
+    rasterizationState.depthBiasSlopeFactor = 0.0f;
+    rasterizationState.lineWidth = 1.0f;
+}
+
 namespace Bird {
+
+Bird::StateCacheT<VkPipeline> m_pipelineStateCache;
+StateCacheT<VkDescriptorSetLayout> m_descriptorSetLayoutCache;
+StateCacheT<VkRenderPass> m_renderPassCache;
+StateCacheT<VkSampler> m_samplerCache;
 
 RendererVulkan::RendererVulkan()
     : m_uselessVao(0)
@@ -602,11 +643,13 @@ RendererVulkan::RendererVulkan()
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+
+    setDeviceForVKObjects();
     createSwapchain(getSize(), nullptr);
-    createGraphicsPipeline();
 }
 
 void RendererVulkan::createInstance() {
+    apiVersion = VK_API_VERSION_1_2;
     BIRD_LOG("Make instance...");
     uint32_t version;
     VK_CHECK(vkEnumerateInstanceVersion(&version));
@@ -627,7 +670,7 @@ void RendererVulkan::createInstance() {
     appInfo.pEngineName = "Panda";
     appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
     //    appInfo.apiVersion = version;
-    appInfo.apiVersion = VK_API_VERSION_1_2;
+    appInfo.apiVersion = apiVersion;
     appInfo.pNext = nullptr;
 
     uint32_t extensionCount = 0;
@@ -790,6 +833,16 @@ void RendererVulkan::createLogicalDevice() {
     vkGetDeviceQueue(m_device, indices.presentFamily, 0, &m_presentQueue);
 }
 
+void RendererVulkan::setupAllocator() {
+    //    VulkanAllocator::initMemoryAllocator(m_instance, m_device, m_physicalDevice, apiVersion);
+}
+
+void RendererVulkan::setDeviceForVKObjects() {
+    for (int i = 0; i < MAX_SHADERS; ++i) {
+        m_shaders[i].m_device = m_device;
+    }
+}
+
 void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     SwapchainSupportDetails support(std::move(querySwapchainSupport(m_physicalDevice, m_surface)));
 
@@ -871,11 +924,10 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     }
 
     VK_CHECK(vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapchain));
-    
     uint32_t count;
-    vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, nullptr);
+    VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, nullptr));
     std::vector<VkImage> images(count);
-    vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, images.data());
+    VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, images.data()));
     m_swapchainFrames.resize(images.size());
     for (int i = 0; i < images.size(); ++i) {
         VkImageViewCreateInfo imageViewInfo;
@@ -887,7 +939,6 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
         imageViewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
         imageViewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
         imageViewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-        
         imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         imageViewInfo.subresourceRange.baseMipLevel = 0;
         imageViewInfo.subresourceRange.levelCount = 1;
@@ -896,7 +947,9 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
         imageViewInfo.format = format.format;
 
         m_swapchainFrames[i].image = images[i];
-        VK_CHECK(vkCreateImageView(m_device, &imageViewInfo, nullptr, &m_swapchainFrames[i].imageView));
+        VK_CHECK(
+            vkCreateImageView(m_device, &imageViewInfo, nullptr, &m_swapchainFrames[i].imageView)
+        );
     }
     m_swapchainFormat = format.format;
     m_swapchainExtent = extent;
@@ -904,13 +957,10 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     maxFramesInFlight = m_swapchainFrames.size();
 }
 
-void RendererVulkan::createGraphicsPipeline() {
-
-}
-
 RendererVulkan::~RendererVulkan() {
+    m_pipelineStateCache.invalidate();
     cleanupSwapchain();
-
+    //    VulkanAllocator::cleanupMemoryAllocator();
     vkDestroyDevice(m_device, nullptr);
     vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 #if BIRD_DEBUG_MODE
@@ -963,7 +1013,7 @@ RendererVulkan::QueueFamilyIndices RendererVulkan::findQueueFamilies() {
 }
 
 void RendererVulkan::cleanupSwapchain() {
-    for (const auto &frame: m_swapchainFrames) {
+    for (const auto &frame : m_swapchainFrames) {
         vkDestroyImageView(m_device, frame.imageView, nullptr);
         vkDestroyFramebuffer(m_device, frame.framebuffer, nullptr);
         vkDestroyFence(m_device, frame.inFlight, nullptr);
@@ -973,6 +1023,181 @@ void RendererVulkan::cleanupSwapchain() {
 
     vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
 }
+
+VkPipelineMultisampleStateCreateInfo RendererVulkan::getMultisampleState(uint32_t stateFlags) {
+    VkPhysicalDeviceProperties properties;
+    vkGetPhysicalDeviceProperties(m_physicalDevice, &properties);
+
+    bool supports8xMSAA = properties.limits.framebufferColorSampleCounts & VK_SAMPLE_COUNT_8_BIT;
+    bool supports4xMSAA = properties.limits.framebufferColorSampleCounts & VK_SAMPLE_COUNT_4_BIT;
+
+    VkPipelineMultisampleStateCreateInfo multisampleState = {};
+    multisampleState.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+    multisampleState.pNext = nullptr;
+    multisampleState.flags = 0;
+    multisampleState.pSampleMask = nullptr;
+    multisampleState.alphaToOneEnable = VK_FALSE;
+    // Настройка MSAA (мультисэмплинга)
+    if (stateFlags & BIRD_STATE_MSAA_8X) {
+        if (supports8xMSAA) {
+            multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_8_BIT;
+        } else {
+            multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+        }
+    } else if (stateFlags & BIRD_STATE_MSAA_4X) {
+        if (supports4xMSAA) {
+            multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_4_BIT;
+        } else {
+            multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+        }
+    } else if (stateFlags & BIRD_STATE_MSAA_2X) {
+        multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_2_BIT;
+    } else {
+        multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+    }
+
+    // Включение Sample Shading (если требуется высокое качество)
+    multisampleState.sampleShadingEnable =
+        (stateFlags & BIRD_STATE_SAMPLE_SHADING) ? VK_TRUE : VK_FALSE;
+    multisampleState.minSampleShading = multisampleState.sampleShadingEnable ? 1.0f : 0.0f;
+
+    // Включение Alpha-to-Coverage (для прозрачных объектов)
+    multisampleState.alphaToCoverageEnable =
+        (stateFlags & BIRD_STATE_ALPHA_TO_COVERAGE) ? VK_TRUE : VK_FALSE;
+
+    return multisampleState;
+}
+
+VkPipeline RendererVulkan::getPipeline(
+    uint64_t state,
+    uint8_t numStreams,
+    const Bird::VertexBufferLayoutData **layouts,
+    Bird::ProgramHandle program,
+    uint8_t numInstanceData
+) {
+    VulkanShader &shader = m_shaders[program.id];
+
+    VkPipeline pipeline = m_pipelineStateCache.find(program.id);
+
+    if (pipeline != VK_NULL_HANDLE) {
+        return pipeline;
+    }
+
+    // Blending
+    VkPipelineColorBlendStateCreateInfo colorBlendState;
+    setBlendState(colorBlendState, state);
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyState;
+    inputAssemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+    inputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    inputAssemblyState.pNext = NULL;
+    inputAssemblyState.flags = 0;
+    inputAssemblyState.primitiveRestartEnable = VK_FALSE;
+
+    VkPipelineRasterizationStateCreateInfo rasterizationState;
+    setRasterizerState(rasterizationState, state);
+
+    VkPipelineDepthStencilStateCreateInfo depthStencilState;
+    // ?
+    //    setDepthStencilState(depthStencilState, state, stencil);
+
+    // ?
+    VkPipelineVertexInputStateCreateInfo vertexInputState;
+    /*
+    vertexInputState.pVertexBindingDescriptions   = inputBinding;
+    vertexInputState.pVertexAttributeDescriptions = inputAttrib;
+    setInputLayout(vertexInputState, _numStreams, _layouts, program, _numInstanceData);
+     */
+    vertexInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputState.vertexBindingDescriptionCount = 0;
+    vertexInputState.pVertexBindingDescriptions = nullptr; // Optional
+    vertexInputState.vertexAttributeDescriptionCount = 0;
+    vertexInputState.pVertexAttributeDescriptions = nullptr; // Optional
+
+    static std::array<VkDynamicState, 4> dynamicStates = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR,
+        VK_DYNAMIC_STATE_CULL_MODE,
+        VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE
+    };
+
+    VkPipelineDynamicStateCreateInfo dynamicState;
+    dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicState.pNext = NULL;
+    dynamicState.flags = 0;
+    dynamicState.dynamicStateCount = dynamicStates.size();
+    dynamicState.pDynamicStates = dynamicStates.data();
+
+    VkPipelineShaderStageCreateInfo shaderStages[2];
+    shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    shaderStages[0].pNext = NULL;
+    shaderStages[0].flags = 0;
+    shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+    shaderStages[0].module = shader.m_vertex;
+    shaderStages[0].pName = "main";
+    shaderStages[0].pSpecializationInfo = NULL;
+
+    shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    shaderStages[1].pNext = NULL;
+    shaderStages[1].flags = 0;
+    shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    shaderStages[1].module = shader.m_fragment;
+    shaderStages[1].pName = "main";
+    shaderStages[1].pSpecializationInfo = NULL;
+
+    VkPipelineViewportStateCreateInfo viewportState;
+    viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    viewportState.pNext = NULL;
+    viewportState.flags = 0;
+    viewportState.viewportCount = 1;
+    viewportState.pViewports = NULL;
+    viewportState.scissorCount = 1;
+    viewportState.pScissors = NULL;
+
+    VkPipelineMultisampleStateCreateInfo multisampleState = getMultisampleState(state);
+
+    VkGraphicsPipelineCreateInfo graphicsPipeline;
+    graphicsPipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    graphicsPipeline.pNext = NULL;
+    graphicsPipeline.flags = 0;
+    graphicsPipeline.stageCount = 2;
+    graphicsPipeline.pStages = shaderStages;
+    graphicsPipeline.pVertexInputState = &vertexInputState;
+    graphicsPipeline.pInputAssemblyState = &inputAssemblyState;
+    graphicsPipeline.pTessellationState = NULL;
+    graphicsPipeline.pViewportState = &viewportState;
+    graphicsPipeline.pRasterizationState = &rasterizationState;
+    graphicsPipeline.pMultisampleState = &multisampleState;
+    graphicsPipeline.pDepthStencilState = nullptr;
+    // ?
+    //    graphicsPipeline.pDepthStencilState = &depthStencilState;
+    graphicsPipeline.pColorBlendState = &colorBlendState;
+    graphicsPipeline.pDynamicState = &dynamicState;
+    // ?
+    //	  graphicsPipeline.layout     = m_pipelineLayout;
+    //    graphicsPipeline.layout = program.m_pipelineLayout;
+    //    graphicsPipeline.renderPass = isValid(m_fbh) ? m_frameBuffers[m_fbh.idx].m_renderPass :
+    //    m_renderPass;
+    graphicsPipeline.subpass = 0;
+    graphicsPipeline.basePipelineHandle = VK_NULL_HANDLE;
+    graphicsPipeline.basePipelineIndex = 0;
+
+    // TODO: Cache pipelines
+    VK_CHECK(vkCreateGraphicsPipelines(m_device, nullptr, 1, &graphicsPipeline, nullptr, &pipeline)
+    );
+
+    m_pipelineStateCache.add(program.id, pipeline);
+
+    return pipeline;
+}
+
+void RendererVulkan::setInputLayout(
+    VkPipelineVertexInputStateCreateInfo &vertexInputState,
+    uint8_t numStream,
+    const Bird::VertexLayoutHandle **layout,
+    const VulkanShader &shader,
+    uint8_t numInstanceData
+) {}
 
 RendererType RendererVulkan::getRendererType() const {
     return RendererType::Vulkan;
@@ -992,15 +1217,25 @@ void RendererVulkan::readFrameBuffer(
 
 void RendererVulkan::deleteFrameBuffer(FrameBufferHandle handle) {}
 
-void RendererVulkan::createProgram(ProgramHandle handle, ProgramCreate create) {}
+void RendererVulkan::createProgram(ProgramHandle handle, ProgramCreate create) {
+    m_shaders[handle.id].create(create);
+}
 
-void RendererVulkan::deleteShader(ProgramHandle handle) {}
+void RendererVulkan::deleteShader(ProgramHandle handle) {
+    m_shaders[handle.id].terminate();
+}
 
-void RendererVulkan::createTexture(TextureHandle handle, TextureCreate create) {}
+void RendererVulkan::createTexture(TextureHandle handle, TextureCreate create) {
+    m_textures[handle.id].create(create);
+}
 
-void RendererVulkan::resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) {}
+void RendererVulkan::resizeTexture(TextureHandle handle, uint32_t width, uint32_t height) {
+    m_textures[handle.id].resize(width, height);
+}
 
-void RendererVulkan::deleteTexture(TextureHandle handle) {}
+void RendererVulkan::deleteTexture(TextureHandle handle) {
+    m_textures[handle.id].terminate();
+}
 
 void RendererVulkan::createIndexBuffer(
     IndexBufferHandle handle,
@@ -1049,7 +1284,9 @@ void RendererVulkan::createVertexLayout(VertexLayoutHandle handle, VertexBufferL
 
 void RendererVulkan::deleteVertexLayout(VertexLayoutHandle handle) {}
 
-void RendererVulkan::readTexture(Bird::TextureHandle handle, void *data) {}
+void RendererVulkan::readTexture(Bird::TextureHandle handle, void *data) {
+    m_textures[handle.id].readPixels(data);
+}
 
 void RendererVulkan::setUniform(const Uniform &uniform) {
     switch (uniform.type) {
@@ -1071,10 +1308,53 @@ void RendererVulkan::setTexture(TextureHandle handle, uint32_t slot) {}
 
 void RendererVulkan::submit(Frame *frame, View *views) {}
 
-void RendererVulkan::viewChanged(View &view) {}
+void RendererVulkan::viewChanged(View &view) {
+    if (view.m_frameBuffer.isValid()) {
+        m_frameBuffers[view.m_frameBuffer.id].bind();
+    }
+    if (!view.m_viewport.isZero()) {
+        VkViewport viewport;
+        viewport.x = view.m_viewport.origin.x;
+        viewport.y = view.m_viewport.origin.y;
+        viewport.width = view.m_viewport.size.width;
+        viewport.height = -view.m_viewport.size.height; // ?
+        viewport.minDepth = 0.0;
+        viewport.maxDepth = 1.0;
+    }
+    uint32_t rgba = view.m_clearColor;
+    uint8_t r = rgba >> 24;
+    uint8_t g = rgba >> 16;
+    uint8_t b = rgba >> 8;
+    uint8_t a = rgba >> 0;
+    if (!view.m_frameBuffer.isValid()) {
+        return;
+    }
+    for (auto clear : view.m_clearAttachments) {
+        m_frameBuffers[view.m_frameBuffer.id].clearIntAttachment(
+            clear.attachmentIndex, clear.value
+        );
+    }
+}
 
 void RendererVulkan::submit(RenderDraw *draw) {
     // TODO: Capture time
+    m_shaders[draw->m_shader.id].bind();
+
+    if (draw->m_state & BIRD_STATE_CULL_FACE) {
+    } else {
+    }
+    if (draw->m_state & BIRD_STATE_DEPTH_TEST) {
+    } else {
+    }
+
+    if (!draw->m_scissorRect.isZero()) {
+        VkRect2D scissor;
+        scissor.offset = {(int)draw->m_scissorRect.origin.x, (int)draw->m_scissorRect.origin.y};
+        scissor.extent = {
+            (uint32_t)draw->m_scissorRect.size.width, (uint32_t)draw->m_scissorRect.size.height
+        };
+    } else {
+    }
 }
 
 } // namespace Bird

@@ -9,6 +9,7 @@
 
 #include <string>
 #include <unordered_map>
+#include "VulkanBase.hpp"
 
 namespace Bird {
 
@@ -26,8 +27,12 @@ public:
     void setUniformInt(const char *name, int *value, int count);
     void bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex);
 
+    VkPipelineLayout m_pipelineLayout;
+    VkDevice m_device;
+    VkShaderModule m_vertex;
+    VkShaderModule m_fragment;
+
 private:
-    uint32_t m_id;
     std::unordered_map<std::string, int> m_uniformLocationCache;
     static void checkCompileErrors(uint32_t shader, const std::string &type);
     int getUniformLocation(const std::string &name);

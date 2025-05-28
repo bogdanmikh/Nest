@@ -1,11 +1,11 @@
-#version 330 core
+#version 450
 
-in vec2 Frag_UV;
-in vec4 Frag_Color;
+layout(location = 0) in vec2 Frag_UV;
+layout(location = 1) in vec4 Frag_Color;
 
-out vec4 Out_Color;
+layout(location = 0) out vec4 Out_Color;
 
-uniform sampler2D Texture;       
+layout(binding = 0) uniform sampler2D Texture;
 
 void main() {
     Out_Color = Frag_Color * texture(Texture, Frag_UV.st);
