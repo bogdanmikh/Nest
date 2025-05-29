@@ -3,7 +3,6 @@
 //
 
 #include "VulkanShader.hpp"
-#include "Bird/Base.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -15,10 +14,11 @@ VulkanShader::VulkanShader()
     : m_uniformLocationCache() {}
 
 void VulkanShader::create(ProgramCreate create) {
+    m_device = *device;
     const char *vertexSource = reinterpret_cast<const char *>(create.m_vertex.data);
     const char *fragmentSource = reinterpret_cast<const char *>(create.m_fragment.data);
-    size_t vertexSourceSize = *reinterpret_cast<uint32_t *>(create.m_vertex.userData);
-    size_t fragmentSourceSize = *reinterpret_cast<uint32_t *>(create.m_fragment.userData);
+    uint32_t vertexSourceSize = *reinterpret_cast<uint32_t *>(create.m_vertex.userData);
+    uint32_t fragmentSourceSize = *reinterpret_cast<uint32_t *>(create.m_fragment.userData);
     free(create.m_vertex.userData);
     free(create.m_fragment.userData);
 
@@ -27,13 +27,13 @@ void VulkanShader::create(ProgramCreate create) {
     vertShaderCreateInfo.codeSize = vertexSourceSize;
     vertShaderCreateInfo.pCode = reinterpret_cast<const uint32_t *>(create.m_vertex.data);
 
-    VK_CHECK(vkCreateShaderModule(m_device, &vertShaderCreateInfo, nullptr, &m_vertex));
+    VK_CHECK(vkCreateShaderModule(m_device, &vertShaderCreateInfo, allocatorCb, &m_vertex));
 
     VkShaderModuleCreateInfo fragShaderCreateInfo = {};
     fragShaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     fragShaderCreateInfo.codeSize = fragmentSourceSize;
     fragShaderCreateInfo.pCode = reinterpret_cast<const uint32_t *>(create.m_fragment.data);
-    VK_CHECK(vkCreateShaderModule(m_device, &fragShaderCreateInfo, nullptr, &m_fragment));
+    VK_CHECK(vkCreateShaderModule(m_device, &fragShaderCreateInfo, allocatorCb, &m_fragment));
 
     create.m_vertex.release();
     create.m_fragment.release();
@@ -56,8 +56,8 @@ void VulkanShader::create(ProgramCreate create) {
 }
 
 void VulkanShader::terminate() {
-    vkDestroyShaderModule(m_device, m_vertex, nullptr);
-    vkDestroyShaderModule(m_device, m_fragment, nullptr);
+    vkDestroy(m_vertex);
+    vkDestroy(m_fragment);
 }
 
 void VulkanShader::checkCompileErrors(unsigned int shader, const std::string &type) {}

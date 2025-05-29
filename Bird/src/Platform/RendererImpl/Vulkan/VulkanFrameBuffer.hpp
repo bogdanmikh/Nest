@@ -3,6 +3,7 @@
 #include "Bird/Base.hpp"
 
 #include <vector>
+#include <vulkan/vulkan.h>
 
 namespace Bird {
 
@@ -20,6 +21,8 @@ public:
     );
     void clearIntAttachment(int index, int value);
     void clearUIntAttachment(int index, uint32_t value);
+
+    VkRenderPass m_renderPass;
 
 private:
     void checkStatus();

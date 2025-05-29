@@ -9,7 +9,6 @@ namespace Bird {
 VulkanTexture::VulkanTexture()
     : m_id(-1)
     , m_create()
-    , m_format(0)
     , m_type(0) {}
 
 void VulkanTexture::create(TextureCreate &create) {}

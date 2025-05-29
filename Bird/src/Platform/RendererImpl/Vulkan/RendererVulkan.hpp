@@ -3,7 +3,8 @@
 //
 
 #pragma once
-#include <Bird/Base.hpp>
+
+#include "Bird/Base.hpp"
 #include "Bird/RendererI.hpp"
 #include "VulkanFrameBuffer.hpp"
 #include "VulkanShader.hpp"
@@ -12,48 +13,6 @@
 #include "VulkanVertexBuffer.hpp"
 #include "Bird/GraphicsContext.hpp"
 #include "VulkanBase.hpp"
-
-#define VK_DESTROY                                                                                 \
-    VK_DESTROY_FUNC(Buffer);                                                                       \
-    VK_DESTROY_FUNC(CommandPool);                                                                  \
-    VK_DESTROY_FUNC(DescriptorPool);                                                               \
-    VK_DESTROY_FUNC(DescriptorSetLayout);                                                          \
-    VK_DESTROY_FUNC(Fence);                                                                        \
-    VK_DESTROY_FUNC(Framebuffer);                                                                  \
-    VK_DESTROY_FUNC(Image);                                                                        \
-    VK_DESTROY_FUNC(ImageView);                                                                    \
-    VK_DESTROY_FUNC(Sampler);                                                                      \
-    VK_DESTROY_FUNC(Pipeline);                                                                     \
-    VK_DESTROY_FUNC(PipelineCache);                                                                \
-    VK_DESTROY_FUNC(PipelineLayout);                                                               \
-    VK_DESTROY_FUNC(RenderPass);                                                                   \
-    VK_DESTROY_FUNC(Semaphore);                                                                    \
-    VK_DESTROY_FUNC(ShaderModule);                                                                 \
-    VK_DESTROY_FUNC(SwapchainKHR);
-
-#define VK_DESTROY_FUNC(_name)                                                                     \
-    struct Vk##_name {                                                                             \
-        ::Vk##_name vk;                                                                            \
-        Vk##_name() {}                                                                             \
-        Vk##_name(::Vk##_name _vk)                                                                 \
-            : vk(_vk) {}                                                                           \
-        operator ::Vk##_name() {                                                                   \
-            return vk;                                                                             \
-        }                                                                                          \
-        operator ::Vk##_name() const {                                                             \
-            return vk;                                                                             \
-        }                                                                                          \
-        ::Vk##_name *operator&() {                                                                 \
-            return &vk;                                                                            \
-        }                                                                                          \
-        const ::Vk##_name *operator&() const {                                                     \
-            return &vk;                                                                            \
-        }                                                                                          \
-    };                                                                                             \
-    NEST_STATIC_ASSERT(sizeof(::Vk##_name) == sizeof(Vk##_name));                                  \
-    void vkDestroy(Vk##_name &)
-VK_DESTROY
-#undef VK_DESTROY_FUNC
 
 namespace Bird {
 
@@ -166,6 +125,7 @@ public:
         return m_textures[handle.id];
     }
 
+    VkRenderPass getRenderPass(uint32_t num, const FrameBufferAttachment *attachments);
 private:
     void viewChanged(View &view);
     void submit(RenderDraw *draw);
@@ -178,8 +138,6 @@ private:
     void setupAllocator();
     void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
     void cleanupSwapchain();
-
-    void setDeviceForVKObjects();
 
     VkPipeline getPipeline(
         uint64_t state,
@@ -237,7 +195,15 @@ private:
     VkQueue m_graphicsQueue;
     VkQueue m_presentQueue;
     VkSwapchainKHR m_swapchain;
-    std::vector<SwapchainFrame> m_swapchainFrames;
+
+#define NUM_SWAPCHAIN_IMAGE 4
+    SwapchainFrame m_swapchainFrames[NUM_SWAPCHAIN_IMAGE];
+
+    StateCacheT<VkPipeline> m_pipelineStateCache;
+    StateCacheT<VkDescriptorSetLayout> m_descriptorSetLayoutCache;
+    StateCacheT<VkRenderPass> m_renderPassCache;
+    StateCacheT<VkSampler> m_samplerCache;
+
     VkFormat m_swapchainFormat;
     VkExtent2D m_swapchainExtent;
 
@@ -245,7 +211,7 @@ private:
 
     uint32_t apiVersion;
 
-    //    std::unordered_map
+    VkAllocationCallbacks* m_allocatorCb;
 };
 
 } // namespace Bird

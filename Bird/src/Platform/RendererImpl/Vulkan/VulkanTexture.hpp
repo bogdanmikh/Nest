@@ -6,6 +6,8 @@
 
 #include "Bird/Base.hpp"
 
+#include <vulkan/vulkan.h>
+
 namespace Bird {
 
 class VulkanTexture {
@@ -32,12 +34,13 @@ public:
 
     void readPixels(void *data);
 
-private:
     TextureCreate m_create;
     uint32_t m_id;
     uint32_t m_target;
-    uint32_t m_format;
     uint32_t m_type;
+
+    VkImageAspectFlags m_aspectMask;
+    VkFormat m_format;
 };
 
 } // namespace Bird

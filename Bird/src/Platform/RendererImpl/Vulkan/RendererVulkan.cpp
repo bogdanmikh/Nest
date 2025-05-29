@@ -4,7 +4,6 @@
 
 #include "RendererVulkan.hpp"
 #include "VulkanAllocator.hpp"
-#include "Bird/Base.hpp"
 
 #include <Foundation/Assert.hpp>
 #include <Foundation/Allocator.hpp>
@@ -618,11 +617,6 @@ void setRasterizerState(
 
 namespace Bird {
 
-Bird::StateCacheT<VkPipeline> m_pipelineStateCache;
-StateCacheT<VkDescriptorSetLayout> m_descriptorSetLayoutCache;
-StateCacheT<VkRenderPass> m_renderPassCache;
-StateCacheT<VkSampler> m_samplerCache;
-
 RendererVulkan::RendererVulkan()
     : m_uselessVao(0)
     , m_frameBuffers()
@@ -631,6 +625,7 @@ RendererVulkan::RendererVulkan()
     , m_vertexLayouts()
     , m_vertexBuffers()
     , m_textures() {
+    allocatorCb = m_allocatorCb;
 #ifdef PLATFORM_DESKTOP
     NEST_ASSERT(glfwVulkanSupported(), "GLFW NOT SUPPORT VULKAN!")
     context = F_NEW(Foundation::getAllocator(), VulkanContext);
@@ -643,8 +638,8 @@ RendererVulkan::RendererVulkan()
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+    device = &m_device;
 
-    setDeviceForVKObjects();
     createSwapchain(getSize(), nullptr);
 }
 
@@ -837,12 +832,6 @@ void RendererVulkan::setupAllocator() {
     //    VulkanAllocator::initMemoryAllocator(m_instance, m_device, m_physicalDevice, apiVersion);
 }
 
-void RendererVulkan::setDeviceForVKObjects() {
-    for (int i = 0; i < MAX_SHADERS; ++i) {
-        m_shaders[i].m_device = m_device;
-    }
-}
-
 void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     SwapchainSupportDetails support(std::move(querySwapchainSupport(m_physicalDevice, m_surface)));
 
@@ -922,15 +911,13 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
         // Первое создание свопчейна
         swapchainCreateInfo.oldSwapchain = VkSwapchainKHR(nullptr);
     }
-
-    VK_CHECK(vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, nullptr, &m_swapchain));
+    VK_CHECK(vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, m_allocatorCb, &m_swapchain));
     uint32_t count;
     VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, nullptr));
-    std::vector<VkImage> images(count);
-    VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, images.data()));
-    m_swapchainFrames.resize(images.size());
-    for (int i = 0; i < images.size(); ++i) {
-        VkImageViewCreateInfo imageViewInfo;
+    VkImage images[count];
+    VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &count, &images[0]));
+    for (int i = 0; i < count; ++i) {
+        VkImageViewCreateInfo imageViewInfo{};
         imageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         imageViewInfo.image = images[i];
         imageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
@@ -947,18 +934,22 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
         imageViewInfo.format = format.format;
 
         m_swapchainFrames[i].image = images[i];
+        VkImageView *imageView = &m_swapchainFrames[i].imageView;
         VK_CHECK(
-            vkCreateImageView(m_device, &imageViewInfo, nullptr, &m_swapchainFrames[i].imageView)
+            vkCreateImageView(m_device, &imageViewInfo, m_allocatorCb, &m_swapchainFrames[i].imageView)
         );
     }
     m_swapchainFormat = format.format;
     m_swapchainExtent = extent;
 
-    maxFramesInFlight = m_swapchainFrames.size();
+    maxFramesInFlight = count;
 }
 
 RendererVulkan::~RendererVulkan() {
     m_pipelineStateCache.invalidate();
+    m_descriptorSetLayoutCache.invalidate();
+    m_renderPassCache.invalidate();
+    m_samplerCache.invalidate();
     cleanupSwapchain();
     //    VulkanAllocator::cleanupMemoryAllocator();
     vkDestroyDevice(m_device, nullptr);
@@ -1068,6 +1059,16 @@ VkPipelineMultisampleStateCreateInfo RendererVulkan::getMultisampleState(uint32_
     return multisampleState;
 }
 
+uint32_t getPipelineHashkey(
+    uint64_t state,
+    uint8_t numStreams,
+    const Bird::VertexBufferLayoutData **layouts,
+    Bird::ProgramHandle program,
+    uint8_t numInstanceData
+) {
+    return program.id;
+}
+
 VkPipeline RendererVulkan::getPipeline(
     uint64_t state,
     uint8_t numStreams,
@@ -1077,7 +1078,8 @@ VkPipeline RendererVulkan::getPipeline(
 ) {
     VulkanShader &shader = m_shaders[program.id];
 
-    VkPipeline pipeline = m_pipelineStateCache.find(program.id);
+    uint32_t hash = getPipelineHashkey(state, numStreams, layouts, program, numInstanceData);
+    VkPipeline pipeline = m_pipelineStateCache.find(hash);
 
     if (pipeline != VK_NULL_HANDLE) {
         return pipeline;
@@ -1173,9 +1175,9 @@ VkPipeline RendererVulkan::getPipeline(
     //    graphicsPipeline.pDepthStencilState = &depthStencilState;
     graphicsPipeline.pColorBlendState = &colorBlendState;
     graphicsPipeline.pDynamicState = &dynamicState;
+    graphicsPipeline.layout = shader.m_pipelineLayout;
+    FrameBufferHandle frameBufferHandle;
     // ?
-    //	  graphicsPipeline.layout     = m_pipelineLayout;
-    //    graphicsPipeline.layout = program.m_pipelineLayout;
     //    graphicsPipeline.renderPass = isValid(m_fbh) ? m_frameBuffers[m_fbh.idx].m_renderPass :
     //    m_renderPass;
     graphicsPipeline.subpass = 0;
@@ -1183,12 +1185,97 @@ VkPipeline RendererVulkan::getPipeline(
     graphicsPipeline.basePipelineIndex = 0;
 
     // TODO: Cache pipelines
-    VK_CHECK(vkCreateGraphicsPipelines(m_device, nullptr, 1, &graphicsPipeline, nullptr, &pipeline)
+    VK_CHECK(vkCreateGraphicsPipelines(m_device, nullptr, 1, &graphicsPipeline, m_allocatorCb, &pipeline)
     );
 
     m_pipelineStateCache.add(program.id, pipeline);
 
     return pipeline;
+}
+
+uint32_t getRenderPassHashkey(uint32_t num, const FrameBufferAttachment *attachments) {
+    uint32_t hash = 0;
+    for (int i = 0; i < num; ++i) {
+        hash += attachments[i].handle.id;
+    }
+    return hash;
+}
+
+VkRenderPass
+RendererVulkan::getRenderPass(uint32_t num, const Bird::FrameBufferAttachment *attachments) {
+    VkRenderPass renderPass = VK_NULL_HANDLE;
+    uint32_t hashKey = getRenderPassHashkey(num, attachments);
+    renderPass = (VkRenderPass)m_renderPassCache.find(hashKey);
+    if (renderPass != VK_NULL_HANDLE) {
+        return renderPass;
+    }
+    VkAttachmentDescription ad[MAX_FRAMEBUFFER_ATTACHMENTS];
+    VkAttachmentReference colorAr[MAX_FRAMEBUFFER_ATTACHMENTS];
+    VkAttachmentReference resolveAr[MAX_FRAMEBUFFER_ATTACHMENTS];
+    VkAttachmentReference depthAr;
+    uint32_t numColorAr = 0;
+
+    depthAr.attachment = VK_ATTACHMENT_UNUSED;
+    depthAr.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+    for (uint8_t i = 0; i < num; ++i) {
+        VulkanTexture &texture = m_textures[attachments[i].handle.id];
+        ad[i].flags = 0;
+        ad[i].format = texture.m_format;
+        ad[i].samples = VK_SAMPLE_COUNT_1_BIT;
+
+        if (texture.m_aspectMask & VK_IMAGE_ASPECT_COLOR_BIT) {
+            ad[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            ad[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+            ad[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            ad[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            ad[i].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            ad[i].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            colorAr[numColorAr].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            colorAr[numColorAr].attachment = i;
+            numColorAr++;
+        } else if (texture.m_aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT) {
+            ad[i].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            ad[i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+            ad[i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+            ad[i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+            ad[i].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            ad[i].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            depthAr.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            depthAr.attachment = i;
+        }
+
+        resolveAr[i].attachment = VK_ATTACHMENT_UNUSED;
+        resolveAr[i].layout = ad[i].initialLayout;
+    }
+
+    VkSubpassDescription sd[1];
+    sd[0].flags = 0;
+    sd[0].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    sd[0].inputAttachmentCount = 0;
+    sd[0].pInputAttachments = NULL;
+    sd[0].colorAttachmentCount = numColorAr;
+    sd[0].pColorAttachments = colorAr;
+    sd[0].pResolveAttachments = resolveAr;
+    sd[0].pDepthStencilAttachment = &depthAr;
+    sd[0].preserveAttachmentCount = 0;
+    sd[0].pPreserveAttachments = NULL;
+
+    VkRenderPassCreateInfo rpi;
+    rpi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    rpi.pNext = NULL;
+    rpi.flags = 0;
+    rpi.attachmentCount = num;
+    rpi.pAttachments = ad;
+    rpi.subpassCount = 1;
+    rpi.pSubpasses = sd;
+    rpi.dependencyCount = 0;
+    rpi.pDependencies = NULL;
+
+    VK_CHECK(vkCreateRenderPass(m_device, &rpi, m_allocatorCb, &renderPass));
+
+    m_renderPassCache.add(hashKey, renderPass);
+    return renderPass;
 }
 
 void RendererVulkan::setInputLayout(
