@@ -9,7 +9,7 @@ namespace Bird {
 
 static inline bool isDepthFormat(TextureFormat format) {
     switch (format) {
-        case TextureFormat::DEPTH24STENCIL8:
+        case TextureFormat::DEPTH32STENCIL8:
             return true;
         default:
             return false;

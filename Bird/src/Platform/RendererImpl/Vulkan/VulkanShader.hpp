@@ -11,6 +11,11 @@
 #include <unordered_map>
 #include "VulkanBase.hpp"
 
+struct VulkanShaderDelegate {
+    virtual ~VulkanShaderDelegate() = default;
+    virtual StateCacheT<VkDescriptorSetLayout> &getDescriptorSetLayoutCache() = 0;
+};
+
 namespace Bird {
 
 class VulkanShader {
@@ -31,6 +36,8 @@ public:
     VkDevice m_device;
     VkShaderModule m_vertex;
     VkShaderModule m_fragment;
+
+    VulkanShaderDelegate *m_delegate;
 
 private:
     std::unordered_map<std::string, int> m_uniformLocationCache;

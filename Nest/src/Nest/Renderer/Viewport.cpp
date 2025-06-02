@@ -34,7 +34,7 @@ void Viewport::init() {
     create.m_wrap = Bird::CLAMP_TO_BORDER;
     create.m_borderColor = 0xFFFFFFFF;
     m_colorAttachment = Bird::createTexture(create);
-    create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
+    create.m_format = Bird::TextureFormat::DEPTH32STENCIL8;
     m_depthAttachment = Bird::createTexture(create);
     Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, m_depthAttachment};
     m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);
@@ -52,7 +52,7 @@ void Viewport::initWithSize(Nest::Vec2 size) {
     create.m_width = m_windowSize.width;
     create.m_height = m_windowSize.height;
     m_colorAttachment = Bird::createTexture(create);
-    create.m_format = Bird::TextureFormat::DEPTH24STENCIL8;
+    create.m_format = Bird::TextureFormat::DEPTH32STENCIL8;
     m_depthAttachment = Bird::createTexture(create);
     Bird::FrameBufferAttachment attachments[] = {m_colorAttachment, m_depthAttachment};
     m_fbSpecification = Bird::FrameBufferSpecification(attachments, 2);

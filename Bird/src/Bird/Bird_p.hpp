@@ -7,9 +7,12 @@
 #include "Bird/Bird.hpp"
 #include "HandleAllocator.hpp"
 #include "Bird/BirdStates.hpp"
-#include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
-#include "RendererI.hpp"
+#if USE_VULKAN
 #include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
+#else
+#include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
+#endif
+#include "RendererI.hpp"
 
 #include <Foundation/PlatformDetection.hpp>
 #include <Foundation/Foundation.hpp>

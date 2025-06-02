@@ -9,10 +9,16 @@ namespace Bird {
 
 class RendererOpenGL;
 
+class VulkanFrameBufferDelegate {
+public:
+    virtual ~VulkanFrameBufferDelegate() = default;
+    virtual VkRenderPass getRenderPass(uint32_t num, const FrameBufferAttachment *attachments) = 0;
+};
+
 class VulkanFrameBuffer {
 public:
     VulkanFrameBuffer();
-    void create(RendererOpenGL *renderer, FrameBufferSpecification specification);
+    void create(FrameBufferSpecification specification);
     void terminate();
     void bind();
     void unbind();
@@ -23,6 +29,7 @@ public:
     void clearUIntAttachment(int index, uint32_t value);
 
     VkRenderPass m_renderPass;
+    VulkanFrameBufferDelegate *m_delegate;
 
 private:
     void checkStatus();

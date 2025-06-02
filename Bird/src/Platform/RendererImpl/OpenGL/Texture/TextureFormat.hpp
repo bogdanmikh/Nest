@@ -25,7 +25,7 @@ const static TextureFormatInfo s_textureFormat[] = {
     {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE}, // RGBA8
     {GL_R32I, GL_RED_INTEGER, GL_INT},     // RED_INTEGER
     // Depth/stencil
-    {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8} // DEPTH24STENCIL8
+    {GL_DEPTH32F_STENCIL8, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV} // DEPTH32STENCIL8
 };
 
 static GLint openGLFiltering(TextureFiltering filtering) {

@@ -48,7 +48,7 @@ enum TextureFormat {
     RGBA8,
     RED_INTEGER,
     // Depth/stencil
-    DEPTH24STENCIL8
+    DEPTH32STENCIL8
 };
 
 enum TextureWrapMode { CLAMP_TO_EDGE, CLAMP_TO_BORDER, REPEAT };
@@ -98,8 +98,8 @@ struct TextureCreate {
                 return 4;
             case RED_INTEGER:
                 return 4;
-            case DEPTH24STENCIL8:
-                return 4;
+            case DEPTH32STENCIL8:
+                return 8;
         }
     }
 };

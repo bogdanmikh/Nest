@@ -16,51 +16,7 @@
 
 namespace Bird {
 
-template<typename Ty>
-class StateCacheT {
-public:
-    void add(uint64_t key, Ty value) {
-        invalidate(key);
-        m_hashMap.insert(std::make_pair(key, value));
-    }
-
-    Ty find(uint64_t key) {
-        typename HashMap::iterator it = m_hashMap.find(key);
-        if (it != m_hashMap.end()) {
-            return it->second;
-        }
-
-        return 0;
-    }
-
-    void invalidate(uint64_t key) {
-        typename HashMap::iterator it = m_hashMap.find(key);
-        if (it != m_hashMap.end()) {
-            vkDestroy(it->second);
-            m_hashMap.erase(it);
-        }
-    }
-
-    void invalidate() {
-        for (typename HashMap::iterator it = m_hashMap.begin(), itEnd = m_hashMap.end();
-             it != itEnd;
-             ++it) {
-            vkDestroy(it->second);
-        }
-
-        m_hashMap.clear();
-    }
-
-    uint32_t getCount() const {
-        return uint32_t(m_hashMap.size());
-    }
-
-private:
-    typedef std::unordered_map<uint64_t, Ty> HashMap;
-    HashMap m_hashMap;
-};
-
-class RendererVulkan : public RendererI {
+class RendererVulkan : public RendererI, VulkanFrameBufferDelegate, VulkanShaderDelegate {
 public:
     RendererVulkan();
     ~RendererVulkan() override;
@@ -125,7 +81,20 @@ public:
         return m_textures[handle.id];
     }
 
-    VkRenderPass getRenderPass(uint32_t num, const FrameBufferAttachment *attachments);
+#pragma region VulkanFrameBufferDelegate
+    VkRenderPass getRenderPass(uint32_t num, const FrameBufferAttachment *attachments) override;
+#pragma endregion
+
+#pragma region VulkanShaderDelegate
+    StateCacheT<VkDescriptorSetLayout> &getDescriptorSetLayoutCache() override;
+#pragma endregion
+
+    VkResult allocateMemory(
+        const VkMemoryRequirements *requirements,
+        VkMemoryPropertyFlags propertyFlags,
+        VkDeviceMemory *memory
+    ) const;
+
 private:
     void viewChanged(View &view);
     void submit(RenderDraw *draw);
@@ -138,6 +107,17 @@ private:
     void setupAllocator();
     void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
     void cleanupSwapchain();
+    void createSwapchainFramebuffer();
+
+    void releaseSwapchainFramebuffer();
+    void createSwapchainRenderPass();
+    void releaseSwapchainRenderPass();
+    void initSwapchainImageLayout();
+
+    void createCommandPool();
+
+    int32_t
+    selectMemoryType(uint32_t memoryTypeBits, uint32_t propertyFlags, int32_t startIndex = 0) const;
 
     VkPipeline getPipeline(
         uint64_t state,
@@ -198,6 +178,17 @@ private:
 
 #define NUM_SWAPCHAIN_IMAGE 4
     SwapchainFrame m_swapchainFrames[NUM_SWAPCHAIN_IMAGE];
+    VkCommandBuffer m_commandBuffer;
+
+    VkImage m_depthStencilImage;
+    VkImageView m_depthStencilImageView;
+    VkFormat m_depthStencilFormat;
+    VkRenderPass m_renderPass;
+
+    VkCommandPool m_commandPool;
+    VkFence m_fence;
+    VkDeviceMemory m_depthStencilMemory;
+    VkPhysicalDeviceMemoryProperties m_memoryProperties;
 
     StateCacheT<VkPipeline> m_pipelineStateCache;
     StateCacheT<VkDescriptorSetLayout> m_descriptorSetLayoutCache;
@@ -207,11 +198,13 @@ private:
     VkFormat m_swapchainFormat;
     VkExtent2D m_swapchainExtent;
 
-    int32_t maxFramesInFlight, frameNumber;
+    uint32_t m_frameNumber;
+    uint32_t m_numSwapchainImages;
+    uint32_t m_imageIndex;
 
     uint32_t apiVersion;
 
-    VkAllocationCallbacks* m_allocatorCb;
+    VkAllocationCallbacks *m_allocatorCb;
 };
 
 } // namespace Bird

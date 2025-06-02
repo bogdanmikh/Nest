@@ -9,26 +9,31 @@ set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE SOURCES src/Bird/*.cpp)
 file(GLOB_RECURSE INCLUDE src/Bird/*.hpp include/Bird/*.hpp)
 
-file(GLOB_RECURSE GLOB_RESULT_INCLUDE src/Platform/RendererImpl/OpenGL/*.hpp)
-file(GLOB_RECURSE GLOB_RESULT_SOURCES src/Platform/RendererImpl/OpenGL/*.cpp)
-
-if (PLATFORM_DESKTOP AND USE_VULKAN)
+if (USE_VULKAN)
     file(GLOB_RECURSE VULKAN_INCLUDE src/Platform/RendererImpl/Vulkan/*.hpp)
     file(GLOB_RECURSE VULKAN_SOURCE src/Platform/RendererImpl/Vulkan/*.cpp)
-    list(APPEND INCLUDE "src/Platform/RendererImpl/Context/VulkanContext.hpp")
-    list(APPEND INCLUDE "src/Platform/RendererImpl/Context/VulkanContext.cpp")
+else ()
+    file(GLOB_RECURSE GLOB_RESULT_INCLUDE src/Platform/RendererImpl/OpenGL/*.hpp)
+    file(GLOB_RECURSE GLOB_RESULT_SOURCES src/Platform/RendererImpl/OpenGL/*.cpp)
 endif ()
+
 if (USE_VULKAN)
-    list(APPEND INCLUDE ${GLOB_RESULT_INCLUDE} ${VULKAN_INCLUDE})
-    list(APPEND SOURCES ${GLOB_RESULT_SOURCES} ${VULKAN_SOURCE})
+    list(APPEND INCLUDE ${VULKAN_INCLUDE})
+    list(APPEND SOURCES ${VULKAN_SOURCE})
 else ()
     list(APPEND INCLUDE ${GLOB_RESULT_INCLUDE})
     list(APPEND SOURCES ${GLOB_RESULT_SOURCES})
 endif ()
+
 # Other platform specific realizations
 if (PLATFORM_DESKTOP)
-    list(APPEND INCLUDE "src/Platform/RendererImpl/Context/OpenGLContext.hpp")
-    list(APPEND SOURCES "src/Platform/RendererImpl/Context/OpenGLContext.cpp")
+    if (USE_VULKAN)
+        list(APPEND INCLUDE "src/Platform/RendererImpl/Context/VulkanContext.hpp")
+        list(APPEND SOURCES "src/Platform/RendererImpl/Context/VulkanContext.cpp")
+    else ()
+        list(APPEND INCLUDE "src/Platform/RendererImpl/Context/OpenGLContext.hpp")
+        list(APPEND SOURCES "src/Platform/RendererImpl/Context/OpenGLContext.cpp")
+    endif ()
 elseif (PLATFORM_IOS)
     list(APPEND INCLUDE "src/Platform/RendererImpl/Context/GlesContext.hpp")
     list(APPEND SOURCES "src/Platform/RendererImpl/Context/GlesContext.mm")
@@ -40,7 +45,6 @@ else ()
 endif ()
 
 # Bird target
-
 add_library(Bird STATIC "${SOURCES}" "${INCLUDE}")
 
 target_compile_definitions(Bird PUBLIC GLES_SILENCE_DEPRECATION)
@@ -83,8 +87,10 @@ target_include_directories(Bird PRIVATE ${VENDOR_DIRECTORY}/glm)
 
 if (PLATFORM_DESKTOP)
     # Dependencies - GLAD
-    target_link_libraries(Bird glad)
-    target_include_directories(Bird PUBLIC ${VENDOR_DIRECTORY}/glad/include)
+    if (NOT USE_VULKAN)
+        target_link_libraries(Bird glad)
+        target_include_directories(Bird PUBLIC ${VENDOR_DIRECTORY}/glad/include)
+    endif ()
 endif ()
 
 if (USE_VULKAN)
