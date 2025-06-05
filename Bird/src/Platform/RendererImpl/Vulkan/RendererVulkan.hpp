@@ -108,6 +108,7 @@ private:
     void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
     void cleanupSwapchain();
     void createSwapchainFramebuffer();
+    void createSemaphores();
 
     void releaseSwapchainFramebuffer();
     void createSwapchainRenderPass();
@@ -120,22 +121,18 @@ private:
     selectMemoryType(uint32_t memoryTypeBits, uint32_t propertyFlags, int32_t startIndex = 0) const;
 
     VkPipeline getPipeline(
-        uint64_t state,
-        uint8_t numStreams,
-        const Bird::VertexBufferLayoutData **layouts,
-        Bird::ProgramHandle program,
-        uint8_t numInstanceData
+        uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
     );
 
     VkPipelineMultisampleStateCreateInfo getMultisampleState(uint32_t stateFlags);
-
     void setInputLayout(
         VkPipelineVertexInputStateCreateInfo &vertexInputState,
-        uint8_t numStream,
-        const Bird::VertexLayoutHandle **layout,
-        const VulkanShader &shader,
-        uint8_t numInstanceData
+        Bird::ProgramHandle program,
+        const Bird::VertexBufferLayoutData &layoutData
     );
+
+    void
+    setDepthStencilState(VkPipelineDepthStencilStateCreateInfo &depthStencilState, uint64_t state);
     struct QueueFamilyIndices {
         const uint32_t invalidValue = UINT32_MAX;
         uint32_t graphicsFamily = invalidValue;
@@ -176,6 +173,8 @@ private:
     VkQueue m_presentQueue;
     VkSwapchainKHR m_swapchain;
 
+    FrameBufferHandle m_frameBufferHandle;
+
 #define NUM_SWAPCHAIN_IMAGE 4
     SwapchainFrame m_swapchainFrames[NUM_SWAPCHAIN_IMAGE];
     VkCommandBuffer m_commandBuffer;
@@ -186,7 +185,6 @@ private:
     VkRenderPass m_renderPass;
 
     VkCommandPool m_commandPool;
-    VkFence m_fence;
     VkDeviceMemory m_depthStencilMemory;
     VkPhysicalDeviceMemoryProperties m_memoryProperties;
 

@@ -26,11 +26,11 @@ void TriangleRenderer::onAttach() {
     Foundation::Memory indicesMemory = Foundation::Memory::copying(indices, sizeof(uint32_t) * 3);
 
     Foundation::Memory verticesMemory =
-        Foundation::Memory::copying(vertices, sizeof(VertexTriangle) * 24);
+        Foundation::Memory::copying(vertices, sizeof(VertexTriangle) * 3);
     VertexBufferLayoutData layoutData;
     layoutData.pushVec3();
     VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
-    m_vertexBuffer = createVertexBuffer(verticesMemory, 24 * sizeof(VertexTriangle), vertexLayout);
+    m_vertexBuffer = createVertexBuffer(verticesMemory, 3 * sizeof(VertexTriangle), vertexLayout);
     m_indexBuffer = createIndexBuffer(indicesMemory, BufferElementType::UnsignedInt, 3);
 }
 

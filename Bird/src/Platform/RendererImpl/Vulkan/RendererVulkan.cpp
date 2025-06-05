@@ -644,6 +644,7 @@ RendererVulkan::RendererVulkan()
     createSwapchainRenderPass();
     createSwapchainFramebuffer();
     createCommandPool();
+    createSemaphores();
 }
 
 void RendererVulkan::createInstance() {
@@ -1138,26 +1139,13 @@ void RendererVulkan::createSwapchainFramebuffer() {
 void RendererVulkan::createCommandPool() {
     QueueFamilyIndices indices = findQueueFamilies();
 
-    VkFenceCreateInfo fenceCreateInfo;
-    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.pNext = NULL;
-    fenceCreateInfo.flags = 0;
-    VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_fence));
-
     VkCommandPoolCreateInfo commandPoolCreateInfo;
     commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     commandPoolCreateInfo.pNext = NULL;
     commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     commandPoolCreateInfo.queueFamilyIndex = indices.graphicsFamily;
 
-    VkResult result =
-        vkCreateCommandPool(m_device, &commandPoolCreateInfo, m_allocatorCb, &m_commandPool);
-
-    if (result != VK_SUCCESS) {
-        vkDestroy(m_fence);
-        VK_CHECK(result);
-    }
-
+    VK_CHECK(vkCreateCommandPool(m_device, &commandPoolCreateInfo, m_allocatorCb, &m_commandPool));
     VkCommandBufferAllocateInfo commandBufferAllocateInfo;
     commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     commandBufferAllocateInfo.pNext = NULL;
@@ -1166,12 +1154,11 @@ void RendererVulkan::createCommandPool() {
     commandBufferAllocateInfo.commandBufferCount = 1;
 
     for (int i = 0; i < m_numSwapchainImages; ++i) {
-        result = vkAllocateCommandBuffers(
+        VkResult result = vkAllocateCommandBuffers(
             m_device, &commandBufferAllocateInfo, &m_swapchainFrames[i].commandBuffer
         );
         if (result != VK_SUCCESS) {
             vkDestroy(m_commandPool);
-            vkDestroy(m_fence);
             VK_CHECK(result);
         }
     }
@@ -1179,6 +1166,19 @@ void RendererVulkan::createCommandPool() {
     initSwapchainImageLayout();
 
     VK_CHECK(vkResetCommandPool(m_device, m_commandPool, 0));
+}
+
+void RendererVulkan::createSemaphores() {
+    VkSemaphoreCreateInfo semaphoreCreateInfo;
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreCreateInfo.pNext = NULL;
+    semaphoreCreateInfo.flags = 0;
+
+    for (uint32_t i = 0; i < m_numSwapchainImages; ++i) {
+        VK_CHECK(vkCreateSemaphore(
+            m_device, &semaphoreCreateInfo, nullptr, &m_swapchainFrames[i].imageAvailable
+        ));
+    }
 }
 
 void RendererVulkan::releaseSwapchainFramebuffer() {
@@ -1252,19 +1252,19 @@ void RendererVulkan::releaseSwapchainRenderPass() {
 
 void RendererVulkan::initSwapchainImageLayout() {
     // ?
-//        VkCommandBuffer commandBuffer = beginNewCommand();
-//
-//        setImageMemoryBarrier(
-//            commandBuffer
-//            , m_backBufferDepthStencilImage
-//            , VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT
-//            , VK_IMAGE_LAYOUT_UNDEFINED
-//            , VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-//            , 1
-//            , 1
-//        );
-//
-//        submitCommandAndWait(commandBuffer);
+    //        VkCommandBuffer commandBuffer = beginNewCommand();
+    //
+    //        setImageMemoryBarrier(
+    //            commandBuffer
+    //            , m_backBufferDepthStencilImage
+    //            , VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT
+    //            , VK_IMAGE_LAYOUT_UNDEFINED
+    //            , VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+    //            , 1
+    //            , 1
+    //        );
+    //
+    //        submitCommandAndWait(commandBuffer);
     m_imageIndex = 0;
 }
 
@@ -1313,25 +1313,17 @@ VkPipelineMultisampleStateCreateInfo RendererVulkan::getMultisampleState(uint32_
 }
 
 uint32_t getPipelineHashkey(
-    uint64_t state,
-    uint8_t numStreams,
-    const Bird::VertexBufferLayoutData **layouts,
-    Bird::ProgramHandle program,
-    uint8_t numInstanceData
+    uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
 ) {
-    return program.id;
+    return program.id + state % 100 + layoutData.m_stride % 100;
 }
 
 VkPipeline RendererVulkan::getPipeline(
-    uint64_t state,
-    uint8_t numStreams,
-    const Bird::VertexBufferLayoutData **layouts,
-    Bird::ProgramHandle program,
-    uint8_t numInstanceData
+    uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
 ) {
     VulkanShader &shader = m_shaders[program.id];
 
-    uint32_t hashKey = getPipelineHashkey(state, numStreams, layouts, program, numInstanceData);
+    uint32_t hashKey = getPipelineHashkey(state, program, layoutData);
     VkPipeline pipeline = m_pipelineStateCache.find(hashKey);
 
     if (pipeline != VK_NULL_HANDLE) {
@@ -1353,27 +1345,13 @@ VkPipeline RendererVulkan::getPipeline(
     setRasterizerState(rasterizationState, state, false);
 
     VkPipelineDepthStencilStateCreateInfo depthStencilState;
-    // ?
-    //    setDepthStencilState(depthStencilState, state, stencil);
+    setDepthStencilState(depthStencilState, state);
 
-    // ?
-    VkPipelineVertexInputStateCreateInfo vertexInputState;
-    /*
-    vertexInputState.pVertexBindingDescriptions   = inputBinding;
-    vertexInputState.pVertexAttributeDescriptions = inputAttrib;
-    setInputLayout(vertexInputState, _numStreams, _layouts, program, _numInstanceData);
-     */
-    vertexInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputState.vertexBindingDescriptionCount = 0;
-    vertexInputState.pVertexBindingDescriptions = nullptr; // Optional
-    vertexInputState.vertexAttributeDescriptionCount = 0;
-    vertexInputState.pVertexAttributeDescriptions = nullptr; // Optional
+    VkPipelineVertexInputStateCreateInfo vertexInputState{};
+    setInputLayout(vertexInputState, program, layoutData);
 
-    static std::array<VkDynamicState, 4> dynamicStates = {
-        VK_DYNAMIC_STATE_VIEWPORT,
-        VK_DYNAMIC_STATE_SCISSOR,
-        VK_DYNAMIC_STATE_CULL_MODE,
-        VK_DYNAMIC_STATE_DEPTH_TEST_ENABLE
+    static std::array<VkDynamicState, 2> dynamicStates = {
+        VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR
     };
 
     VkPipelineDynamicStateCreateInfo dynamicState;
@@ -1423,16 +1401,13 @@ VkPipeline RendererVulkan::getPipeline(
     graphicsPipeline.pViewportState = &viewportState;
     graphicsPipeline.pRasterizationState = &rasterizationState;
     graphicsPipeline.pMultisampleState = &multisampleState;
-    graphicsPipeline.pDepthStencilState = nullptr;
-    // ?
-    //    graphicsPipeline.pDepthStencilState = &depthStencilState;
+    graphicsPipeline.pDepthStencilState = &depthStencilState;
     graphicsPipeline.pColorBlendState = &colorBlendState;
     graphicsPipeline.pDynamicState = &dynamicState;
     graphicsPipeline.layout = shader.m_pipelineLayout;
-    FrameBufferHandle frameBufferHandle;
-    // ?
-    //    graphicsPipeline.renderPass = isValid(m_fbh) ? m_frameBuffers[m_fbh.idx].m_renderPass :
-    //    m_renderPass;
+    graphicsPipeline.renderPass = m_frameBufferHandle.isValid()
+                                      ? m_frameBuffers[m_frameBufferHandle.id].m_renderPass
+                                      : m_renderPass;
     graphicsPipeline.subpass = 0;
     graphicsPipeline.basePipelineHandle = VK_NULL_HANDLE;
     graphicsPipeline.basePipelineIndex = 0;
@@ -1539,12 +1514,112 @@ StateCacheT<VkDescriptorSetLayout> &RendererVulkan::getDescriptorSetLayoutCache(
 
 void RendererVulkan::setInputLayout(
     VkPipelineVertexInputStateCreateInfo &vertexInputState,
-    uint8_t numStream,
-    const Bird::VertexLayoutHandle **layout,
-    const VulkanShader &shader,
-    uint8_t numInstanceData
+    Bird::ProgramHandle program,
+    const Bird::VertexBufferLayoutData &layoutData
 ) {
+    vertexInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+    vertexInputState.pNext = NULL;
+    vertexInputState.flags = 0;
+    VkVertexInputBindingDescription bindingDescription = {};
+    bindingDescription.binding = 0; // Используем 0-й биндинг
+    bindingDescription.stride = layoutData.m_stride;
+    bindingDescription.inputRate =
+        VK_VERTEX_INPUT_RATE_VERTEX; // Для инстансинга нужно VK_VERTEX_INPUT_RATE_INSTANCE
 
+    //    VkVertexInputBindingDescription
+    //        inputBinding[(int)BufferElementType::Count + MAX_VERTEX_LAYOUT_ELEMENTS + 1];
+    //    VkVertexInputAttributeDescription
+    //        inputAttrib[(int)BufferElementType::Count + MAX_VERTEX_LAYOUT_ELEMENTS + 1];
+
+    VkVertexInputAttributeDescription attributeDescriptions[MAX_VERTEX_LAYOUT_ELEMENTS];
+    uint32_t attributeCount = 0;
+
+    // Заполняем описания атрибутов
+    for (uint32_t i = 0; i < layoutData.m_elementsCount && i < MAX_VERTEX_LAYOUT_ELEMENTS; i++) {
+        const auto &element = layoutData.m_elements[i];
+        auto &attribute = attributeDescriptions[attributeCount++];
+
+        attribute.binding = 0; // Привязываем к 0-му биндингу
+        attribute.location = i; // Локация в шейдере соответствует индексу
+        attribute.offset =
+            (i == 0)
+                ? 0
+                : attributeDescriptions[i - 1].offset +
+                      layoutData.m_elements[i - 1].count *
+                          VertexBufferElement::getSizeOfType(layoutData.m_elements[i - 1].type);
+
+        // Преобразуем тип элемента в формат Vulkan
+        switch (element.type) {
+            case BufferElementType::Float:
+                attribute.format = (element.count == 1)   ? VK_FORMAT_R32_SFLOAT
+                                   : (element.count == 2) ? VK_FORMAT_R32G32_SFLOAT
+                                   : (element.count == 3) ? VK_FORMAT_R32G32B32_SFLOAT
+                                                          : VK_FORMAT_R32G32B32A32_SFLOAT;
+                break;
+            case BufferElementType::UnsignedInt:
+                attribute.format = (element.count == 1)   ? VK_FORMAT_R32_UINT
+                                   : (element.count == 2) ? VK_FORMAT_R32G32_UINT
+                                   : (element.count == 3) ? VK_FORMAT_R32G32B32_UINT
+                                                          : VK_FORMAT_R32G32B32A32_UINT;
+                break;
+            case BufferElementType::Int:
+                attribute.format = (element.count == 1)   ? VK_FORMAT_R32_SINT
+                                   : (element.count == 2) ? VK_FORMAT_R32G32_SINT
+                                   : (element.count == 3) ? VK_FORMAT_R32G32B32_SINT
+                                                          : VK_FORMAT_R32G32B32A32_SINT;
+                break;
+            case BufferElementType::UnsignedShort:
+                attribute.format = (element.count == 1)   ? VK_FORMAT_R16_UINT
+                                   : (element.count == 2) ? VK_FORMAT_R16G16_UINT
+                                   : (element.count == 3) ? VK_FORMAT_R16G16B16_UINT
+                                                          : VK_FORMAT_R16G16B16A16_UINT;
+                break;
+            case BufferElementType::UnsignedByte:
+                attribute.format = element.normalized
+                                       ? ((element.count == 1)   ? VK_FORMAT_R8_UNORM
+                                          : (element.count == 2) ? VK_FORMAT_R8G8_UNORM
+                                          : (element.count == 3) ? VK_FORMAT_R8G8B8_UNORM
+                                                                 : VK_FORMAT_R8G8B8A8_UNORM)
+                                       : ((element.count == 1)   ? VK_FORMAT_R8_UINT
+                                          : (element.count == 2) ? VK_FORMAT_R8G8_UINT
+                                          : (element.count == 3) ? VK_FORMAT_R8G8B8_UINT
+                                                                 : VK_FORMAT_R8G8B8A8_UINT);
+                break;
+            default:
+                NEST_ASSERT(false, "Unknown vertex buffer element type");
+                break;
+        }
+    }
+
+    // Заполняем итоговую структуру
+    vertexInputState.vertexBindingDescriptionCount = 1;
+    vertexInputState.pVertexBindingDescriptions = &bindingDescription;
+    vertexInputState.vertexAttributeDescriptionCount = attributeCount;
+    vertexInputState.pVertexAttributeDescriptions = attributeDescriptions;
+}
+
+void RendererVulkan::setDepthStencilState(
+    VkPipelineDepthStencilStateCreateInfo &depthStencilState, uint64_t state
+) {
+    depthStencilState = {};
+    depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+
+    if (state & BIRD_STATE_DEPTH_TEST) {
+        depthStencilState.depthTestEnable = VK_TRUE;
+        depthStencilState.depthWriteEnable = VK_TRUE;
+        depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
+    } else {
+        depthStencilState.depthTestEnable = VK_FALSE;
+        depthStencilState.depthWriteEnable = VK_FALSE;
+    }
+
+    depthStencilState.depthBoundsTestEnable = VK_FALSE;
+    depthStencilState.minDepthBounds = 0.0f;
+    depthStencilState.maxDepthBounds = 1.0f;
+
+    depthStencilState.stencilTestEnable = VK_FALSE;
+    depthStencilState.front = {};
+    depthStencilState.back = {};
 }
 
 RendererType RendererVulkan::getRendererType() const {
@@ -1552,19 +1627,19 @@ RendererType RendererVulkan::getRendererType() const {
 }
 
 void RendererVulkan::flip() {
-//    context->flip();
+    //    context->flip();
     VkPresentInfoKHR presentInfo;
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.pNext = NULL;
     presentInfo.waitSemaphoreCount = 0;
-    presentInfo.pWaitSemaphores    = NULL;
+    presentInfo.pWaitSemaphores = NULL;
     presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains    = &m_swapchain;
-    presentInfo.pImageIndices  = &m_imageIndex;
-    presentInfo.pResults       = NULL;
+    presentInfo.pSwapchains = &m_swapchain;
+    presentInfo.pImageIndices = &m_imageIndex;
+    presentInfo.pResults = NULL;
     VkResult result = vkQueuePresentKHR(m_graphicsQueue, &presentInfo);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-//        m_needToRefreshSwapchain = true;
+        //        m_needToRefreshSwapchain = true;
     }
 }
 
@@ -1630,7 +1705,11 @@ void RendererVulkan::createVertexBuffer(
     Foundation::Memory data,
     uint32_t size,
     VertexLayoutHandle layoutHandle
-) {}
+) {
+    m_vertexBuffers[handle.id].create(data.data, size, false);
+    m_vertexBuffers[handle.id].setLayoutHandle(layoutHandle);
+    data.release();
+}
 
 void RendererVulkan::createDynamicVertexBuffer(
     VertexBufferHandle handle,
@@ -1645,7 +1724,9 @@ void RendererVulkan::updateDynamicVertexBuffer(
 
 void RendererVulkan::deleteVertexBuffer(VertexBufferHandle handle) {}
 
-void RendererVulkan::createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) {}
+void RendererVulkan::createVertexLayout(VertexLayoutHandle handle, VertexBufferLayoutData layout) {
+    m_vertexLayouts[handle.id] = layout;
+}
 
 void RendererVulkan::deleteVertexLayout(VertexLayoutHandle handle) {}
 
@@ -1671,6 +1752,42 @@ void RendererVulkan::setUniform(const Uniform &uniform) {
 
 void RendererVulkan::setTexture(TextureHandle handle, uint32_t slot) {}
 
+void RendererVulkan::viewChanged(View &view) {
+    if (view.m_frameBuffer.isValid()) {
+        m_frameBuffers[view.m_frameBuffer.id].bind();
+    }
+    if (!view.m_viewport.isZero()) {
+        VkViewport viewport;
+        viewport.x = view.m_viewport.origin.x;
+        viewport.y = view.m_viewport.origin.y;
+        viewport.width = view.m_viewport.size.width;
+        viewport.height = -view.m_viewport.size.height; // ?
+        viewport.minDepth = 0.0;
+        viewport.maxDepth = 1.0;
+        vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
+
+        VkRect2D rect;
+        rect.offset.x = view.m_viewport.origin.x;
+        rect.offset.y = view.m_viewport.origin.y;
+        rect.extent.width = view.m_viewport.size.width;
+        rect.extent.height = view.m_viewport.size.height;
+        vkCmdSetScissor(m_commandBuffer, 0, 1, &rect);
+    }
+    uint32_t rgba = view.m_clearColor;
+    uint8_t r = rgba >> 24;
+    uint8_t g = rgba >> 16;
+    uint8_t b = rgba >> 8;
+    uint8_t a = rgba >> 0;
+    if (!view.m_frameBuffer.isValid()) {
+        return;
+    }
+    for (auto clear : view.m_clearAttachments) {
+        m_frameBuffers[view.m_frameBuffer.id].clearIntAttachment(
+            clear.attachmentIndex, clear.value
+        );
+    }
+}
+
 void RendererVulkan::submit(Frame *frame, View *views) {
     BIRD_LOG("FRAME SUBMITTED. DRAW CALLS: {}", frame->getDrawCallsCount());
     if (frame->m_transientVbSize > 0) {
@@ -1690,12 +1807,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
 
     VkSemaphore renderWait = m_swapchainFrames[m_frameNumber].imageAvailable;
     VkResult result = vkAcquireNextImageKHR(
-        m_device
-        , m_swapchain
-        , UINT64_MAX
-        , renderWait
-        , VK_NULL_HANDLE
-        , &m_imageIndex
+        m_device, m_swapchain, UINT64_MAX, renderWait, VK_NULL_HANDLE, &m_imageIndex
     );
 
     VkCommandBufferBeginInfo commandBufferBeginInfo;
@@ -1709,13 +1821,14 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     VkRenderPassBeginInfo renderPassBeginInfo;
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.pNext = NULL;
-    renderPassBeginInfo.renderPass  = m_renderPass;
+    renderPassBeginInfo.renderPass = m_renderPass;
     renderPassBeginInfo.framebuffer = m_swapchainFrames[m_imageIndex].framebuffer;
     renderPassBeginInfo.renderArea.offset.x = 0;
     renderPassBeginInfo.renderArea.offset.y = 0;
     renderPassBeginInfo.renderArea.extent = m_swapchainExtent;
     renderPassBeginInfo.clearValueCount = 0;
-    renderPassBeginInfo.pClearValues    = NULL;
+    renderPassBeginInfo.pClearValues = NULL;
+    vkCmdBeginRenderPass(m_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     ViewId viewId = -1;
     for (int i = 0; i < frame->getDrawCallsCount(); i++) {
         RenderDraw &draw = frame->getDrawCalls()[i];
@@ -1728,48 +1841,22 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         }
         submit(&draw);
     }
-}
-
-void RendererVulkan::viewChanged(View &view) {
-    if (view.m_frameBuffer.isValid()) {
-        m_frameBuffers[view.m_frameBuffer.id].bind();
-    }
-    if (!view.m_viewport.isZero()) {
-        VkViewport viewport;
-        viewport.x = view.m_viewport.origin.x;
-        viewport.y = view.m_viewport.origin.y;
-        viewport.width = view.m_viewport.size.width;
-        viewport.height = -view.m_viewport.size.height; // ?
-        viewport.minDepth = 0.0;
-        viewport.maxDepth = 1.0;
-    }
-    uint32_t rgba = view.m_clearColor;
-    uint8_t r = rgba >> 24;
-    uint8_t g = rgba >> 16;
-    uint8_t b = rgba >> 8;
-    uint8_t a = rgba >> 0;
-    if (!view.m_frameBuffer.isValid()) {
-        return;
-    }
-    for (auto clear : view.m_clearAttachments) {
-        m_frameBuffers[view.m_frameBuffer.id].clearIntAttachment(
-            clear.attachmentIndex, clear.value
-        );
-    }
+    vkCmdEndRenderPass(m_commandBuffer);
+    VK_CHECK(vkEndCommandBuffer(m_commandBuffer));
 }
 
 void RendererVulkan::submit(RenderDraw *draw) {
     // TODO: Capture time
     m_shaders[draw->m_shader.id].bind();
 
-    if (draw->m_state & BIRD_STATE_CULL_FACE) {
-    } else {
-    }
-    if (draw->m_state & BIRD_STATE_DEPTH_TEST) {
-    } else {
-    }
+    VertexLayoutHandle layoutHandle =
+        draw->m_vertexLayout.id != BIRD_INVALID_HANDLE
+            ? draw->m_vertexLayout
+            : m_vertexBuffers[draw->m_vertexBuffer.id].getLayoutHandle();
+    NEST_ASSERT(layoutHandle.id != BIRD_INVALID_HANDLE, "Invalid handle");
 
-    VkPipeline pipeline = getPipeline(draw->m_state, 0, nullptr, draw->m_shader, 0);
+    VertexBufferLayoutData layoutData = m_vertexLayouts[layoutHandle.id];
+    VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
 
     if (!draw->m_scissorRect.isZero()) {
         VkRect2D scissor;

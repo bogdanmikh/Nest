@@ -8,9 +8,9 @@
 #include "HandleAllocator.hpp"
 #include "Bird/BirdStates.hpp"
 #if USE_VULKAN
-#include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
+#    include "Platform/RendererImpl/Vulkan/RendererVulkan.hpp"
 #else
-#include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
+#    include "Platform/RendererImpl/OpenGL/RendererOpenGL.hpp"
 #endif
 #include "RendererI.hpp"
 
