@@ -107,8 +107,9 @@ private:
     void setupAllocator();
     void createSwapchain(Size size, VkSwapchainKHR *oldSwapchain);
     void cleanupSwapchain();
-    void createSwapchainFramebuffer();
+    void createFence();
     void createSemaphores();
+    void createSwapchainFramebuffer();
 
     void releaseSwapchainFramebuffer();
     void createSwapchainRenderPass();
@@ -149,7 +150,6 @@ private:
         VkFramebuffer framebuffer;
         VkCommandBuffer commandBuffer;
         VkSemaphore imageAvailable, renderFinished;
-        VkFence inFlight;
     };
 
     QueueFamilyIndices findQueueFamilies();
@@ -171,6 +171,7 @@ private:
     VkDevice m_device;
     VkQueue m_graphicsQueue;
     VkQueue m_presentQueue;
+    VkFence m_fence;
     VkSwapchainKHR m_swapchain;
 
     FrameBufferHandle m_frameBufferHandle;

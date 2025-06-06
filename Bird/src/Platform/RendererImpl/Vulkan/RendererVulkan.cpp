@@ -581,6 +581,7 @@ void setBlendState(VkPipelineColorBlendStateCreateInfo &colorBlendState, uint64_
     colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
     colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+    colorBlendState.pNext = nullptr;
     colorBlendState.logicOpEnable = VK_FALSE;
     colorBlendState.logicOp = VK_LOGIC_OP_COPY; // Optional
     colorBlendState.attachmentCount = 1;
@@ -643,8 +644,9 @@ RendererVulkan::RendererVulkan()
     createSwapchain(getSize(), nullptr);
     createSwapchainRenderPass();
     createSwapchainFramebuffer();
-    createCommandPool();
+    createFence();
     createSemaphores();
+    createCommandPool();
 }
 
 void RendererVulkan::createInstance() {
@@ -1043,19 +1045,48 @@ VkResult RendererVulkan::allocateMemory(
 }
 
 RendererVulkan::~RendererVulkan() {
+    VK_CHECK(vkQueueWaitIdle(m_graphicsQueue));
+    VK_CHECK(vkDeviceWaitIdle(m_device));
+
+    for (uint32_t i = 0; i < MAX_FRAME_BUFFERS; ++i) {
+        m_frameBuffers[i].terminate();
+    }
+
+    for (uint32_t i = 0; i < MAX_INDEX_BUFFERS; ++i) {
+        m_indexBuffers[i].terminate();
+    }
+
+    for (uint32_t i = 0; i < MAX_VERTEX_BUFFERS; ++i) {
+        m_vertexBuffers[i].terminate();
+    }
+
+    for (uint32_t i = 0; i < MAX_SHADERS; ++i) {
+        m_shaders[i].terminate();
+    }
+
+    for (uint32_t i = 0; i < MAX_TEXTURES; ++i) {
+        m_textures[i].terminate();
+    }
+
     m_pipelineStateCache.invalidate();
     m_descriptorSetLayoutCache.invalidate();
     m_renderPassCache.invalidate();
     m_samplerCache.invalidate();
+    for (int i = 0; i < m_numSwapchainImages; ++i) {
+        auto &swapchainFrame = m_swapchainFrames[i];
+        vkFreeCommandBuffers(m_device, m_commandPool, 1, &swapchainFrame.commandBuffer);
+    }
 
     for (uint32_t i = 0; i < m_numSwapchainImages; ++i) {
-        //        vkDestroy(m_swapchainFrames[i].imageAvailable);
-        //        vkDestroy(m_swapchainFrames[i].renderFinished);
+        vkDestroy(m_swapchainFrames[i].imageAvailable);
+        vkDestroy(m_swapchainFrames[i].renderFinished);
     }
+    releaseSwapchainFramebuffer();
     cleanupSwapchain();
+    vkDestroySurfaceKHR(m_instance, m_surface, m_allocatorCb);
+    vkDestroy(m_renderPass);
     //    VulkanAllocator::cleanupMemoryAllocator();
     vkDestroyDevice(m_device, nullptr);
-    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
 #if BIRD_DEBUG_MODE
     cleanupDebugMessenger(m_instance, m_debugMessenger);
 #endif
@@ -1109,7 +1140,6 @@ void RendererVulkan::cleanupSwapchain() {
     for (auto &frame : m_swapchainFrames) {
         vkDestroy(frame.imageView);
         vkDestroy(frame.framebuffer);
-        vkDestroy(frame.inFlight);
     }
     vkDestroy(m_swapchain);
 }
@@ -1179,6 +1209,14 @@ void RendererVulkan::createSemaphores() {
             m_device, &semaphoreCreateInfo, nullptr, &m_swapchainFrames[i].imageAvailable
         ));
     }
+}
+
+void RendererVulkan::createFence() {
+    VkFenceCreateInfo fenceCreateInfo;
+    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fenceCreateInfo.pNext = NULL;
+    fenceCreateInfo.flags = 0;
+    VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_fence));
 }
 
 void RendererVulkan::releaseSwapchainFramebuffer() {
@@ -1347,7 +1385,12 @@ VkPipeline RendererVulkan::getPipeline(
     VkPipelineDepthStencilStateCreateInfo depthStencilState;
     setDepthStencilState(depthStencilState, state);
 
-    VkPipelineVertexInputStateCreateInfo vertexInputState{};
+    VkVertexInputAttributeDescription attributeDescriptions[MAX_VERTEX_LAYOUT_ELEMENTS];
+    VkVertexInputBindingDescription bindingDescription[MAX_VERTEX_LAYOUT_ELEMENTS];
+
+    VkPipelineVertexInputStateCreateInfo vertexInputState;
+    vertexInputState.pVertexBindingDescriptions = bindingDescription;
+    vertexInputState.pVertexAttributeDescriptions = attributeDescriptions;
     setInputLayout(vertexInputState, program, layoutData);
 
     static std::array<VkDynamicState, 2> dynamicStates = {
@@ -1479,17 +1522,17 @@ RendererVulkan::getRenderPass(uint32_t num, const Bird::FrameBufferAttachment *a
         resolveAttachmentDescription[i].layout = attachmentDescription[i].initialLayout;
     }
 
-    VkSubpassDescription sd[1];
-    sd[0].flags = 0;
-    sd[0].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    sd[0].inputAttachmentCount = 0;
-    sd[0].pInputAttachments = NULL;
-    sd[0].colorAttachmentCount = numColorAr;
-    sd[0].pColorAttachments = colorAttachmentDescription;
-    sd[0].pResolveAttachments = resolveAttachmentDescription;
-    sd[0].pDepthStencilAttachment = &depthAr;
-    sd[0].preserveAttachmentCount = 0;
-    sd[0].pPreserveAttachments = NULL;
+    VkSubpassDescription subpassDescription[1];
+    subpassDescription[0].flags = 0;
+    subpassDescription[0].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpassDescription[0].inputAttachmentCount = 0;
+    subpassDescription[0].pInputAttachments = NULL;
+    subpassDescription[0].colorAttachmentCount = numColorAr;
+    subpassDescription[0].pColorAttachments = colorAttachmentDescription;
+    subpassDescription[0].pResolveAttachments = resolveAttachmentDescription;
+    subpassDescription[0].pDepthStencilAttachment = &depthAr;
+    subpassDescription[0].preserveAttachmentCount = 0;
+    subpassDescription[0].pPreserveAttachments = NULL;
 
     VkRenderPassCreateInfo renderPassCreateInfo;
     renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -1498,7 +1541,7 @@ RendererVulkan::getRenderPass(uint32_t num, const Bird::FrameBufferAttachment *a
     renderPassCreateInfo.attachmentCount = num;
     renderPassCreateInfo.pAttachments = attachmentDescription;
     renderPassCreateInfo.subpassCount = 1;
-    renderPassCreateInfo.pSubpasses = sd;
+    renderPassCreateInfo.pSubpasses = subpassDescription;
     renderPassCreateInfo.dependencyCount = 0;
     renderPassCreateInfo.pDependencies = NULL;
 
@@ -1520,24 +1563,23 @@ void RendererVulkan::setInputLayout(
     vertexInputState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputState.pNext = NULL;
     vertexInputState.flags = 0;
-    VkVertexInputBindingDescription bindingDescription = {};
-    bindingDescription.binding = 0; // Используем 0-й биндинг
-    bindingDescription.stride = layoutData.m_stride;
-    bindingDescription.inputRate =
-        VK_VERTEX_INPUT_RATE_VERTEX; // Для инстансинга нужно VK_VERTEX_INPUT_RATE_INSTANCE
 
-    //    VkVertexInputBindingDescription
-    //        inputBinding[(int)BufferElementType::Count + MAX_VERTEX_LAYOUT_ELEMENTS + 1];
-    //    VkVertexInputAttributeDescription
-    //        inputAttrib[(int)BufferElementType::Count + MAX_VERTEX_LAYOUT_ELEMENTS + 1];
+    VkVertexInputBindingDescription* bindingDescription =
+        const_cast<VkVertexInputBindingDescription *>(vertexInputState.pVertexBindingDescriptions);
 
-    VkVertexInputAttributeDescription attributeDescriptions[MAX_VERTEX_LAYOUT_ELEMENTS];
+    VkVertexInputAttributeDescription *attributeDescriptions =
+        const_cast<VkVertexInputAttributeDescription *>(
+            vertexInputState.pVertexAttributeDescriptions
+        );
+    //        .binding = 0;
+    bindingDescription->stride = layoutData.m_stride;
+    bindingDescription->inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
     uint32_t attributeCount = 0;
 
     // Заполняем описания атрибутов
     for (uint32_t i = 0; i < layoutData.m_elementsCount && i < MAX_VERTEX_LAYOUT_ELEMENTS; i++) {
         const auto &element = layoutData.m_elements[i];
-        auto &attribute = attributeDescriptions[attributeCount++];
+        VkVertexInputAttributeDescription &attribute = attributeDescriptions[attributeCount++];
 
         attribute.binding = 0; // Привязываем к 0-му биндингу
         attribute.location = i; // Локация в шейдере соответствует индексу
@@ -1591,11 +1633,8 @@ void RendererVulkan::setInputLayout(
         }
     }
 
-    // Заполняем итоговую структуру
     vertexInputState.vertexBindingDescriptionCount = 1;
-    vertexInputState.pVertexBindingDescriptions = &bindingDescription;
     vertexInputState.vertexAttributeDescriptionCount = attributeCount;
-    vertexInputState.pVertexAttributeDescriptions = attributeDescriptions;
 }
 
 void RendererVulkan::setDepthStencilState(
@@ -1765,13 +1804,6 @@ void RendererVulkan::viewChanged(View &view) {
         viewport.minDepth = 0.0;
         viewport.maxDepth = 1.0;
         vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
-
-        VkRect2D rect;
-        rect.offset.x = view.m_viewport.origin.x;
-        rect.offset.y = view.m_viewport.origin.y;
-        rect.extent.width = view.m_viewport.size.width;
-        rect.extent.height = view.m_viewport.size.height;
-        vkCmdSetScissor(m_commandBuffer, 0, 1, &rect);
     }
     uint32_t rgba = view.m_clearColor;
     uint8_t r = rgba >> 24;
@@ -1805,7 +1837,9 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         return;
     }
 
-    VkSemaphore renderWait = m_swapchainFrames[m_frameNumber].imageAvailable;
+    auto &currentFrame = m_swapchainFrames[m_frameNumber];
+
+    VkSemaphore renderWait = currentFrame.imageAvailable;
     VkResult result = vkAcquireNextImageKHR(
         m_device, m_swapchain, UINT64_MAX, renderWait, VK_NULL_HANDLE, &m_imageIndex
     );
@@ -1815,33 +1849,45 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     commandBufferBeginInfo.pNext = NULL;
     commandBufferBeginInfo.flags = 0 | VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     commandBufferBeginInfo.pInheritanceInfo = NULL;
-    m_commandBuffer = m_swapchainFrames[m_frameNumber].commandBuffer;
+    m_commandBuffer = currentFrame.commandBuffer;
     VK_CHECK(vkBeginCommandBuffer(m_commandBuffer, &commandBufferBeginInfo));
 
-    VkRenderPassBeginInfo renderPassBeginInfo;
-    renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    renderPassBeginInfo.pNext = NULL;
-    renderPassBeginInfo.renderPass = m_renderPass;
-    renderPassBeginInfo.framebuffer = m_swapchainFrames[m_imageIndex].framebuffer;
-    renderPassBeginInfo.renderArea.offset.x = 0;
-    renderPassBeginInfo.renderArea.offset.y = 0;
-    renderPassBeginInfo.renderArea.extent = m_swapchainExtent;
-    renderPassBeginInfo.clearValueCount = 0;
-    renderPassBeginInfo.pClearValues = NULL;
-    vkCmdBeginRenderPass(m_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
     ViewId viewId = -1;
     for (int i = 0; i < frame->getDrawCallsCount(); i++) {
         RenderDraw &draw = frame->getDrawCalls()[i];
         if (!draw.m_isSubmitted) {
             continue;
         }
+        uint32_t rgba = views[draw.m_viewId].m_clearColor;
+        uint8_t r = rgba >> 24;
+        uint8_t g = rgba >> 16;
+        uint8_t b = rgba >> 8;
+        uint8_t a = rgba >> 0;
+        VkClearValue clearValue;
+        clearValue.color.uint32[0] = r;
+        clearValue.color.uint32[1] = g;
+        clearValue.color.uint32[2] = b;
+        clearValue.color.uint32[3] = a;
+
+        VkRenderPassBeginInfo renderPassBeginInfo;
+        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassBeginInfo.pNext = NULL;
+        renderPassBeginInfo.renderPass = m_renderPass;
+        renderPassBeginInfo.framebuffer = currentFrame.framebuffer;
+        renderPassBeginInfo.renderArea.offset.x = 0;
+        renderPassBeginInfo.renderArea.offset.y = 0;
+        renderPassBeginInfo.renderArea.extent = m_swapchainExtent;
+        renderPassBeginInfo.clearValueCount = 1;
+        renderPassBeginInfo.pClearValues = &clearValue;
+        vkCmdBeginRenderPass(m_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
         if (draw.m_viewId != viewId) {
             viewId = draw.m_viewId;
             viewChanged(views[viewId]);
         }
         submit(&draw);
+        vkCmdEndRenderPass(m_commandBuffer);
     }
-    vkCmdEndRenderPass(m_commandBuffer);
     VK_CHECK(vkEndCommandBuffer(m_commandBuffer));
 }
 
@@ -1857,6 +1903,7 @@ void RendererVulkan::submit(RenderDraw *draw) {
 
     VertexBufferLayoutData layoutData = m_vertexLayouts[layoutHandle.id];
     VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
+//    vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
     if (!draw->m_scissorRect.isZero()) {
         VkRect2D scissor;
@@ -1864,6 +1911,7 @@ void RendererVulkan::submit(RenderDraw *draw) {
         scissor.extent = {
             (uint32_t)draw->m_scissorRect.size.width, (uint32_t)draw->m_scissorRect.size.height
         };
+        vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
     } else {
     }
 }
