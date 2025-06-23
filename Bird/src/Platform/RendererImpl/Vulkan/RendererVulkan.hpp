@@ -150,6 +150,7 @@ private:
         VkFramebuffer framebuffer;
         VkCommandBuffer commandBuffer;
         VkSemaphore imageAvailable, renderFinished;
+        VkFence fence;
     };
 
     QueueFamilyIndices findQueueFamilies();
@@ -171,7 +172,6 @@ private:
     VkDevice m_device;
     VkQueue m_graphicsQueue;
     VkQueue m_presentQueue;
-    VkFence m_fence;
     VkSwapchainKHR m_swapchain;
 
     FrameBufferHandle m_frameBufferHandle;

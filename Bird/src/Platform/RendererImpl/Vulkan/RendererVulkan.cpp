@@ -1216,7 +1216,9 @@ void RendererVulkan::createFence() {
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.pNext = NULL;
     fenceCreateInfo.flags = 0;
-    VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_fence));
+    for (int i = 0; i < m_numSwapchainImages; ++i) {
+        VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_swapchainFrames[i].fence));
+    }
 }
 
 void RendererVulkan::releaseSwapchainFramebuffer() {
@@ -1838,11 +1840,18 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     }
 
     auto &currentFrame = m_swapchainFrames[m_frameNumber];
+    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
 
     VkSemaphore renderWait = currentFrame.imageAvailable;
-    VkResult result = vkAcquireNextImageKHR(
+    VkResult acquireResult = vkAcquireNextImageKHR(
         m_device, m_swapchain, UINT64_MAX, renderWait, VK_NULL_HANDLE, &m_imageIndex
     );
+    if (acquireResult == VK_ERROR_OUT_OF_DATE_KHR) {
+        // ?
+//        recreateSwapchain();
+        return;
+    }
+    VK_CHECK(acquireResult);
 
     VkCommandBufferBeginInfo commandBufferBeginInfo;
     commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1850,6 +1859,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     commandBufferBeginInfo.flags = 0 | VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     commandBufferBeginInfo.pInheritanceInfo = NULL;
     m_commandBuffer = currentFrame.commandBuffer;
+    VK_CHECK(vkResetCommandBuffer(m_commandBuffer, 0));
     VK_CHECK(vkBeginCommandBuffer(m_commandBuffer, &commandBufferBeginInfo));
 
     ViewId viewId = -1;
