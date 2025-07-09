@@ -14,6 +14,7 @@
 struct VulkanShaderDelegate {
     virtual ~VulkanShaderDelegate() = default;
     virtual StateCacheT<VkDescriptorSetLayout> &getDescriptorSetLayoutCache() = 0;
+    virtual VkCommandBuffer getCommandBuffer() = 0;
 };
 
 namespace Bird {

@@ -619,8 +619,7 @@ void setRasterizerState(
 namespace Bird {
 
 RendererVulkan::RendererVulkan()
-    : m_uselessVao(0)
-    , m_frameBuffers()
+    : m_frameBuffers()
     , m_shaders()
     , m_indexBuffers()
     , m_vertexLayouts()
@@ -1025,10 +1024,10 @@ VkResult RendererVulkan::allocateMemory(
     VkMemoryPropertyFlags propertyFlags,
     VkDeviceMemory *memory
 ) const {
-    VkMemoryAllocateInfo ma;
-    ma.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    ma.pNext = NULL;
-    ma.allocationSize = requirements->size;
+    VkMemoryAllocateInfo memoryAllocateInfo;
+    memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    memoryAllocateInfo.pNext = NULL;
+    memoryAllocateInfo.allocationSize = requirements->size;
 
     VkResult result = VK_ERROR_UNKNOWN;
     int32_t searchIndex = -1;
@@ -1036,8 +1035,8 @@ VkResult RendererVulkan::allocateMemory(
         searchIndex++;
         searchIndex = selectMemoryType(requirements->memoryTypeBits, propertyFlags, searchIndex);
         if (searchIndex >= 0) {
-            ma.memoryTypeIndex = searchIndex;
-            result = vkAllocateMemory(m_device, &ma, m_allocatorCb, memory);
+            memoryAllocateInfo.memoryTypeIndex = searchIndex;
+            result = vkAllocateMemory(m_device, &memoryAllocateInfo, m_allocatorCb, memory);
         }
     } while (result != VK_SUCCESS && searchIndex >= 0);
 
@@ -1076,6 +1075,7 @@ RendererVulkan::~RendererVulkan() {
         auto &swapchainFrame = m_swapchainFrames[i];
         vkFreeCommandBuffers(m_device, m_commandPool, 1, &swapchainFrame.commandBuffer);
     }
+    vkFreeMemory(m_device, m_depthStencilMemory, m_allocatorCb);
 
     for (uint32_t i = 0; i < m_numSwapchainImages; ++i) {
         vkDestroy(m_swapchainFrames[i].imageAvailable);
@@ -1217,7 +1217,9 @@ void RendererVulkan::createFence() {
     fenceCreateInfo.pNext = NULL;
     fenceCreateInfo.flags = 0;
     for (int i = 0; i < m_numSwapchainImages; ++i) {
-        VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_swapchainFrames[i].fence));
+        VK_CHECK(
+            vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &m_swapchainFrames[i].fence)
+        );
     }
 }
 
@@ -1553,6 +1555,24 @@ RendererVulkan::getRenderPass(uint32_t num, const Bird::FrameBufferAttachment *a
     return renderPass;
 }
 
+VkCommandBuffer RendererVulkan::getCommandBuffer() {
+    return m_commandBuffer;
+}
+
+void RendererVulkan::setMemoryBarrier(
+    VkCommandBuffer commandBuffer, VkPipelineStageFlags srcStages, VkPipelineStageFlags dstStages
+) {
+    VkMemoryBarrier memoryBarrier;
+    memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+    memoryBarrier.pNext = NULL;
+    memoryBarrier.srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+    memoryBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT;
+
+    vkCmdPipelineBarrier(
+        commandBuffer, srcStages, dstStages, 0, 1, &memoryBarrier, 0, NULL, 0, NULL
+    );
+}
+
 StateCacheT<VkDescriptorSetLayout> &RendererVulkan::getDescriptorSetLayoutCache() {
     return m_descriptorSetLayoutCache;
 }
@@ -1566,7 +1586,7 @@ void RendererVulkan::setInputLayout(
     vertexInputState.pNext = NULL;
     vertexInputState.flags = 0;
 
-    VkVertexInputBindingDescription* bindingDescription =
+    VkVertexInputBindingDescription *bindingDescription =
         const_cast<VkVertexInputBindingDescription *>(vertexInputState.pVertexBindingDescriptions);
 
     VkVertexInputAttributeDescription *attributeDescriptions =
@@ -1848,7 +1868,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     );
     if (acquireResult == VK_ERROR_OUT_OF_DATE_KHR) {
         // ?
-//        recreateSwapchain();
+        //        recreateSwapchain();
         return;
     }
     VK_CHECK(acquireResult);
@@ -1912,8 +1932,9 @@ void RendererVulkan::submit(RenderDraw *draw) {
     NEST_ASSERT(layoutHandle.id != BIRD_INVALID_HANDLE, "Invalid handle");
 
     VertexBufferLayoutData layoutData = m_vertexLayouts[layoutHandle.id];
+
     VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
-//    vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+    vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
     if (!draw->m_scissorRect.isZero()) {
         VkRect2D scissor;
@@ -1922,8 +1943,14 @@ void RendererVulkan::submit(RenderDraw *draw) {
             (uint32_t)draw->m_scissorRect.size.width, (uint32_t)draw->m_scissorRect.size.height
         };
         vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
-    } else {
     }
+
+    m_vertexBuffers[draw->m_vertexBuffer.id].bind();
+
+    NEST_ASSERT(layoutHandle.id != BIRD_INVALID_HANDLE, "Invalid handle");
+    m_shaders[draw->m_shader.id].bindAttributes(layoutData, draw->m_verticesOffset);
+    m_indexBuffers[draw->m_indexBuffer.id].bind();
+    vkCmdDraw(m_commandBuffer, draw->m_verticesOffset, 1, 0, 0);
 }
 
 } // namespace Bird

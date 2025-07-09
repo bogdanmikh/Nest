@@ -73,7 +73,76 @@ void VulkanShader::checkCompileErrors(unsigned int shader, const std::string &ty
 
 int VulkanShader::getUniformLocation(const std::string &name) {}
 
-void VulkanShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex) {}
+void VulkanShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex) {
+    // Конвертируем VertexBufferLayoutData в Vulkan vertex input bindings и attributes
+    std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+    bindingDescriptions[0].binding = 0;
+    bindingDescriptions[0].stride = layout.m_stride;
+    bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+    std::vector<VkVertexInputAttributeDescription> attributeDescriptions(layout.m_elementsCount);
+
+    uint32_t offset = 0;
+    for (uint32_t i = 0; i < layout.m_elementsCount; ++i) {
+        const auto &element = layout.m_elements[i];
+
+        attributeDescriptions[i].binding = 0;
+        attributeDescriptions[i].location = i;
+        attributeDescriptions[i].offset = offset;
+
+        switch (element.type) {
+            case BufferElementType::Float:
+                attributeDescriptions[i].format = element.count == 1   ? VK_FORMAT_R32_SFLOAT
+                                                  : element.count == 2 ? VK_FORMAT_R32G32_SFLOAT
+                                                  : element.count == 3
+                                                      ? VK_FORMAT_R32G32B32_SFLOAT
+                                                      : VK_FORMAT_R32G32B32A32_SFLOAT;
+                break;
+            case BufferElementType::UnsignedInt:
+                attributeDescriptions[i].format = element.count == 1   ? VK_FORMAT_R32_UINT
+                                                  : element.count == 2 ? VK_FORMAT_R32G32_UINT
+                                                  : element.count == 3
+                                                      ? VK_FORMAT_R32G32B32_UINT
+                                                      : VK_FORMAT_R32G32B32A32_UINT;
+                break;
+            case BufferElementType::Int:
+                attributeDescriptions[i].format = element.count == 1   ? VK_FORMAT_R32_SINT
+                                                  : element.count == 2 ? VK_FORMAT_R32G32_SINT
+                                                  : element.count == 3
+                                                      ? VK_FORMAT_R32G32B32_SINT
+                                                      : VK_FORMAT_R32G32B32A32_SINT;
+                break;
+            case BufferElementType::UnsignedShort:
+                attributeDescriptions[i].format =
+                    element.normalized ? (element.count == 1   ? VK_FORMAT_R16_UNORM
+                                          : element.count == 2 ? VK_FORMAT_R16G16_UNORM
+                                          : element.count == 3 ? VK_FORMAT_R16G16B16_UNORM
+                                                               : VK_FORMAT_R16G16B16A16_UNORM)
+                                       : (element.count == 1   ? VK_FORMAT_R16_UINT
+                                          : element.count == 2 ? VK_FORMAT_R16G16_UINT
+                                          : element.count == 3 ? VK_FORMAT_R16G16B16_UINT
+                                                               : VK_FORMAT_R16G16B16A16_UINT);
+                break;
+            case BufferElementType::UnsignedByte:
+                attributeDescriptions[i].format =
+                    element.normalized ? (element.count == 1   ? VK_FORMAT_R8_UNORM
+                                          : element.count == 2 ? VK_FORMAT_R8G8_UNORM
+                                          : element.count == 3 ? VK_FORMAT_R8G8B8_UNORM
+                                                               : VK_FORMAT_R8G8B8A8_UNORM)
+                                       : (element.count == 1   ? VK_FORMAT_R8_UINT
+                                          : element.count == 2 ? VK_FORMAT_R8G8_UINT
+                                          : element.count == 3 ? VK_FORMAT_R8G8B8_UINT
+                                                               : VK_FORMAT_R8G8B8A8_UINT);
+                break;
+        }
+
+        offset += element.count * VertexBufferElement::getSizeOfType(element.type);
+    }
+
+    VkBuffer vertexBuffers[] = {/* ваш vertex buffer */};
+    VkDeviceSize offsets[] = {static_cast<VkDeviceSize>(baseVertex)};
+    vkCmdBindVertexBuffers(m_delegate->getCommandBuffer(), 0, 1, vertexBuffers, offsets);
+}
 
 void VulkanShader::bind() {}
 

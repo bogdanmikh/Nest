@@ -6,6 +6,7 @@
 
 #include "Bird/VertexBufferLayoutData.hpp"
 #include "Bird/Base.hpp"
+#include "VulkanBuffer.hpp"
 
 namespace Bird {
 
@@ -20,10 +21,13 @@ public:
     void setLayoutHandle(VertexLayoutHandle layoutHandle);
     VertexLayoutHandle getLayoutHandle();
 
+    VulkanBufferDelegate *m_delegate;
+
 private:
     uint32_t m_id;
     bool m_isDynamic;
     VertexLayoutHandle m_layoutHandle;
+    VulkanBuffer m_vulkanBuffer;
 };
 
 } // namespace Bird

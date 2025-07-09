@@ -6,17 +6,21 @@
 
 #include "Bird/Base.hpp"
 #include "Bird/RendererI.hpp"
+#include "Bird/GraphicsContext.hpp"
+#include "VulkanBuffer.hpp"
 #include "VulkanFrameBuffer.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanIndexBuffer.hpp"
 #include "VulkanVertexBuffer.hpp"
-#include "Bird/GraphicsContext.hpp"
 #include "VulkanBase.hpp"
 
 namespace Bird {
 
-class RendererVulkan : public RendererI, VulkanFrameBufferDelegate, VulkanShaderDelegate {
+class RendererVulkan : public RendererI,
+                       VulkanFrameBufferDelegate,
+                       VulkanShaderDelegate,
+                       VulkanBufferDelegate {
 public:
     RendererVulkan();
     ~RendererVulkan() override;
@@ -85,6 +89,14 @@ public:
     VkRenderPass getRenderPass(uint32_t num, const FrameBufferAttachment *attachments) override;
 #pragma endregion
 
+    VkCommandBuffer getCommandBuffer() override;
+
+    void setMemoryBarrier(
+        VkCommandBuffer commandBuffer,
+        VkPipelineStageFlags srcStages,
+        VkPipelineStageFlags dstStages
+    ) override;
+
 #pragma region VulkanShaderDelegate
     StateCacheT<VkDescriptorSetLayout> &getDescriptorSetLayoutCache() override;
 #pragma endregion
@@ -93,7 +105,7 @@ public:
         const VkMemoryRequirements *requirements,
         VkMemoryPropertyFlags propertyFlags,
         VkDeviceMemory *memory
-    ) const;
+    ) const override;
 
 private:
     void viewChanged(View &view);
@@ -155,7 +167,6 @@ private:
 
     QueueFamilyIndices findQueueFamilies();
 
-    uint32_t m_uselessVao;
     GraphicsContext *context;
     VulkanFrameBuffer m_frameBuffers[MAX_FRAME_BUFFERS];
     VulkanShader m_shaders[MAX_SHADERS];
