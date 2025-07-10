@@ -12,15 +12,6 @@
 
 namespace Bird {
 
-enum class RendererType {
-    Noop, //!< No rendering.
-    // Direct3D12,   //!< Direct3D 12.0
-    // Metal,        //!< Metal
-    OpenGLES, //!< OpenGL ES 2.0+
-    OpenGL,   //!< OpenGL 2.1+
-    Vulkan,   //!< Vulkan
-};
-
 class RendererI {
 public:
     virtual ~RendererI() = default;

@@ -20,6 +20,10 @@ void initialize() {
     BIRD_LOG("BIRD INIT END");
 }
 
+RendererType getRendererType() {
+    return s_context->getRendererType();
+}
+
 void terminate() {
     BIRD_LOG("BIRD SHUTDOWN BEGIN");
     s_context->shutdown();

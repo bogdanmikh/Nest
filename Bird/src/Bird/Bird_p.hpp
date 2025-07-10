@@ -57,6 +57,10 @@ struct Context {
         frame();
     }
 
+    RendererType getRendererType() {
+        return m_renderer->getRendererType();
+    }
+
     // Main thread
     void shutdown() {
         destroyTransientVertexBuffer(m_submit->m_transientVb);

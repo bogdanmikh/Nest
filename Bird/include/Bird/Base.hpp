@@ -42,6 +42,15 @@ BIRD_HANDLE(FrameBufferHandle)
 BIRD_HANDLE(VertexBufferHandle)
 BIRD_HANDLE(VertexLayoutHandle)
 
+enum class RendererType {
+    Noop, //!< No rendering.
+    // Direct3D12,   //!< Direct3D 12.0
+    // Metal,        //!< Metal
+    OpenGLES, //!< OpenGL ES 2.0+
+    OpenGL,   //!< OpenGL 2.1+
+    Vulkan,   //!< Vulkan
+};
+
 enum TextureFormat {
     // Color
     RGB8,

@@ -12,12 +12,18 @@ set(BIRD_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Bird)
 
 set(ENET_STATIC ON)
 set(USE_VULKAN ON)
-set(USE_ASSIMP ON)
+set(USE_ASSIMP OFF)
 
 if (USE_VULKAN)
     add_compile_definitions(USE_VULKAN=1)
 else ()
     add_compile_definitions(USE_VULKAN=0)
+endif ()
+
+if (USE_ASSIMP)
+    add_compile_definitions(USE_ASSIMP=1)
+else ()
+    add_compile_definitions(USE_ASSIMP=0)
 endif ()
 
 if (PLATFORM_ANDROID)
@@ -29,16 +35,6 @@ if(PLATFORM_DESKTOP)
     add_subdirectory(Vendor/glfw)
     add_subdirectory(Vendor/glad)
 endif()
-
-if (USE_VULKAN AND PLATFORM_DESKTOP)
-    find_package(Vulkan REQUIRED)
-
-    if (${Vulkan_VERSION} VERSION_LESS "1.3.000" )
-        message( FATAL_ERROR "Minimum required Vulkan version for C++ modules is 1.1.000. "
-                "Found ${Vulkan_VERSION}."
-        )
-    endif()
-endif ()
 
 if (USE_ASSIMP)
     add_subdirectory(Vendor/assimp)

@@ -11,6 +11,7 @@
 namespace Bird {
 
 void initialize();
+RendererType getRendererType();
 void terminate();
 // MARK: - Command buffer
 FrameBufferHandle createFrameBuffer(FrameBufferSpecification specification);

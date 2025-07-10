@@ -53,12 +53,21 @@ target_include_directories(Bird PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 if (PLATFORM_DESKTOP)
     # Dependencies - GLFW, only for Desktop :)
-    if (USE_VULKAN)
-        target_link_libraries(Bird glfw Vulkan::Vulkan)
-    else ()
-        target_link_libraries(Bird glfw)
-    endif ()
+    target_link_libraries(Bird glfw)
     target_include_directories(Bird PUBLIC Vendor/glfw/include)
+    if (USE_VULKAN)
+        find_package(Vulkan REQUIRED)
+
+        if (${Vulkan_VERSION} VERSION_LESS "1.3.000" )
+            message( FATAL_ERROR "Minimum required Vulkan version for C++ modules is 1.1.000. "
+                    "Found ${Vulkan_VERSION}."
+            )
+        endif ()
+        target_link_libraries(Bird Vulkan::Vulkan)
+    else()
+        target_link_libraries(Bird glad)
+        target_include_directories(Bird PUBLIC ${VENDOR_DIRECTORY}/glad/include)
+    endif ()
 elseif (PLATFORM_IOS)
     # add_definitions("-x objective-c++")
     # Locate system libraries on iOS
@@ -84,14 +93,6 @@ target_include_directories(Bird PUBLIC ${FOUNDATION_DIRECTORY}/include)
 # Dependencies - GLM
 target_link_libraries(Bird glm)
 target_include_directories(Bird PRIVATE ${VENDOR_DIRECTORY}/glm)
-
-if (PLATFORM_DESKTOP)
-    # Dependencies - GLAD
-    if (NOT USE_VULKAN)
-        target_link_libraries(Bird glad)
-        target_include_directories(Bird PUBLIC ${VENDOR_DIRECTORY}/glad/include)
-    endif ()
-endif ()
 
 if (USE_VULKAN)
     target_link_libraries(Bird VulkanMemoryAllocator)

@@ -9,7 +9,6 @@
 
 namespace Bird {
 
-// GLFW and GLAD based context
 class VulkanContext : public GraphicsContext {
 public:
     void create() override;

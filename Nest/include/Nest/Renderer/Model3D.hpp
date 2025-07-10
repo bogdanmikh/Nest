@@ -5,8 +5,6 @@
 #include "Nest/Renderer/Renderer3D.hpp"
 #include <Bird/Bird.hpp>
 
-#define USE_ASSIMP 1
-
 #if USE_ASSIMP
 #    include <assimp/Importer.hpp>
 #    include <assimp/postprocess.h>
