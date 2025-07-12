@@ -12,6 +12,7 @@
 #include <Foundation/Logger.hpp>
 
 #include <chrono>
+#define USE_IMGUI 0
 
 namespace Nest {
 
@@ -38,9 +39,10 @@ Application::Application(ApplicationStartupSettings &settings)
     m_window->setEventQueue(&m_eventQueue);
 
     Bird::initialize();
-
+#if USE_IMGUI
     m_ImGuiLayer = F_NEW(Foundation::getAllocator(), ImGuiLayer);
     m_ImGuiLayer->onAttach();
+#endif
 
     m_worldCamera = F_NEW(Foundation::getAllocator(), WorldCamera);
     m_worldCamera->setPosition(0, 0, 0);
@@ -55,11 +57,13 @@ Application::Application(ApplicationStartupSettings &settings)
 }
 
 Application::~Application() {
-    m_ImGuiLayer->onDetach();
     if (m_layer) {
         m_layer->onDetach();
     }
+#if USE_IMGUI
+    m_ImGuiLayer->onDetach();
     F_DELETE(Foundation::getAllocator(), m_ImGuiLayer);
+#endif
     F_DELETE(Foundation::getAllocator(), m_worldCamera);
     F_DELETE(Foundation::getAllocator(), m_window);
     delete m_layer;
@@ -112,13 +116,17 @@ void Application::loop() {
         }
 
         m_worldCamera->update();
-        m_ImGuiLayer->onUpdate(deltaTime);
+#if USE_IMGUI
         m_ImGuiLayer->begin(deltaTime);
+        m_ImGuiLayer->onUpdate(deltaTime);
+#endif
         if (m_layer) {
             m_layer->onImGuiRender();
             m_layer->onUpdate(deltaTime);
         }
+#if USE_IMGUI
         m_ImGuiLayer->end();
+#endif
         m_window->pollEvents();
         Input::nextFrame();
         processEvents();
@@ -135,7 +143,9 @@ void Application::processEvents() {
             windowSizeChanged(Size(ev->getWidth(), ev->getHeight()));
         }
         if (!event->isHandled) {
+#if USE_IMGUI
             m_ImGuiLayer->onEvent(event);
+#endif
             m_layer->onEvent(event);
         }
         //        if (!event->isHandled) {

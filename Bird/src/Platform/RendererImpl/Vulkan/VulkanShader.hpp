@@ -24,8 +24,6 @@ public:
     VulkanShader();
     void create(ProgramCreate create);
     void terminate();
-    void bind();
-    void unbind();
     void setUniformFloat(const char *name, float *value, int count);
     void setUniformVec4(const char *name, float *value, int count);
     void setUniformMat3(const char *name, float *value, int count);

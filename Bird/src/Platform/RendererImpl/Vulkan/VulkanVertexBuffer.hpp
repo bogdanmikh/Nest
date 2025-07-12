@@ -17,17 +17,15 @@ public:
     void update(void *data, uint32_t size);
     void terminate();
     void bind();
-    void unbind();
     void setLayoutHandle(VertexLayoutHandle layoutHandle);
     VertexLayoutHandle getLayoutHandle();
 
     VulkanBufferDelegate *m_delegate;
 
 private:
-    uint32_t m_id;
     bool m_isDynamic;
     VertexLayoutHandle m_layoutHandle;
-    VulkanBuffer m_vulkanBuffer;
+    VulkanBuffer m_buffer;
 };
 
 } // namespace Bird

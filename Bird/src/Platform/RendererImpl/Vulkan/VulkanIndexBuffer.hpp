@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Bird/VertexBufferLayoutData.hpp"
+#include "VulkanBuffer.hpp"
 
 namespace Bird {
 
@@ -15,18 +16,15 @@ public:
     void terminate();
     void update(void *indices, size_t count);
     void bind() const;
-    void unbind() const;
-    uint32_t getCount() const;
-    inline uint32_t getElementType() {
-        return m_elementType;
-    };
+    VulkanBufferDelegate *m_delegate;
 
 private:
-    uint32_t m_id;
     uint32_t m_count;
-    uint32_t m_elementType;
     size_t m_elementSize;
     bool m_isDynamic;
+    VulkanBuffer m_buffer;
+    VkDeviceSize m_size;
+    VkIndexType m_indexType;
 };
 
 } // namespace Bird

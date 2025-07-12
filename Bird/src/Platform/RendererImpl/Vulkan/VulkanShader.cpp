@@ -138,15 +138,7 @@ void VulkanShader::bindAttributes(VertexBufferLayoutData &layout, intptr_t baseV
 
         offset += element.count * VertexBufferElement::getSizeOfType(element.type);
     }
-
-    VkBuffer vertexBuffers[] = {/* ваш vertex buffer */};
-    VkDeviceSize offsets[] = {static_cast<VkDeviceSize>(baseVertex)};
-    vkCmdBindVertexBuffers(m_delegate->getCommandBuffer(), 0, 1, vertexBuffers, offsets);
 }
-
-void VulkanShader::bind() {}
-
-void VulkanShader::unbind() {}
 
 void VulkanShader::setUniformFloat(const char *name, float *value, int count) {}
 

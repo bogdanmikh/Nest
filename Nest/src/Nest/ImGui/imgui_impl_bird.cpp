@@ -154,7 +154,7 @@ IMGUI_IMPL_API bool ImGui_ImplBird_CreateDeviceObjects() {
     );
 #else
     programAsset = Nest::AssetLoader::loadProgram(
-        "default-shaders/imgui/imgui_vertex.glsl", "default-shaders/imgui/imgui_fragment.glsl"
+        "default-shaders/imgui/imgui_vertex330.glsl", "default-shaders/imgui/imgui_fragment330.glsl"
     );
 #endif
     shader = Bird::createProgram(programAsset.getBirdProgramCreate());

@@ -25,15 +25,18 @@ enum struct BufferType { Vertex, Index };
 
 class VulkanBuffer {
 public:
+    VulkanBuffer();
     void create(void *data, uint32_t size, BufferType type, bool isDynamic);
     void update(void *data, uint32_t size);
     void terminate();
+    bool isValid() const;
 
     VulkanBufferDelegate *m_delegate;
     VkBuffer m_buffer;
 
 private:
-    uint32_t m_id;
+    VkDevice m_device;
+    VkAllocationCallbacks *m_allocatorCb;
     uint32_t m_size;
     bool m_isDynamic;
     VkDeviceMemory m_deviceMemory;

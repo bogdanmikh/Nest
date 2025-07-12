@@ -10,8 +10,13 @@ void TriangleRenderer::onAttach() {
     //    fragmentShaderPath = "Shaders/fst.glsl";
     //    Nest::ProgramAsset programAsset =
     //        Nest::AssetLoader::loadProgram(vertexShaderPath, fragmentShaderPath);
+#if USE_VULKAN
     vertexShaderPath = "Shaders/vst.spv";
     fragmentShaderPath = "Shaders/fst.spv";
+#else
+    vertexShaderPath = "Shaders/vst330.glsl";
+    fragmentShaderPath = "Shaders/fst330.glsl";
+#endif
     Nest::ProgramAsset programAsset =
         Nest::AssetLoader::loadProgramBin(vertexShaderPath, fragmentShaderPath);
     m_shader = createProgram(programAsset.getBirdProgramCreate());
