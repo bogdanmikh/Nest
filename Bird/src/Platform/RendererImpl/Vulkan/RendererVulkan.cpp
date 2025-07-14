@@ -959,25 +959,25 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
 
     VK_CHECK(vkBindImageMemory(m_device, m_depthStencilImage, m_depthStencilMemory, 0));
 
-    VkImageViewCreateInfo imageViewCreateInfo;
-    imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    imageViewCreateInfo.pNext = NULL;
-    imageViewCreateInfo.flags = 0;
-    imageViewCreateInfo.image = m_depthStencilImage;
-    imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    imageViewCreateInfo.format = m_depthStencilFormat;
-    imageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
-    imageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
-    imageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
-    imageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
-    imageViewCreateInfo.subresourceRange.aspectMask =
+    VkImageViewCreateInfo depthImageViewInfo;
+    depthImageViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    depthImageViewInfo.pNext = NULL;
+    depthImageViewInfo.flags = 0;
+    depthImageViewInfo.image = m_depthStencilImage;
+    depthImageViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    depthImageViewInfo.format = m_depthStencilFormat;
+    depthImageViewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    depthImageViewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    depthImageViewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    depthImageViewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    depthImageViewInfo.subresourceRange.aspectMask =
         0 | VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-    imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-    imageViewCreateInfo.subresourceRange.levelCount = 1;
-    imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-    imageViewCreateInfo.subresourceRange.layerCount = 1;
+    depthImageViewInfo.subresourceRange.baseMipLevel = 0;
+    depthImageViewInfo.subresourceRange.levelCount = 1;
+    depthImageViewInfo.subresourceRange.baseArrayLayer = 0;
+    depthImageViewInfo.subresourceRange.layerCount = 1;
     VK_CHECK(
-        vkCreateImageView(m_device, &imageViewCreateInfo, m_allocatorCb, &m_depthStencilImageView)
+        vkCreateImageView(m_device, &depthImageViewInfo, m_allocatorCb, &m_depthStencilImageView)
     );
 
     for (int i = 0; i < m_numSwapchainImages; ++i) {
@@ -998,7 +998,6 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
         imageViewInfo.format = format.format;
 
         m_swapchainFrames[i].image = images[i];
-        VkImageView *imageView = &m_swapchainFrames[i].imageView;
         VK_CHECK(vkCreateImageView(
             m_device, &imageViewInfo, m_allocatorCb, &m_swapchainFrames[i].imageView
         ));
@@ -1238,12 +1237,13 @@ void RendererVulkan::createSwapchainRenderPass() {
     attachmentDescription[0].flags = 0;
     attachmentDescription[0].format = m_swapchainFormat;
     attachmentDescription[0].samples = VK_SAMPLE_COUNT_1_BIT;
-    attachmentDescription[0].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+//    attachmentDescription[0].loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+    attachmentDescription[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     attachmentDescription[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     attachmentDescription[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     attachmentDescription[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachmentDescription[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    attachmentDescription[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    attachmentDescription[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    attachmentDescription[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     attachmentDescription[1].flags = 0;
     attachmentDescription[1].format = m_depthStencilFormat;
     attachmentDescription[1].samples = VK_SAMPLE_COUNT_1_BIT;
@@ -1251,7 +1251,7 @@ void RendererVulkan::createSwapchainRenderPass() {
     attachmentDescription[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     attachmentDescription[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
     attachmentDescription[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
-    attachmentDescription[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+    attachmentDescription[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     attachmentDescription[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
     VkAttachmentReference colorAttachmentReference[1];
@@ -1332,7 +1332,8 @@ void RendererVulkan::initSwapchainImageLayout() {
     barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     barrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
     barrier.image = m_depthStencilImage;
-    barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT; // Для глубины
+    barrier.subresourceRange.aspectMask =
+        VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT; // Для глубины
     barrier.subresourceRange.baseMipLevel = 0;
     barrier.subresourceRange.levelCount = 1;
     barrier.subresourceRange.baseArrayLayer = 0;
@@ -1366,10 +1367,9 @@ void RendererVulkan::initSwapchainImageLayout() {
     fenceCreateInfo.pNext = NULL;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     VkFence fence;
-    VK_CHECK(
-        vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &fence)
-    );
+    VK_CHECK(vkCreateFence(m_device, &fenceCreateInfo, m_allocatorCb, &fence));
 
+    VK_CHECK(vkResetFences(m_device, 1, &fence));
     VK_CHECK(vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, fence));
     VK_CHECK(vkQueueWaitIdle(m_graphicsQueue)); // Ждем завершения (для синхронизации)
 
@@ -1640,6 +1640,152 @@ void RendererVulkan::setMemoryBarrier(
     );
 }
 
+void RendererVulkan::setImageMemoryBarrier(
+    VkCommandBuffer commandBuffer,
+    VkImage image,
+    VkImageAspectFlags aspectMask,
+    VkImageLayout oldLayout,
+    VkImageLayout newLayout,
+    uint32_t baseMipLevel,
+    uint32_t levelCount,
+    uint32_t baseArrayLayer,
+    uint32_t layerCount
+) {
+    NEST_ASSERT(
+        newLayout != VK_IMAGE_LAYOUT_UNDEFINED && newLayout != VK_IMAGE_LAYOUT_PREINITIALIZED,
+        "newLayout cannot use VK_IMAGE_LAYOUT_UNDEFINED or VK_IMAGE_LAYOUT_PREINITIALIZED."
+    );
+
+    constexpr VkPipelineStageFlags depthStageMask =
+        VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+
+    constexpr VkPipelineStageFlags sampledStageMask = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT |
+                                                      VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT |
+                                                      VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+
+    VkPipelineStageFlags srcStageMask = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+    VkPipelineStageFlags dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+
+    VkAccessFlags srcAccessMask = 0;
+    VkAccessFlags dstAccessMask = 0;
+
+    switch (oldLayout) {
+        case VK_IMAGE_LAYOUT_UNDEFINED:
+            break;
+
+        case VK_IMAGE_LAYOUT_GENERAL:
+            srcStageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+            srcAccessMask = VK_ACCESS_MEMORY_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+            srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+            srcStageMask = depthStageMask;
+            srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            srcStageMask = depthStageMask | sampledStageMask;
+            break;
+
+        case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+            srcStageMask = sampledStageMask;
+            break;
+
+        case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+            srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+            srcStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_PREINITIALIZED:
+            srcStageMask = VK_PIPELINE_STAGE_HOST_BIT;
+            srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_PRESENT_SRC_KHR:
+            break;
+
+        default:
+            NEST_ASSERT(false, "Unknown image layout.");
+            break;
+    }
+
+    switch (newLayout) {
+        case VK_IMAGE_LAYOUT_GENERAL:
+            dstStageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+            dstAccessMask = VK_ACCESS_MEMORY_READ_BIT | VK_ACCESS_MEMORY_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+            dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            dstAccessMask =
+                VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+            dstStageMask = depthStageMask;
+            dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+                            VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL:
+            dstStageMask = depthStageMask | sampledStageMask;
+            dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
+                            VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+            dstStageMask = sampledStageMask;
+            dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+            dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+            dstStageMask = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            break;
+
+        case VK_IMAGE_LAYOUT_PRESENT_SRC_KHR:
+            // vkQueuePresentKHR performs automatic visibility operations
+            break;
+
+        default:
+            NEST_ASSERT(false, "Unknown image layout.");
+            break;
+    }
+
+    VkImageMemoryBarrier imageMemoryBarrier;
+    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imageMemoryBarrier.pNext = NULL;
+    imageMemoryBarrier.srcAccessMask = srcAccessMask;
+    imageMemoryBarrier.dstAccessMask = dstAccessMask;
+    imageMemoryBarrier.oldLayout = oldLayout;
+    imageMemoryBarrier.newLayout = newLayout;
+    imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    imageMemoryBarrier.image = image;
+    imageMemoryBarrier.subresourceRange.aspectMask = aspectMask;
+    imageMemoryBarrier.subresourceRange.baseMipLevel = baseMipLevel;
+    imageMemoryBarrier.subresourceRange.levelCount = levelCount;
+    imageMemoryBarrier.subresourceRange.baseArrayLayer = baseArrayLayer;
+    imageMemoryBarrier.subresourceRange.layerCount = layerCount;
+    vkCmdPipelineBarrier(
+        commandBuffer, srcStageMask, dstStageMask, 0, 0, NULL, 0, NULL, 1, &imageMemoryBarrier
+    );
+}
+
 StateCacheT<VkDescriptorSetLayout> &RendererVulkan::getDescriptorSetLayoutCache() {
     return m_descriptorSetLayoutCache;
 }
@@ -1755,20 +1901,20 @@ RendererType RendererVulkan::getRendererType() const {
 }
 
 void RendererVulkan::flip() {
-    //    context->flip();
-    VkPresentInfoKHR presentInfo;
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.pNext = NULL;
-    presentInfo.waitSemaphoreCount = 0;
-    presentInfo.pWaitSemaphores = NULL;
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &m_swapchain;
-    presentInfo.pImageIndices = &m_imageIndex;
-    presentInfo.pResults = NULL;
-    VkResult result = vkQueuePresentKHR(m_graphicsQueue, &presentInfo);
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-        //        m_needToRefreshSwapchain = true;
-    }
+    context->flip();
+//    VkPresentInfoKHR presentInfo;
+//    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+//    presentInfo.pNext = NULL;
+//    presentInfo.waitSemaphoreCount = 0;
+//    presentInfo.pWaitSemaphores = NULL;
+//    presentInfo.swapchainCount = 1;
+//    presentInfo.pSwapchains = &m_swapchain;
+//    presentInfo.pImageIndices = &m_imageIndex;
+//    presentInfo.pResults = NULL;
+//    VkResult result = vkQueuePresentKHR(m_graphicsQueue, &presentInfo);
+//    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+//        //        m_needToRefreshSwapchain = true;
+//    }
 }
 
 void RendererVulkan::createFrameBuffer(
@@ -1939,9 +2085,8 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         // ?
         //        recreateSwapchain();
         return;
-    } else {
-        VK_CHECK(acquireResult);
     }
+    VK_CHECK(acquireResult);
 
     VkCommandBufferBeginInfo commandBufferBeginInfo;
     commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1984,6 +2129,13 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         if (draw.m_viewId != viewId) {
             viewId = draw.m_viewId;
             viewChanged(views[viewId]);
+
+            VkRect2D scissor;
+            scissor.offset = {(int)draw.m_scissorRect.origin.x, (int)draw.m_scissorRect.origin.y};
+            scissor.extent = {
+                (uint32_t)draw.m_scissorRect.size.width, (uint32_t)draw.m_scissorRect.size.height
+            };
+            vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
         }
         submit(&draw);
         vkCmdEndRenderPass(m_commandBuffer);
@@ -1992,8 +2144,6 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         m_commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
     );
     VK_CHECK(vkEndCommandBuffer(m_commandBuffer));
-
-    VK_CHECK(vkResetFences(m_device, 1, &currentFrame.fence));
 
     VkSubmitInfo submitInfo;
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -2013,11 +2163,13 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
+    VK_CHECK(vkResetFences(m_device, 1, &currentFrame.fence));
     VK_CHECK(vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, currentFrame.fence));
-    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX) );
+    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
 
     VkPresentInfoKHR presentInfo;
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.pNext = nullptr;
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
 
@@ -2034,7 +2186,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         VK_CHECK(present);
     }
 
-    m_frameNumber = (m_frameNumber + 1) % NUM_SWAPCHAIN_IMAGE;
+    m_frameNumber = (m_frameNumber + 1) % m_numSwapchainImages;
 }
 
 void RendererVulkan::submit(RenderDraw *draw) {
@@ -2049,13 +2201,6 @@ void RendererVulkan::submit(RenderDraw *draw) {
 
     VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
     vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-
-    VkRect2D scissor;
-    scissor.offset = {(int)draw->m_scissorRect.origin.x, (int)draw->m_scissorRect.origin.y};
-    scissor.extent = {
-        (uint32_t)draw->m_scissorRect.size.width, (uint32_t)draw->m_scissorRect.size.height
-    };
-    vkCmdSetScissor(m_commandBuffer, 0, 1, &scissor);
 
     NEST_ASSERT(layoutHandle.id != BIRD_INVALID_HANDLE, "Invalid handle");
     m_shaders[draw->m_shader.id].bindAttributes(layoutData, draw->m_verticesOffset);

@@ -97,6 +97,18 @@ public:
         VkPipelineStageFlags dstStages
     ) override;
 
+    void setImageMemoryBarrier(
+        VkCommandBuffer commandBuffer,
+        VkImage image,
+        VkImageAspectFlags aspectMask,
+        VkImageLayout oldLayout,
+        VkImageLayout newLayout,
+        uint32_t baseMipLevel = 0,
+        uint32_t levelCount = VK_REMAINING_MIP_LEVELS,
+        uint32_t baseArrayLayer = 0,
+        uint32_t layerCount = VK_REMAINING_ARRAY_LAYERS
+    );
+
 #pragma region VulkanShaderDelegate
     StateCacheT<VkDescriptorSetLayout> &getDescriptorSetLayoutCache() override;
 #pragma endregion
