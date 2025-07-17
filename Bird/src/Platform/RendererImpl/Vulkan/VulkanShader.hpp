@@ -29,7 +29,6 @@ public:
     void setUniformMat3(const char *name, float *value, int count);
     void setUniformMat4(const char *name, float *value, int count);
     void setUniformInt(const char *name, int *value, int count);
-    void bindAttributes(VertexBufferLayoutData &layout, intptr_t baseVertex);
 
     VkPipelineLayout m_pipelineLayout;
     VkDevice m_device;

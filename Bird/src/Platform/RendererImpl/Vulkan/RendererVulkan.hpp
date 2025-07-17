@@ -121,6 +121,7 @@ public:
 
 private:
     void viewChanged(View &view);
+    void setDynamicStates(RenderDraw &draw, View &view);
     void submit(RenderDraw *draw);
 
     void createInstance();

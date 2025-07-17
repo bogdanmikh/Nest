@@ -56,8 +56,18 @@ void VulkanBuffer::create(void *data, uint32_t size, BufferType type, bool isDyn
 
 void VulkanBuffer::update(void *data, uint32_t size) {
     NEST_ASSERT(isValid(), "VERTEX BUFFER ALREADY DELETED");
-    VK_CHECK(vkMapMemory(m_device, m_deviceMemory, 0, size, 0, &data));
+    void *memData = nullptr;
+    VK_CHECK(vkMapMemory(m_device, m_deviceMemory, 0, size, 0, &memData));
+    memcpy(memData, data, (size_t)size);
     vkUnmapMemory(m_device, m_deviceMemory);
+
+//    if (!m_isDynamic) {
+//        m_delegate->setMemoryBarrier(
+//            m_delegate->getCommandBuffer(),
+//            VK_PIPELINE_STAGE_HOST_BIT,
+//            VK_PIPELINE_STAGE_VERTEX_INPUT_BIT
+//        );
+//    }
 
     //    m_delegate->setMemoryBarrier(
     //        m_delegate->getCommandBuffer(),

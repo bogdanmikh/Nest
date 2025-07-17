@@ -37,6 +37,8 @@ void TriangleRenderer::onAttach() {
     VertexLayoutHandle vertexLayout = createVertexLayout(layoutData);
     m_vertexBuffer = createVertexBuffer(verticesMemory, 3 * sizeof(VertexTriangle), vertexLayout);
     m_indexBuffer = createIndexBuffer(indicesMemory, BufferElementType::UnsignedInt, 3);
+
+    Bird::setViewClear(0, 0x3D75C9FF);
 }
 
 void TriangleRenderer::onUpdate(double deltaTime) {
