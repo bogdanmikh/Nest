@@ -604,11 +604,10 @@ void setRasterizerState(
     rasterizationState.polygonMode = wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
     if (state & BIRD_STATE_CULL_FACE) {
         rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizationState.cullMode = VK_CULL_MODE_NONE;
     } else {
         rasterizationState.cullMode = VK_CULL_MODE_NONE;
     }
-    rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // против часовой
+    // rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // против часовой
     rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
     rasterizationState.depthBiasEnable = VK_FALSE;
     rasterizationState.depthBiasConstantFactor = 0.0f;
@@ -1900,8 +1899,6 @@ void RendererVulkan::setDepthStencilState(
         depthStencilState.depthTestEnable = VK_TRUE;
         depthStencilState.depthWriteEnable = VK_TRUE;
         depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
-        depthStencilState.depthTestEnable = VK_FALSE;
-        depthStencilState.depthWriteEnable = VK_FALSE;
     } else {
         depthStencilState.depthTestEnable = VK_FALSE;
         depthStencilState.depthWriteEnable = VK_FALSE;
@@ -2201,7 +2198,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
 
     VK_CHECK(vkResetFences(m_device, 1, &currentFrame.fence));
     VK_CHECK(vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, currentFrame.fence));
-    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
+    // VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

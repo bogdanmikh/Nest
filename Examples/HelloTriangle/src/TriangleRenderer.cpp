@@ -42,6 +42,7 @@ void TriangleRenderer::onAttach() {
 }
 
 void TriangleRenderer::onUpdate(double deltaTime) {
+    Bird::setState(BIRD_STATE_CULL_FACE);
     Bird::setShader(m_shader);
     Bird::setIndexBuffer(m_indexBuffer, 0, 3);
     Bird::setVertexBuffer(m_vertexBuffer);
