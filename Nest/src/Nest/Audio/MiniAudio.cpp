@@ -38,7 +38,7 @@ UUID MiniAudioEngine::addAudio(const Nest::Path &filePath) {
         return AUDIO_INVALID_UUID;
     }
     if (!std::filesystem::exists(filePath)) {
-        LOG_ERROR("Audio: {} not exists", filePath.c_str());
+        LOG_ERROR("Audio: {} not exists", filePath.string().c_str());
         return AUDIO_INVALID_UUID;
     }
 
@@ -46,15 +46,15 @@ UUID MiniAudioEngine::addAudio(const Nest::Path &filePath) {
     m_listAudio.emplace_back();
 
     result = ma_sound_init_from_file(
-        m_engine, filePath.c_str(), 0, NULL, NULL, &m_listAudio.back().second
+        m_engine, filePath.string().c_str(), 0, NULL, NULL, &m_listAudio.back().second
     );
 
     if (result != MA_SUCCESS) {
         m_listAudio.pop_back();
-        LOG_ERROR("Failed to initialize audio \"{}\".", filePath.c_str());
+        LOG_ERROR("Failed to initialize audio \"{}\".", filePath.string().c_str());
         return AUDIO_INVALID_UUID;
     }
-    LOG_INFO("Loaded audio: {}", filePath.c_str());
+    LOG_INFO("Loaded audio: {}", filePath.string().c_str());
     return m_listAudio.back().first;
 }
 

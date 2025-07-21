@@ -111,7 +111,7 @@ public:
             m_skyTexture = Bird::createTexture(m_skyTextureConfig);
         } else {
             auto path = skyCreateInfo.pathHdrTexture.value();
-            Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadTexture(path);
+            Nest::TextureAsset m_skyTextureAsset = AssetLoader::loadTexture(path.string());
             Bird::TextureCreate m_skyTextureConfig = m_skyTextureAsset.getBirdTextureCreate();
             m_skyTextureConfig.m_minFiltering = NEAREST;
             m_skyTextureConfig.m_magFiltering = LINEAR;
