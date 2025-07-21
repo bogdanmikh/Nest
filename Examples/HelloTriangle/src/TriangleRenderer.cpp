@@ -18,13 +18,13 @@ void TriangleRenderer::onAttach() {
     fragmentShaderPath = "Shaders/fst330.glsl";
 #endif
     Nest::ProgramAsset programAsset =
-        Nest::AssetLoader::loadProgramBin(vertexShaderPath, fragmentShaderPath);
+        Nest::AssetLoader::loadProgramBin(vertexShaderPath.string(), fragmentShaderPath.string());
     m_shader = createProgram(programAsset.getBirdProgramCreate());
 
     VertexTriangle vertices[3] = {
-        VertexTriangle(0.0, -0.5, 0.0),
-        VertexTriangle(0.5, 0.5, 0.0),
-        VertexTriangle(-0.5, 0.5, 0.0)
+        VertexTriangle(1.0, 1.0, 0.0),
+        VertexTriangle(-1.0, 1.0, 0.0),
+        VertexTriangle(0.0, -1.0, 0.0)
     };
 
     uint32_t indices[3]{0, 1, 2};

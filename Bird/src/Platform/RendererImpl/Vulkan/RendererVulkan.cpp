@@ -49,7 +49,7 @@ Bird::Size getSize() {
 const char **getRequiredInstanceExtensions(uint32_t *extensionCount) {
     static std::vector<const char *> extensions;
 #if defined(PLATFORM_WINDOWS)
-    extensions = {VK_KHR_WIN32_SURFACE_EXTENSION_NAME};
+    extensions = {"VK_KHR_win32_surface"};
 #elif defined(PLATFORM_ANDROID)
     extensions = {VK_KHR_ANDROID_SURFACE_EXTENSION_NAME};
 #elif defined(PLATFORM_LINUX)
@@ -71,9 +71,8 @@ bool supported(
 ) {
     uint32_t extensionCount = 0;
     VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
-    VkExtensionProperties extensionsProperties[extensionCount];
-    VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionsProperties)
-    );
+    std::vector<VkExtensionProperties> extensionsProperties(extensionCount);
+    VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionsProperties.data()));
 #if BIRD_DEBUG_MODE
     std::ostringstream message;
     // functions that Vulkan supports
@@ -605,9 +604,11 @@ void setRasterizerState(
     rasterizationState.polygonMode = wireframe ? VK_POLYGON_MODE_LINE : VK_POLYGON_MODE_FILL;
     if (state & BIRD_STATE_CULL_FACE) {
         rasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizationState.cullMode = VK_CULL_MODE_NONE;
     } else {
         rasterizationState.cullMode = VK_CULL_MODE_NONE;
     }
+    rasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // против часовой
     rasterizationState.frontFace = VK_FRONT_FACE_CLOCKWISE;
     rasterizationState.depthBiasEnable = VK_FALSE;
     rasterizationState.depthBiasConstantFactor = 0.0f;
@@ -626,6 +627,7 @@ RendererVulkan::RendererVulkan()
     , m_vertexBuffers()
     , m_textures()
     , m_frameNumber(0) {
+    m_allocatorCb = nullptr;
     g_allocatorCb = m_allocatorCb;
 #ifdef PLATFORM_DESKTOP
     NEST_ASSERT(glfwVulkanSupported(), "GLFW NOT SUPPORT VULKAN!")
@@ -667,8 +669,8 @@ void RendererVulkan::createInstance() {
 
     VkApplicationInfo appInfo;
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "PandaEditor";
-    appInfo.pEngineName = "Panda";
+    appInfo.pApplicationName = "Nest";
+    appInfo.pEngineName = "Nest";
     appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
     //    appInfo.apiVersion = version;
     appInfo.apiVersion = apiVersion;
@@ -716,7 +718,11 @@ void RendererVulkan::createInstance() {
 
     VkInstanceCreateInfo instanceCreateInfo;
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+#ifdef PLATFORM_MACOS
     instanceCreateInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#else
+    instanceCreateInfo.flags = 0;
+#endif
     instanceCreateInfo.pApplicationInfo = &appInfo;
     instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     instanceCreateInfo.ppEnabledExtensionNames = extensions.data();
@@ -926,7 +932,7 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     }
     VK_CHECK(vkCreateSwapchainKHR(m_device, &swapchainCreateInfo, m_allocatorCb, &m_swapchain));
     VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_numSwapchainImages, nullptr));
-    VkImage images[m_numSwapchainImages];
+    std::vector<VkImage> images(m_numSwapchainImages);
     VK_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_numSwapchainImages, &images[0]));
 
     VkImageCreateInfo depthStencilImageCreateInfo;
@@ -1546,7 +1552,7 @@ VkPipeline RendererVulkan::getPipeline(
         vkCreateGraphicsPipelines(m_device, nullptr, 1, &graphicsPipeline, m_allocatorCb, &pipeline)
     );
 
-    m_pipelineStateCache.add(program.id, pipeline);
+    m_pipelineStateCache.add(hashKey, pipeline);
 
     return pipeline;
 }
@@ -1894,6 +1900,8 @@ void RendererVulkan::setDepthStencilState(
         depthStencilState.depthTestEnable = VK_TRUE;
         depthStencilState.depthWriteEnable = VK_TRUE;
         depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencilState.depthTestEnable = VK_FALSE;
+        depthStencilState.depthWriteEnable = VK_FALSE;
     } else {
         depthStencilState.depthTestEnable = VK_FALSE;
         depthStencilState.depthWriteEnable = VK_FALSE;
@@ -2066,6 +2074,8 @@ void RendererVulkan::setDynamicStates(Bird::RenderDraw &draw, View &view) {
         viewport.y = view.m_viewport.origin.y;
         viewport.width = view.m_viewport.size.width;
         viewport.height = view.m_viewport.size.height; // ?
+        viewport.width = (float)m_swapchainExtent.width;
+        viewport.height = (float)m_swapchainExtent.height;
         viewport.minDepth = 0.0;
         viewport.maxDepth = 1.0;
         vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);
@@ -2137,23 +2147,25 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         uint8_t g = rgba >> 16;
         uint8_t b = rgba >> 8;
         uint8_t a = rgba >> 0;
-        VkClearValue clearValue;
-        clearValue.color.float32[0] = r / 255.0f;
-        clearValue.color.float32[1] = g / 255.0f;
-        clearValue.color.float32[2] = b / 255.0f;
-        clearValue.color.float32[3] = a / 255.0f;
+        VkClearValue clearValue[2];
+        clearValue[0].color.float32[0] = r / 255.0f;
+        clearValue[0].color.float32[1] = g / 255.0f;
+        clearValue[0].color.float32[2] = b / 255.0f;
+        clearValue[0].color.float32[3] = a / 255.0f;
+
+        clearValue[1].depthStencil = { 1.0f, 0 };
 
         VkRenderPassBeginInfo renderPassBeginInfo;
         renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         renderPassBeginInfo.pNext = NULL;
         renderPassBeginInfo.renderPass = m_renderPass;
-        renderPassBeginInfo.framebuffer = m_swapchainFrames[m_imageIndex].framebuffer;
+        renderPassBeginInfo.framebuffer = currentFrame.framebuffer;
 //        renderPassBeginInfo.framebuffer = currentFrame.framebuffer;
         renderPassBeginInfo.renderArea.offset.x = 0;
         renderPassBeginInfo.renderArea.offset.y = 0;
         renderPassBeginInfo.renderArea.extent = m_swapchainExtent;
-        renderPassBeginInfo.clearValueCount = 1;
-        renderPassBeginInfo.pClearValues = &clearValue;
+        renderPassBeginInfo.clearValueCount = 2;
+        renderPassBeginInfo.pClearValues = clearValue;
         vkCmdBeginRenderPass(m_commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         if (draw.m_viewId != viewId) {
@@ -2161,7 +2173,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
             viewChanged(views[viewId]);
         }
         setDynamicStates(draw, views[viewId]);
-//        submit(&draw);
+        submit(&draw);
         vkCmdEndRenderPass(m_commandBuffer);
     }
     setMemoryBarrier(
@@ -2181,7 +2193,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &currentFrame.commandBuffer;
+    submitInfo.pCommandBuffers = &m_commandBuffer;
 
     VkSemaphore signalSemaphores[] = {currentFrame.renderFinished};
     submitInfo.signalSemaphoreCount = 1;
@@ -2189,9 +2201,9 @@ void RendererVulkan::submit(Frame *frame, View *views) {
 
     VK_CHECK(vkResetFences(m_device, 1, &currentFrame.fence));
     VK_CHECK(vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, currentFrame.fence));
-//    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
+    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
 
-    VkPresentInfoKHR presentInfo;
+    VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.pNext = nullptr;
     presentInfo.waitSemaphoreCount = 1;
@@ -2227,11 +2239,11 @@ void RendererVulkan::submit(RenderDraw *draw) {
     VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
     vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-    m_vertexBuffers[draw->m_vertexBuffer.id].bind();
     m_indexBuffers[draw->m_indexBuffer.id].bind();
+    m_vertexBuffers[draw->m_vertexBuffer.id].bind();
     vkCmdDrawIndexed(m_commandBuffer, draw->m_numIndices, 1, 0, 0, 0);
     //    vkCmdDrawIndexed(m_commandBuffer, draw->m_numIndices, 1, 0, draw->m_verticesOffset, 0);
-    //    vkCmdDraw(m_commandBuffer, draw->m_verticesOffset, 1, 0, 0);
+    // vkCmdDraw(m_commandBuffer, draw->m_numIndices, 1, 0, 0);
 }
 
 } // namespace Bird

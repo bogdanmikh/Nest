@@ -18,8 +18,6 @@ public:
     virtual ~AudioEngine() = default;
     virtual void init() = 0;
     static void *get();
-
-protected:
     virtual UUID addAudio(const Path &filePath) = 0;
     virtual void playAudio(const UUID &uuid, float second) = 0;
     virtual void stopAudio(const UUID &uuid) = 0;
@@ -28,8 +26,6 @@ protected:
     virtual bool isPlaying(const UUID &uuid) = 0;
     virtual void setEcho(const UUID &uuid, float delay, float decay) = 0;
     virtual void setPlaybackSpeed(const UUID &uuid, float speed) = 0;
-    friend class Audio;
-
 private:
     static AudioEngine *s_instance;
 };

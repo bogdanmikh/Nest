@@ -71,7 +71,9 @@ void VulkanShader::terminate() {
 
 void VulkanShader::checkCompileErrors(unsigned int shader, const std::string &type) {}
 
-int VulkanShader::getUniformLocation(const std::string &name) {}
+int VulkanShader::getUniformLocation(const std::string &name) {
+    return 0;
+}
 
 void VulkanShader::setUniformFloat(const char *name, float *value, int count) {}
 

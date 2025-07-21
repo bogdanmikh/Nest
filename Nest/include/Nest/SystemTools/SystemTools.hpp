@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nest/Base/Base.hpp"
+#include <optional>
 
 namespace Nest {
 
