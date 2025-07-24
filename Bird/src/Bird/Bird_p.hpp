@@ -45,6 +45,9 @@ struct Context {
         // #ifdef PLATFORM_DESKTOP
         m_thread.init(renderThread, nullptr, 0, "Render thread");
         // #endif
+#if USE_VULKAN
+        m_renderer = F_NEW(Foundation::getAllocator(), RendererVulkan);
+#endif
         Foundation::CommandBuffer::Command cmd(RendererCommandType::RendererInit);
         m_render->getPreCommandQueue().write(cmd);
         m_apiSemaphore.post();
@@ -262,7 +265,7 @@ struct Context {
                 "First command should be RendererInit"
             );
 #if USE_VULKAN
-            m_renderer = F_NEW(Foundation::getAllocator(), RendererVulkan);
+
 #else
             m_renderer = F_NEW(Foundation::getAllocator(), RendererOpenGL);
 #endif
