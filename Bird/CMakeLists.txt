@@ -98,4 +98,6 @@ target_include_directories(Bird PRIVATE ${VENDOR_DIRECTORY}/glm)
 if (USE_VULKAN)
     target_link_libraries(Bird VulkanMemoryAllocator)
     target_include_directories(Bird PRIVATE ${VENDOR_DIRECTORY}/VulkanMemoryAllocator/include)
+
+    target_compile_definitions(Bird PRIVATE VK_ENABLE_BETA_EXTENSIONS)
 endif ()

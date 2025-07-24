@@ -2,6 +2,7 @@
 // Created by Admin on 26.01.2022.
 //
 
+#define GLFW_INCLUDE_VULKAN
 #include "GlfwWindow.hpp"
 
 #include <Foundation/PlatformDetection.hpp>
@@ -46,10 +47,12 @@ GlfwWindow::GlfwWindow(const char *title, Size size, bool isFullscreen, bool isM
 #endif
 
 #ifdef PLATFORM_MACOS
+#if !USE_VULKAN
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+#endif
 #endif
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
