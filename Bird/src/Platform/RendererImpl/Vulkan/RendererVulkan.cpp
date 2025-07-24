@@ -72,7 +72,9 @@ bool supported(
     uint32_t extensionCount = 0;
     VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
     std::vector<VkExtensionProperties> extensionsProperties(extensionCount);
-    VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionsProperties.data()));
+    VK_CHECK(vkEnumerateInstanceExtensionProperties(
+        nullptr, &extensionCount, extensionsProperties.data()
+    ));
 #if BIRD_DEBUG_MODE
     std::ostringstream message;
     // functions that Vulkan supports
@@ -747,12 +749,8 @@ void RendererVulkan::setupDebugMessenger() {
 
 void RendererVulkan::createSurface() {
 #ifdef PLATFORM_DESKTOP
-    VkSurfaceKHR surface;
     auto *window = static_cast<GLFWwindow *>(PlatformData::get()->nativeWindowHandle);
-    VK_CHECK(glfwCreateWindowSurface(m_instance, window, nullptr, &surface));
-
-    m_surface = surface;
-
+    VK_CHECK(glfwCreateWindowSurface(m_instance, window, m_allocatorCb, &m_surface));
     BIRD_LOG("Successfully abstracted GLFW surface for Vulkan");
 #endif
 }
@@ -762,8 +760,7 @@ void RendererVulkan::pickPhysicalDevice() {
     uint32_t physicalDeviceCount = 0;
     VK_CHECK(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, nullptr));
 
-    std::vector<VkPhysicalDevice> physicalDevices;
-    physicalDevices.resize(physicalDeviceCount);
+    std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
 
     VK_CHECK(vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, &physicalDevices[0]));
 #if BIRD_DEBUG_MODE
@@ -870,9 +867,12 @@ void RendererVulkan::createSwapchain(Size size, VkSwapchainKHR *oldSwapchain) {
     }
 
     // Базовая инициализация структуры (обязательно для всех Vulkan-структур)
-    VkSwapchainCreateInfoKHR swapchainCreateInfo = {};
+    VkSwapchainCreateInfoKHR swapchainCreateInfo;
     // Указываем тип структуры для корректной работы Vulkan API
     swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+
+    swapchainCreateInfo.pNext = nullptr;
+    swapchainCreateInfo.flags = 0;
     // Поверхность (окно), с которой будет связан свопчейн
     swapchainCreateInfo.surface = m_surface;
 
@@ -1204,7 +1204,7 @@ void RendererVulkan::createCommandPool() {
 
     VK_CHECK(vkResetCommandPool(m_device, m_commandPool, 0));
 
-    m_commandBuffer = m_swapchainFrames[m_frameNumber].commandBuffer;
+    //    m_commandBuffer = m_swapchainFrames[m_frameNumber].commandBuffer;
 }
 
 void RendererVulkan::createSemaphores() {
@@ -1267,9 +1267,9 @@ void RendererVulkan::createSwapchainRenderPass() {
     colorAttachmentReference[0].attachment = 0;
     colorAttachmentReference[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    VkAttachmentReference resolveAttachmentReference[1];
-    resolveAttachmentReference[0].attachment = VK_ATTACHMENT_UNUSED;
-    resolveAttachmentReference[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    //    VkAttachmentReference resolveAttachmentReference[1];
+    //    resolveAttachmentReference[0].attachment = VK_ATTACHMENT_UNUSED;
+    //    resolveAttachmentReference[0].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
     VkAttachmentReference depthAttachmentReference[1];
     depthAttachmentReference[0].attachment = 1;
@@ -1282,7 +1282,7 @@ void RendererVulkan::createSwapchainRenderPass() {
     subpassDescription[0].pInputAttachments = NULL;
     subpassDescription[0].colorAttachmentCount = 1;
     subpassDescription[0].pColorAttachments = colorAttachmentReference;
-    subpassDescription[0].pResolveAttachments = resolveAttachmentReference;
+    subpassDescription[0].pResolveAttachments = NULL;
     subpassDescription[0].pDepthStencilAttachment = depthAttachmentReference;
     subpassDescription[0].preserveAttachmentCount = 0;
     subpassDescription[0].pPreserveAttachments = NULL;
@@ -2130,7 +2130,7 @@ void RendererVulkan::submit(Frame *frame, View *views) {
     commandBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     commandBufferBeginInfo.pInheritanceInfo = NULL;
     m_commandBuffer = currentFrame.commandBuffer;
-    VK_CHECK(vkResetCommandBuffer(m_commandBuffer, 0));
+    VK_CHECK(vkResetCommandPool(m_device, m_commandPool, 0));
     VK_CHECK(vkBeginCommandBuffer(m_commandBuffer, &commandBufferBeginInfo));
 
     ViewId viewId = -1;
@@ -2150,14 +2150,13 @@ void RendererVulkan::submit(Frame *frame, View *views) {
         clearValue[0].color.float32[2] = b / 255.0f;
         clearValue[0].color.float32[3] = a / 255.0f;
 
-        clearValue[1].depthStencil = { 1.0f, 0 };
+        clearValue[1].depthStencil = {1.0f, 0};
 
         VkRenderPassBeginInfo renderPassBeginInfo;
         renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         renderPassBeginInfo.pNext = NULL;
         renderPassBeginInfo.renderPass = m_renderPass;
-        renderPassBeginInfo.framebuffer = currentFrame.framebuffer;
-//        renderPassBeginInfo.framebuffer = currentFrame.framebuffer;
+        renderPassBeginInfo.framebuffer = m_swapchainFrames[m_imageIndex].framebuffer;
         renderPassBeginInfo.renderArea.offset.x = 0;
         renderPassBeginInfo.renderArea.offset.y = 0;
         renderPassBeginInfo.renderArea.extent = m_swapchainExtent;
@@ -2198,7 +2197,8 @@ void RendererVulkan::submit(Frame *frame, View *views) {
 
     VK_CHECK(vkResetFences(m_device, 1, &currentFrame.fence));
     VK_CHECK(vkQueueSubmit(m_graphicsQueue, 1, &submitInfo, currentFrame.fence));
-    // VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
+    VK_CHECK(vkWaitForFences(m_device, 1, &currentFrame.fence, VK_TRUE, UINT64_MAX));
+    m_commandBuffer = VK_NULL_HANDLE;
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

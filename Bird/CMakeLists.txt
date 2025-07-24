@@ -63,6 +63,7 @@ if (PLATFORM_DESKTOP)
                     "Found ${Vulkan_VERSION}."
             )
         endif ()
+        target_compile_definitions(Bird PRIVATE VK_ENABLE_BETA_EXTENSIONS)
         target_link_libraries(Bird Vulkan::Vulkan)
     else()
         target_link_libraries(Bird glad)

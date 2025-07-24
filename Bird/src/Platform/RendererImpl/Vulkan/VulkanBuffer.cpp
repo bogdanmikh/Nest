@@ -61,13 +61,13 @@ void VulkanBuffer::update(void *data, uint32_t size) {
     memcpy(memData, data, (size_t)size);
     vkUnmapMemory(m_device, m_deviceMemory);
 
-//    if (!m_isDynamic) {
-//        m_delegate->setMemoryBarrier(
-//            m_delegate->getCommandBuffer(),
-//            VK_PIPELINE_STAGE_HOST_BIT,
-//            VK_PIPELINE_STAGE_VERTEX_INPUT_BIT
-//        );
-//    }
+    //    if (!m_isDynamic) {
+    //        m_delegate->setMemoryBarrier(
+    //            m_delegate->getCommandBuffer(),
+    //            VK_PIPELINE_STAGE_HOST_BIT,
+    //            VK_PIPELINE_STAGE_VERTEX_INPUT_BIT
+    //        );
+    //    }
 
     //    m_delegate->setMemoryBarrier(
     //        m_delegate->getCommandBuffer(),

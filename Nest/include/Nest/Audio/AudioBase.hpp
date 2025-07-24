@@ -26,6 +26,7 @@ public:
     virtual bool isPlaying(const UUID &uuid) = 0;
     virtual void setEcho(const UUID &uuid, float delay, float decay) = 0;
     virtual void setPlaybackSpeed(const UUID &uuid, float speed) = 0;
+
 private:
     static AudioEngine *s_instance;
 };
