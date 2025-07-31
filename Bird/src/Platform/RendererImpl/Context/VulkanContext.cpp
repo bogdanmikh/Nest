@@ -11,12 +11,12 @@ namespace Bird {
 
 void VulkanContext::create() {
     glfwWindowHandle = PlatformData::get()->nativeWindowHandle;
-//    glfwMakeContextCurrent((GLFWwindow *)glfwWindowHandle);
-//    glfwSwapInterval(1);
+    //    glfwMakeContextCurrent((GLFWwindow *)glfwWindowHandle);
+    //    glfwSwapInterval(1);
 }
 
 void VulkanContext::flip() {
-//    glfwSwapBuffers((GLFWwindow *)glfwWindowHandle);
+    //    glfwSwapBuffers((GLFWwindow *)glfwWindowHandle);
 }
 
 uint32_t VulkanContext::getDefaultFrameBufferId() {

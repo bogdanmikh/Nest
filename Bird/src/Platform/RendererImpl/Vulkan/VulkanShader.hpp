@@ -21,7 +21,16 @@ namespace Bird {
 
 class VulkanShader {
 public:
-    VulkanShader();
+    void create(Foundation::Memory *memory);
+    void terminate();
+    VkShaderModule m_module;
+
+private:
+    VkDevice m_device;
+};
+
+class VulkanProgram {
+public:
     void create(ProgramCreate create);
     void terminate();
     void setUniformFloat(const char *name, float *value, int count);
@@ -30,14 +39,18 @@ public:
     void setUniformMat4(const char *name, float *value, int count);
     void setUniformInt(const char *name, int *value, int count);
 
+    VkShaderModule getVertexModule();
+    VkShaderModule getFragmentModule();
+
     VkDevice m_device;
-    VkShaderModule m_vertex;
-    VkShaderModule m_fragment;
     VulkanShaderDelegate *m_delegate;
 
     VkDescriptorSetLayout m_descriptorSetLayout;
     VkPipelineLayout m_pipelineLayout;
+
 private:
+    VulkanShader m_vertex;
+    VulkanShader m_fragment;
 };
 
 } // namespace Bird

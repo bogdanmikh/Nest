@@ -1450,7 +1450,7 @@ uint32_t getPipelineHashkey(
 VkPipeline RendererVulkan::getPipeline(
     uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
 ) {
-    VulkanShader &shader = m_shaders[program.id];
+    VulkanProgram &shader = m_shaders[program.id];
 
     uint32_t hashKey = getPipelineHashkey(state, program, layoutData);
     VkPipeline pipeline = m_pipelineStateCache.find(hashKey);
@@ -1500,7 +1500,7 @@ VkPipeline RendererVulkan::getPipeline(
     shaderStages[0].pNext = NULL;
     shaderStages[0].flags = 0;
     shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-    shaderStages[0].module = shader.m_vertex;
+    shaderStages[0].module = shader.getVertexModule();
     shaderStages[0].pName = "main";
     shaderStages[0].pSpecializationInfo = NULL;
 
@@ -1508,7 +1508,7 @@ VkPipeline RendererVulkan::getPipeline(
     shaderStages[1].pNext = NULL;
     shaderStages[1].flags = 0;
     shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    shaderStages[1].module = shader.m_fragment;
+    shaderStages[1].module = shader.getFragmentModule();
     shaderStages[1].pName = "main";
     shaderStages[1].pSpecializationInfo = NULL;
 
@@ -1640,6 +1640,12 @@ RendererVulkan::getRenderPass(uint32_t num, const Bird::FrameBufferAttachment *a
 
     m_renderPassCache.add(hashKey, renderPass);
     return renderPass;
+}
+// ?
+uint32_t getDescriptorSetLayoutHashkey(
+    uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
+) {
+    return program.id + state % 100 + layoutData.m_stride % 100;
 }
 
 VkCommandBuffer RendererVulkan::getCommandBuffer() {
@@ -2068,12 +2074,12 @@ void RendererVulkan::setDynamicStates(Bird::RenderDraw &draw, View &view) {
     if (!view.m_viewport.isZero()) {
         VkViewport viewport;
         viewport.x = view.m_viewport.origin.x;
-//        viewport.y = view.m_viewport.origin.y;
+        //        viewport.y = view.m_viewport.origin.y;
         viewport.y = view.m_viewport.origin.y + view.m_viewport.size.height;
         viewport.width = view.m_viewport.size.width;
         viewport.height = -view.m_viewport.size.height; // ?
-//        viewport.width = (float)m_swapchainExtent.width;
-//        viewport.height = (float)m_swapchainExtent.height;
+        //        viewport.width = (float)m_swapchainExtent.width;
+        //        viewport.height = (float)m_swapchainExtent.height;
         viewport.minDepth = 0.0;
         viewport.maxDepth = 1.0;
         vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);

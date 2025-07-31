@@ -182,7 +182,7 @@ private:
 
     GraphicsContext *context;
     VulkanFrameBuffer m_frameBuffers[MAX_FRAME_BUFFERS];
-    VulkanShader m_shaders[MAX_SHADERS];
+    VulkanProgram m_shaders[MAX_SHADERS];
     VulkanIndexBuffer m_indexBuffers[MAX_INDEX_BUFFERS];
     VertexBufferLayoutData m_vertexLayouts[MAX_BUFFER_LAYOUTS];
     VulkanVertexBuffer m_vertexBuffers[MAX_VERTEX_BUFFERS];
