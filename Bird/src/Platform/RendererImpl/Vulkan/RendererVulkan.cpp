@@ -2068,11 +2068,12 @@ void RendererVulkan::setDynamicStates(Bird::RenderDraw &draw, View &view) {
     if (!view.m_viewport.isZero()) {
         VkViewport viewport;
         viewport.x = view.m_viewport.origin.x;
-        viewport.y = view.m_viewport.origin.y;
+//        viewport.y = view.m_viewport.origin.y;
+        viewport.y = view.m_viewport.origin.y + view.m_viewport.size.height;
         viewport.width = view.m_viewport.size.width;
-        viewport.height = view.m_viewport.size.height; // ?
-        viewport.width = (float)m_swapchainExtent.width;
-        viewport.height = (float)m_swapchainExtent.height;
+        viewport.height = -view.m_viewport.size.height; // ?
+//        viewport.width = (float)m_swapchainExtent.width;
+//        viewport.height = (float)m_swapchainExtent.height;
         viewport.minDepth = 0.0;
         viewport.maxDepth = 1.0;
         vkCmdSetViewport(m_commandBuffer, 0, 1, &viewport);

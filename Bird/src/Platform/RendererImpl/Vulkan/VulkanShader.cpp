@@ -14,8 +14,7 @@ uint64_t getHashDescriptorSetLayout(VkDescriptorSetLayout &descriptorSetLayout) 
 
 namespace Bird {
 
-VulkanShader::VulkanShader()
-    : m_uniformLocationCache() {}
+VulkanShader::VulkanShader() {}
 
 void VulkanShader::create(ProgramCreate create) {
     m_device = *g_device;
@@ -67,12 +66,6 @@ void VulkanShader::terminate() {
     vkDestroy(m_vertex);
     vkDestroy(m_fragment);
     vkDestroy(m_pipelineLayout);
-}
-
-void VulkanShader::checkCompileErrors(unsigned int shader, const std::string &type) {}
-
-int VulkanShader::getUniformLocation(const std::string &name) {
-    return 0;
 }
 
 void VulkanShader::setUniformFloat(const char *name, float *value, int count) {}

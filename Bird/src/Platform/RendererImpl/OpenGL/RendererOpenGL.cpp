@@ -347,7 +347,7 @@ void RendererOpenGL::submit(RenderDraw *draw) {
     indexBuffers[draw->m_indexBuffer.id].bind();
     GL_CALL(glDrawElements(
         GL_TRIANGLES,
-        ,
+        draw->m_numIndices,
         indexBuffers[draw->m_indexBuffer.id].getElementType(),
         (void *)draw->m_indicesOffset
     ));

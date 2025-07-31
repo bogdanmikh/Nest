@@ -30,17 +30,14 @@ public:
     void setUniformMat4(const char *name, float *value, int count);
     void setUniformInt(const char *name, int *value, int count);
 
-    VkPipelineLayout m_pipelineLayout;
     VkDevice m_device;
     VkShaderModule m_vertex;
     VkShaderModule m_fragment;
-
     VulkanShaderDelegate *m_delegate;
 
+    VkDescriptorSetLayout m_descriptorSetLayout;
+    VkPipelineLayout m_pipelineLayout;
 private:
-    std::unordered_map<std::string, int> m_uniformLocationCache;
-    static void checkCompileErrors(uint32_t shader, const std::string &type);
-    int getUniformLocation(const std::string &name);
 };
 
 } // namespace Bird

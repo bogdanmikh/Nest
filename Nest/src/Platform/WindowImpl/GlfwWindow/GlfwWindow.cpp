@@ -2,7 +2,6 @@
 // Created by Admin on 26.01.2022.
 //
 
-#define GLFW_INCLUDE_VULKAN
 #include "GlfwWindow.hpp"
 
 #include <Foundation/PlatformDetection.hpp>
