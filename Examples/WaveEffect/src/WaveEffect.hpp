@@ -29,11 +29,11 @@ private:
     Bird::IndexBufferHandle m_indexBuffer;
     Bird::VertexBufferHandle m_vertexBuffer;
 
-    float maxSpeed = 0.01;
+    float maxSpeed = 0.001;
     glm::vec4 background;
     glm::vec2 mousePos;
     glm::vec2 resolution;
-    double time;
+    float time;
     Nest::Vec3 colors[6];
     Nest::Vec3 rotation[3];
     Direction direction[3];

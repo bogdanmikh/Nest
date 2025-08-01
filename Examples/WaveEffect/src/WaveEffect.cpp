@@ -52,10 +52,10 @@ void WaveEffect::onAttach() {
     colors[4] = {0.7f, 0.3f, 0.9f};  // Сиреневый (градиент)
     colors[5] = {0.2f, 0.8f, 0.8f};  // Бирюзовый (градиент)
 
-    // Параметры вращения (x,y смещение, z - скорость)
-    rotation[0] = {0.1f, -0.05f, 0.15f};  // Медленное вращение
-    rotation[1] = {-0.2f, 0.1f, -0.1f};   // Обратное вращение
-    rotation[2] = {0.05f, 0.15f, 0.2f};   // Средняя скорость
+//    // Параметры вращения (x,y смещение, z - скорость)
+//    rotation[0] = {0.1f, -0.05f, 0.15f};  // Медленное вращение
+//    rotation[1] = {-0.2f, 0.1f, -0.1f};   // Обратное вращение
+//    rotation[2] = {0.05f, 0.15f, 0.2f};   // Средняя скорость
 
     direction[0] = Direction::LEFT;
     direction[1] = Direction::RIGHT;
@@ -63,9 +63,36 @@ void WaveEffect::onAttach() {
 }
 
 void WaveEffect::onUpdate(double deltaTime) {
-    time = Nest::Application::get()->getWindow()->getTime();
+    time = (float)Nest::Application::get()->getWindow()->getTime();
     mousePos = {Nest::Input::getMousePositionX(), Nest::Input::getMousePositionX()};
     resolution = Nest::Application::get()->getWindow()->getSize();
+
+    for (int i = 0; i < 6; ++i) {
+        float maxD = 0.08;
+        int d = Nest::getRandomInt(0, 1);
+        colors[i].x += (d == 0 ? Nest::getRandomFloat(0, maxD) : -Nest::getRandomFloat(0, maxD));
+        d = Nest::getRandomInt(0, 1);
+        colors[i].y += (d == 0 ? Nest::getRandomFloat(0, maxD) : -Nest::getRandomFloat(0, maxD));
+        d = Nest::getRandomInt(0, 1);
+        colors[i].z += (d == 0 ? Nest::getRandomFloat(0, maxD) : -Nest::getRandomFloat(0, maxD));
+        if (colors[i].x < 0) {
+            colors[i].x = 0;
+        } else if (colors[i].x > 1) {
+            colors[i].x = 1;
+        }
+
+        if (colors[i].y < 0) {
+            colors[i].y = 0;
+        } else if (colors[i].y > 1) {
+            colors[i].y = 1;
+        }
+
+        if (colors[i].z < 0) {
+            colors[i].z = 0;
+        } else if (colors[i].z > 1) {
+            colors[i].z = 1;
+        }
+    }
     // Плавные аудио-параметры (используйте шум Перлина или синусоиды)
     static float audioTime = 0.0f;
     audioTime += 0.1f;
@@ -76,7 +103,7 @@ void WaveEffect::onUpdate(double deltaTime) {
     background = {0, 0, 0, 1};
 
     for (int i = 0; i < 3; ++i) {
-        float coeff = Nest::getRandomFloat(0, 0.5) * deltaTime;
+        float coeff = Nest::getRandomFloat(0, 0.5);
         if (direction[i] == Direction::RIGHT) {
             rotation[i].x += Nest::getRandomFloat(0, maxSpeed) * coeff;
             rotation[i].y += Nest::getRandomFloat(0, maxSpeed) * coeff;
@@ -98,9 +125,9 @@ void WaveEffect::onUpdate(double deltaTime) {
     }
 
     // Параметры реакции - плавно затухают
-    react[0] = std::max(0.0f, react[0] - 0.01f);
-    react[1] = std::max(0.0f, react[1] - 0.008f);
-    react[2] = std::max(0.0f, react[2] - 0.012f);
+    react[0] = std::max(0.0f, react[0] - 0.01f) * Nest::getRandomFloat(0, 0.5);
+    react[1] = std::max(0.0f, react[1] - 0.008f) * Nest::getRandomFloat(0, 0.5);
+    react[2] = std::max(0.0f, react[2] - 0.012f) * Nest::getRandomFloat(0, 0.5);
     if (Nest::Input::isMouseButtonPressed(Nest::MouseButton::LEFT)) {
         interaction = 1;
     } else {
@@ -109,8 +136,8 @@ void WaveEffect::onUpdate(double deltaTime) {
     Bird::setShader(m_shader);
 
     Bird::setUniform(m_shader, "vScreenSize", &resolution, Bird::UniformType::Vec2);
-    Bird::setUniform(m_shader, "vTime", &resolution, Bird::UniformType::Float);
-    static float scale = 0.5;
+    Bird::setUniform(m_shader, "vTime", &time, Bird::UniformType::Float);
+    static float scale = 0.8;
     Bird::setUniform(m_shader, "vScale", &scale, Bird::UniformType::Float);
     Bird::setUniform(m_shader, "vColorBackground", &background, Bird::UniformType::Vec4);
     for (int i = 0; i < 6; ++i) {
