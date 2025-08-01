@@ -8,6 +8,9 @@ namespace Bird {
 
 const static uint32_t s_uniformTypeSize[UniformType::Count + 1] = {
     sizeof(int32_t),       // Sampler
+    sizeof(float),         // Float
+    2 * sizeof(float),     // Vec2
+    3 * sizeof(float),     // Vec3
     4 * sizeof(float),     // Vec4
     3 * 3 * sizeof(float), // Mat3
     4 * 4 * sizeof(float), // Mat4

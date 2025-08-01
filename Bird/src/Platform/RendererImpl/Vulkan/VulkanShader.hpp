@@ -19,15 +19,22 @@ struct VulkanShaderDelegate {
 
 namespace Bird {
 
+enum class ShaderType {
+    VERTEX,
+    FRAGMENT
+};
+
 class VulkanShader {
 public:
-    void create(Foundation::Memory *memory);
+    void create(Foundation::Memory *memory, const ShaderType &type);
     void terminate();
-    VkShaderModule m_module;
 
+    VkDescriptorSetLayoutBinding m_bindings[MAX_UNIFORMS];
+    VkShaderModule m_module;
 private:
     VkDevice m_device;
 };
+
 
 class VulkanProgram {
 public:

@@ -139,6 +139,14 @@ void OpenGLShader::setUniformFloat(const char *name, float *value, int count) {
     GL_CALL(glUniform1fv(getUniformLocation(name), count, value));
 }
 
+void OpenGLShader::setUniformVec2(const char *name, float *value, int count) {
+    GL_CALL(glUniform2fv(getUniformLocation(name), count, value));
+}
+
+void OpenGLShader::setUniformVec3(const char *name, float *value, int count) {
+    GL_CALL(glUniform3fv(getUniformLocation(name), count, value));
+}
+
 void OpenGLShader::setUniformVec4(const char *name, float *value, int count) {
     GL_CALL(glUniform4fv(getUniformLocation(name), count, value));
 }

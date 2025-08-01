@@ -12,7 +12,7 @@
 #include <Foundation/Logger.hpp>
 
 #include <chrono>
-#define USE_IMGUI 0
+#define USE_IMGUI 1
 
 namespace Nest {
 

@@ -150,6 +150,8 @@ private:
         uint64_t state, Bird::ProgramHandle program, const Bird::VertexBufferLayoutData &layoutData
     );
 
+//    VkDescriptorSet getDescriptorSet(const ProgramVK& program, const RenderBind& renderBind, const ScratchBufferVK& scratchBuffer, const float _palette[][4]);
+
     VkPipelineMultisampleStateCreateInfo getMultisampleState(uint32_t stateFlags);
     void setInputLayout(
         VkPipelineVertexInputStateCreateInfo &vertexInputState,

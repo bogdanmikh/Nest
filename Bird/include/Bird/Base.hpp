@@ -113,7 +113,7 @@ struct TextureCreate {
     }
 };
 
-enum UniformType { Sampler, Vec4, Mat3, Mat4, Count };
+enum UniformType { Sampler, Float, Vec2, Vec3, Vec4, Mat3, Mat4, Count };
 
 struct FrameBufferAttachment {
     FrameBufferAttachment()

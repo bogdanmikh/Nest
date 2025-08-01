@@ -2243,6 +2243,11 @@ void RendererVulkan::submit(RenderDraw *draw) {
     VkPipeline pipeline = getPipeline(draw->m_state, draw->m_shader, layoutData);
     vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
+    VulkanProgram program = m_shaders[draw->m_shader.id];
+    if (program.m_descriptorSetLayout != nullptr) {
+
+    }
+
     m_indexBuffers[draw->m_indexBuffer.id].bind();
     m_vertexBuffers[draw->m_vertexBuffer.id].bind();
     vkCmdDrawIndexed(m_commandBuffer, draw->m_numIndices, 1, 0, 0, 0);

@@ -20,6 +20,8 @@ public:
     void bind();
     void unbind();
     void setUniformFloat(const char *name, float *value, int count);
+    void setUniformVec2(const char *name, float *value, int count);
+    void setUniformVec3(const char *name, float *value, int count);
     void setUniformVec4(const char *name, float *value, int count);
     void setUniformMat3(const char *name, float *value, int count);
     void setUniformMat4(const char *name, float *value, int count);

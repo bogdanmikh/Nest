@@ -228,6 +228,21 @@ void RendererOpenGL::setUniform(const Uniform &uniform) {
                 uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
             );
             return;
+        case UniformType::Float:
+            shaders[uniform.handle.id].setUniformFloat(
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
+            );
+            return;
+        case UniformType::Vec2:
+            shaders[uniform.handle.id].setUniformVec2(
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
+            );
+            return;
+        case UniformType::Vec3:
+            shaders[uniform.handle.id].setUniformVec3(
+                uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count
+            );
+            return;
         case UniformType::Vec4:
             shaders[uniform.handle.id].setUniformVec4(
                 uniform.name.c_str(), static_cast<float *>(uniform.data), uniform.count

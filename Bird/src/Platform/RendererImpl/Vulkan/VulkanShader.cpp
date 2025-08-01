@@ -14,7 +14,7 @@ uint64_t getDescriptorSetLayoutHashKey() {
 
 namespace Bird {
 
-void VulkanShader::create(Foundation::Memory *memory) {
+void VulkanShader::create(Foundation::Memory *memory, const ShaderType &type) {
     m_device = *g_device;
     uint32_t sourceSize = *reinterpret_cast<uint32_t *>(memory->userData);
     const char *source = reinterpret_cast<const char *>(memory->data);
@@ -28,6 +28,14 @@ void VulkanShader::create(Foundation::Memory *memory) {
 
     free(memory->userData);
     memory->release();
+
+    VkShaderStageFlagBits shaderStage = VK_SHADER_STAGE_ALL;
+
+    if (type == ShaderType::VERTEX) {
+        shaderStage = VK_SHADER_STAGE_VERTEX_BIT;
+    } else if (type == ShaderType::FRAGMENT) {
+        shaderStage = VK_SHADER_STAGE_FRAGMENT_BIT;
+    }
 }
 
 void VulkanShader::terminate() {
@@ -37,8 +45,8 @@ void VulkanShader::terminate() {
 void VulkanProgram::create(ProgramCreate create) {
     m_device = *g_device;
 
-    m_vertex.create(&create.m_vertex);
-    m_fragment.create(&create.m_fragment);
+    m_vertex.create(&create.m_vertex, ShaderType::VERTEX);
+    m_fragment.create(&create.m_fragment, ShaderType::FRAGMENT);
     // ?
     uint64_t hashKey = getDescriptorSetLayoutHashKey();
     m_descriptorSetLayout = m_delegate->getDescriptorSetLayoutCache().find(hashKey);
